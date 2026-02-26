@@ -393,7 +393,7 @@ function ProgressPage({ providers }) {
     if (!grouped[label]) grouped[label] = { label, date: d || '9999', providers: [] };
     grouped[label].providers.push(p);
   });
-  const groups = Object.values(grouped).sort((a, b) => a.date.localeCompare(b.date));
+  const groups = Object.values(grouped).sort((a, b) => b.date.localeCompare(a.date));
 
   return (
     <div className="progress-page">
@@ -582,7 +582,7 @@ function App() {
                 if (!grouped[label]) grouped[label] = { label, date: d || '9999', providers: [] };
                 grouped[label].providers.push(p);
               });
-              const groups = Object.values(grouped).sort((a, b) => a.date.localeCompare(b.date));
+              const groups = Object.values(grouped).sort((a, b) => b.date.localeCompare(a.date));
               return groups.map(group => (
                 <div key={group.label} style={{marginBottom:32}}>
                   <h3 style={{fontSize:16,fontWeight:700,color:'#374151',marginBottom:12,paddingBottom:6,borderBottom:'2px solid #e5e7eb'}}>{group.label}</h3>
