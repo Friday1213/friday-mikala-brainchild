@@ -150,7 +150,7 @@ function ProviderForm({ provider, onSave, onCancel }) {
     ...f, training_plan: { ...f.training_plan, [`${day}_${slot}`]: val }
   }));
 
-  const tp = typeof form.training_plan === 'string' ? JSON.parse(form.training_plan || '{}') : (form.training_plan || {});
+  const tp = (() => { try { let v = form.training_plan; while (typeof v === 'string') v = JSON.parse(v); return v || {}; } catch(e) { return {}; } })();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
