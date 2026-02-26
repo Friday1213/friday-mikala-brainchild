@@ -273,6 +273,15 @@ function TaskRow({ task, onUpdate, onDelete }) {
 function ProviderDetail({ provider: initialProvider, onBack, onEdit }) {
   const [provider, setProvider] = useState(initialProvider);
   const [tab, setTab] = useState('info');
+  const [noteText, setNoteText] = useState(initialProvider.free_notes || '');
+  const [noteSaved, setNoteSaved] = useState(true);
+
+  const saveNotes = async () => {
+    const p = {...provider, free_notes: noteText};
+    delete p.tasks;
+    await api(`/api/providers/${provider.id}`, {method:'PUT', body: JSON.stringify(p)});
+    setNoteSaved(true);
+  };
 
   const updateTask = (updated) => setProvider(p => ({ ...p, tasks: p.tasks.map(t => t.id === updated.id ? updated : t) }));
   const deleteTask = async (id) => { await api(`/api/tasks/${id}`, { method: 'DELETE' }); setProvider(p => ({ ...p, tasks: p.tasks.filter(t => t.id !== id) })); };
@@ -319,7 +328,7 @@ function ProviderDetail({ provider: initialProvider, onBack, onEdit }) {
       </div>
 
       <div className="tabs">
-        {['info','tasks','training'].map(t => <button key={t} className={`tab ${tab===t?'active':''}`} onClick={()=>setTab(t)}>{t==='info'?'Provider Info':t==='tasks'?'Onboarding Tasks':'Training Plan'}</button>)}
+        {['info','tasks','training','notes'].map(t => <button key={t} className={`tab ${tab===t?'active':''}`} onClick={()=>setTab(t)}>{t==='info'?'Provider Info':t==='tasks'?'Onboarding Tasks':t==='training'?'Training Plan':'Notes'}</button>)}
       </div>
 
       {tab === 'info' && (
@@ -359,6 +368,24 @@ function ProviderDetail({ provider: initialProvider, onBack, onEdit }) {
               <tbody>{provider.tasks?.map(t => <TaskRow key={t.id} task={t} onUpdate={updateTask} onDelete={deleteTask} />)}</tbody>
             </table>
           </div>
+        </div>
+      )}
+
+      {tab === 'notes' && (
+        <div className="card">
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
+            <div className="section-title" style={{marginBottom:0}}>Notes</div>
+            <div style={{display:'flex',alignItems:'center',gap:10}}>
+              {!noteSaved && <span style={{fontSize:12,color:'#d97706'}}>Unsaved changes</span>}
+              <button className="btn btn-primary btn-sm" onClick={saveNotes}>Save</button>
+            </div>
+          </div>
+          <textarea
+            value={noteText}
+            onChange={e=>{setNoteText(e.target.value);setNoteSaved(false);}}
+            placeholder="Add any notes about this provider here..."
+            style={{width:'100%',minHeight:300,padding:'12px',border:'1px solid #d1d5db',borderRadius:6,fontSize:14,lineHeight:1.6,resize:'vertical',outline:'none'}}
+          />
         </div>
       )}
 
