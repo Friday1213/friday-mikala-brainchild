@@ -275,6 +275,25 @@ function ProviderDetail({ provider: initialProvider, onBack, onEdit }) {
   const [tab, setTab] = useState('info');
   const [noteText, setNoteText] = useState(initialProvider.free_notes || '');
   const [noteSaved, setNoteSaved] = useState(true);
+  const NEXTECH_ITEMS = ['Primary Provider', 'Compression Socks', 'Note Signing', 'E-Prescribing', 'US Order', 'Consents'];
+  const defaultNextech = () => Object.fromEntries(NEXTECH_ITEMS.map(k => [k, false]));
+  const [nextechItems, setNextechItems] = useState(() => {
+    try { return initialProvider.nextech_status ? JSON.parse(initialProvider.nextech_status) : defaultNextech(); } catch(e) { return defaultNextech(); }
+  });
+  const [nextechSaved, setNextechSaved] = useState(true);
+
+  const saveNextech = async () => {
+    const p = {...provider, nextech_status: nextechItems};
+    delete p.tasks;
+    await api(`/api/providers/${provider.id}`, {method:'PUT', body: JSON.stringify(p)});
+    setNextechSaved(true);
+  };
+
+  const toggleNextech = (item) => {
+    setNextechItems(n => ({...n, [item]: !n[item]}));
+    setNextechSaved(false);
+  };
+
   const [malForm, setMalForm] = useState({ malpractice_status: initialProvider.malpractice_status || 'Not Started', malpractice_carrier: initialProvider.malpractice_carrier || '', malpractice_policy: initialProvider.malpractice_policy || '', malpractice_start: initialProvider.malpractice_start || '', malpractice_end: initialProvider.malpractice_end || '', malpractice_amount: initialProvider.malpractice_amount || '', malpractice_notes: initialProvider.malpractice_notes || '' });
   const [malSaved, setMalSaved] = useState(true);
   const [credUpdates, setCredUpdates] = useState([]);
@@ -358,8 +377,8 @@ function ProviderDetail({ provider: initialProvider, onBack, onEdit }) {
       </div>
 
       <div className="tabs">
-        {['info','tasks','training','malpractice','credentialing','notes'].map(t => <button key={t} className={`tab ${tab===t?'active':''}`} onClick={()=>setTab(t)}>
-        {t==='info'?'Provider Info':t==='tasks'?'Onboarding Tasks':t==='training'?'Training Plan':t==='malpractice'?'Malpractice':t==='credentialing'?'Credentialing':'Notes'}
+        {['info','tasks','training','malpractice','credentialing','nextech','notes'].map(t => <button key={t} className={`tab ${tab===t?'active':''}`} onClick={()=>setTab(t)}>
+        {t==='info'?'Provider Info':t==='tasks'?'Onboarding Tasks':t==='training'?'Training Plan':t==='malpractice'?'Malpractice':t==='credentialing'?'Credentialing':t==='nextech'?'Nextech':'Notes'}
       </button>)}
       </div>
 
@@ -399,6 +418,30 @@ function ProviderDetail({ provider: initialProvider, onBack, onEdit }) {
               <thead><tr><th>Task</th><th>Details</th><th>Owner</th><th>Status</th><th>Deadline</th><th>Location/Tracking</th><th>Notes</th><th>Actions</th></tr></thead>
               <tbody>{provider.tasks?.map(t => <TaskRow key={t.id} task={t} onUpdate={updateTask} onDelete={deleteTask} />)}</tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {tab === 'nextech' && (
+        <div className="card">
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+            <div className="section-title" style={{marginBottom:0}}>Nextech Setup</div>
+            <div style={{display:'flex',alignItems:'center',gap:10}}>
+              {!nextechSaved && <span style={{fontSize:12,color:'#d97706'}}>Unsaved changes</span>}
+              <button className="btn btn-primary btn-sm" onClick={saveNextech}>Save</button>
+            </div>
+          </div>
+          <div style={{display:'flex',flexDirection:'column',gap:12}}>
+            {NEXTECH_ITEMS.map(item => (
+              <label key={item} style={{display:'flex',alignItems:'center',gap:12,cursor:'pointer',padding:'12px 16px',borderRadius:8,background: nextechItems[item] ? '#d1fae5' : '#f9fafb',border:`1px solid ${nextechItems[item]?'#a7f3d0':'#e5e7eb'}`,transition:'all 0.15s'}}>
+                <input type="checkbox" checked={!!nextechItems[item]} onChange={()=>toggleNextech(item)} style={{width:18,height:18,accentColor:'#059669',cursor:'pointer'}} />
+                <span style={{fontSize:15,fontWeight:500,color: nextechItems[item] ? '#059669' : '#374151',textDecoration: nextechItems[item] ? 'line-through' : 'none'}}>{item}</span>
+                {nextechItems[item] && <span style={{marginLeft:'auto',fontSize:12,color:'#059669',fontWeight:600}}>✓ Complete</span>}
+              </label>
+            ))}
+          </div>
+          <div style={{marginTop:16,fontSize:13,color:'#6b7280'}}>
+            {Object.values(nextechItems).filter(Boolean).length} of {NEXTECH_ITEMS.length} complete
           </div>
         </div>
       )}
