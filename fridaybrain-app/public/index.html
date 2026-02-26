@@ -271,6 +271,45 @@ function TaskRow({ task, onUpdate, onDelete }) {
   );
 }
 
+function TrainingTab({ provider, onSaved }) {
+  const parseTP = (v) => { try { while (typeof v === 'string') v = JSON.parse(v); return v || {}; } catch(e) { return {}; } };
+  const [tp, setTp] = useState(() => parseTP(provider.training_plan));
+  const [saved, setSaved] = useState(true);
+
+  const setLoc = (day, slot, val) => { setTp(t => ({...t, [`${day}_${slot}`]: val})); setSaved(false); };
+
+  const save = async () => {
+    const p = {...provider, training_plan: tp};
+    delete p.tasks;
+    await fetch(`/api/providers/${provider.id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(p) });
+    onSaved(tp);
+    setSaved(true);
+  };
+
+  const DAY_NAMES = { M: 'Monday', T: 'Tuesday', W: 'Wednesday', Th: 'Thursday', F: 'Friday' };
+
+  return (
+    <div className="card">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
+        <div className="section-title" style={{marginBottom:0}}>Training Schedule</div>
+        <div style={{display:'flex',alignItems:'center',gap:10}}>
+          {!saved && <span style={{fontSize:12,color:'#d97706'}}>Unsaved changes</span>}
+          <button className="btn btn-primary btn-sm" onClick={save}>Save</button>
+        </div>
+      </div>
+      <div className="training-grid">
+        {['M','T','W','Th','F'].map(day => (
+          <div key={day} className="training-day">
+            <h4>{DAY_NAMES[day]}</h4>
+            <input placeholder="Location 1" value={tp[`${day}_1`]||''} onChange={e=>setLoc(day,'1',e.target.value)} />
+            <input placeholder="Location 2" value={tp[`${day}_2`]||''} onChange={e=>setLoc(day,'2',e.target.value)} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ProviderDetail({ provider: initialProvider, onBack, onEdit }) {
   const [provider, setProvider] = useState(initialProvider);
   const [tab, setTab] = useState('info');
@@ -588,18 +627,7 @@ function ProviderDetail({ provider: initialProvider, onBack, onEdit }) {
       )}
 
       {tab === 'training' && (
-        <div className="card">
-          <div className="section-title">Training Schedule</div>
-          <div className="training-grid">
-            {DAYS.map(day => (
-              <div key={day} className="training-day">
-                <h4>{day === 'Th' ? 'Thursday' : day === 'M' ? 'Monday' : day === 'T' ? 'Tuesday' : day === 'W' ? 'Wednesday' : 'Friday'}</h4>
-                {[tp[`${day}_1`], tp[`${day}_2`]].map((loc, i) => loc ? <div key={i} style={{fontSize:13,color:'#374151',padding:'4px 0'}}>{loc}</div> : null)}
-                {!tp[`${day}_1`] && !tp[`${day}_2`] && <div style={{fontSize:12,color:'#9ca3af'}}>No locations set</div>}
-              </div>
-            ))}
-          </div>
-        </div>
+        <TrainingTab provider={provider} onSaved={updated => setProvider(p => ({...p, training_plan: updated}))} />
       )}
     </div>
   );
