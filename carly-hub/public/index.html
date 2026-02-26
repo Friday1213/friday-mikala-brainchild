@@ -69,6 +69,7 @@
   .cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 12px; cursor: pointer; position: relative; }
   .cal-day.has-pto { background: #fee2e2; color: #dc2626; font-weight: 600; border-radius: 6px; }
   .cal-day.has-sick { background: #fef3c7; color: #d97706; font-weight: 600; border-radius: 6px; }
+  .cal-day.has-holiday { background: #d1fae5; color: #059669; font-weight: 600; border-radius: 6px; }
   .cal-day.today { outline: 2px solid #2563eb; border-radius: 6px; }
   .cal-day.other-month { color: #d1d5db; }
   .year-selector { display: flex; align-items: center; gap: 12px; }
@@ -88,6 +89,47 @@ const api = async (path, options = {}) => {
 
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const DAYS_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+// US Federal Holidays (fixed + computed)
+function getHolidays(year) {
+  const h = {};
+  const add = (m, d, name) => { h[`${year}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`] = name; };
+  // Fixed
+  add(1,1,'New Year\'s Day');
+  add(6,19,'Juneteenth');
+  add(7,4,'Independence Day');
+  add(11,11,'Veterans Day');
+  add(12,25,'Christmas Day');
+  // MLK Day: 3rd Monday in Jan
+  const mlk = nthWeekday(year,1,1,3); add(1,mlk,'MLK Day');
+  // Presidents Day: 3rd Monday in Feb
+  const pres = nthWeekday(year,2,1,3); add(2,pres,'Presidents\' Day');
+  // Memorial Day: last Monday in May
+  const mem = lastWeekday(year,5,1); add(5,mem,'Memorial Day');
+  // Labor Day: 1st Monday in Sep
+  const labor = nthWeekday(year,9,1,1); add(9,labor,'Labor Day');
+  // Columbus Day: 2nd Monday in Oct
+  const col = nthWeekday(year,10,1,2); add(10,col,'Columbus Day');
+  // Thanksgiving: 4th Thursday in Nov
+  const thanks = nthWeekday(year,11,4,4); add(11,thanks,'Thanksgiving');
+  // Black Friday (day after Thanksgiving) — not federal but useful
+  add(11, thanks+1, 'Day after Thanksgiving');
+  return h;
+}
+function nthWeekday(year, month, dow, n) {
+  let d = 1, count = 0;
+  while (count < n) {
+    if (new Date(year, month-1, d).getDay() === dow) count++;
+    if (count < n) d++;
+  }
+  return d;
+}
+function lastWeekday(year, month, dow) {
+  const last = new Date(year, month, 0).getDate();
+  for (let d = last; d >= 1; d--) {
+    if (new Date(year, month-1, d).getDay() === dow) return d;
+  }
+}
 
 function PTOPage() {
   const [entries, setEntries] = useState([]);
@@ -142,6 +184,7 @@ function PTOPage() {
 
   const fmtDate = d => d ? `${year}-${String(viewMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}` : '';
   const isToday = d => d && today.getFullYear()===year && today.getMonth()===viewMonth && today.getDate()===d;
+  const holidays = getHolidays(year);
 
   return (
     <div>
@@ -192,12 +235,16 @@ function PTOPage() {
             {calDays.map((d,i)=>{
               const dateStr = fmtDate(d);
               const entry = entryDateMap[dateStr];
-              return <div key={i} className={`cal-day ${entry?.type==='PTO'?'has-pto':entry?.type==='Sick'?'has-sick':''} ${isToday(d)?'today':''} ${!d?'other-month':''}`} title={entry?`${entry.type}: ${entry.hours}h${entry.note?' - '+entry.note:''}`:''}>{d||''}</div>;
+              const holiday = holidays[dateStr];
+              const cls = entry?.type==='PTO'?'has-pto':entry?.type==='Sick'?'has-sick':holiday?'has-holiday':'';
+              const tip = entry ? `${entry.type}: ${entry.hours}h${entry.note?' - '+entry.note:''}` : holiday || '';
+              return <div key={i} className={`cal-day ${cls} ${isToday(d)?'today':''} ${!d?'other-month':''}`} title={tip}>{d||''}</div>;
             })}
           </div>
           <div style={{display:'flex',gap:12,marginTop:12,fontSize:12}}>
             <span><span style={{background:'#fee2e2',padding:'2px 6px',borderRadius:4,color:'#dc2626'}}>■</span> PTO</span>
             <span><span style={{background:'#fef3c7',padding:'2px 6px',borderRadius:4,color:'#d97706'}}>■</span> Sick</span>
+            <span><span style={{background:'#d1fae5',padding:'2px 6px',borderRadius:4,color:'#059669'}}>■</span> Holiday</span>
           </div>
         </div>
 
