@@ -1,0 +1,14 @@
+{
+  "name": "carly-hub",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build": "npm install && npm rebuild better-sqlite3"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "better-sqlite3": "^9.4.3",
+    "express-session": "^1.17.3"
+  }
+}
