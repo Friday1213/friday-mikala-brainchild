@@ -40,10 +40,13 @@ db.exec(`
   );
 `);
 
+// Add sick_hours column if missing (migration)
+try { db.exec('ALTER TABLE pto_settings ADD COLUMN sick_hours REAL DEFAULT 40'); } catch(e) {}
+
 // Seed default PTO settings
 const settings = db.prepare('SELECT COUNT(*) as count FROM pto_settings').get();
 if (settings.count === 0) {
-  db.prepare('INSERT INTO pto_settings (id, annual_hours, hours_per_day, year) VALUES (1, 160, 10, 2026)').run();
+  db.prepare('INSERT INTO pto_settings (id, annual_hours, hours_per_day, year, sick_hours) VALUES (1, 160, 10, 2026, 40)').run();
 }
 
 module.exports = db;

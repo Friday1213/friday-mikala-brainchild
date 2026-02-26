@@ -108,6 +108,9 @@ function PTOPage() {
   const remainingHours = settings.annual_hours - usedHours;
   const pct = Math.round((usedHours / settings.annual_hours) * 100);
   const remainingDays = Math.floor(remainingHours / settings.hours_per_day);
+  const sickBank = settings.sick_hours || 40;
+  const sickRemaining = sickBank - sickHours;
+  const sickPct = Math.round((sickHours / sickBank) * 100);
 
   const save = async (e) => {
     e.preventDefault();
@@ -155,18 +158,24 @@ function PTOPage() {
       </div>
 
       <div className="stat-cards">
-        <div className="stat-card"><div className="stat-num" style={{color:'#2563eb'}}>{remainingHours}h</div><div className="stat-label">Remaining</div></div>
+        <div className="stat-card"><div className="stat-num" style={{color:'#2563eb'}}>{remainingHours}h</div><div className="stat-label">PTO Remaining</div></div>
         <div className="stat-card"><div className="stat-num" style={{color:'#dc2626'}}>{usedHours}h</div><div className="stat-label">PTO Used</div></div>
-        <div className="stat-card"><div className="stat-num">{remainingDays}</div><div className="stat-label">Days Left</div></div>
+        <div className="stat-card"><div className="stat-num">{remainingDays}</div><div className="stat-label">PTO Days Left</div></div>
+        <div className="stat-card"><div className="stat-num" style={{color:'#d97706'}}>{sickRemaining}h</div><div className="stat-label">Sick Remaining</div></div>
         <div className="stat-card"><div className="stat-num" style={{color:'#d97706'}}>{sickHours}h</div><div className="stat-label">Sick Used</div></div>
-        <div className="stat-card"><div className="stat-num">{settings.annual_hours}h</div><div className="stat-label">Annual Bank</div></div>
       </div>
 
-      <div className="card" style={{marginBottom:16}}>
+      <div className="card" style={{marginBottom:8}}>
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
-          <span style={{fontSize:13,color:'#374151',fontWeight:500}}>PTO Used: {usedHours}h of {settings.annual_hours}h ({pct}%)</span>
+          <span style={{fontSize:13,color:'#374151',fontWeight:500}}>🏖 PTO Used: {usedHours}h of {settings.annual_hours}h ({pct}%)</span>
         </div>
         <div className="progress-bar"><div className="progress-fill" style={{width:`${Math.min(pct,100)}%`,background: pct > 80 ? '#dc2626' : '#2563eb'}} /></div>
+      </div>
+      <div className="card" style={{marginBottom:16}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+          <span style={{fontSize:13,color:'#374151',fontWeight:500}}>🤒 Sick Used: {sickHours}h of {sickBank}h ({sickPct}%)</span>
+        </div>
+        <div className="progress-bar"><div className="progress-fill" style={{width:`${Math.min(sickPct,100)}%`,background: sickPct > 80 ? '#dc2626' : '#d97706'}} /></div>
       </div>
 
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>

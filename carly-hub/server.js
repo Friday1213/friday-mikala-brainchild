@@ -12,8 +12,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 // PTO Settings
 app.get('/api/pto/settings', (req, res) => res.json(db.prepare('SELECT * FROM pto_settings WHERE id=1').get()));
 app.put('/api/pto/settings', (req, res) => {
-  const { annual_hours, hours_per_day, year } = req.body;
-  db.prepare('UPDATE pto_settings SET annual_hours=?, hours_per_day=?, year=? WHERE id=1').run(annual_hours, hours_per_day, year);
+  const { annual_hours, hours_per_day, year, sick_hours } = req.body;
+  db.prepare('UPDATE pto_settings SET annual_hours=?, hours_per_day=?, year=?, sick_hours=? WHERE id=1').run(annual_hours, hours_per_day, year, sick_hours ?? 40);
   res.json({ ok: true });
 });
 
