@@ -513,8 +513,12 @@ function ProviderDetail({ provider: initialProvider, onBack, onEdit }) {
               </label>
             ))}
           </div>
-          <div style={{marginTop:16,fontSize:13,color:'#6b7280'}}>
-            {Object.values(nextechItems).filter(Boolean).length} of {NEXTECH_ITEMS.length} complete
+          <div style={{display:'flex',gap:8,marginTop:16}}>
+            <input id="nextech-new" placeholder="Add custom item..." onKeyDown={e=>{if(e.key==='Enter'){const v=e.target.value.trim();if(v){setNextechItems(n=>({...n,[v]:false}));setNextechSaved(false);e.target.value='';}}} } style={{flex:1,padding:'8px 12px',border:'1px solid #d1d5db',borderRadius:6,fontSize:14,outline:'none'}} />
+            <button className="btn btn-primary" onClick={()=>{const el=document.getElementById('nextech-new');const v=el.value.trim();if(v){setNextechItems(n=>({...n,[v]:false}));setNextechSaved(false);el.value='';}}}> + Add</button>
+          </div>
+          <div style={{marginTop:12,fontSize:13,color:'#6b7280'}}>
+            {Object.values(nextechItems).filter(Boolean).length} of {Object.keys(nextechItems).length} complete
           </div>
         </div>
       )}
