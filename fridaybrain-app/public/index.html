@@ -486,24 +486,41 @@ function App() {
             </div>
             {filtered.length === 0 ? (
               <div className="empty-state"><h3>No providers yet</h3><p>Add your first provider to get started</p></div>
-            ) : (
-              <div className="provider-grid">
-                {filtered.map(p => {
-                  const pct = p.taskStats.total ? Math.round(p.taskStats.done / p.taskStats.total * 100) : 0;
-                  return (
-                    <div key={p.id} className={`provider-card ${p.specialty?.toLowerCase()}`} onClick={async()=>{const full=await api(`/api/providers/${p.id}`);setSelectedProvider(full);setView('detail');}}>
-                      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:4}}>
-                        <h3>{p.name}</h3>
-                        <span className={`badge badge-${p.specialty?.toLowerCase()}`}>{p.specialty}</span>
-                      </div>
-                      <div className="meta">{p.credentials && <span style={{marginRight:8}}>{p.credentials}</span>}{p.pt_ft && <span className={`badge badge-${p.pt_ft.toLowerCase()}`} style={{marginRight:8}}>{p.pt_ft}</span>}{p.expected_first_day && <span>Starts {p.expected_first_day}</span>}</div>
-                      <div className="progress-bar"><div className="progress-fill" style={{width:`${pct}%`}} /></div>
-                      <div className="progress-label">{p.taskStats.done}/{p.taskStats.total} tasks · {pct}% complete</div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+            ) : (() => {
+              const grouped = {};
+              filtered.forEach(p => {
+                const d = p.anticipated_start_date || p.expected_first_day;
+                let label = 'No Start Date';
+                if (d) {
+                  const dt = new Date(d + 'T00:00:00');
+                  label = dt.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                }
+                if (!grouped[label]) grouped[label] = { label, date: d || '9999', providers: [] };
+                grouped[label].providers.push(p);
+              });
+              const groups = Object.values(grouped).sort((a, b) => a.date.localeCompare(b.date));
+              return groups.map(group => (
+                <div key={group.label} style={{marginBottom:32}}>
+                  <h3 style={{fontSize:16,fontWeight:700,color:'#374151',marginBottom:12,paddingBottom:6,borderBottom:'2px solid #e5e7eb'}}>{group.label}</h3>
+                  <div className="provider-grid">
+                    {group.providers.map(p => {
+                      const pct = p.taskStats.total ? Math.round(p.taskStats.done / p.taskStats.total * 100) : 0;
+                      return (
+                        <div key={p.id} className={`provider-card ${p.specialty?.toLowerCase()}`} onClick={async()=>{const full=await api(`/api/providers/${p.id}`);setSelectedProvider(full);setView('detail');}}>
+                          <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:4}}>
+                            <h3>{p.name}</h3>
+                            <span className={`badge badge-${p.specialty?.toLowerCase()}`}>{p.specialty}</span>
+                          </div>
+                          <div className="meta">{p.credentials && <span style={{marginRight:8}}>{p.credentials}</span>}{p.pt_ft && <span className={`badge badge-${p.pt_ft.toLowerCase()}`} style={{marginRight:8}}>{p.pt_ft}</span>}</div>
+                          <div className="progress-bar"><div className="progress-fill" style={{width:`${pct}%`}} /></div>
+                          <div className="progress-label">{p.taskStats.done}/{p.taskStats.total} tasks · {pct}% complete</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ));
+            })()}
           </>
         )}
 
