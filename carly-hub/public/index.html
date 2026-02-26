@@ -71,6 +71,7 @@
   .cal-day.has-sick { background: #fef3c7; color: #d97706; font-weight: 600; border-radius: 6px; }
   .cal-day.has-holiday { background: #d1fae5; color: #059669; font-weight: 600; border-radius: 6px; }
   .cal-day.has-half { background: linear-gradient(135deg, #d1fae5 50%, #f3f4f6 50%); color: #059669; font-weight: 600; border-radius: 6px; }
+  .cal-day.has-jewish { background: #ede9fe; color: #7c3aed; font-weight: 600; border-radius: 6px; }
   .cal-day.today { outline: 2px solid #2563eb; border-radius: 6px; }
   .cal-day.other-month { color: #d1d5db; }
   .year-selector { display: flex; align-items: center; gap: 12px; }
@@ -94,10 +95,25 @@ const DAYS_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 // VIP Medical Group company holidays
 function getHolidays(year) {
   const h = {};
-  const add = (m, d, name, half) => {
+  const add = (m, d, name, half, jewish) => {
     const key = `${year}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    h[key] = { name, half: !!half };
+    h[key] = { name, half: !!half, jewish: !!jewish };
   };
+  // Jewish holidays (dates shift yearly — hardcoded through 2030)
+  const jewish = {
+    2025: { passover: [4,13], roshHashanah: [9,22], yomKippur: [10,1] },
+    2026: { passover: [4,2],  roshHashanah: [9,11], yomKippur: [9,20] },
+    2027: { passover: [4,21], roshHashanah: [9,30], yomKippur: [10,9] },
+    2028: { passover: [4,10], roshHashanah: [9,20], yomKippur: [9,29] },
+    2029: { passover: [3,31], roshHashanah: [9,9],  yomKippur: [9,18] },
+    2030: { passover: [4,18], roshHashanah: [9,27], yomKippur: [10,6] },
+  };
+  if (jewish[year]) {
+    const j = jewish[year];
+    add(...j.passover, 'Passover (First Night)', false, true);
+    add(...j.roshHashanah, 'Rosh Hashanah', false, true);
+    add(...j.yomKippur, 'Yom Kippur', false, true);
+  }
   // Fixed dates
   add(7, 3, 'July 3rd (Company Holiday)');
   add(12, 24, 'Christmas Eve');
@@ -234,7 +250,7 @@ function PTOPage() {
               const dateStr = fmtDate(d);
               const entry = entryDateMap[dateStr];
               const holiday = holidays[dateStr];
-              const cls = entry?.type==='PTO'?'has-pto':entry?.type==='Sick'?'has-sick':holiday?.half?'has-half':holiday?'has-holiday':'';
+              const cls = entry?.type==='PTO'?'has-pto':entry?.type==='Sick'?'has-sick':holiday?.half?'has-half':holiday?.jewish?'has-jewish':holiday?'has-holiday':'';
               const tip = entry ? `${entry.type}: ${entry.hours}h${entry.note?' - '+entry.note:''}` : holiday ? (holiday.half ? `½ Day: ${holiday.name}` : holiday.name) : '';
               return <div key={i} className={`cal-day ${cls} ${isToday(d)?'today':''} ${!d?'other-month':''}`} title={tip}>{d||''}</div>;
             })}
@@ -244,6 +260,7 @@ function PTOPage() {
             <span><span style={{background:'#fef3c7',padding:'2px 6px',borderRadius:4,color:'#d97706'}}>■</span> Sick</span>
             <span><span style={{background:'#d1fae5',padding:'2px 6px',borderRadius:4,color:'#059669'}}>■</span> Holiday</span>
             <span><span style={{background:'linear-gradient(135deg,#d1fae5 50%,#f3f4f6 50%)',padding:'2px 6px',borderRadius:4,color:'#059669'}}>■</span> Half Day</span>
+            <span><span style={{background:'#ede9fe',padding:'2px 6px',borderRadius:4,color:'#7c3aed'}}>■</span> Jewish Holiday</span>
           </div>
         </div>
 
