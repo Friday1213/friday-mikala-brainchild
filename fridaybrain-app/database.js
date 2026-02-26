@@ -67,6 +67,7 @@ try { db.exec('ALTER TABLE providers ADD COLUMN malpractice_end TEXT'); } catch(
 try { db.exec('ALTER TABLE providers ADD COLUMN malpractice_amount TEXT'); } catch(e) {}
 try { db.exec('ALTER TABLE providers ADD COLUMN malpractice_notes TEXT'); } catch(e) {}
 try { db.exec('ALTER TABLE providers ADD COLUMN nextech_status TEXT'); } catch(e) {}
+try { db.exec('ALTER TABLE providers ADD COLUMN ordering TEXT'); } catch(e) {}
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS credentialing_updates (

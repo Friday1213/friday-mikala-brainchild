@@ -83,7 +83,7 @@ app.get('/api/providers', requireAuth, (req, res) => {
   const providers = db.prepare(`SELECT * FROM providers WHERE archived = ? ORDER BY COALESCE(expected_first_day, anticipated_start_date, '0000') DESC`).all(showArchived ? 1 : 0);
   const tasksCount = db.prepare(`SELECT provider_id, COUNT(*) as total, SUM(CASE WHEN status='Complete' THEN 1 ELSE 0 END) as done, SUM(CASE WHEN notes IS NOT NULL AND notes != '' THEN 1 ELSE 0 END) as has_notes FROM tasks GROUP BY provider_id`).all();
   // Add nextech items and training plan to counts
-  const allProviderNextech = db.prepare(`SELECT id, nextech_status, training_plan FROM providers WHERE archived=0`).all();
+  const allProviderNextech = db.prepare(`SELECT id, nextech_status, training_plan, ordering FROM providers WHERE archived=0`).all();
   const nextechMap = {};
   allProviderNextech.forEach(p => {
     try {
@@ -92,7 +92,10 @@ app.get('/api/providers', requireAuth, (req, res) => {
       const tp = p.training_plan ? JSON.parse(p.training_plan) : {};
       const days = ['M','T','W','Th','F'];
       const trainingFilled = days.some(d => tp[`${d}_1`] || tp[`${d}_2`]) ? 1 : 0;
-      nextechMap[p.id] = { total: 6 + 1, done: nextechDone + trainingFilled };
+      const ordering = p.ordering ? JSON.parse(p.ordering) : [];
+      const orderTotal = ordering.length;
+      const orderDone = ordering.filter(o => o.done).length;
+      nextechMap[p.id] = { total: 6 + 1 + orderTotal, done: nextechDone + trainingFilled + orderDone };
     } catch(e) { nextechMap[p.id] = { total: 11, done: 0 }; }
   });
   const taskMap = {};
@@ -122,8 +125,8 @@ app.get('/api/providers/:id', requireAuth, (req, res) => {
 
 app.put('/api/providers/:id', requireAuth, (req, res) => {
   const { name, contact_number, personal_email, vip_emergency_line, work_email, npi, credentials, pt_ft, specialty, languages, biography, signature_link, drive_folder_link, contract_signed_date, expected_first_day, primary_location, independent_practice, anticipated_start_date, state, entity_locations, training_plan } = req.body;
-  const { free_notes, malpractice_status, malpractice_carrier, malpractice_policy, malpractice_start, malpractice_end, malpractice_amount, malpractice_notes, nextech_status } = req.body;
-  db.prepare(`UPDATE providers SET name=?, contact_number=?, personal_email=?, vip_emergency_line=?, work_email=?, npi=?, credentials=?, pt_ft=?, specialty=?, languages=?, biography=?, signature_link=?, drive_folder_link=?, contract_signed_date=?, expected_first_day=?, primary_location=?, independent_practice=?, anticipated_start_date=?, state=?, entity_locations=?, training_plan=?, free_notes=?, malpractice_status=?, malpractice_carrier=?, malpractice_policy=?, malpractice_start=?, malpractice_end=?, malpractice_amount=?, malpractice_notes=?, nextech_status=?, updated_at=CURRENT_TIMESTAMP WHERE id=?`).run(name, contact_number, personal_email, vip_emergency_line, work_email, npi, credentials, pt_ft, specialty, languages, biography, signature_link, drive_folder_link, contract_signed_date, expected_first_day, primary_location, independent_practice ? 1 : 0, anticipated_start_date, state, entity_locations, training_plan ? JSON.stringify(training_plan) : null, free_notes || null, malpractice_status || 'Not Started', malpractice_carrier || null, malpractice_policy || null, malpractice_start || null, malpractice_end || null, malpractice_amount || null, malpractice_notes || null, nextech_status ? JSON.stringify(nextech_status) : null, req.params.id);
+  const { free_notes, malpractice_status, malpractice_carrier, malpractice_policy, malpractice_start, malpractice_end, malpractice_amount, malpractice_notes, nextech_status, ordering } = req.body;
+  db.prepare(`UPDATE providers SET name=?, contact_number=?, personal_email=?, vip_emergency_line=?, work_email=?, npi=?, credentials=?, pt_ft=?, specialty=?, languages=?, biography=?, signature_link=?, drive_folder_link=?, contract_signed_date=?, expected_first_day=?, primary_location=?, independent_practice=?, anticipated_start_date=?, state=?, entity_locations=?, training_plan=?, free_notes=?, malpractice_status=?, malpractice_carrier=?, malpractice_policy=?, malpractice_start=?, malpractice_end=?, malpractice_amount=?, malpractice_notes=?, nextech_status=?, ordering=?, updated_at=CURRENT_TIMESTAMP WHERE id=?`).run(name, contact_number, personal_email, vip_emergency_line, work_email, npi, credentials, pt_ft, specialty, languages, biography, signature_link, drive_folder_link, contract_signed_date, expected_first_day, primary_location, independent_practice ? 1 : 0, anticipated_start_date, state, entity_locations, training_plan ? JSON.stringify(training_plan) : null, free_notes || null, malpractice_status || 'Not Started', malpractice_carrier || null, malpractice_policy || null, malpractice_start || null, malpractice_end || null, malpractice_amount || null, malpractice_notes || null, nextech_status ? JSON.stringify(nextech_status) : null, ordering ? JSON.stringify(ordering) : null, req.params.id);
   res.json({ ok: true });
 });
 
