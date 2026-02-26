@@ -146,9 +146,10 @@ function ProviderForm({ provider, onSave, onCancel }) {
   });
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
-  const setTraining = (day, slot, val) => setForm(f => ({
-    ...f, training_plan: { ...f.training_plan, [`${day}_${slot}`]: val }
-  }));
+  const setTraining = (day, slot, val) => setForm(f => {
+    let cur; try { cur = f.training_plan; while (typeof cur === 'string') cur = JSON.parse(cur); cur = cur || {}; } catch(e) { cur = {}; }
+    return { ...f, training_plan: { ...cur, [`${day}_${slot}`]: val } };
+  });
 
   const tp = (() => { try { let v = form.training_plan; while (typeof v === 'string') v = JSON.parse(v); return v || {}; } catch(e) { return {}; } })();
 
