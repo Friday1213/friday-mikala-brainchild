@@ -593,7 +593,10 @@ function App() {
                         <div key={p.id} className={`provider-card ${p.specialty?.toLowerCase()}`} onClick={async()=>{const full=await api(`/api/providers/${p.id}`);setSelectedProvider(full);setView('detail');}}>
                           <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:4}}>
                             <h3>{p.name}</h3>
-                            <span className={`badge badge-${p.specialty?.toLowerCase()}`}>{p.specialty}</span>
+                            <div style={{display:'flex',alignItems:'center',gap:6}}>
+                              {p.taskStats?.has_notes > 0 && <span title="Has task notes" style={{fontSize:16}}>🚩</span>}
+                              <span className={`badge badge-${p.specialty?.toLowerCase()}`}>{p.specialty}</span>
+                            </div>
                           </div>
                           <div className="meta">{p.credentials && <span style={{marginRight:8}}>{p.credentials}</span>}{p.pt_ft && <span className={`badge badge-${p.pt_ft.toLowerCase()}`} style={{marginRight:8}}>{p.pt_ft}</span>}</div>
                           <div className="progress-bar"><div className="progress-fill" style={{width:`${pct}%`}} /></div>

@@ -80,7 +80,7 @@ const DEFAULT_TASKS = [
 // Providers
 app.get('/api/providers', requireAuth, (req, res) => {
   const providers = db.prepare(`SELECT * FROM providers ORDER BY COALESCE(anticipated_start_date, expected_first_day, '0000') DESC`).all();
-  const tasksCount = db.prepare(`SELECT provider_id, COUNT(*) as total, SUM(CASE WHEN status='Complete' THEN 1 ELSE 0 END) as done FROM tasks GROUP BY provider_id`).all();
+  const tasksCount = db.prepare(`SELECT provider_id, COUNT(*) as total, SUM(CASE WHEN status='Complete' THEN 1 ELSE 0 END) as done, SUM(CASE WHEN notes IS NOT NULL AND notes != '' THEN 1 ELSE 0 END) as has_notes FROM tasks GROUP BY provider_id`).all();
   const taskMap = {};
   tasksCount.forEach(t => taskMap[t.provider_id] = { total: t.total, done: t.done });
   res.json(providers.map(p => ({ ...p, taskStats: taskMap[p.id] || { total: 0, done: 0 } })));
