@@ -91,8 +91,8 @@ app.get('/api/providers', requireAuth, (req, res) => {
       const nextechDone = Object.values(items).filter(Boolean).length;
       const tp = p.training_plan ? JSON.parse(p.training_plan) : {};
       const days = ['M','T','W','Th','F'];
-      const trainingDone = days.filter(d => tp[`${d}_1`] || tp[`${d}_2`]).length;
-      nextechMap[p.id] = { total: 6 + 5, done: nextechDone + trainingDone };
+      const trainingFilled = days.some(d => tp[`${d}_1`] || tp[`${d}_2`]) ? 1 : 0;
+      nextechMap[p.id] = { total: 6 + 1, done: nextechDone + trainingFilled };
     } catch(e) { nextechMap[p.id] = { total: 11, done: 0 }; }
   });
   const taskMap = {};
