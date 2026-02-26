@@ -82,9 +82,24 @@ app.get('/api/providers', requireAuth, (req, res) => {
   const showArchived = req.query.archived === 'true';
   const providers = db.prepare(`SELECT * FROM providers WHERE archived = ? ORDER BY COALESCE(expected_first_day, anticipated_start_date, '0000') DESC`).all(showArchived ? 1 : 0);
   const tasksCount = db.prepare(`SELECT provider_id, COUNT(*) as total, SUM(CASE WHEN status='Complete' THEN 1 ELSE 0 END) as done, SUM(CASE WHEN notes IS NOT NULL AND notes != '' THEN 1 ELSE 0 END) as has_notes FROM tasks GROUP BY provider_id`).all();
+  // Add nextech items to counts
+  const allProviderNextech = db.prepare(`SELECT id, nextech_status FROM providers WHERE archived=0`).all();
+  const nextechMap = {};
+  allProviderNextech.forEach(p => {
+    try {
+      const items = p.nextech_status ? JSON.parse(p.nextech_status) : {};
+      const total = 6; // fixed 6 nextech items
+      const done = Object.values(items).filter(Boolean).length;
+      nextechMap[p.id] = { total, done };
+    } catch(e) { nextechMap[p.id] = { total: 6, done: 0 }; }
+  });
   const taskMap = {};
-  tasksCount.forEach(t => taskMap[t.provider_id] = { total: t.total, done: t.done });
-  res.json(providers.map(p => ({ ...p, taskStats: taskMap[p.id] || { total: 0, done: 0 } })));
+  tasksCount.forEach(t => taskMap[t.provider_id] = { total: t.total, done: t.done, has_notes: t.has_notes });
+  res.json(providers.map(p => {
+    const tasks = taskMap[p.id] || { total: 0, done: 0, has_notes: 0 };
+    const nextech = nextechMap[p.id] || { total: 6, done: 0 };
+    return { ...p, taskStats: { total: tasks.total + nextech.total, done: tasks.done + nextech.done, has_notes: tasks.has_notes } };
+  }));
 });
 
 app.post('/api/providers', requireAuth, (req, res) => {
