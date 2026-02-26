@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FridayBrain — Provider Onboarding</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f6f9; color: #1a1a2e; }
+  .app { min-height: 100vh; }
+  .navbar { background: #1a1a2e; color: white; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .navbar h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+  .navbar .nav-right { display: flex; align-items: center; gap: 16px; font-size: 14px; }
+  .navbar .user { opacity: 0.8; }
+  .btn { padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-size: 14px; font-weight: 500; transition: opacity 0.15s; }
+  .btn:hover { opacity: 0.85; }
+  .btn-primary { background: #2563eb; color: white; }
+  .btn-danger { background: #dc2626; color: white; }
+  .btn-ghost { background: transparent; color: white; border: 1px solid rgba(255,255,255,0.3); }
+  .btn-sm { padding: 4px 10px; font-size: 12px; }
+  .btn-outline { background: white; color: #2563eb; border: 1px solid #2563eb; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+  .card { background: white; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 24px; margin-bottom: 16px; }
+  .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  .page-header h2 { font-size: 24px; font-weight: 700; }
+  .provider-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+  .provider-card { background: white; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 20px; cursor: pointer; transition: box-shadow 0.15s, transform 0.15s; border-left: 4px solid #e5e7eb; }
+  .provider-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: translateY(-1px); }
+  .provider-card.vein { border-left-color: #7c3aed; }
+  .provider-card.pain { border-left-color: #dc2626; }
+  .provider-card.hybrid { border-left-color: #059669; }
+  .provider-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+  .provider-card .meta { font-size: 13px; color: #6b7280; margin-bottom: 12px; }
+  .progress-bar { height: 6px; background: #e5e7eb; border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: #2563eb; border-radius: 3px; transition: width 0.3s; }
+  .progress-label { font-size: 12px; color: #6b7280; margin-top: 4px; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .badge-vein { background: #ede9fe; color: #7c3aed; }
+  .badge-pain { background: #fee2e2; color: #dc2626; }
+  .badge-hybrid { background: #d1fae5; color: #059669; }
+  .badge-ft { background: #dbeafe; color: #2563eb; }
+  .badge-pt { background: #fef3c7; color: #d97706; }
+  .status-badge { padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; cursor: pointer; border: none; }
+  .status-not-started { background: #f3f4f6; color: #6b7280; }
+  .status-in-progress { background: #fef3c7; color: #d97706; }
+  .status-complete { background: #d1fae5; color: #059669; }
+  .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .form-grid.three { grid-template-columns: repeat(3, 1fr); }
+  .form-full { grid-column: 1 / -1; }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-group label { font-size: 13px; font-weight: 500; color: #374151; }
+  .form-group input, .form-group select, .form-group textarea { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; outline: none; transition: border-color 0.15s; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+  .section-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #f3f4f6; color: #374151; }
+  .task-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .task-table th { background: #f9fafb; padding: 10px 12px; text-align: left; font-weight: 600; color: #374151; border-bottom: 2px solid #e5e7eb; }
+  .task-table td { padding: 10px 12px; border-bottom: 1px solid #f3f4f6; vertical-align: top; }
+  .task-table tr:hover td { background: #f9fafb; }
+  .task-table input { border: 1px solid #e5e7eb; border-radius: 4px; padding: 4px 8px; font-size: 13px; width: 100%; }
+  .task-table input:focus { outline: none; border-color: #2563eb; }
+  .back-btn { display: flex; align-items: center; gap: 6px; color: #6b7280; cursor: pointer; font-size: 14px; margin-bottom: 16px; background: none; border: none; padding: 0; }
+  .back-btn:hover { color: #1a1a2e; }
+  .tabs { display: flex; gap: 4px; margin-bottom: 24px; background: #f3f4f6; padding: 4px; border-radius: 8px; width: fit-content; }
+  .tab { padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; color: #6b7280; border: none; background: none; }
+  .tab.active { background: white; color: #1a1a2e; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .training-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .training-day { background: #f9fafb; border-radius: 8px; padding: 12px; }
+  .training-day h4 { font-size: 13px; font-weight: 600; margin-bottom: 8px; color: #374151; }
+  .training-day input { width: 100%; margin-bottom: 6px; padding: 6px 8px; border: 1px solid #e5e7eb; border-radius: 4px; font-size: 13px; }
+  .login-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #1a1a2e; }
+  .login-card { background: white; border-radius: 16px; padding: 48px; text-align: center; max-width: 400px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+  .login-card h1 { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+  .login-card p { color: #6b7280; margin-bottom: 32px; }
+  .google-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; background: white; font-size: 15px; font-weight: 500; cursor: pointer; transition: background 0.15s; }
+  .google-btn:hover { background: #f9fafb; }
+  .empty-state { text-align: center; padding: 60px 24px; color: #9ca3af; }
+  .empty-state h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: #6b7280; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 24px; }
+  .modal { background: white; border-radius: 12px; max-width: 800px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 32px; }
+  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  .modal-header h2 { font-size: 20px; font-weight: 700; }
+  .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #6b7280; line-height: 1; }
+  .close-btn:hover { color: #1a1a2e; }
+  .info-row { display: flex; gap: 8px; margin-bottom: 6px; font-size: 14px; }
+  .info-label { font-weight: 500; color: #374151; min-width: 160px; }
+  .info-value { color: #6b7280; }
+  @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } .training-grid { grid-template-columns: repeat(3, 1fr); } .provider-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useCallback } = React;
+
+const api = async (path, options = {}) => {
+  const res = await fetch(path, { headers: { 'Content-Type': 'application/json' }, ...options });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+};
+
+const DAYS = ['M', 'T', 'W', 'Th', 'F'];
+const STATUS_CYCLE = ['Not Started', 'In Progress', 'Complete'];
+const statusClass = s => s === 'Complete' ? 'status-complete' : s === 'In Progress' ? 'status-in-progress' : 'status-not-started';
+
+function LoginPage() {
+  return (
+    <div className="login-page">
+      <div className="login-card">
+        <h1>🧠 FridayBrain</h1>
+        <p>Provider Onboarding Tracker</p>
+        <a href="/auth/google" style={{textDecoration:'none'}}>
+          <button className="google-btn">
+            <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18l2.67-2.07z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z"/></svg>
+            Sign in with Google
+          </button>
+        </a>
+      </div>
+    </div>
+  );
+}
+
+function ProviderForm({ provider, onSave, onCancel }) {
+  const [form, setForm] = useState(provider || {
+    name: '', contact_number: '', personal_email: '', vip_emergency_line: '',
+    work_email: '', npi: '', credentials: '', pt_ft: 'FT', specialty: 'Vein',
+    languages: '', biography: '', signature_link: '', drive_folder_link: '',
+    contract_signed_date: '', expected_first_day: '', primary_location: '',
+    independent_practice: 0, anticipated_start_date: '', state: '',
+    entity_locations: '', training_plan: {}
+  });
+
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const setTraining = (day, slot, val) => setForm(f => ({
+    ...f, training_plan: { ...f.training_plan, [`${day}_${slot}`]: val }
+  }));
+
+  const tp = typeof form.training_plan === 'string' ? JSON.parse(form.training_plan || '{}') : (form.training_plan || {});
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await onSave({ ...form, training_plan: tp });
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div className="section-title">Provider Information</div>
+      <div className="form-grid" style={{marginBottom:24}}>
+        <div className="form-group form-full"><label>Doctor Name *</label><input required value={form.name||''} onChange={e=>set('name',e.target.value)} /></div>
+        <div className="form-group"><label>Contact Number</label><input value={form.contact_number||''} onChange={e=>set('contact_number',e.target.value)} /></div>
+        <div className="form-group"><label>Personal Email</label><input type="email" value={form.personal_email||''} onChange={e=>set('personal_email',e.target.value)} /></div>
+        <div className="form-group"><label>Work Email</label><input type="email" value={form.work_email||''} onChange={e=>set('work_email',e.target.value)} /></div>
+        <div className="form-group"><label>VIP Emergency Line</label><input value={form.vip_emergency_line||''} onChange={e=>set('vip_emergency_line',e.target.value)} /></div>
+        <div className="form-group"><label>NPI</label><input value={form.npi||''} onChange={e=>set('npi',e.target.value)} /></div>
+        <div className="form-group"><label>Credentials (e.g. MD, FACS)</label><input value={form.credentials||''} onChange={e=>set('credentials',e.target.value)} /></div>
+        <div className="form-group"><label>PT/FT</label>
+          <select value={form.pt_ft||'FT'} onChange={e=>set('pt_ft',e.target.value)}>
+            <option value="FT">Full Time</option><option value="PT">Part Time</option>
+          </select>
+        </div>
+        <div className="form-group"><label>Specialty</label>
+          <select value={form.specialty||'Vein'} onChange={e=>set('specialty',e.target.value)}>
+            <option value="Vein">Vein</option><option value="Pain">Pain</option><option value="Hybrid">Hybrid</option>
+          </select>
+        </div>
+        <div className="form-group"><label>Languages Spoken</label><input value={form.languages||''} onChange={e=>set('languages',e.target.value)} /></div>
+        <div className="form-group"><label>State</label><input value={form.state||''} onChange={e=>set('state',e.target.value)} /></div>
+        <div className="form-group"><label>Primary Location</label><input value={form.primary_location||''} onChange={e=>set('primary_location',e.target.value)} /></div>
+        <div className="form-group"><label>Entity Locations</label><input value={form.entity_locations||''} onChange={e=>set('entity_locations',e.target.value)} /></div>
+        <div className="form-group"><label>Independent Practice</label>
+          <select value={form.independent_practice ? '1':'0'} onChange={e=>set('independent_practice',e.target.value==='1'?1:0)}>
+            <option value="0">No</option><option value="1">Yes</option>
+          </select>
+        </div>
+        <div className="form-group"><label>Date Contract Signed</label><input type="date" value={form.contract_signed_date||''} onChange={e=>set('contract_signed_date',e.target.value)} /></div>
+        <div className="form-group"><label>Expected First Day</label><input type="date" value={form.expected_first_day||''} onChange={e=>set('expected_first_day',e.target.value)} /></div>
+        <div className="form-group"><label>Anticipated Start Date</label><input type="date" value={form.anticipated_start_date||''} onChange={e=>set('anticipated_start_date',e.target.value)} /></div>
+        <div className="form-group"><label>Signature Link</label><input value={form.signature_link||''} onChange={e=>set('signature_link',e.target.value)} /></div>
+        <div className="form-group"><label>Google Drive Folder Link</label><input value={form.drive_folder_link||''} onChange={e=>set('drive_folder_link',e.target.value)} /></div>
+        <div className="form-group form-full"><label>Short Biography (125 words max)</label>
+          <textarea rows={4} value={form.biography||''} onChange={e=>set('biography',e.target.value)} />
+        </div>
+      </div>
+
+      <div className="section-title">Training Plan</div>
+      <div className="training-grid" style={{marginBottom:24}}>
+        {DAYS.map(day => (
+          <div key={day} className="training-day">
+            <h4>{day === 'Th' ? 'Thursday' : day === 'M' ? 'Monday' : day === 'T' ? 'Tuesday' : day === 'W' ? 'Wednesday' : 'Friday'}</h4>
+            <input placeholder="Location 1" value={tp[`${day}_1`]||''} onChange={e=>setTraining(day,'1',e.target.value)} />
+            <input placeholder="Location 2" value={tp[`${day}_2`]||''} onChange={e=>setTraining(day,'2',e.target.value)} />
+          </div>
+        ))}
+      </div>
+
+      <div style={{display:'flex',gap:12,justifyContent:'flex-end'}}>
+        <button type="button" className="btn btn-outline" onClick={onCancel}>Cancel</button>
+        <button type="submit" className="btn btn-primary">Save Provider</button>
+      </div>
+    </form>
+  );
+}
+
+function TaskRow({ task, onUpdate, onDelete }) {
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState(task);
+
+  const cycleStatus = async () => {
+    const idx = STATUS_CYCLE.indexOf(task.status);
+    const next = STATUS_CYCLE[(idx + 1) % STATUS_CYCLE.length];
+    await api(`/api/tasks/${task.id}`, { method: 'PUT', body: JSON.stringify({ ...task, status: next }) });
+    onUpdate({ ...task, status: next });
+  };
+
+  const save = async () => {
+    await api(`/api/tasks/${task.id}`, { method: 'PUT', body: JSON.stringify(form) });
+    onUpdate(form);
+    setEditing(false);
+  };
+
+  if (editing) return (
+    <tr>
+      <td><input value={form.task_name||''} onChange={e=>setForm(f=>({...f,task_name:e.target.value}))} /></td>
+      <td><input value={form.details||''} onChange={e=>setForm(f=>({...f,details:e.target.value}))} /></td>
+      <td><input value={form.completed_by||''} onChange={e=>setForm(f=>({...f,completed_by:e.target.value}))} style={{width:60}} /></td>
+      <td>
+        <select value={form.status} onChange={e=>setForm(f=>({...f,status:e.target.value}))} style={{fontSize:12,padding:'4px 6px',border:'1px solid #e5e7eb',borderRadius:4}}>
+          {STATUS_CYCLE.map(s=><option key={s}>{s}</option>)}
+        </select>
+      </td>
+      <td><input type="date" value={form.deadline||''} onChange={e=>setForm(f=>({...f,deadline:e.target.value}))} /></td>
+      <td><input value={form.location_tracking||''} onChange={e=>setForm(f=>({...f,location_tracking:e.target.value}))} /></td>
+      <td><input value={form.notes||''} onChange={e=>setForm(f=>({...f,notes:e.target.value}))} /></td>
+      <td style={{whiteSpace:'nowrap'}}>
+        <button className="btn btn-primary btn-sm" onClick={save}>Save</button>{' '}
+        <button className="btn btn-sm btn-outline" onClick={()=>setEditing(false)}>Cancel</button>
+      </td>
+    </tr>
+  );
+
+  return (
+    <tr>
+      <td style={{fontWeight:500}}>{task.task_name}</td>
+      <td style={{color:'#6b7280',fontSize:12}}>{task.details}</td>
+      <td><span style={{background:'#e5e7eb',borderRadius:4,padding:'2px 6px',fontSize:12}}>{task.completed_by}</span></td>
+      <td><button className={`status-badge ${statusClass(task.status)}`} onClick={cycleStatus}>{task.status}</button></td>
+      <td style={{fontSize:12,color:'#6b7280'}}>{task.deadline}</td>
+      <td style={{fontSize:12,color:'#6b7280'}}>{task.location_tracking}</td>
+      <td style={{fontSize:12,color:'#6b7280'}}>{task.notes}</td>
+      <td style={{whiteSpace:'nowrap'}}>
+        <button className="btn btn-outline btn-sm" onClick={()=>setEditing(true)}>Edit</button>{' '}
+        <button className="btn btn-danger btn-sm" onClick={()=>onDelete(task.id)}>✕</button>
+      </td>
+    </tr>
+  );
+}
+
+function ProviderDetail({ provider: initialProvider, onBack, onEdit }) {
+  const [provider, setProvider] = useState(initialProvider);
+  const [tab, setTab] = useState('info');
+
+  const updateTask = (updated) => setProvider(p => ({ ...p, tasks: p.tasks.map(t => t.id === updated.id ? updated : t) }));
+  const deleteTask = async (id) => { await api(`/api/tasks/${id}`, { method: 'DELETE' }); setProvider(p => ({ ...p, tasks: p.tasks.filter(t => t.id !== id) })); };
+  const addTask = async () => {
+    const { id } = await api(`/api/providers/${provider.id}/tasks`, { method: 'POST', body: JSON.stringify({ task_name: 'New Task', status: 'Not Started' }) });
+    setProvider(p => ({ ...p, tasks: [...p.tasks, { id, task_name: 'New Task', status: 'Not Started', completed_by: '', details: '', deadline: '', location_tracking: '', notes: '' }] }));
+  };
+
+  const tp = typeof provider.training_plan === 'string' ? JSON.parse(provider.training_plan || '{}') : (provider.training_plan || {});
+  const done = provider.tasks?.filter(t => t.status === 'Complete').length || 0;
+  const total = provider.tasks?.length || 0;
+  const pct = total ? Math.round(done / total * 100) : 0;
+
+  const specialtyColor = provider.specialty === 'Pain' ? '#dc2626' : provider.specialty === 'Hybrid' ? '#059669' : '#7c3aed';
+
+  return (
+    <div>
+      <button className="back-btn" onClick={onBack}>← Back to Dashboard</button>
+      <div className="card" style={{marginBottom:16}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:16}}>
+          <div>
+            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:6}}>
+              <h2 style={{fontSize:24,fontWeight:700}}>{provider.name}</h2>
+              <span className={`badge badge-${provider.specialty?.toLowerCase()}`}>{provider.specialty}</span>
+              <span className={`badge badge-${provider.pt_ft?.toLowerCase()}`}>{provider.pt_ft}</span>
+            </div>
+            <div style={{fontSize:14,color:'#6b7280'}}>{provider.credentials && <span style={{marginRight:12}}>{provider.credentials}</span>}{provider.primary_location}</div>
+          </div>
+          <div style={{textAlign:'right'}}>
+            <div style={{fontSize:13,color:'#6b7280',marginBottom:4}}>Onboarding Progress</div>
+            <div style={{fontSize:22,fontWeight:700,color:specialtyColor}}>{pct}%</div>
+            <div style={{fontSize:12,color:'#9ca3af'}}>{done}/{total} tasks complete</div>
+            <button className="btn btn-outline btn-sm" style={{marginTop:8}} onClick={onEdit}>Edit Provider</button>
+          </div>
+        </div>
+        <div style={{marginTop:12}}>
+          <div className="progress-bar"><div className="progress-fill" style={{width:`${pct}%`,background:specialtyColor}} /></div>
+        </div>
+      </div>
+
+      <div className="tabs">
+        {['info','tasks','training'].map(t => <button key={t} className={`tab ${tab===t?'active':''}`} onClick={()=>setTab(t)}>{t==='info'?'Provider Info':t==='tasks'?'Onboarding Tasks':'Training Plan'}</button>)}
+      </div>
+
+      {tab === 'info' && (
+        <div className="card">
+          <div className="section-title">Contact & Identity</div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:'8px 24px',marginBottom:24}}>
+            {[['NPI', provider.npi],['Personal Email', provider.personal_email],['Work Email', provider.work_email],['Contact Number', provider.contact_number],['VIP Emergency Line', provider.vip_emergency_line],['Languages', provider.languages],['State', provider.state],['Entity Locations', provider.entity_locations],['Independent Practice', provider.independent_practice ? 'Yes' : 'No']].map(([l,v])=>v?(
+              <div key={l} className="info-row"><span className="info-label">{l}</span><span className="info-value">{v}</span></div>
+            ):null)}
+          </div>
+          <div className="section-title">Dates</div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:'8px 24px',marginBottom:24}}>
+            {[['Contract Signed', provider.contract_signed_date],['Expected First Day', provider.expected_first_day],['Anticipated Start Date', provider.anticipated_start_date]].map(([l,v])=>v?(
+              <div key={l} className="info-row"><span className="info-label">{l}</span><span className="info-value">{v}</span></div>
+            ):null)}
+          </div>
+          {provider.biography && <><div className="section-title">Biography</div><p style={{fontSize:14,color:'#374151',lineHeight:1.6}}>{provider.biography}</p></>}
+          {(provider.signature_link || provider.drive_folder_link) && (
+            <><div className="section-title" style={{marginTop:16}}>Links</div>
+            <div style={{display:'flex',gap:12,flexWrap:'wrap'}}>
+              {provider.signature_link && <a href={provider.signature_link} target="_blank" className="btn btn-outline btn-sm">Signature Link ↗</a>}
+              {provider.drive_folder_link && <a href={provider.drive_folder_link} target="_blank" className="btn btn-outline btn-sm">Drive Folder ↗</a>}
+            </div></>
+          )}
+        </div>
+      )}
+
+      {tab === 'tasks' && (
+        <div className="card">
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
+            <div className="section-title" style={{marginBottom:0}}>Onboarding Tasks</div>
+            <button className="btn btn-primary btn-sm" onClick={addTask}>+ Add Task</button>
+          </div>
+          <div style={{overflowX:'auto'}}>
+            <table className="task-table">
+              <thead><tr><th>Task</th><th>Details</th><th>Owner</th><th>Status</th><th>Deadline</th><th>Location/Tracking</th><th>Notes</th><th>Actions</th></tr></thead>
+              <tbody>{provider.tasks?.map(t => <TaskRow key={t.id} task={t} onUpdate={updateTask} onDelete={deleteTask} />)}</tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {tab === 'training' && (
+        <div className="card">
+          <div className="section-title">Training Schedule</div>
+          <div className="training-grid">
+            {DAYS.map(day => (
+              <div key={day} className="training-day">
+                <h4>{day === 'Th' ? 'Thursday' : day === 'M' ? 'Monday' : day === 'T' ? 'Tuesday' : day === 'W' ? 'Wednesday' : 'Friday'}</h4>
+                {[tp[`${day}_1`], tp[`${day}_2`]].map((loc, i) => loc ? <div key={i} style={{fontSize:13,color:'#374151',padding:'4px 0'}}>{loc}</div> : null)}
+                {!tp[`${day}_1`] && !tp[`${day}_2`] && <div style={{fontSize:12,color:'#9ca3af'}}>No locations set</div>}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TeamSettings({ onClose }) {
+  const [members, setMembers] = useState([]);
+  const [newInitials, setNewInitials] = useState('');
+  const [newName, setNewName] = useState('');
+
+  useEffect(() => { api('/api/team').then(setMembers); }, []);
+
+  const add = async () => {
+    if (!newInitials) return;
+    await api('/api/team', { method: 'POST', body: JSON.stringify({ initials: newInitials, name: newName }) });
+    const updated = await api('/api/team');
+    setMembers(updated);
+    setNewInitials(''); setNewName('');
+  };
+
+  const remove = async (id) => {
+    await api(`/api/team/${id}`, { method: 'DELETE' });
+    setMembers(m => m.filter(x => x.id !== id));
+  };
+
+  return (
+    <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="modal">
+        <div className="modal-header"><h2>Team Members</h2><button className="close-btn" onClick={onClose}>×</button></div>
+        <table className="task-table" style={{marginBottom:24}}>
+          <thead><tr><th>Initials</th><th>Name</th><th></th></tr></thead>
+          <tbody>{members.map(m => (
+            <tr key={m.id}>
+              <td><strong>{m.initials}</strong></td>
+              <td>{m.name}</td>
+              <td><button className="btn btn-danger btn-sm" onClick={()=>remove(m.id)}>Remove</button></td>
+            </tr>
+          ))}</tbody>
+        </table>
+        <div style={{display:'flex',gap:8}}>
+          <input placeholder="Initials" value={newInitials} onChange={e=>setNewInitials(e.target.value.toUpperCase())} style={{width:80,padding:'8px 12px',border:'1px solid #d1d5db',borderRadius:6}} />
+          <input placeholder="Full name (optional)" value={newName} onChange={e=>setNewName(e.target.value)} style={{flex:1,padding:'8px 12px',border:'1px solid #d1d5db',borderRadius:6}} />
+          <button className="btn btn-primary" onClick={add}>Add</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [me, setMe] = useState(null);
+  const [providers, setProviders] = useState([]);
+  const [view, setView] = useState('dashboard');
+  const [selectedProvider, setSelectedProvider] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  const [editingProvider, setEditingProvider] = useState(null);
+  const [showTeam, setShowTeam] = useState(false);
+  const [search, setSearch] = useState('');
+  const [filterSpecialty, setFilterSpecialty] = useState('all');
+
+  useEffect(() => {
+    api('/api/me').then(data => {
+      setMe(data);
+      if (data.authenticated) api('/api/providers').then(setProviders);
+    });
+  }, []);
+
+  if (!me) return <div style={{display:'flex',alignItems:'center',justifyContent:'center',minHeight:'100vh'}}>Loading...</div>;
+  if (!me.authenticated) return <LoginPage />;
+
+  const saveProvider = async (data) => {
+    if (editingProvider) {
+      await api(`/api/providers/${editingProvider.id}`, { method: 'PUT', body: JSON.stringify(data) });
+      setProviders(ps => ps.map(p => p.id === editingProvider.id ? { ...p, ...data } : p));
+      if (selectedProvider?.id === editingProvider.id) {
+        const updated = await api(`/api/providers/${editingProvider.id}`);
+        setSelectedProvider(updated);
+      }
+    } else {
+      const { id } = await api('/api/providers', { method: 'POST', body: JSON.stringify(data) });
+      const updated = await api('/api/providers');
+      setProviders(updated);
+      const newProv = await api(`/api/providers/${id}`);
+      setSelectedProvider(newProv);
+      setView('detail');
+    }
+    setShowForm(false);
+    setEditingProvider(null);
+  };
+
+  const openEdit = async () => {
+    const full = await api(`/api/providers/${selectedProvider.id}`);
+    setEditingProvider(full);
+    setShowForm(true);
+  };
+
+  const filtered = providers.filter(p => {
+    const matchSearch = !search || p.name.toLowerCase().includes(search.toLowerCase());
+    const matchSpec = filterSpecialty === 'all' || p.specialty === filterSpecialty;
+    return matchSearch && matchSpec;
+  });
+
+  return (
+    <div className="app">
+      <nav className="navbar">
+        <h1 onClick={()=>{setView('dashboard');setSelectedProvider(null);}} style={{cursor:'pointer'}}>🧠 FridayBrain</h1>
+        <div className="nav-right">
+          <button className="btn btn-ghost btn-sm" onClick={()=>setShowTeam(true)}>Team</button>
+          {me.user && <span className="user">{me.user.name}</span>}
+          <a href="/auth/logout"><button className="btn btn-ghost btn-sm">Sign out</button></a>
+        </div>
+      </nav>
+
+      <div className="container">
+        {view === 'dashboard' && (
+          <>
+            <div className="page-header">
+              <h2>Provider Onboarding</h2>
+              <button className="btn btn-primary" onClick={()=>{setEditingProvider(null);setShowForm(true);}}>+ Add Provider</button>
+            </div>
+            <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
+              <input placeholder="Search providers..." value={search} onChange={e=>setSearch(e.target.value)} style={{padding:'8px 12px',border:'1px solid #d1d5db',borderRadius:6,fontSize:14,flex:1,minWidth:200}} />
+              <select value={filterSpecialty} onChange={e=>setFilterSpecialty(e.target.value)} style={{padding:'8px 12px',border:'1px solid #d1d5db',borderRadius:6,fontSize:14}}>
+                <option value="all">All Specialties</option>
+                <option value="Vein">Vein</option><option value="Pain">Pain</option><option value="Hybrid">Hybrid</option>
+              </select>
+            </div>
+            {filtered.length === 0 ? (
+              <div className="empty-state"><h3>No providers yet</h3><p>Add your first provider to get started</p></div>
+            ) : (
+              <div className="provider-grid">
+                {filtered.map(p => {
+                  const pct = p.taskStats.total ? Math.round(p.taskStats.done / p.taskStats.total * 100) : 0;
+                  return (
+                    <div key={p.id} className={`provider-card ${p.specialty?.toLowerCase()}`} onClick={async()=>{const full=await api(`/api/providers/${p.id}`);setSelectedProvider(full);setView('detail');}}>
+                      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:4}}>
+                        <h3>{p.name}</h3>
+                        <span className={`badge badge-${p.specialty?.toLowerCase()}`}>{p.specialty}</span>
+                      </div>
+                      <div className="meta">{p.credentials && <span style={{marginRight:8}}>{p.credentials}</span>}{p.pt_ft && <span className={`badge badge-${p.pt_ft.toLowerCase()}`} style={{marginRight:8}}>{p.pt_ft}</span>}{p.expected_first_day && <span>Starts {p.expected_first_day}</span>}</div>
+                      <div className="progress-bar"><div className="progress-fill" style={{width:`${pct}%`}} /></div>
+                      <div className="progress-label">{p.taskStats.done}/{p.taskStats.total} tasks · {pct}% complete</div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </>
+        )}
+
+        {view === 'detail' && selectedProvider && (
+          <ProviderDetail provider={selectedProvider} onBack={()=>{setView('dashboard');api('/api/providers').then(setProviders);}} onEdit={openEdit} />
+        )}
+      </div>
+
+      {showForm && (
+        <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&setShowForm(false)}>
+          <div className="modal">
+            <div className="modal-header">
+              <h2>{editingProvider ? 'Edit Provider' : 'Add New Provider'}</h2>
+              <button className="close-btn" onClick={()=>{setShowForm(false);setEditingProvider(null);}}>×</button>
+            </div>
+            <ProviderForm provider={editingProvider} onSave={saveProvider} onCancel={()=>{setShowForm(false);setEditingProvider(null);}} />
+          </div>
+        </div>
+      )}
+
+      {showTeam && <TeamSettings onClose={()=>setShowTeam(false)} />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
