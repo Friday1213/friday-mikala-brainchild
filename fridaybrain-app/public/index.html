@@ -369,7 +369,7 @@ function ProviderDetail({ provider: initialProvider, onBack, onEdit }) {
     setProvider(p => ({ ...p, tasks: [...p.tasks, { id, task_name: 'New Task', status: 'Not Started', completed_by: '', details: '', deadline: '', location_tracking: '', notes: '' }] }));
   };
 
-  const tp = typeof provider.training_plan === 'string' ? JSON.parse(provider.training_plan || '{}') : (provider.training_plan || {});
+  const tp = (() => { try { let v = provider.training_plan; while (typeof v === 'string') v = JSON.parse(v); return v || {}; } catch(e) { return {}; } })();
   const done = provider.tasks?.filter(t => t.status === 'Complete').length || 0;
   const total = provider.tasks?.length || 0;
   const pct = total ? Math.round(done / total * 100) : 0;
