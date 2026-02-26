@@ -265,6 +265,23 @@ function PTOPage() {
         </div>
 
         <div className="card">
+          <div className="section-title">Upcoming Holidays</div>
+          {(() => {
+            const today = new Date().toISOString().split('T')[0];
+            const allHolidays = Object.entries(getHolidays(year))
+              .sort(([a],[b]) => a.localeCompare(b))
+              .filter(([date]) => date >= today || year > new Date().getFullYear());
+            if (allHolidays.length === 0) return <div style={{fontSize:13,color:'#9ca3af'}}>No upcoming holidays this year</div>;
+            return allHolidays.map(([date, h]) => (
+              <div key={date} className="entry-row">
+                <span style={{width:10,height:10,borderRadius:3,flexShrink:0,background:h.jewish?'#7c3aed':h.half?'linear-gradient(135deg,#059669 50%,#d1d5db 50%)':'#059669',display:'inline-block'}} />
+                <span style={{flex:1,fontWeight:500,fontSize:13}}>{h.name}{h.half?' (½ day)':''}</span>
+                <span style={{fontSize:12,color:'#6b7280'}}>{new Date(date+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',weekday:'short'})}</span>
+              </div>
+            ));
+          })()}
+        </div>
+        <div className="card" style={{marginTop:16}}>
           <div className="section-title">Log History</div>
           {entries.length === 0 ? <div className="empty-state" style={{padding:24}}>No entries yet</div> : entries.map(e => (
             <div key={e.id} className="entry-row">
