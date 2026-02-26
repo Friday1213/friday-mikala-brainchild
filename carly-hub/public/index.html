@@ -323,6 +323,158 @@ function PTOPage() {
   );
 }
 
+const OT_CATEGORIES = ['General','Onboarding','Credentialing','Admin','Travel','Coverage','Project'];
+
+function OvertimePage() {
+  const [entries, setEntries] = useState([]);
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [showForm, setShowForm] = useState(false);
+  const [editEntry, setEditEntry] = useState(null);
+  const [form, setForm] = useState({ date:'', hours:1, category:'General', note:'' });
+  const [filterCat, setFilterCat] = useState('all');
+
+  useEffect(() => { api(`/api/overtime?year=${year}`).then(setEntries); }, [year]);
+
+  const save = async (e) => {
+    e.preventDefault();
+    if (editEntry) {
+      await api(`/api/overtime/${editEntry.id}`, { method:'PUT', body:JSON.stringify(form) });
+      setEntries(es => es.map(x => x.id===editEntry.id ? {...x,...form} : x));
+    } else {
+      const { id } = await api('/api/overtime', { method:'POST', body:JSON.stringify(form) });
+      setEntries(es => [{id,...form},...es]);
+    }
+    setShowForm(false); setEditEntry(null); setForm({date:'',hours:1,category:'General',note:''});
+  };
+
+  const del = async (id) => {
+    if (!confirm('Delete this entry?')) return;
+    await api(`/api/overtime/${id}`, { method:'DELETE' });
+    setEntries(es => es.filter(x => x.id!==id));
+  };
+
+  const totalHours = entries.reduce((s,e) => s+e.hours, 0);
+  const totalDays = (totalHours/8).toFixed(1);
+
+  // Weekly avg (weeks elapsed in year so far, or full year)
+  const now = new Date();
+  const weeksElapsed = year < now.getFullYear() ? 52 : Math.max(1, Math.ceil((now - new Date(year,0,1)) / (7*24*60*60*1000)));
+  const weeklyAvg = (totalHours / weeksElapsed).toFixed(1);
+
+  // By category
+  const byCat = {};
+  entries.forEach(e => { byCat[e.category] = (byCat[e.category]||0) + e.hours; });
+
+  // By month
+  const byMonth = Array(12).fill(0);
+  entries.forEach(e => { const m = parseInt(e.date.split('-')[1])-1; byMonth[m] += e.hours; });
+  const maxMonth = Math.max(...byMonth, 1);
+
+  const filtered = filterCat==='all' ? entries : entries.filter(e=>e.category===filterCat);
+
+  return (
+    <div>
+      <div className="page-header">
+        <h2>Overtime Log</h2>
+        <div style={{display:'flex',gap:8,alignItems:'center'}}>
+          <div className="year-selector">
+            <button onClick={()=>setYear(y=>y-1)}>‹</button>
+            <span style={{fontWeight:600}}>{year}</span>
+            <button onClick={()=>setYear(y=>y+1)}>›</button>
+          </div>
+          <button className="btn btn-primary" onClick={()=>{setEditEntry(null);setForm({date:'',hours:1,category:'General',note:''});setShowForm(true);}}>+ Log Overtime</button>
+        </div>
+      </div>
+
+      <div className="stat-cards">
+        <div className="stat-card"><div className="stat-num" style={{color:'#7c3aed'}}>{totalHours}h</div><div className="stat-label">Total OT Hours</div></div>
+        <div className="stat-card"><div className="stat-num" style={{color:'#7c3aed'}}>{totalDays}</div><div className="stat-label">Equivalent Days</div></div>
+        <div className="stat-card"><div className="stat-num">{weeklyAvg}h</div><div className="stat-label">Avg Per Week</div></div>
+        <div className="stat-card"><div className="stat-num">{entries.length}</div><div className="stat-label">Log Entries</div></div>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}}>
+        <div className="card">
+          <div className="section-title">By Month</div>
+          {byMonth.map((h,i) => h>0 && (
+            <div key={i} style={{marginBottom:8}}>
+              <div style={{display:'flex',justifyContent:'space-between',fontSize:12,marginBottom:3}}>
+                <span style={{color:'#374151',fontWeight:500}}>{MONTHS[i]}</span>
+                <span style={{color:'#7c3aed',fontWeight:600}}>{h}h</span>
+              </div>
+              <div className="progress-bar" style={{margin:0,height:8}}>
+                <div className="progress-fill" style={{width:`${(h/maxMonth)*100}%`,background:'#7c3aed'}} />
+              </div>
+            </div>
+          ))}
+          {totalHours===0 && <div style={{fontSize:13,color:'#9ca3af'}}>No entries yet</div>}
+        </div>
+        <div className="card">
+          <div className="section-title">By Category</div>
+          {Object.entries(byCat).sort((a,b)=>b[1]-a[1]).map(([cat,h]) => (
+            <div key={cat} style={{marginBottom:8}}>
+              <div style={{display:'flex',justifyContent:'space-between',fontSize:12,marginBottom:3}}>
+                <span style={{color:'#374151',fontWeight:500}}>{cat}</span>
+                <span style={{color:'#7c3aed',fontWeight:600}}>{h}h</span>
+              </div>
+              <div className="progress-bar" style={{margin:0,height:8}}>
+                <div className="progress-fill" style={{width:`${(h/totalHours)*100}%`,background:'#7c3aed'}} />
+              </div>
+            </div>
+          ))}
+          {totalHours===0 && <div style={{fontSize:13,color:'#9ca3af'}}>No entries yet</div>}
+        </div>
+      </div>
+
+      <div className="card">
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+          <div className="section-title" style={{marginBottom:0}}>Log</div>
+          <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+            <button className={`btn btn-sm ${filterCat==='all'?'btn-primary':'btn-outline'}`} onClick={()=>setFilterCat('all')}>All</button>
+            {OT_CATEGORIES.map(c=>(
+              <button key={c} className={`btn btn-sm ${filterCat===c?'btn-primary':'btn-outline'}`} onClick={()=>setFilterCat(c)}>{c}</button>
+            ))}
+          </div>
+        </div>
+        {filtered.length===0 ? <div className="empty-state" style={{padding:24}}>No entries{filterCat!=='all'?' in this category':' yet'}</div> : filtered.map(e=>(
+          <div key={e.id} className="entry-row">
+            <span style={{background:'#ede9fe',color:'#7c3aed',padding:'2px 8px',borderRadius:12,fontSize:11,fontWeight:600,whiteSpace:'nowrap'}}>{e.category}</span>
+            <span style={{fontWeight:500,whiteSpace:'nowrap'}}>{e.date}</span>
+            <span style={{color:'#7c3aed',fontWeight:700,whiteSpace:'nowrap'}}>{e.hours}h</span>
+            <span style={{color:'#6b7280',fontSize:12,flex:1}}>{e.note}</span>
+            <button className="btn btn-outline btn-sm" onClick={()=>{setEditEntry(e);setForm({date:e.date,hours:e.hours,category:e.category,note:e.note||''});setShowForm(true);}}>Edit</button>
+            <button className="btn btn-danger btn-sm" onClick={()=>del(e.id)}>✕</button>
+          </div>
+        ))}
+      </div>
+
+      {showForm && (
+        <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&setShowForm(false)}>
+          <div className="modal">
+            <div className="modal-header"><h2>{editEntry?'Edit Entry':'Log Overtime'}</h2><button className="close-btn" onClick={()=>setShowForm(false)}>×</button></div>
+            <form onSubmit={save}>
+              <div className="form-grid">
+                <div className="form-group"><label>Date</label><input type="date" required value={form.date} onChange={e=>setForm(f=>({...f,date:e.target.value}))} /></div>
+                <div className="form-group"><label>Hours Over</label><input type="number" min="0.5" step="0.5" required value={form.hours} onChange={e=>setForm(f=>({...f,hours:parseFloat(e.target.value)}))} /></div>
+                <div className="form-group form-full"><label>Category</label>
+                  <select value={form.category} onChange={e=>setForm(f=>({...f,category:e.target.value}))}>
+                    {OT_CATEGORIES.map(c=><option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
+                <div className="form-group form-full"><label>Notes</label><textarea rows={3} value={form.note} onChange={e=>setForm(f=>({...f,note:e.target.value}))} placeholder="What were you working on?" /></div>
+              </div>
+              <div style={{display:'flex',gap:8,justifyContent:'flex-end',marginTop:16}}>
+                <button type="button" className="btn btn-outline" onClick={()=>setShowForm(false)}>Cancel</button>
+                <button type="submit" className="btn btn-primary">Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function TravelPage() {
   const [trips, setTrips] = useState([]);
   const [showForm, setShowForm] = useState(false);
@@ -454,10 +606,11 @@ function App() {
         <div className="nav-tabs">
           <button className={`nav-tab ${tab==='pto'?'active':''}`} onClick={()=>setTab('pto')}>🏖 PTO</button>
           <button className={`nav-tab ${tab==='travel'?'active':''}`} onClick={()=>setTab('travel')}>✈️ Travel</button>
+          <button className={`nav-tab ${tab==='overtime'?'active':''}`} onClick={()=>setTab('overtime')}>⏱ Overtime</button>
         </div>
       </nav>
       <div className="container">
-        {tab === 'pto' ? <PTOPage /> : <TravelPage />}
+        {tab === 'pto' ? <PTOPage /> : tab === 'travel' ? <TravelPage /> : <OvertimePage />}
       </div>
     </div>
   );

@@ -37,6 +37,26 @@ app.delete('/api/pto/:id', (req, res) => {
   res.json({ ok: true });
 });
 
+// Overtime
+app.get('/api/overtime', (req, res) => {
+  const year = req.query.year || new Date().getFullYear();
+  res.json(db.prepare(`SELECT * FROM overtime WHERE date LIKE ? ORDER BY date DESC`).all(`${year}%`));
+});
+app.post('/api/overtime', (req, res) => {
+  const { date, hours, category, note } = req.body;
+  const result = db.prepare('INSERT INTO overtime (date, hours, category, note) VALUES (?,?,?,?)').run(date, hours, category || 'General', note);
+  res.json({ id: result.lastInsertRowid });
+});
+app.put('/api/overtime/:id', (req, res) => {
+  const { date, hours, category, note } = req.body;
+  db.prepare('UPDATE overtime SET date=?, hours=?, category=?, note=? WHERE id=?').run(date, hours, category || 'General', note, req.params.id);
+  res.json({ ok: true });
+});
+app.delete('/api/overtime/:id', (req, res) => {
+  db.prepare('DELETE FROM overtime WHERE id=?').run(req.params.id);
+  res.json({ ok: true });
+});
+
 // Trips
 app.get('/api/trips', (req, res) => res.json(db.prepare('SELECT * FROM trips ORDER BY start_date DESC').all()));
 app.post('/api/trips', (req, res) => {

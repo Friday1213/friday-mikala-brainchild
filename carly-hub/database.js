@@ -24,6 +24,15 @@ db.exec(`
     year INTEGER DEFAULT 2026
   );
 
+  CREATE TABLE IF NOT EXISTS overtime (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    date TEXT NOT NULL,
+    hours REAL NOT NULL,
+    category TEXT DEFAULT 'General',
+    note TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
   CREATE TABLE IF NOT EXISTS trips (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     destination TEXT NOT NULL,
