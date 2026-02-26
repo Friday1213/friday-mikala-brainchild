@@ -305,7 +305,12 @@ function ProviderDetail({ provider: initialProvider, onBack, onEdit }) {
             <div style={{fontSize:13,color:'#6b7280',marginBottom:4}}>Onboarding Progress</div>
             <div style={{fontSize:22,fontWeight:700,color:specialtyColor}}>{pct}%</div>
             <div style={{fontSize:12,color:'#9ca3af'}}>{done}/{total} tasks complete</div>
-            <button className="btn btn-outline btn-sm" style={{marginTop:8}} onClick={onEdit}>Edit Provider</button>
+            <div style={{display:'flex',gap:8,marginTop:8,justifyContent:'flex-end'}}>
+              <button className="btn btn-outline btn-sm" onClick={onEdit}>Edit Provider</button>
+              <button className="btn btn-sm" style={{background:'#f3f4f6',color:'#6b7280'}} onClick={async()=>{ await api(`/api/providers/${provider.id}/archive`,{method:'PUT',body:JSON.stringify({archived:!provider.archived})}); onBack(); }}>
+                {provider.archived ? '📂 Unarchive' : '🗂 Archive'}
+              </button>
+            </div>
           </div>
         </div>
         <div style={{marginTop:12}}>
@@ -498,13 +503,18 @@ function App() {
   const [showTeam, setShowTeam] = useState(false);
   const [search, setSearch] = useState('');
   const [filterSpecialty, setFilterSpecialty] = useState('all');
+  const [showArchived, setShowArchived] = useState(false);
 
   useEffect(() => {
     api('/api/me').then(data => {
       setMe(data);
-      if (data.authenticated) api('/api/providers').then(setProviders);
+      if (data.authenticated) api(`/api/providers?archived=${showArchived}`).then(setProviders);
     });
   }, []);
+
+  useEffect(() => {
+    if (me?.authenticated) api(`/api/providers?archived=${showArchived}`).then(setProviders);
+  }, [showArchived]);
 
   if (!me) return <div style={{display:'flex',alignItems:'center',justifyContent:'center',minHeight:'100vh'}}>Loading...</div>;
   if (!me.authenticated) return <LoginPage />;
@@ -567,6 +577,9 @@ function App() {
                 <option value="all">All Specialties</option>
                 <option value="Vein">Vein</option><option value="Pain">Pain</option><option value="Hybrid">Hybrid</option>
               </select>
+              <button className={`btn btn-sm ${showArchived ? 'btn-primary' : 'btn-outline'}`} onClick={()=>setShowArchived(a=>!a)}>
+                {showArchived ? '📂 Archived' : '🗂 Show Archived'}
+              </button>
             </div>
             {filtered.length === 0 ? (
               <div className="empty-state"><h3>No providers yet</h3><p>Add your first provider to get started</p></div>

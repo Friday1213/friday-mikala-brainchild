@@ -56,6 +56,9 @@ db.exec(`
   );
 `);
 
+// Add archived column if it doesn't exist
+try { db.exec('ALTER TABLE providers ADD COLUMN archived INTEGER DEFAULT 0'); } catch(e) {}
+
 // Seed default team members
 const existingMembers = db.prepare('SELECT COUNT(*) as count FROM team_members').get();
 if (existingMembers.count === 0) {

@@ -79,7 +79,8 @@ const DEFAULT_TASKS = [
 
 // Providers
 app.get('/api/providers', requireAuth, (req, res) => {
-  const providers = db.prepare(`SELECT * FROM providers ORDER BY COALESCE(anticipated_start_date, expected_first_day, '0000') DESC`).all();
+  const showArchived = req.query.archived === 'true';
+  const providers = db.prepare(`SELECT * FROM providers WHERE archived = ? ORDER BY COALESCE(anticipated_start_date, expected_first_day, '0000') DESC`).all(showArchived ? 1 : 0);
   const tasksCount = db.prepare(`SELECT provider_id, COUNT(*) as total, SUM(CASE WHEN status='Complete' THEN 1 ELSE 0 END) as done, SUM(CASE WHEN notes IS NOT NULL AND notes != '' THEN 1 ELSE 0 END) as has_notes FROM tasks GROUP BY provider_id`).all();
   const taskMap = {};
   tasksCount.forEach(t => taskMap[t.provider_id] = { total: t.total, done: t.done });
@@ -105,6 +106,12 @@ app.get('/api/providers/:id', requireAuth, (req, res) => {
 app.put('/api/providers/:id', requireAuth, (req, res) => {
   const { name, contact_number, personal_email, vip_emergency_line, work_email, npi, credentials, pt_ft, specialty, languages, biography, signature_link, drive_folder_link, contract_signed_date, expected_first_day, primary_location, independent_practice, anticipated_start_date, state, entity_locations, training_plan } = req.body;
   db.prepare(`UPDATE providers SET name=?, contact_number=?, personal_email=?, vip_emergency_line=?, work_email=?, npi=?, credentials=?, pt_ft=?, specialty=?, languages=?, biography=?, signature_link=?, drive_folder_link=?, contract_signed_date=?, expected_first_day=?, primary_location=?, independent_practice=?, anticipated_start_date=?, state=?, entity_locations=?, training_plan=?, updated_at=CURRENT_TIMESTAMP WHERE id=?`).run(name, contact_number, personal_email, vip_emergency_line, work_email, npi, credentials, pt_ft, specialty, languages, biography, signature_link, drive_folder_link, contract_signed_date, expected_first_day, primary_location, independent_practice ? 1 : 0, anticipated_start_date, state, entity_locations, training_plan ? JSON.stringify(training_plan) : null, req.params.id);
+  res.json({ ok: true });
+});
+
+app.put('/api/providers/:id/archive', requireAuth, (req, res) => {
+  const { archived } = req.body;
+  db.prepare('UPDATE providers SET archived = ? WHERE id = ?').run(archived ? 1 : 0, req.params.id);
   res.json({ ok: true });
 });
 
