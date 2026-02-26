@@ -275,6 +275,34 @@ function ProviderDetail({ provider: initialProvider, onBack, onEdit }) {
   const [tab, setTab] = useState('info');
   const [noteText, setNoteText] = useState(initialProvider.free_notes || '');
   const [noteSaved, setNoteSaved] = useState(true);
+  const [malForm, setMalForm] = useState({ malpractice_status: initialProvider.malpractice_status || 'Not Started', malpractice_carrier: initialProvider.malpractice_carrier || '', malpractice_policy: initialProvider.malpractice_policy || '', malpractice_start: initialProvider.malpractice_start || '', malpractice_end: initialProvider.malpractice_end || '', malpractice_amount: initialProvider.malpractice_amount || '', malpractice_notes: initialProvider.malpractice_notes || '' });
+  const [malSaved, setMalSaved] = useState(true);
+  const [credUpdates, setCredUpdates] = useState([]);
+  const [credText, setCredText] = useState('');
+
+  const loadCred = async () => {
+    const updates = await fetch(`/api/providers/${initialProvider.id}/credentialing`).then(r=>r.json());
+    setCredUpdates(updates);
+  };
+
+  const saveMalpractice = async () => {
+    const p = {...provider, ...malForm};
+    delete p.tasks;
+    await api(`/api/providers/${provider.id}`, {method:'PUT', body: JSON.stringify(p)});
+    setMalSaved(true);
+  };
+
+  const addCredUpdate = async () => {
+    if (!credText.trim()) return;
+    const { id } = await api(`/api/providers/${provider.id}/credentialing`, {method:'POST', body: JSON.stringify({update_text: credText})});
+    setCredUpdates(u => [{id, update_text: credText, created_at: new Date().toISOString()}, ...u]);
+    setCredText('');
+  };
+
+  const deleteCred = async (id) => {
+    await api(`/api/credentialing/${id}`, {method:'DELETE'});
+    setCredUpdates(u => u.filter(x => x.id !== id));
+  };
 
   const saveNotes = async () => {
     const p = {...provider, free_notes: noteText};
@@ -282,6 +310,8 @@ function ProviderDetail({ provider: initialProvider, onBack, onEdit }) {
     await api(`/api/providers/${provider.id}`, {method:'PUT', body: JSON.stringify(p)});
     setNoteSaved(true);
   };
+
+  React.useEffect(() => { if (tab === 'credentialing') loadCred(); }, [tab]);
 
   const updateTask = (updated) => setProvider(p => ({ ...p, tasks: p.tasks.map(t => t.id === updated.id ? updated : t) }));
   const deleteTask = async (id) => { await api(`/api/tasks/${id}`, { method: 'DELETE' }); setProvider(p => ({ ...p, tasks: p.tasks.filter(t => t.id !== id) })); };
@@ -328,7 +358,9 @@ function ProviderDetail({ provider: initialProvider, onBack, onEdit }) {
       </div>
 
       <div className="tabs">
-        {['info','tasks','training','notes'].map(t => <button key={t} className={`tab ${tab===t?'active':''}`} onClick={()=>setTab(t)}>{t==='info'?'Provider Info':t==='tasks'?'Onboarding Tasks':t==='training'?'Training Plan':'Notes'}</button>)}
+        {['info','tasks','training','malpractice','credentialing','notes'].map(t => <button key={t} className={`tab ${tab===t?'active':''}`} onClick={()=>setTab(t)}>
+        {t==='info'?'Provider Info':t==='tasks'?'Onboarding Tasks':t==='training'?'Training Plan':t==='malpractice'?'Malpractice':t==='credentialing'?'Credentialing':'Notes'}
+      </button>)}
       </div>
 
       {tab === 'info' && (
@@ -371,6 +403,52 @@ function ProviderDetail({ provider: initialProvider, onBack, onEdit }) {
         </div>
       )}
 
+      {tab === 'malpractice' && (
+        <div className="card">
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
+            <div className="section-title" style={{marginBottom:0}}>Malpractice Insurance</div>
+            <div style={{display:'flex',alignItems:'center',gap:10}}>
+              {!malSaved && <span style={{fontSize:12,color:'#d97706'}}>Unsaved changes</span>}
+              <button className="btn btn-primary btn-sm" onClick={saveMalpractice}>Save</button>
+            </div>
+          </div>
+          <div className="form-grid">
+            <div className="form-group form-full"><label>Status</label>
+              <select value={malForm.malpractice_status} onChange={e=>{setMalForm(f=>({...f,malpractice_status:e.target.value}));setMalSaved(false);}}>
+                <option value="Not Started">Not Started</option>
+                <option value="Requested">Requested</option>
+                <option value="Active">Active</option>
+              </select>
+            </div>
+            <div className="form-group"><label>Carrier</label><input value={malForm.malpractice_carrier} onChange={e=>{setMalForm(f=>({...f,malpractice_carrier:e.target.value}));setMalSaved(false);}} /></div>
+            <div className="form-group"><label>Policy Number</label><input value={malForm.malpractice_policy} onChange={e=>{setMalForm(f=>({...f,malpractice_policy:e.target.value}));setMalSaved(false);}} /></div>
+            <div className="form-group"><label>Coverage Start</label><input type="date" value={malForm.malpractice_start} onChange={e=>{setMalForm(f=>({...f,malpractice_start:e.target.value}));setMalSaved(false);}} /></div>
+            <div className="form-group"><label>Coverage End</label><input type="date" value={malForm.malpractice_end} onChange={e=>{setMalForm(f=>({...f,malpractice_end:e.target.value}));setMalSaved(false);}} /></div>
+            <div className="form-group"><label>Coverage Amount</label><input value={malForm.malpractice_amount} onChange={e=>{setMalForm(f=>({...f,malpractice_amount:e.target.value}));setMalSaved(false);}} placeholder="e.g. $1M/$3M" /></div>
+            <div className="form-group form-full"><label>Notes</label><textarea rows={3} value={malForm.malpractice_notes} onChange={e=>{setMalForm(f=>({...f,malpractice_notes:e.target.value}));setMalSaved(false);}} /></div>
+          </div>
+        </div>
+      )}
+
+      {tab === 'credentialing' && (
+        <div className="card">
+          <div className="section-title">Credentialing Updates</div>
+          <div style={{display:'flex',gap:8,marginBottom:20}}>
+            <textarea value={credText} onChange={e=>setCredText(e.target.value)} placeholder="Add a credentialing update..." style={{flex:1,padding:'10px 12px',border:'1px solid #d1d5db',borderRadius:6,fontSize:14,resize:'none',height:72,outline:'none'}} onKeyDown={e=>{if(e.key==='Enter'&&e.metaKey)addCredUpdate();}} />
+            <button className="btn btn-primary" style={{alignSelf:'flex-end'}} onClick={addCredUpdate}>Post</button>
+          </div>
+          {credUpdates.length === 0 ? <div style={{textAlign:'center',color:'#9ca3af',padding:32}}>No updates yet</div> : credUpdates.map(u => (
+            <div key={u.id} style={{padding:'12px 0',borderBottom:'1px solid #f3f4f6',display:'flex',justifyContent:'space-between',gap:12}}>
+              <div style={{flex:1}}>
+                <div style={{fontSize:14,lineHeight:1.6,color:'#374151'}}>{u.update_text}</div>
+                <div style={{fontSize:11,color:'#9ca3af',marginTop:4}}>{new Date(u.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'})}</div>
+              </div>
+              <button className="btn btn-danger btn-sm" style={{alignSelf:'flex-start'}} onClick={()=>deleteCred(u.id)}>✕</button>
+            </div>
+          ))}
+        </div>
+      )}
+
       {tab === 'notes' && (
         <div className="card">
           <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
@@ -407,6 +485,9 @@ function ProviderDetail({ provider: initialProvider, onBack, onEdit }) {
   );
 }
 
+const MAL_STATUS_COLOR = { 'Not Started': '#6b7280', 'Requested': '#d97706', 'Active': '#059669' };
+const MAL_STATUS_BG = { 'Not Started': '#f3f4f6', 'Requested': '#fef3c7', 'Active': '#d1fae5' };
+
 function ProgressPage({ providers }) {
   const totalProviders = providers.length;
   const totalTasks = providers.reduce((s, p) => s + (p.taskStats?.total || 0), 0);
@@ -427,10 +508,20 @@ function ProgressPage({ providers }) {
   });
   const groups = Object.values(grouped).sort((a, b) => b.date.localeCompare(a.date));
 
+  const [progressTab, setProgressTab] = useState('onboarding');
+  const malCounts = { 'Not Started': 0, 'Requested': 0, 'Active': 0 };
+  providers.forEach(p => { const s = p.malpractice_status || 'Not Started'; malCounts[s] = (malCounts[s]||0) + 1; });
+
   return (
     <div className="progress-page">
-      <div className="page-header"><h2>Onboarding Progress</h2><div style={{fontSize:13,color:'#6b7280'}}>Updates automatically as tasks are completed</div></div>
+      <div className="page-header"><h2>Progress Dashboard</h2><div style={{fontSize:13,color:'#6b7280'}}>Updates automatically</div></div>
+      <div className="tabs" style={{marginBottom:24}}>
+        {['onboarding','malpractice','credentialing'].map(t=>(
+          <button key={t} className={`tab ${progressTab===t?'active':''}`} onClick={()=>setProgressTab(t)} style={{textTransform:'capitalize'}}>{t}</button>
+        ))}
+      </div>
 
+      {progressTab === 'onboarding' && <>
       <div className="stat-cards">
         <div className="stat-card"><div className="stat-num">{totalProviders}</div><div className="stat-label">Total Providers</div></div>
         <div className="stat-card"><div className="stat-num" style={{color:'#2563eb'}}>{overallPct}%</div><div className="stat-label">Overall Progress</div></div>
@@ -472,6 +563,82 @@ function ProgressPage({ providers }) {
           </div>
         );
       })}
+      </>}
+
+      {progressTab === 'malpractice' && (
+        <>
+          <div className="stat-cards">
+            {Object.entries(malCounts).map(([status, count]) => (
+              <div key={status} className="stat-card">
+                <div className="stat-num" style={{color: MAL_STATUS_COLOR[status]}}>{count}</div>
+                <div className="stat-label">{status}</div>
+              </div>
+            ))}
+          </div>
+          <div className="card">
+            <div className="section-title">Malpractice Status by Provider</div>
+            <table style={{width:'100%',borderCollapse:'collapse',fontSize:14}}>
+              <thead><tr style={{background:'#f9fafb'}}>
+                <th style={{padding:'10px 12px',textAlign:'left',fontWeight:600,borderBottom:'2px solid #e5e7eb'}}>Provider</th>
+                <th style={{padding:'10px 12px',textAlign:'left',fontWeight:600,borderBottom:'2px solid #e5e7eb'}}>Status</th>
+                <th style={{padding:'10px 12px',textAlign:'left',fontWeight:600,borderBottom:'2px solid #e5e7eb'}}>Carrier</th>
+                <th style={{padding:'10px 12px',textAlign:'left',fontWeight:600,borderBottom:'2px solid #e5e7eb'}}>Policy #</th>
+                <th style={{padding:'10px 12px',textAlign:'left',fontWeight:600,borderBottom:'2px solid #e5e7eb'}}>Coverage</th>
+              </tr></thead>
+              <tbody>{providers.map(p => (
+                <tr key={p.id} style={{borderBottom:'1px solid #f3f4f6'}}>
+                  <td style={{padding:'10px 12px',fontWeight:500}}>{p.name}</td>
+                  <td style={{padding:'10px 12px'}}>
+                    <span style={{background: MAL_STATUS_BG[p.malpractice_status||'Not Started'], color: MAL_STATUS_COLOR[p.malpractice_status||'Not Started'], padding:'3px 10px', borderRadius:12, fontSize:12, fontWeight:500}}>
+                      {p.malpractice_status || 'Not Started'}
+                    </span>
+                  </td>
+                  <td style={{padding:'10px 12px',color:'#6b7280'}}>{p.malpractice_carrier || '—'}</td>
+                  <td style={{padding:'10px 12px',color:'#6b7280'}}>{p.malpractice_policy || '—'}</td>
+                  <td style={{padding:'10px 12px',color:'#6b7280'}}>{p.malpractice_start && p.malpractice_end ? `${p.malpractice_start} → ${p.malpractice_end}` : '—'}</td>
+                </tr>
+              ))}</tbody>
+            </table>
+          </div>
+        </>
+      )}
+
+      {progressTab === 'credentialing' && (
+        <CredentialingDashboard providers={providers} />
+      )}
+    </div>
+  );
+}
+
+function CredentialingDashboard({ providers }) {
+  const [updates, setUpdates] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  React.useEffect(() => {
+    Promise.all(providers.map(p =>
+      fetch(`/api/providers/${p.id}/credentialing`).then(r=>r.json()).then(u => u.map(x => ({...x, provider_name: p.name, provider_id: p.id})))
+    )).then(all => {
+      const flat = all.flat().sort((a,b) => b.created_at.localeCompare(a.created_at));
+      setUpdates(flat);
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) return <div style={{textAlign:'center',padding:48,color:'#9ca3af'}}>Loading...</div>;
+  if (updates.length === 0) return <div className="empty-state"><h3>No credentialing updates yet</h3><p>Add updates from each provider's Credentialing tab</p></div>;
+
+  return (
+    <div className="card">
+      <div className="section-title">All Credentialing Updates</div>
+      {updates.map(u => (
+        <div key={u.id} style={{padding:'12px 0',borderBottom:'1px solid #f3f4f6'}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:4}}>
+            <span style={{fontWeight:600,fontSize:13,color:'#2563eb'}}>{u.provider_name}</span>
+            <span style={{fontSize:11,color:'#9ca3af'}}>{new Date(u.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'})}</span>
+          </div>
+          <div style={{fontSize:14,color:'#374151',lineHeight:1.6}}>{u.update_text}</div>
+        </div>
+      ))}
     </div>
   );
 }

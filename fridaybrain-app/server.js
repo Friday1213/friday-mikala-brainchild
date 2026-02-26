@@ -105,8 +105,8 @@ app.get('/api/providers/:id', requireAuth, (req, res) => {
 
 app.put('/api/providers/:id', requireAuth, (req, res) => {
   const { name, contact_number, personal_email, vip_emergency_line, work_email, npi, credentials, pt_ft, specialty, languages, biography, signature_link, drive_folder_link, contract_signed_date, expected_first_day, primary_location, independent_practice, anticipated_start_date, state, entity_locations, training_plan } = req.body;
-  const { free_notes } = req.body;
-  db.prepare(`UPDATE providers SET name=?, contact_number=?, personal_email=?, vip_emergency_line=?, work_email=?, npi=?, credentials=?, pt_ft=?, specialty=?, languages=?, biography=?, signature_link=?, drive_folder_link=?, contract_signed_date=?, expected_first_day=?, primary_location=?, independent_practice=?, anticipated_start_date=?, state=?, entity_locations=?, training_plan=?, free_notes=?, updated_at=CURRENT_TIMESTAMP WHERE id=?`).run(name, contact_number, personal_email, vip_emergency_line, work_email, npi, credentials, pt_ft, specialty, languages, biography, signature_link, drive_folder_link, contract_signed_date, expected_first_day, primary_location, independent_practice ? 1 : 0, anticipated_start_date, state, entity_locations, training_plan ? JSON.stringify(training_plan) : null, free_notes || null, req.params.id);
+  const { free_notes, malpractice_status, malpractice_carrier, malpractice_policy, malpractice_start, malpractice_end, malpractice_amount, malpractice_notes } = req.body;
+  db.prepare(`UPDATE providers SET name=?, contact_number=?, personal_email=?, vip_emergency_line=?, work_email=?, npi=?, credentials=?, pt_ft=?, specialty=?, languages=?, biography=?, signature_link=?, drive_folder_link=?, contract_signed_date=?, expected_first_day=?, primary_location=?, independent_practice=?, anticipated_start_date=?, state=?, entity_locations=?, training_plan=?, free_notes=?, malpractice_status=?, malpractice_carrier=?, malpractice_policy=?, malpractice_start=?, malpractice_end=?, malpractice_amount=?, malpractice_notes=?, updated_at=CURRENT_TIMESTAMP WHERE id=?`).run(name, contact_number, personal_email, vip_emergency_line, work_email, npi, credentials, pt_ft, specialty, languages, biography, signature_link, drive_folder_link, contract_signed_date, expected_first_day, primary_location, independent_practice ? 1 : 0, anticipated_start_date, state, entity_locations, training_plan ? JSON.stringify(training_plan) : null, free_notes || null, malpractice_status || 'Not Started', malpractice_carrier || null, malpractice_policy || null, malpractice_start || null, malpractice_end || null, malpractice_amount || null, malpractice_notes || null, req.params.id);
   res.json({ ok: true });
 });
 
@@ -137,6 +137,20 @@ app.post('/api/providers/:id/tasks', requireAuth, (req, res) => {
 
 app.delete('/api/tasks/:id', requireAuth, (req, res) => {
   db.prepare('DELETE FROM tasks WHERE id=?').run(req.params.id);
+  res.json({ ok: true });
+});
+
+// Credentialing updates
+app.get('/api/providers/:id/credentialing', requireAuth, (req, res) => {
+  res.json(db.prepare('SELECT * FROM credentialing_updates WHERE provider_id=? ORDER BY created_at DESC').all(req.params.id));
+});
+app.post('/api/providers/:id/credentialing', requireAuth, (req, res) => {
+  const { update_text } = req.body;
+  const result = db.prepare('INSERT INTO credentialing_updates (provider_id, update_text) VALUES (?,?)').run(req.params.id, update_text);
+  res.json({ id: result.lastInsertRowid });
+});
+app.delete('/api/credentialing/:id', requireAuth, (req, res) => {
+  db.prepare('DELETE FROM credentialing_updates WHERE id=?').run(req.params.id);
   res.json({ ok: true });
 });
 

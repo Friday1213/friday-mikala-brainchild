@@ -59,6 +59,23 @@ db.exec(`
 // Add archived column if it doesn't exist
 try { db.exec('ALTER TABLE providers ADD COLUMN archived INTEGER DEFAULT 0'); } catch(e) {}
 try { db.exec('ALTER TABLE providers ADD COLUMN free_notes TEXT'); } catch(e) {}
+try { db.exec('ALTER TABLE providers ADD COLUMN malpractice_status TEXT DEFAULT "Not Started"'); } catch(e) {}
+try { db.exec('ALTER TABLE providers ADD COLUMN malpractice_carrier TEXT'); } catch(e) {}
+try { db.exec('ALTER TABLE providers ADD COLUMN malpractice_policy TEXT'); } catch(e) {}
+try { db.exec('ALTER TABLE providers ADD COLUMN malpractice_start TEXT'); } catch(e) {}
+try { db.exec('ALTER TABLE providers ADD COLUMN malpractice_end TEXT'); } catch(e) {}
+try { db.exec('ALTER TABLE providers ADD COLUMN malpractice_amount TEXT'); } catch(e) {}
+try { db.exec('ALTER TABLE providers ADD COLUMN malpractice_notes TEXT'); } catch(e) {}
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS credentialing_updates (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    provider_id INTEGER NOT NULL,
+    update_text TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (provider_id) REFERENCES providers(id) ON DELETE CASCADE
+  );
+`);
 
 // Seed default team members
 const existingMembers = db.prepare('SELECT COUNT(*) as count FROM team_members').get();
