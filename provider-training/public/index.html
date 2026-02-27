@@ -206,7 +206,7 @@ function HomeTab({ setMode, setAdminTab, setClinicalTab }) {
               style={{borderColor: l.mode==='clinical' ? '#d1fae5' : '#ede9fe'}}>
               <div className="ql-icon">{l.icon}</div>
               <div className="ql-label">{l.label}</div>
-              <div style={{fontSize:10,fontWeight:800,marginTop:6,color:l.mode==='clinical'?'#059669':'#7c3aed'}}>{l.mode==='clinical'?'🩺 Clinical':'⚙️ Admin'}</div>
+              <div style={{fontSize:10,fontWeight:800,marginTop:6,color:l.mode==='clinical'?'#059669':'#7c3aed'}}>{l.mode==='clinical'?'🩺 Clinical':'⚙️ Systems'}</div>
             </div>
           ))}
         </div>
@@ -881,7 +881,7 @@ function App() {
             className={`mode-btn mode-btn-admin${mode==='admin'?' active':''}`}
             onClick={()=>goMode('admin')}
           >
-            ⚙️ Administrative
+            ⚙️ Systems
           </button>
         </div>
       </div>
