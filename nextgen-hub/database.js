@@ -61,4 +61,15 @@ try {
   )`).run();
 } catch(e) {}
 
+// Article: MIPS QID 130
+try {
+  db.prepare(`INSERT OR IGNORE INTO articles (id, title, category, role, module, summary, content, tips, common_mistakes)
+    VALUES (33, 'MIPS QID 130 — Documentation of Current Medications', 'Quality & Compliance', 'MA / Provider', 'Medications',
+    'How to satisfy MIPS Quality ID 130 — Documentation of Current Medications — during a patient encounter in NextGen.',
+    '1. Go to the Appointment Tab within the Inbox and select the patient.\n2. Complete the 4-Point Check: verify Location, Provider, Patient, and Encounter Date/Time.\n3. Open the Intake Template or the Medication Module.\n4. Determine whether the patient is taking any medications (ask the patient or review available info).\n\nIf NO medications:\n- Document "No Active Medications"\n- Check the Medications Reconciled checkbox\n\nIf taking medications:\n- Document all medications in the Medication Module\n- Check the Medications Reconciled checkbox',
+    'The Medications Reconciled checkbox must be checked in BOTH scenarios — with or without medications.|This measure applies to every eligible encounter — build it into your intake routine.',
+    'Leaving the Medications Reconciled checkbox unchecked.|Documenting medications without checking reconciliation.|Skipping this step entirely on follow-up visits.'
+  )`).run();
+} catch(e) {}
+
 module.exports = db;

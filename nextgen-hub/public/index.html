@@ -742,6 +742,25 @@ const WORKFLOWS = [
       { type:'end', text:'Radiology/diagnostic order placed ✅' },
     ]
   },
+  {
+    id: 'mips-130',
+    title: 'MIPS QID 130 — Medication Documentation',
+    icon: '💊',
+    role: 'MA / Provider',
+    color: '#b45309',
+    light: '#fef3c7',
+    steps: [
+      { type:'start', text:'Patient encounter begins' },
+      { type:'step', text:'Go to the Appointment Tab within the Inbox', detail:'Select the patient from the Appointment Tab.' },
+      { type:'step', text:'Complete 4-Point Check', detail:'Verify: Location · Provider · Patient · Encounter Date/Time.' },
+      { type:'step', text:'Open the Intake Template or the Medication Module' },
+      { type:'step', text:'Determine whether the patient is taking any medications', detail:'Ask the patient or review available information.' },
+      { type:'decision', text:'Is the patient taking any medications?',
+        yes:'Document all medications in the Medication Module → Check the Medications Reconciled checkbox',
+        no:'Document "No Active Medications" → Check the Medications Reconciled checkbox' },
+      { type:'end', text:'MIPS QID 130 documented ✅' },
+    ]
+  },
 ];
 
 function FlowNode({ node, color, light }) {
