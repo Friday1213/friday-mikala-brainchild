@@ -1002,7 +1002,6 @@ function App() {
         <div className="nav-right">
           <button className={`btn btn-ghost btn-sm`} onClick={()=>{setView('dashboard');setSelectedProvider(null);}}>Dashboard</button>
           <button className={`btn btn-ghost btn-sm`} onClick={()=>{setView('progress');setSelectedProvider(null);}}>Progress</button>
-          <button className={`btn btn-ghost btn-sm`} onClick={()=>{setView('services');setSelectedProvider(null);}}>Services</button>
           <button className="btn btn-ghost btn-sm" onClick={()=>setShowTeam(true)}>Team</button>
           {me.user && <span className="user">{me.user.name}</span>}
           <a href="/auth/logout"><button className="btn btn-ghost btn-sm">Sign out</button></a>
@@ -1070,7 +1069,7 @@ function App() {
         )}
 
         {view === 'progress' && <ProgressPage providers={providers} />}
-        {view === 'services' && <ServicesPage />}
+
 
         {view === 'detail' && selectedProvider && (
           <ProviderDetail provider={selectedProvider} onBack={()=>{setView('dashboard');api('/api/providers').then(setProviders);}} onEdit={openEdit} />
