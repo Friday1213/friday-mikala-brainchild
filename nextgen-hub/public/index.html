@@ -367,6 +367,184 @@ function VeinProcedureTemplate() {
   );
 }
 
+function VarithenaTemplate() {
+  const EMPTY = {side:'Right',vein:'',access:'',pregnant:'Not Pregnant',sonographer:'',hpi:'',foam_volume:'',foam_conc:'1%',injection_sites:'',total_volume:'',prescan_notes:'',proc_notes:'',findings:'',post_instructions:'',dressing:'',followup_weeks:'',followup_prn:false,followup_sooner:false,aborted:false,consent:false,risks:false,questions:false,prepped:false,pt_id:false,site_confirmed:false,standing_post:false,compression:false};
+  const [form, setForm] = useState(EMPTY);
+  const [submitted, setSubmitted] = useState(false);
+  const set = (k,v) => setForm(f=>({...f,[k]:v}));
+
+  const veins = ['Great Saphenous Vein (GSV)','Accessory GSV','Small Saphenous Vein (SSV)','GSV + Tributaries'];
+  const accesses = ['Proximal Thigh','Mid-Thigh','Distal Thigh','Below Knee','Mid-Calf'];
+  const concentrations = ['0.5%','1%','2%'];
+
+  const SectionHeader = ({children}) => <div style={{fontSize:12,fontWeight:900,color:'white',background:'#7c3aed',padding:'8px 14px',borderRadius:8,marginBottom:12,marginTop:20,letterSpacing:'0.03em'}}>{children}</div>;
+  const Field = ({label,req,hint,children}) => (
+    <div style={{marginBottom:14}}>
+      <div style={{fontSize:11,fontWeight:900,color:'#6d28d9',textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:4}}>
+        {label}{req&&<span style={{color:'#ef4444',marginLeft:3}}>*</span>}
+        {hint&&<span style={{fontWeight:400,color:'#94a3b8',textTransform:'none',marginLeft:6,fontSize:10}}>{hint}</span>}
+      </div>
+      {children}
+    </div>
+  );
+  const Radio = ({name,value,label,checked,onChange}) => (
+    <label style={{display:'flex',alignItems:'center',gap:8,padding:'7px 11px',borderRadius:8,cursor:'pointer',background:checked?'#ede9fe':'#f8fafc',border:`2px solid ${checked?'#7c3aed':'#e2e8f0'}`,fontWeight:checked?800:600,fontSize:13,marginBottom:5,transition:'all 0.15s'}}>
+      <input type="radio" name={name} value={value} checked={checked} onChange={onChange} style={{accentColor:'#7c3aed'}} />{label}
+    </label>
+  );
+  const Check = ({label,checked,onChange,warn}) => (
+    <label style={{display:'flex',alignItems:'center',gap:8,padding:'7px 11px',borderRadius:8,cursor:'pointer',background:checked?(warn?'#fef3c7':'#ede9fe'):'#f8fafc',border:`2px solid ${checked?(warn?'#f59e0b':'#7c3aed'):'#e2e8f0'}`,fontWeight:checked?800:600,fontSize:13,marginBottom:5,transition:'all 0.15s'}}>
+      <input type="checkbox" checked={checked} onChange={onChange} style={{width:15,height:15,accentColor:warn?'#f59e0b':'#7c3aed'}} />{label}
+    </label>
+  );
+  const TextInput = ({k,placeholder,type='text'}) => <input type={type} style={{width:'100%',padding:'9px 12px',border:'2px solid #e2e8f0',borderRadius:8,fontFamily:'Nunito',fontSize:13,fontWeight:600}} value={form[k]||''} onChange={e=>set(k,e.target.value)} placeholder={placeholder} />;
+  const TextArea = ({k,placeholder,rows=3}) => <textarea style={{width:'100%',padding:'9px 12px',border:'2px solid #e2e8f0',borderRadius:8,fontFamily:'Nunito',fontSize:13,fontWeight:600,resize:'vertical'}} rows={rows} value={form[k]||''} onChange={e=>set(k,e.target.value)} placeholder={placeholder} />;
+
+  if (submitted) return (
+    <div style={{background:'white',borderRadius:16,padding:32,boxShadow:'0 2px 12px rgba(0,0,0,0.06)'}}>
+      <div style={{textAlign:'center',marginBottom:24}}><div style={{fontSize:40,marginBottom:8}}>✅</div><h3 style={{fontSize:18,fontWeight:900,color:'#6d28d9'}}>Varithena Note Complete</h3><div style={{color:'#64748b',fontSize:13,marginTop:4}}>{form.side} {form.vein} — CPT 36478</div></div>
+      <div style={{background:'#f5f3ff',borderRadius:12,padding:20,marginBottom:20}}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12,fontSize:13}}>
+          {[['CPT','36478 (Varithena)'],['Access',form.access],['Foam Volume',form.foam_volume?`${form.foam_volume} mL`:'—'],['Concentration',form.foam_conc],['Injection Sites',form.injection_sites||'—'],['Total Volume',form.total_volume?`${form.total_volume} mL`:'—'],['Sonographer/MA',form.sonographer||'—'],['Compression',form.compression?'✅ Applied':'—'],['Standing Post',form.standing_post?'✅ Yes':'—']].map(([k,v])=>(
+            <div key={k}><div style={{fontSize:10,fontWeight:900,color:'#94a3b8',textTransform:'uppercase'}}>{k}</div><div style={{fontWeight:700,color:'#1e293b',marginTop:2}}>{v}</div></div>
+          ))}
+        </div>
+      </div>
+      <button className="btn btn-primary" style={{background:'#7c3aed'}} onClick={()=>{setForm(EMPTY);setSubmitted(false);}}>Start New Note</button>
+    </div>
+  );
+
+  return (
+    <div style={{background:'white',borderRadius:16,padding:28,boxShadow:'0 2px 12px rgba(0,0,0,0.06)'}}>
+      <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:4}}>
+        <h3 style={{fontSize:18,fontWeight:900,color:'#6d28d9'}}>💜 Varithena Procedure Note — Field Reference</h3>
+        <span style={{background:'#ede9fe',color:'#6d28d9',fontWeight:800,fontSize:12,padding:'3px 10px',borderRadius:20}}>CPT 36478</span>
+      </div>
+      <p style={{fontSize:13,color:'#64748b',marginBottom:16}}>Varithena (polidocanol injectable foam) — chemical ablation. Different from thermal ablation: no catheter, no tumescent, foam volume is the key measurement.</p>
+
+      <SectionHeader>☑️ Pre-Procedure Care Checklist</SectionHeader>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:6}}>
+        <Check label="Consent was obtained" checked={form.consent} onChange={e=>set('consent',e.target.checked)} />
+        <Check label="Procedure/risks were explained" checked={form.risks} onChange={e=>set('risks',e.target.checked)} />
+        <Check label="Questions were answered" checked={form.questions} onChange={e=>set('questions',e.target.checked)} />
+        <Check label="Prepped and draped" checked={form.prepped} onChange={e=>set('prepped',e.target.checked)} />
+        <Check label="Correct patient identified" checked={form.pt_id} onChange={e=>set('pt_id',e.target.checked)} />
+        <Check label="Correct site and side confirmed" checked={form.site_confirmed} onChange={e=>set('site_confirmed',e.target.checked)} />
+      </div>
+
+      <SectionHeader>💜 Procedure Details</SectionHeader>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <div>
+          <Field label="Side" req><div style={{display:'flex',gap:8}}>
+            {['Right','Left'].map(s=><button key={s} onClick={()=>set('side',s)} style={{flex:1,padding:'9px',borderRadius:8,border:`2px solid ${form.side===s?'#7c3aed':'#e2e8f0'}`,background:form.side===s?'#ede9fe':'white',fontWeight:800,fontSize:14,cursor:'pointer',color:form.side===s?'#6d28d9':'#374151'}}>{s}</button>)}
+          </div></Field>
+          <Field label="Vein Treated" req>
+            {veins.map(v=><Radio key={v} name="vein" value={v} label={`${form.side} ${v}`} checked={form.vein===v} onChange={()=>set('vein',v)} />)}
+          </Field>
+          <Field label="Access Site" req>
+            {accesses.map(a=><Radio key={a} name="access" value={a} label={a} checked={form.access===a} onChange={()=>set('access',a)} />)}
+          </Field>
+        </div>
+        <div>
+          <Field label="Pregnancy Status" req>
+            <Radio name="preg" value="Not Pregnant" label="Not Pregnant" checked={form.pregnant==='Not Pregnant'} onChange={()=>set('pregnant','Not Pregnant')} />
+          </Field>
+          <Field label="Sonographer / MA">
+            <TextInput k="sonographer" placeholder="Name of assisting MA or sonographer" />
+          </Field>
+          <div style={{background:'#fef3c7',border:'1px solid #fcd34d',borderRadius:10,padding:12,marginTop:8}}>
+            <div style={{fontSize:11,fontWeight:900,color:'#92400e',marginBottom:4}}>⚠️ Varithena-Specific Reminders</div>
+            <div style={{fontSize:12,color:'#78350f',lineHeight:1.6}}>
+              • Max foam volume: <strong>15 mL per session</strong><br/>
+              • Vessel must be ≥3mm diameter<br/>
+              • Patient must stand/walk immediately after<br/>
+              • Compression stocking required post-procedure<br/>
+              • Not covered by all insurers — verify before procedure
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <SectionHeader>📝 HPI / Primary Complaint</SectionHeader>
+      <Field label="History of Present Illness" req>
+        <TextArea k="hpi" rows={4} placeholder="Document patient complaint, symptom duration, severity, prior conservative treatment history..." />
+      </Field>
+
+      <SectionHeader>💉 Foam Details</SectionHeader>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12}}>
+        <Field label="Foam Volume (mL)" req hint="Max 15 mL/session">
+          <TextInput k="foam_volume" placeholder="e.g. 10" type="number" />
+        </Field>
+        <Field label="Concentration" req>
+          <select style={{width:'100%',padding:'9px 12px',border:'2px solid #e2e8f0',borderRadius:8,fontFamily:'Nunito',fontSize:13,fontWeight:600}} value={form.foam_conc} onChange={e=>set('foam_conc',e.target.value)}>
+            {concentrations.map(c=><option key={c}>{c}</option>)}
+          </select>
+        </Field>
+        <Field label="Total Volume Used (mL)">
+          <TextInput k="total_volume" placeholder="Total mL" type="number" />
+        </Field>
+        <Field label="Number of Injection Sites">
+          <TextInput k="injection_sites" placeholder="e.g. 3" type="number" />
+        </Field>
+      </div>
+
+      <SectionHeader>📋 Documentation</SectionHeader>
+      <Field label="Pre-Procedure Scan Notes" req>
+        <TextArea k="prescan_notes" rows={3} placeholder="Pre-procedure duplex ultrasound findings — vessel diameter, reflux duration, access site anatomy..." />
+      </Field>
+      <Field label="Procedure Notes">
+        <TextArea k="proc_notes" rows={3} placeholder="Foam injection technique, ultrasound guidance used, patient tolerance..." />
+      </Field>
+      <Field label="Findings">
+        <TextArea k="findings" rows={3} placeholder="Vessel response to foam, spasm noted, any complications..." />
+      </Field>
+
+      <SectionHeader>🏥 Post Procedure</SectionHeader>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <Field label="Post-Procedure Instructions">
+          <TextArea k="post_instructions" rows={3} placeholder="Walking instructions, activity restrictions, when to call..." />
+        </Field>
+        <Field label="Dressing / Wound Care">
+          <TextArea k="dressing" rows={3} placeholder="Compression stocking instructions, bandaging..." />
+        </Field>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:12}}>
+        <Check label="✅ Patient ambulated post-procedure" checked={form.standing_post} onChange={e=>set('standing_post',e.target.checked)} />
+        <Check label="✅ Compression stocking applied" checked={form.compression} onChange={e=>set('compression',e.target.checked)} />
+      </div>
+      <Field label="Follow-Up">
+        <div style={{display:'flex',gap:8,flexWrap:'wrap',alignItems:'center',marginBottom:8}}>
+          <span style={{fontSize:13,fontWeight:700,color:'#374151'}}>Return in</span>
+          <input type="number" style={{width:70,padding:'7px 10px',border:'2px solid #e2e8f0',borderRadius:8,fontFamily:'Nunito',fontSize:13,fontWeight:600}} value={form.followup_weeks} onChange={e=>set('followup_weeks',e.target.value)} placeholder="wks" />
+          <span style={{fontSize:13,fontWeight:700,color:'#374151'}}>weeks</span>
+        </div>
+        <Check label="Sooner if symptoms persist/worsen" checked={form.followup_sooner} onChange={e=>set('followup_sooner',e.target.checked)} />
+        <Check label="PRN (as needed)" checked={form.followup_prn} onChange={e=>set('followup_prn',e.target.checked)} />
+      </Field>
+      <Check label="⚠️ Aborted Procedure" checked={form.aborted} onChange={e=>set('aborted',e.target.checked)} warn />
+
+      <div style={{marginTop:20,display:'flex',gap:10}}>
+        <button className="btn btn-primary" style={{background:'#7c3aed'}} onClick={()=>{const req=form.vein&&form.access&&form.foam_volume&&form.prescan_notes&&form.pregnant;if(req)setSubmitted(true);else alert('Please complete all required fields (*)');}}>✅ Mark Complete</button>
+        <button className="btn btn-outline" onClick={()=>setForm(EMPTY)}>🔄 Reset</button>
+      </div>
+    </div>
+  );
+}
+
+function TemplatesView() {
+  const [active, setActive] = useState('ablation');
+  return (
+    <div>
+      <div style={{display:'flex',gap:8,marginBottom:20}}>
+        {[['ablation','🩺 Thermal Ablation (RF / Laser / VenaSeal)'],['varithena','💜 Varithena (Chemical Ablation)']].map(([k,label])=>(
+          <button key={k} onClick={()=>setActive(k)} style={{padding:'10px 20px',borderRadius:10,border:'none',cursor:'pointer',fontSize:13,fontWeight:800,background:active===k?(k==='varithena'?'#7c3aed':'#047857'):'#e2e8f0',color:active===k?'white':'#475569',transition:'all 0.15s'}}>{label}</button>
+        ))}
+      </div>
+      {active==='ablation' ? <VeinProcedureTemplate /> : <VarithenaTemplate />}
+    </div>
+  );
+}
+
 function App() {
   const [articles, setArticles] = useState([]);
   const [stats, setStats] = useState({});
@@ -445,7 +623,7 @@ function App() {
         </div>
 
         {/* Templates tab */}
-        {activeTab==='🩺 Templates' && <VeinProcedureTemplate />}
+        {activeTab==='🩺 Templates' && <TemplatesView />}
 
         {/* Articles */}
         {activeTab!=='🩺 Templates' && <>
