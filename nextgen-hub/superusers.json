@@ -1,0 +1,247 @@
+[
+  {
+    "name": "Gabriella Soares",
+    "email": "gabriella.soares@medwork.io",
+    "role": "Clinic Operations (All Areas)",
+    "region": "NY",
+    "notes": "Assisting w/ NG Build"
+  },
+  {
+    "name": "Kelly Walsh",
+    "email": "kelly@vipmedicalgroup.com",
+    "role": "MA/Pain/Vein Clinical & Front Desk SME",
+    "region": "NJ",
+    "notes": "NJ Regional Operational Director"
+  },
+  {
+    "name": "Alicia Penett",
+    "email": "alicia.penett@vipmedicalgroup.com",
+    "role": "Sonographer and MA Trainer",
+    "region": "All",
+    "notes": "Onboarding for Sonographers & Training Delivery (Hands-On); SME Only"
+  },
+  {
+    "name": "Pam Sheamon",
+    "email": "pamela.sheamon@vipmedicalgroup.com",
+    "role": "Clinical and Front Desk SME",
+    "region": "NY",
+    "notes": "Regional Ops Director - PA; New York Region"
+  },
+  {
+    "name": "Katherine Genao",
+    "email": "katherine@vipmedicalgroup.com",
+    "role": "Front Desk SME",
+    "region": "TX/CT/MD",
+    "notes": "Regional Ops Director - TX, Connecticut & Maryland"
+  },
+  {
+    "name": "Tracey Jaksch",
+    "email": "tracey.jaksch@vipmedicalgroup.com",
+    "role": "Clinical and Front Desk SME",
+    "region": "All",
+    "notes": "Regional Ops Director"
+  },
+  {
+    "name": "Ashleigh Hawkins",
+    "email": "ashleigh.hawkins@vipmedicalgroup.com",
+    "role": "Front Desk SME",
+    "region": "CA",
+    "notes": "Front Desk SME - CA"
+  },
+  {
+    "name": "Marjorie Vandermeulen",
+    "email": "marjorie@vipmedicalgroup.com",
+    "role": "Front Desk Trainer",
+    "region": "All",
+    "notes": "Lead and Trainer Front Desk; Training Delivery"
+  },
+  {
+    "name": "Shawna Finizio",
+    "email": "shawna@vipmedicalgroup.com",
+    "role": "Sonography/Clinical & Front Desk",
+    "region": "NY",
+    "notes": "Regional Clinical Lead - NY"
+  },
+  {
+    "name": "Trish Rivera",
+    "email": "trish@vipmedicalgroup.com",
+    "role": "Sonography/Clinical & Front Desk",
+    "region": "CA",
+    "notes": "Regional Clinical Lead - CA"
+  },
+  {
+    "name": "Julia Ward",
+    "email": "julia.ward@vipmedicalgroup.com",
+    "role": "Sonography/Clinical & Front Desk",
+    "region": "NJ",
+    "notes": "Regional Clinical Lead - NJ"
+  },
+  {
+    "name": "Shirley Pierre",
+    "email": "shirley@vipmedicalgroup.com",
+    "role": "Sonography/Clinical & Front Desk",
+    "region": "All",
+    "notes": "Regional Clinical Lead"
+  },
+  {
+    "name": "Melissa Frasche",
+    "email": "melissa@vipmedicalgroup.com",
+    "role": "Lead Sonographer",
+    "region": "All",
+    "notes": "Lead Sonographer"
+  },
+  {
+    "name": "Carly Sarch",
+    "email": "carly.sarch@vipmedicalgroup.com",
+    "role": "Provider Trainer / Onboarding",
+    "region": "NY",
+    "notes": "Provider Trainer / Onboarding - NY Based; SME Only"
+  },
+  {
+    "name": "Dr. Billy Schoenfeld",
+    "email": "dr.billy@vipmedicalgroup.com",
+    "role": "Provider SME - Vein",
+    "region": "CA",
+    "notes": "Provider SME - Vein - CA Based"
+  },
+  {
+    "name": "Dr. George Hanna",
+    "email": "dr.hanna@vipmedicalgroup.com",
+    "role": "Provider SME - Pain",
+    "region": "NY",
+    "notes": "Provider SME - Pain - NY Based"
+  },
+  {
+    "name": "Dr. Caroline Novak",
+    "email": "dr.caroline@vipmedicalgroup.com",
+    "role": "Provider SME / Chief Medical Officer",
+    "region": "All",
+    "notes": "CMO"
+  },
+  {
+    "name": "Carla Maqueda",
+    "email": "carla.maqueda@medwork.io",
+    "role": "Scheduling SME",
+    "region": "PR",
+    "notes": "Scheduling SME - Puerto Rico"
+  },
+  {
+    "name": "Kat Carcach",
+    "email": "kat@vipmedicalgroup.com",
+    "role": "Scheduling SME",
+    "region": "PR",
+    "notes": "Scheduling SME - Puerto Rico"
+  },
+  {
+    "name": "Veronica Borrero",
+    "email": "veronica.borrero@medwork.io",
+    "role": "Patient Access Manager",
+    "region": "PR",
+    "notes": "Patient Access Manager"
+  },
+  {
+    "name": "Joanne Mojica",
+    "email": "joanne.mojica@medwork.io",
+    "role": "Ins Verification/PA Super User",
+    "region": "PR",
+    "notes": "Manager of Eligibility and Authorizations - Puerto Rico"
+  },
+  {
+    "name": "Tiffany Robinson",
+    "email": "t.robinson@vipmedicalgroup.com",
+    "role": "RCM - VP",
+    "region": "All",
+    "notes": "RCM - VP - All RCM Areas"
+  },
+  {
+    "name": "Steven Suriel",
+    "email": "steven.suriel@medwork.io",
+    "role": "RCM - Manager",
+    "region": "All",
+    "notes": "RCM - Manager - All RCM Areas"
+  },
+  {
+    "name": "Vernessa Sargeant",
+    "email": "vernessa.sargeant@vipmedicalgroup.com",
+    "role": "RCM - Collections Supervisor",
+    "region": "All",
+    "notes": "RCM Collections Supervisor"
+  },
+  {
+    "name": "Caroline Almonte",
+    "email": "caroline.almonte@medwork.io",
+    "role": "RCM - Patient Account Supervisor",
+    "region": "All",
+    "notes": ""
+  },
+  {
+    "name": "Susana Giraldo",
+    "email": "susana.giraldo@medwork.io",
+    "role": "Education Director - L&D",
+    "region": "All",
+    "notes": "Educational Director; Training Delivery"
+  },
+  {
+    "name": "Andrea Castellanos",
+    "email": "andrea.castellanos@medwork.io",
+    "role": "L&D Content Creator",
+    "region": "All",
+    "notes": "Training Delivery"
+  },
+  {
+    "name": "Cesar Salazar",
+    "email": "cesar.salazar@medwork.io",
+    "role": "L&D Content Creator",
+    "region": "All",
+    "notes": "Training Delivery"
+  },
+  {
+    "name": "Andrew Caldwell",
+    "email": "andrew.caldwell@vipmedicalgroup.com",
+    "role": "All Areas - EHR & PM",
+    "region": "All",
+    "notes": "Director of Clinical Systems"
+  },
+  {
+    "name": "Gabriel Fontanez",
+    "email": "gabriel.fontanez@medwork.io",
+    "role": "EHR Analyst",
+    "region": "All",
+    "notes": ""
+  },
+  {
+    "name": "Raul Echeverri",
+    "email": "raul.echeverri@medwork.io",
+    "role": "EHR Analyst",
+    "region": "All",
+    "notes": ""
+  },
+  {
+    "name": "Emily Acosta",
+    "email": "emily.acosta@medwork.io",
+    "role": "EHR Analyst",
+    "region": "All",
+    "notes": ""
+  },
+  {
+    "name": "Kelsey Horan",
+    "email": "kelsey@vipmedicalgroup.com",
+    "role": "Chief Product and Innovation",
+    "region": "All",
+    "notes": ""
+  },
+  {
+    "name": "Cesar Nieves",
+    "email": "cesar@medwork.io",
+    "role": "IT - Admin Training",
+    "region": "All",
+    "notes": "IT Director"
+  },
+  {
+    "name": "Raymond Roldan",
+    "email": "raymond@medwork.io",
+    "role": "IT - Admin Training",
+    "region": "All",
+    "notes": "IT Engineer"
+  }
+]

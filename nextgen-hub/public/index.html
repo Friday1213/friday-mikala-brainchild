@@ -531,6 +531,57 @@ function VarithenaTemplate() {
   );
 }
 
+function SuperuserTracker() {
+  const [superusers, setSuperusers] = useState([]);
+  const [q, setQ] = useState('');
+  const [regionFilter, setRegionFilter] = useState('');
+
+  useEffect(() => {
+    fetch('/superusers.json').then(r=>r.json()).then(setSuperusers);
+  }, []);
+
+  const regions = [...new Set(superusers.map(s=>s.region))].sort();
+  const filtered = superusers.filter(s => {
+    const match = q ? (s.name+s.role+s.notes+s.email).toLowerCase().includes(q.toLowerCase()) : true;
+    const reg = regionFilter ? s.region===regionFilter : true;
+    return match && reg;
+  });
+
+  return (
+    <div>
+      <div style={{background:'white',borderRadius:16,padding:24,boxShadow:'0 2px 12px rgba(0,0,0,0.06)',marginBottom:20}}>
+        <h3 style={{fontSize:18,fontWeight:900,color:'#065f46',marginBottom:4}}>⭐ NextGen Superuser Directory</h3>
+        <p style={{fontSize:13,color:'#64748b',marginBottom:16}}>All {superusers.length} designated superusers for the NextGen go-live. These are your first point of contact for training and support questions.</p>
+        <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
+          <input style={{flex:2,minWidth:200,padding:'10px 14px',border:'2px solid #e2e8f0',borderRadius:10,fontFamily:'Nunito',fontSize:14,fontWeight:600}} placeholder="Search by name, role, or region..." value={q} onChange={e=>setQ(e.target.value)} />
+          <select style={{padding:'10px 14px',border:'2px solid #e2e8f0',borderRadius:10,fontFamily:'Nunito',fontSize:13,fontWeight:700,background:'white'}} value={regionFilter} onChange={e=>setRegionFilter(e.target.value)}>
+            <option value="">All Regions</option>
+            {regions.map(r=><option key={r}>{r}</option>)}
+          </select>
+          {(q||regionFilter)&&<button style={{padding:'10px 16px',borderRadius:10,border:'2px solid #e2e8f0',background:'white',fontFamily:'Nunito',fontWeight:700,cursor:'pointer'}} onClick={()=>{setQ('');setRegionFilter('');}}>Clear</button>}
+        </div>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(320px,1fr))',gap:12}}>
+        {filtered.map((s,i)=>(
+          <div key={i} style={{background:'white',borderRadius:14,padding:18,boxShadow:'0 1px 8px rgba(0,0,0,0.06)',border:'1px solid #f1f5f9'}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:8}}>
+              <div>
+                <div style={{fontSize:15,fontWeight:900,color:'#1e293b'}}>{s.name}</div>
+                <div style={{fontSize:12,color:'#047857',fontWeight:700,marginTop:2}}>{s.role}</div>
+              </div>
+              <span style={{background:'#d1fae5',color:'#065f46',fontWeight:800,fontSize:11,padding:'3px 10px',borderRadius:20,flexShrink:0}}>{s.region}</span>
+            </div>
+            <a href={`mailto:${s.email}`} style={{fontSize:12,color:'#3b82f6',fontWeight:600,textDecoration:'none'}}>{s.email}</a>
+            {s.notes && <div style={{fontSize:12,color:'#64748b',marginTop:6,lineHeight:1.5}}>{s.notes}</div>}
+          </div>
+        ))}
+      </div>
+      {filtered.length===0&&<div style={{textAlign:'center',padding:40,color:'#94a3b8'}}>No superusers match your search</div>}
+    </div>
+  );
+}
+
 function TemplatesView() {
   const [active, setActive] = useState('ablation');
   return (
@@ -555,7 +606,7 @@ function App() {
   const [showAdd, setShowAdd] = useState(false);
   const [activeTab, setActiveTab] = useState('All');
 
-  const TABS = ['All', ...CATEGORIES, '🩺 Templates'];
+  const TABS = ['All', ...CATEGORIES, '🩺 Templates', '⭐ Superusers'];
 
   const load = async () => {
     const params = new URLSearchParams();
@@ -625,8 +676,11 @@ function App() {
         {/* Templates tab */}
         {activeTab==='🩺 Templates' && <TemplatesView />}
 
+        {/* Superusers tab */}
+        {activeTab==='⭐ Superusers' && <SuperuserTracker />}
+
         {/* Articles */}
-        {activeTab!=='🩺 Templates' && <>
+        {activeTab!=='🩺 Templates' && activeTab!=='⭐ Superusers' && <>
         <div className="results-header">
           <div className="results-count">📄 {articles.length} article{articles.length!==1?'s':''}{q||catFilter||roleFilter||activeTab!=='All'?' matching filters':''}</div>
         </div>
