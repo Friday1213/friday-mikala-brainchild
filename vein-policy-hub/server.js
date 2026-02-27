@@ -59,6 +59,31 @@ app.delete('/api/payers/:id', (req, res) => {
   res.json({ ok: true });
 });
 
+// ── Auto-seed from spreadsheet JSON ──────────────────────────────────────────
+try {
+  const seedPath = path.join(__dirname, 'seed_from_spreadsheet.json');
+  if (require('fs').existsSync(seedPath)) {
+    const seeds = JSON.parse(require('fs').readFileSync(seedPath, 'utf8'));
+    const ins = db.prepare(`INSERT OR IGNORE INTO payers
+      (name,state,plan_type,conservative_weeks,conservative_notes,reflux_duration_sec,vessel_diameter_mm,
+       ultrasound_notes,ceap_required,documentation,cpt_codes,icd10_codes,preauth_required,preauth_notes,
+       gotchas,source_url,last_verified,notes)
+      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`);
+    let seeded = 0;
+    seeds.forEach(p => {
+      try {
+        ins.run(p.name,p.state,p.plan_type,p.conservative_weeks||null,p.conservative_notes||null,
+          p.reflux_duration_sec||null,p.vessel_diameter_mm||null,p.ultrasound_notes||null,
+          p.ceap_required||null,p.documentation||null,p.cpt_codes||null,p.icd10_codes||null,
+          p.preauth_required||0,p.preauth_notes||null,p.gotchas||null,p.source_url||null,
+          p.last_verified||null,p.notes||null);
+        seeded++;
+      } catch(e) {}
+    });
+    if (seeded > 0) console.log(`Seeded ${seeded} policies from spreadsheet`);
+  }
+} catch(e) { console.error('Seed error:', e.message); }
+
 // ── AI Parse endpoint ─────────────────────────────────────────────────────────
 app.post('/api/parse-policy', (req, res) => {
   // Returns structured extraction prompt for client-side display
