@@ -334,7 +334,12 @@ function SystemsTab() {
       tagline:'EMR — Electronic Medical Record',
       uses:['Clinical documentation','Patient charts','Generates visit and procedure bills','Prior auth LOMN generation','Schedule management'],
       tips:['Change your location to the clinic of the day on every login','Sign notes within 24 hours — not same day','CA providers: use Gen 1 tab for H&P and Procedure Plan'],
-      notFor:[]
+      notFor:[],
+      videos:[
+        {label:'Nextech Basics — Video 1', id:'1127938695', h:'6abb820c40'},
+        {label:'Nextech Basics — Video 2', id:'1127938863', h:'711a46d873'},
+        {label:'Nextech Basics — Video 3', id:'1127935462', h:'c3ac9fe787'},
+      ]
     },
     { icon:'📊', name:'Medwork', color:'#c2410c', bg:'#fff7ed',
       tagline:'CRM — Customer Relationship Management',
@@ -376,6 +381,22 @@ function SystemsTab() {
             {t.uses.map((u,i)=><div key={i} style={{fontSize:13,color:'#374151',padding:'4px 0',borderBottom:'1px solid #f1f5f9',display:'flex',gap:6}}><span style={{color:t.color}}>→</span>{u}</div>)}
             {t.tips.length>0&&<><div className="section-label" style={{marginTop:10}}>💡 Tips</div>{t.tips.map((u,i)=><div key={i} style={{fontSize:12,color:'#64748b',marginBottom:4}}>• {u}</div>)}</>}
             {t.notFor.length>0&&<><div className="section-label" style={{marginTop:10,color:'#ef4444'}}>Not for</div>{t.notFor.map((u,i)=><div key={i} style={{fontSize:12,color:'#ef4444',marginBottom:4}}>✗ {u}</div>)}</>}
+            {t.videos&&<>
+              <div className="section-label" style={{marginTop:14}}>🎬 Training Videos</div>
+              {t.videos.map(v=>(
+                <div key={v.id} style={{marginBottom:14}}>
+                  <div style={{fontSize:12,fontWeight:800,color:'#1e293b',marginBottom:6}}>{v.label}</div>
+                  <div style={{position:'relative',paddingBottom:'56.25%',height:0,borderRadius:10,overflow:'hidden',background:'#000'}}>
+                    <iframe
+                      src={`https://player.vimeo.com/video/${v.id}?h=${v.h}&title=0&byline=0&portrait=0`}
+                      style={{position:'absolute',top:0,left:0,width:'100%',height:'100%',border:'none'}}
+                      allow="autoplay; fullscreen; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                </div>
+              ))}
+            </>}
           </div>
         ))}
       </div>
