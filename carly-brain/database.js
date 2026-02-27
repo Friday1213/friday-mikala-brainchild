@@ -15,6 +15,8 @@ db.exec(`
     status TEXT DEFAULT 'Todo',
     priority TEXT DEFAULT 'Normal',
     notes TEXT,
+    due_date TEXT,
+    provider_name TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
@@ -27,16 +29,21 @@ db.exec(`
   );
 `);
 
+// Add new columns if they don't exist (safe migration)
+try { db.exec('ALTER TABLE items ADD COLUMN due_date TEXT'); } catch(e) {}
+try { db.exec('ALTER TABLE items ADD COLUMN provider_name TEXT'); } catch(e) {}
+
 // Seed default categories
 const existing = db.prepare('SELECT COUNT(*) as count FROM categories').get();
 if (existing.count === 0) {
   const insert = db.prepare('INSERT OR IGNORE INTO categories (name, color, sort_order) VALUES (?,?,?)');
   [
-    ['Inbox', '#6b7280', 0],
-    ['Provider Onboarding', '#7c3aed', 1],
-    ['EHR Migration', '#2563eb', 2],
-    ['Team / HR', '#059669', 3],
-    ['Admin', '#d97706', 4],
+    ['Inbox',      '#94a3b8', 0],
+    ['To Do',      '#a78bfa', 1],
+    ['Onboarding', '#818cf8', 2],
+    ['NextGen',    '#60a5fa', 3],
+    ['Audits',     '#f472b6', 4],
+    ['Side Projects', '#34d399', 5],
   ].forEach(([n,c,s]) => insert.run(n, c, s));
 }
 
