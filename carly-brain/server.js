@@ -14,7 +14,7 @@ app.get('/api/items', (req, res) => {
   const params = [];
   if (category) { q += ' AND category=?'; params.push(category); }
   if (status)   { q += ' AND status=?';   params.push(status); }
-  q += ' ORDER BY CASE priority WHEN "High" THEN 0 WHEN "Normal" THEN 1 WHEN "Low" THEN 2 END, updated_at DESC';
+  q += " ORDER BY CASE priority WHEN 'High' THEN 0 WHEN 'Normal' THEN 1 WHEN 'Low' THEN 2 END, updated_at DESC";
   res.json(db.prepare(q).all(...params));
 });
 
