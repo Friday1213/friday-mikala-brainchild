@@ -91,6 +91,18 @@ app.post('/api/parse-policy', (req, res) => {
   res.json({ message: 'AI parsing coming soon' });
 });
 
+// ── Doppler Cheat Sheet ───────────────────────────────────────────────────────
+app.get('/api/cheatsheet', (req, res) => {
+  try {
+    const p = path.join(__dirname, 'doppler_cheat_sheet.json');
+    if (require('fs').existsSync(p)) {
+      res.json(JSON.parse(require('fs').readFileSync(p, 'utf8')));
+    } else {
+      res.json({});
+    }
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
 // ── Stats ─────────────────────────────────────────────────────────────────────
 app.get('/api/stats', (req, res) => {
   const total = db.prepare('SELECT COUNT(*) as c FROM payers').get().c;

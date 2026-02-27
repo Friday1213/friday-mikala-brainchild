@@ -1,0 +1,51 @@
+# Doppler Ultrasound Cheat Sheet by State/Payer
+*(Last updated January 2026)*
+
+
+## California
+
+**Payers:** MEDICARE -
+ TRICARE - 
+MEDI-CAL | CIGNA | BCBS ANTHEM | BS OF CA | HUMANA | BCBS HIGHMARK (PA) | MOLINA (Medi-Cal) | HEALTHNET | FIDELIS CARE | BCBS FEDERAL EMPLOYEE PLAN | AETNA | GEHA | UHC -   
+UHC OXFORD | BCBS HIGHMARK | HEALTHNET PPO
+
+
+## Connecticut
+
+**Payers:** MEDICARE | CIGNA | BCBS | AETNA | AETNA | UHC -
+(including the empire plan)
+
+
+## Maryland/DC/Virginia
+
+**Payers:** MEDICARE | CIGNA | ALL BCBS | BCBS HIGHMARK (PA) | AETNA | GEHA | JOHNS HOPKINS | UHC -
+UHC OXFORD | INDEPENDENCE BLUE CROSS - (PV) POLICY
+
+
+## New Jersey
+
+**Payers:** MEDICARE | CIGNA | HORIZON BCBS -          ALL BCBS | BCBS HIGHMARK (PA) | EMBLEM | 1199.0 | AETNA | HUMANA | AETNA | GEHA | MAGNACARE/OSCAR | GHI | UHC -
+UHC COMMUNITY PLAN NJ - 
+OXFORD
+(including the empire plan)
+
+
+## New York
+
+**Payers:** CIGNA | BCBS ILLINOIS -BCBS OKLAHOMA | BCBS Empire | BCBS HIGHMARK (PA) | GHI/EMBLEM HEALTH | 1199.0 | MEDICARE - HEALTH FIRST - FIDELIS - HEALTHNET | HUMANA | AETNA | GEHA | MAGNACARE/OSCAR | BCBS HIGHMARK | UHC -
+UHC COMMUNITY PLAN -
+OXFORD - UHC COMMUNITY PLAN - NJ - The Empire Plan | METROPLUS | BCBS Anthem
+
+
+## Texas
+
+**Payers:** MEDICARE | CIGNA | BCBS | AETNA | AETNA | UHC -
+(including the empire plan)
+
+
+## Other Plans
+
+**Payers:** Version 1 updated 05/11/2022 | INDEPENDENCE BLUE CROSS - (PV) POLICY | BCBS HIGHMARK (PA) | BCBS MASSACHUSETTS | BCBS PREMERA (WA, AK) | BCBS ILLINOIS | BCBS OKLAHOMA | CHAMPVA | HUMANA | HEALTH NEW ENGLAND
+
+
+*Source: VIP Medical Group Doppler Insurance Cheat Sheet*

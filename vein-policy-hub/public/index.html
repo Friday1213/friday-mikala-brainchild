@@ -299,6 +299,78 @@ function PayerModal({ payer, onSave, onClose }) {
   );
 }
 
+function CheatSheet() {
+  const [data, setData] = useState({});
+  const [activeState, setActiveState] = useState('NY');
+
+  useEffect(() => {
+    api('/api/cheatsheet').then(d => { setData(d); });
+  }, []);
+
+  const stateKeys = Object.keys(data);
+  const stateLabels = { CA:'California', CT:'Connecticut', MDDCVA:'MD/DC/VA', NJ:'New Jersey', NY:'New York', TX:'Texas', RAREOTHER:'Other Plans' };
+
+  const sheet = data[activeState];
+  if (!sheet) return <div style={{padding:40,textAlign:'center',color:'#94a3b8'}}>Loading cheat sheet...</div>;
+
+  const procs = sheet.data || [];
+  const payers = sheet.payers || [];
+
+  const PH = {fontFamily:'inherit',fontSize:11,padding:'4px 6px',background:'white',border:'1px solid #e2e8f0',borderRadius:6,color:'#1e3a8a',fontWeight:700,whiteSpace:'nowrap'};
+  const cellStyle = (val) => ({
+    fontSize:11, padding:'5px 8px', textAlign:'center', borderBottom:'1px solid #f1f5f9',
+    color: val==='—'?'#cbd5e1':val&&val.includes('NOT COVERED')?'#ef4444':'#1e3a8a',
+    fontWeight: val==='—'?400:600, background: val==='—'?'#fafafa':'white',
+    minWidth:80, maxWidth:140
+  });
+
+  return (
+    <div>
+      <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:20}}>
+        {stateKeys.map(k => (
+          <button key={k} onClick={()=>setActiveState(k)} style={{
+            padding:'7px 14px', borderRadius:20, border:'none', cursor:'pointer', fontSize:13, fontWeight:700,
+            background: activeState===k ? '#1e3a8a' : '#e2e8f0',
+            color: activeState===k ? 'white' : '#475569'
+          }}>{stateLabels[k]||k}</button>
+        ))}
+      </div>
+
+      <div style={{background:'white',borderRadius:16,padding:20,boxShadow:'0 2px 12px rgba(0,0,0,0.06)',marginBottom:16}}>
+        <h3 style={{fontSize:16,fontWeight:900,color:'#1e3a8a',marginBottom:4}}>📐 Doppler Ultrasound Quick Reference — {stateLabels[activeState]||activeState}</h3>
+        <p style={{fontSize:12,color:'#64748b',marginBottom:16}}>All reflux thresholds ≥ 500ms unless noted. Measurements taken at junction + proximal segment. Last updated Jan 2026.</p>
+
+        <div style={{overflowX:'auto'}}>
+          <table style={{borderCollapse:'collapse',width:'100%',fontSize:12}}>
+            <thead>
+              <tr style={{background:'#f8fafc'}}>
+                <th style={{...PH,textAlign:'left',position:'sticky',left:0,background:'#f8fafc',minWidth:160,zIndex:2}}>Procedure</th>
+                {payers.map((p,i) => <th key={i} style={{...PH,background:'#f8fafc',textAlign:'center'}}>{p}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {procs.map((row, ri) => (
+                <tr key={ri} style={{background: ri%2===0?'white':'#fafafa'}}>
+                  <td style={{fontSize:12,padding:'6px 10px',fontWeight:800,color:'#374151',position:'sticky',left:0,background:ri%2===0?'white':'#fafafa',borderBottom:'1px solid #f1f5f9',zIndex:1}}>
+                    {row.proc}
+                    <div style={{fontSize:10,color:'#94a3b8',fontWeight:400}}>{row.metric==='size_mm'?'Size ≥ (mm)':'Reflux ≥ (ms)'}</div>
+                  </td>
+                  {payers.map((p,ci) => {
+                    const match = (row.values||[]).find(v=>v.payer===p);
+                    const val = match ? match.value : '—';
+                    return <td key={ci} style={cellStyle(val)} title={val==='—'?'Not specified':val}>{val.length>20?val.slice(0,18)+'…':val}</td>;
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div style={{fontSize:11,color:'#94a3b8',marginTop:12}}>— = not specified in policy &nbsp;|&nbsp; Source: VIP Medical Group Doppler Insurance Cheat Sheet</div>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const [payers, setPayers] = useState([]);
   const [stats, setStats] = useState({});
@@ -309,6 +381,7 @@ function App() {
   const [showAdd, setShowAdd] = useState(false);
   const [aiText, setAiText] = useState('');
   const [showAI, setShowAI] = useState(false);
+  const [activeTab, setActiveTab] = useState('policies');
   const searchRef = useRef();
 
   const load = async () => {
@@ -343,10 +416,17 @@ function App() {
           <h1>🫀 Vein <span>Policy Hub</span></h1>
           <div className="navbar-sub">Insurance requirements for vein disease treatment</div>
         </div>
-        <button className="btn btn-primary btn-sm" onClick={()=>{setModal(null);setShowAdd(true);}}>+ Add Policy</button>
+        <div style={{display:'flex',gap:8,alignItems:'center'}}>
+          <button onClick={()=>setActiveTab('policies')} style={{padding:'6px 14px',borderRadius:20,border:'none',cursor:'pointer',fontSize:13,fontWeight:700,background:activeTab==='policies'?'white':'rgba(255,255,255,0.15)',color:activeTab==='policies'?'#1e3a8a':'white'}}>📋 Policies</button>
+          <button onClick={()=>setActiveTab('cheatsheet')} style={{padding:'6px 14px',borderRadius:20,border:'none',cursor:'pointer',fontSize:13,fontWeight:700,background:activeTab==='cheatsheet'?'white':'rgba(255,255,255,0.15)',color:activeTab==='cheatsheet'?'#1e3a8a':'white'}}>📐 Cheat Sheet</button>
+          {activeTab==='policies' && <button className="btn btn-primary btn-sm" onClick={()=>{setModal(null);setShowAdd(true);}}>+ Add Policy</button>}
+        </div>
       </nav>
 
       <div className="container">
+
+        {activeTab==='cheatsheet' && <CheatSheet />}
+        {activeTab==='policies' && <div>
 
         {/* Stats */}
         <div className="stats-row">
@@ -407,6 +487,8 @@ function App() {
           <PayerCard key={p.id} p={p} onEdit={p=>{setModal(p);setShowAdd(true);}} onDelete={deletePayer} defaultOpen={payers.length===1} />
         ))}
       </div>
+
+        </div>}
 
       {showAdd && <PayerModal payer={modal} onSave={savePayer} onClose={()=>{setShowAdd(false);setModal(null);}} />}
     </div>
