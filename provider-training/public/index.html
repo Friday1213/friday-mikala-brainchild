@@ -476,6 +476,33 @@ function ClinicalTab() {
       </T>
 
       <T id="veintalk" title="💬 The Vein Talk — Initial Evaluation Script">
+        {/* Slide viewer */}
+        {(() => {
+          const [slide, setSlide] = React.useState(1);
+          const total = 16;
+          const pad = n => String(n).padStart(2,'0');
+          return (
+            <div className="card" style={{margin:'0 0 18px',boxShadow:'none',border:'2px solid #e2e8f0'}}>
+              <div style={{fontWeight:900,fontSize:14,color:'#1e293b',marginBottom:12}}>🖼️ Vein Talk Slides ({slide}/{total})</div>
+              <div style={{position:'relative',background:'#000',borderRadius:10,overflow:'hidden',marginBottom:10}}>
+                <img src={`/slides/slide-${pad(slide)}.jpg`} alt={`Slide ${slide}`} style={{width:'100%',display:'block'}} />
+              </div>
+              <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:12}}>
+                <button onClick={()=>setSlide(s=>Math.max(1,s-1))} disabled={slide===1}
+                  style={{padding:'8px 20px',borderRadius:8,border:'none',background:slide===1?'#e2e8f0':'#1d4ed8',color:slide===1?'#94a3b8':'white',fontFamily:'Nunito',fontWeight:800,fontSize:13,cursor:slide===1?'default':'pointer'}}>← Prev</button>
+                <div style={{display:'flex',gap:4,flexWrap:'wrap',justifyContent:'center'}}>
+                  {Array.from({length:total},(_,i)=>(
+                    <button key={i+1} onClick={()=>setSlide(i+1)}
+                      style={{width:28,height:28,borderRadius:6,border:'none',background:slide===i+1?'#1d4ed8':'#e2e8f0',color:slide===i+1?'white':'#64748b',fontFamily:'Nunito',fontWeight:800,fontSize:11,cursor:'pointer'}}>{i+1}</button>
+                  ))}
+                </div>
+                <button onClick={()=>setSlide(s=>Math.min(total,s+1))} disabled={slide===total}
+                  style={{padding:'8px 20px',borderRadius:8,border:'none',background:slide===total?'#e2e8f0':'#1d4ed8',color:slide===total?'#94a3b8':'white',fontFamily:'Nunito',fontWeight:800,fontSize:13,cursor:slide===total?'default':'pointer'}}>Next →</button>
+              </div>
+            </div>
+          );
+        })()}
+
         <div className="hbox hbox-blue" style={{marginBottom:14}}>
           <div className="hbox-title">How to Use This Script</div>
           <div className="hbox-body">This is a guideline, not a word-for-word read. Develop your own style. Vary speed and detail based on body language — expressions of confusion vs. impatience. The goal: explain venous insufficiency while emphasizing the patient's own risk factors and personal concerns.</div>
