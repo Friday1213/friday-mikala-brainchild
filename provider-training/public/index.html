@@ -437,7 +437,7 @@ function SystemsTab() {
 
 // ── CLINICAL TAB ────────────────────────────────────────────────────────────
 function ClinicalTab() {
-  const [open, setOpen] = useState({consult:true, review:false, conservative:false, followup:false, scheduling:false, lymph:false});
+  const [open, setOpen] = useState({consult:true, veintalk:false, review:false, conservative:false, followup:false, scheduling:false, lymph:false});
   const T = ({id,title,children}) => (
     <div className="card" style={{marginBottom:12}}>
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',cursor:'pointer'}} onClick={()=>setOpen(o=>({...o,[id]:!o[id]}))}>
@@ -473,6 +473,66 @@ function ClinicalTab() {
           <div className="hbox-title">Building Rapport — Key Tip</div>
           <div className="hbox-body">Try to ask every patient about their 1) Job, 2) Kids, or 3) Country/culture of origin. Write it in the Notes section so you can reference it at every future visit.</div>
         </div>
+      </T>
+
+      <T id="veintalk" title="💬 The Vein Talk — Initial Evaluation Script">
+        <div className="hbox hbox-blue" style={{marginBottom:14}}>
+          <div className="hbox-title">How to Use This Script</div>
+          <div className="hbox-body">This is a guideline, not a word-for-word read. Develop your own style. Vary speed and detail based on body language — expressions of confusion vs. impatience. The goal: explain venous insufficiency while emphasizing the patient's own risk factors and personal concerns.</div>
+        </div>
+
+        {[
+          {
+            label: '1. Opening — Confirm History & Build Rapport',
+            color: '#1d4ed8', bg: '#eff6ff',
+            script: `"Take history / confirm history as provided by the MA or sonographer. Build rapport — 'where are you from?' etc.\n\n'Now that I understand more about you and your health history, I'd like to tell you a little bit about veins, vein disease and what we do here. If I'm either going too fast or I'm boring you let me know. I like everyone to be on the same page!'"`
+          },
+          {
+            label: '2. Slide 1–2 — Arteries vs. Veins',
+            color: '#059669', bg: '#f0fdf4',
+            script: `"There are two types of blood vessels in the body, arteries and veins. Arteries carry blood full of oxygen and veins carry the used-up blood back to the heart.\n\nThe veins in the legs have the hardest job in the body because they have to fight against gravity to bring blood up, all the way back to the heart. Veins are able to do this using one-way doors called valves. The valves open to allow blood to flow towards the heart then swing shut so blood doesn't fall back down."`
+          },
+          {
+            label: '3. Slide 3 — Normal System',
+            color: '#059669', bg: '#f0fdf4',
+            script: `"This is how it looks in a normal system — blood flows from veins closer to the surface of the skin into deeper veins, always flowing in the correct direction due to the valves."`
+          },
+          {
+            label: '4. Slide 4 — The Problem (Valve Failure)',
+            color: '#7c3aed', bg: '#faf5ff',
+            script: `"The problem is the valves! Over time, the valves can become damaged. Especially the valves in veins closer to the surface of the skin, which aren't protected within the muscle. The valves can become leaky and allow blood to flow back down the wrong way, towards the feet.\n\nThis happens faster, at a younger age, or in more valves for some people compared to others." [Discuss patient's specific risk factors here — family history, female gender, etc.]\n\n"We call this condition venous reflux, and when it happens over a long period of time we refer to it as chronic venous insufficiency. Blood builds up in your legs below the valves and this causes new, unhealthy veins to form."`
+          },
+          {
+            label: '5. Slide 5 — Varicose & Spider Veins',
+            color: '#7c3aed', bg: '#faf5ff',
+            script: `"So what's the problem with this picture? Well, long term this can lead to serious complications like ulcers or bleeding. But well before that it can cause symptoms." [If they endorse symptoms, explain they are related. If not, emphasize that symptoms can be subtle.]\n\n"I like to think of this like a pipe inside a wall — the spider veins and varicose veins we see are stains on the wall, but the real problem is the leaky pipe underneath. If you repaint the wall without fixing the pipe, the stains come back. So we need to find out what's going on under the surface."`
+          },
+          {
+            label: '6. Explaining the Ultrasound',
+            color: '#0369a1', bg: '#f0f9ff',
+            script: `"The first step is to do thorough vein mapping using an ultrasound. There is a vein that runs from the inside of the thigh to the ankle [indicate GSV position] and another that runs up the back of the calf. These veins aren't particularly important — they only carry 2–3% of the blood back to the heart — but they are troublemakers. They are the most common culprits for leaky valves and vein disease.\n\n[Tech's name] will check both those veins and also check to see where [any large varicosities or spider clusters] are coming from. About 10% of people have extra veins or a different pattern than usual — that's not bad or dangerous, it's just something I need to know. So if that's the case I'll come take a look myself. Otherwise [tech] takes a ton of photos of your veins."`
+          },
+          {
+            label: '7. Setting Index of Suspicion (with the Tech)',
+            color: '#b45309', bg: '#fefce8',
+            script: `If low suspicion: "I'm not sure you have vein disease, but I think it makes sense to rule it out." Or: "It might be that you don't have deeper vein issues, but I like to make sure before I suggest you pay out of pocket for cosmetics."\n\nIf high suspicion: "Honestly, the discomfort you describe sounds like veins to me, but let's see what the ultrasound shows."`
+          },
+          {
+            label: '8. Insurance & Next Steps',
+            color: '#0369a1', bg: '#f0f9ff',
+            script: `"Give me at least 3 days to review the images and I'll come up with a good treatment plan. We also have a team that handles insurance — I'll let them know my tentative plan and they can calculate your out-of-pocket cost and let you know next week."\n\nIf asked "Is treatment covered by insurance?": "The short answer is yes. The slightly longer answer is sometimes there may be associated costs like a deductible or coinsurance. My knowledge of that stuff is limited, but the team that handles it is amazing. They have a 100% no-surprise-bill policy and will make sure to tell you up front exactly what, if anything, you would owe. They can also work with you to make sure cost doesn't stand in the way of your care."`
+          },
+          {
+            label: '9. Compression Stockings (for everyone)',
+            color: '#059669', bg: '#f0fdf4',
+            script: `"In the meantime, I'm going to give you a pair of our fitted compression stockings."\n\nIf obvious vein disease + symptoms: "If I'm going to do any procedures we need to make sure they fit you."\n\nIf patient didn't endorse symptoms: "I'd like you to try the stockings. Insurance covers most of my procedures if they are going to make you feel better, not just look better. I know you feel like your legs aren't bothering you that much, but if the stockings make you feel better it means my procedures will."`
+          },
+        ].map((section, i) => (
+          <div key={i} style={{marginBottom:14,borderRadius:12,border:`2px solid ${section.color}20`,overflow:'hidden'}}>
+            <div style={{background:section.bg,padding:'10px 16px',fontWeight:900,fontSize:13,color:section.color}}>{section.label}</div>
+            <div style={{background:'white',padding:'14px 16px',fontSize:13,color:'#374151',lineHeight:1.8,whiteSpace:'pre-wrap',fontStyle:'italic'}}>{section.script}</div>
+          </div>
+        ))}
       </T>
 
       <T id="review" title="📊 First Follow-Up — Ultrasound Review">
