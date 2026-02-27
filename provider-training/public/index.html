@@ -6,76 +6,84 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Nunito',sans-serif;background:#f8fafc;color:#1e293b;min-height:100vh}
-.navbar{background:linear-gradient(135deg,#1e3a5f,#2563eb);padding:0 28px;height:64px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(30,58,95,0.3)}
-.navbar-logo{font-size:22px;font-weight:900;color:white;letter-spacing:-0.5px}
+body{font-family:'Nunito',sans-serif;background:#f1f5f9;color:#1e293b;min-height:100vh}
+.navbar{background:linear-gradient(135deg,#1e3a5f,#1d4ed8);padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(30,58,95,0.35)}
+.navbar-brand{display:flex;flex-direction:column}
+.navbar-logo{font-size:20px;font-weight:900;color:white;letter-spacing:-0.3px}
 .navbar-logo span{color:#93c5fd}
-.navbar-sub{font-size:12px;color:#93c5fd;font-weight:700}
+.navbar-sub{font-size:11px;color:#93c5fd;font-weight:700;margin-top:1px}
 .tab-bar{background:#1e3a5f;padding:0 20px;display:flex;gap:2px;align-items:flex-end;overflow-x:auto;scrollbar-width:none}
 .tab-bar::-webkit-scrollbar{display:none}
-.tab{padding:8px 18px 10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;border:none;cursor:pointer;border-radius:10px 10px 0 0;transition:all 0.15s;white-space:nowrap;color:rgba(255,255,255,0.65);background:rgba(255,255,255,0.08);margin-top:6px}
+.tab{padding:8px 16px 10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;border:none;cursor:pointer;border-radius:10px 10px 0 0;transition:all 0.15s;white-space:nowrap;color:rgba(255,255,255,0.65);background:rgba(255,255,255,0.08);margin-top:6px}
 .tab:hover{background:rgba(255,255,255,0.18);color:white}
-.tab.active{background:#f8fafc;color:#1e3a5f;margin-top:4px;padding-bottom:12px}
-.container{max-width:1100px;margin:0 auto;padding:28px 24px}
-.hero{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:white;border-radius:20px;padding:36px 40px;margin-bottom:28px;position:relative;overflow:hidden}
-.hero::after{content:'🩺';position:absolute;right:32px;top:50%;transform:translateY(-50%);font-size:80px;opacity:0.15}
-.hero h1{font-size:28px;font-weight:900;margin-bottom:8px}
-.hero p{font-size:15px;opacity:0.85;max-width:600px;line-height:1.6}
-.card{background:white;border-radius:16px;padding:28px;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin-bottom:20px}
-.card-title{font-size:18px;font-weight:900;color:#1e293b;margin-bottom:16px;display:flex;align-items:center;gap:10px}
-.section-label{font-size:11px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
-.tool-card{background:#f8fafc;border:2px solid #e2e8f0;border-radius:14px;padding:20px}
-.tool-card:hover{border-color:#2563eb;box-shadow:0 2px 8px rgba(37,99,235,0.1)}
-.tool-icon{font-size:28px;margin-bottom:10px}
-.tool-name{font-size:15px;font-weight:900;color:#1e293b;margin-bottom:6px}
-.tool-desc{font-size:13px;color:#64748b;line-height:1.5}
-.tool-uses{margin-top:10px}
-.tool-use{font-size:12px;color:#374151;padding:3px 0;display:flex;align-items:flex-start;gap:6px;line-height:1.4}
-.tool-use::before{content:'→';color:#2563eb;font-weight:700;flex-shrink:0}
-.tool-not{font-size:12px;color:#ef4444;padding:3px 0;display:flex;align-items:flex-start;gap:6px;line-height:1.4}
-.tool-not::before{content:'✗';font-weight:700;flex-shrink:0}
-.step-list{list-style:none;counter-reset:steps}
-.step-list li{counter-increment:steps;display:flex;gap:14px;margin-bottom:14px;align-items:flex-start}
-.step-list li::before{content:counter(steps);background:#2563eb;color:white;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0;margin-top:1px}
-.step-text{font-size:14px;color:#374151;line-height:1.6}
-.step-text strong{color:#1e293b}
-.highlight-box{border-radius:12px;padding:16px 20px;margin-bottom:12px}
-.box-blue{background:#eff6ff;border-left:4px solid #2563eb}
-.box-green{background:#f0fdf4;border-left:4px solid #22c55e}
-.box-amber{background:#fefce8;border-left:4px solid #eab308}
-.box-red{background:#fef2f2;border-left:4px solid #ef4444}
-.box-purple{background:#faf5ff;border-left:4px solid #9333ea}
-.box-title{font-size:12px;font-weight:900;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px}
-.box-body{font-size:14px;color:#374151;line-height:1.6}
-.tag{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;margin:2px}
+.tab.active{background:#f1f5f9;color:#1e3a5f;margin-top:4px;padding-bottom:12px}
+.container{max-width:1080px;margin:0 auto;padding:24px 20px}
+.hero{background:linear-gradient(135deg,#1e3a5f,#1d4ed8);color:white;border-radius:20px;padding:32px 36px;margin-bottom:24px;position:relative;overflow:hidden}
+.hero::after{content:'🏥';position:absolute;right:28px;top:50%;transform:translateY(-50%);font-size:72px;opacity:0.12}
+.hero h1{font-size:26px;font-weight:900;margin-bottom:8px}
+.hero p{font-size:14px;opacity:0.85;max-width:560px;line-height:1.6}
+.search-wrap{background:white;border-radius:50px;padding:4px 8px 4px 20px;display:flex;gap:8px;align-items:center;margin-top:18px;max-width:480px;box-shadow:0 2px 12px rgba(0,0,0,0.15)}
+.search-wrap input{flex:1;border:none;outline:none;font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;color:#1e293b;background:transparent}
+.search-wrap input::placeholder{color:#94a3b8}
+.search-btn{background:#1d4ed8;color:white;border:none;border-radius:50px;padding:8px 18px;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;cursor:pointer}
+.card{background:white;border-radius:16px;padding:24px;box-shadow:0 1px 8px rgba(0,0,0,0.06);margin-bottom:16px}
+.card-title{font-size:16px;font-weight:900;color:#1e293b;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+/* Quick link tiles */
+.ql-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:16px}
+.ql-tile{background:white;border:2px solid #e2e8f0;border-radius:14px;padding:16px 14px;cursor:pointer;transition:all 0.15s;text-align:center;text-decoration:none;color:inherit}
+.ql-tile:hover{border-color:#1d4ed8;box-shadow:0 4px 12px rgba(29,78,216,0.12);transform:translateY(-1px)}
+.ql-icon{font-size:26px;margin-bottom:8px}
+.ql-label{font-size:12px;font-weight:800;color:#374151;line-height:1.3}
+/* FAQ accordion */
+.faq-item{border:1px solid #e2e8f0;border-radius:12px;margin-bottom:8px;overflow:hidden;background:white}
+.faq-q{padding:14px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;font-size:14px;font-weight:800;color:#1e293b;line-height:1.4}
+.faq-q:hover{background:#f8fafc}
+.faq-chevron{color:#94a3b8;font-size:13px;flex-shrink:0;margin-top:1px}
+.faq-a{padding:0 18px 16px;font-size:13px;color:#374151;line-height:1.7;border-top:1px solid #f1f5f9}
+.faq-a a{color:#1d4ed8;font-weight:700}
+.faq-a strong{color:#1e293b}
+.faq-tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:800;margin-right:6px;margin-bottom:4px}
 .tag-blue{background:#dbeafe;color:#1e40af}
 .tag-green{background:#dcfce7;color:#166534}
 .tag-amber{background:#fef3c7;color:#92400e}
 .tag-red{background:#fee2e2;color:#991b1b}
 .tag-purple{background:#ede9fe;color:#5b21b6}
-.info-row{display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:14px}
-.info-row:last-child{border-bottom:none}
-.info-label{font-weight:700;color:#374151;min-width:180px;flex-shrink:0}
-.info-val{color:#64748b;line-height:1.5}
-.schedule-block{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;margin-bottom:12px}
-.schedule-title{font-size:14px;font-weight:900;color:#1e3a5f;margin-bottom:10px}
-.schedule-step{display:flex;gap:10px;align-items:flex-start;margin-bottom:6px;font-size:13px;color:#374151}
-.schedule-num{background:#1e3a5f;color:white;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
-.rod-card{background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;padding:16px 20px;display:flex;gap:16px;align-items:center}
-.rod-region{font-size:12px;font-weight:900;color:#2563eb;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px}
-.rod-name{font-size:15px;font-weight:800;color:#1e293b}
-.ceap-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
-.ceap-table th{background:#1e3a5f;color:white;padding:10px 12px;text-align:left;font-weight:700}
-.ceap-table td{padding:9px 12px;border-bottom:1px solid #f1f5f9;vertical-align:top}
-.ceap-table tr:hover td{background:#f8fafc}
-.meeting-card{border:2px solid #e2e8f0;border-radius:14px;padding:20px;margin-bottom:12px}
-.meeting-num{background:#2563eb;color:white;font-size:11px;font-weight:900;padding:4px 12px;border-radius:20px;display:inline-block;margin-bottom:10px}
-.badge{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:800}
-.acc-header{display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:4px 0}
-.acc-body{margin-top:12px}
-@media(max-width:700px){.grid-2,.grid-3{grid-template-columns:1fr}.hero{padding:24px 20px}.hero::after{display:none}}
+/* Contact cards */
+.contact-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start}
+.contact-avatar{width:38px;height:38px;border-radius:50%;background:#1d4ed8;color:white;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.contact-name{font-size:14px;font-weight:800;color:#1e293b}
+.contact-role{font-size:11px;color:#64748b;font-weight:700;margin-top:1px}
+.contact-info{font-size:12px;color:#1d4ed8;margin-top:4px;font-weight:700}
+/* Checklist */
+.checklist{list-style:none}
+.checklist li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid #f1f5f9;font-size:13px;color:#374151;line-height:1.5}
+.checklist li:last-child{border-bottom:none}
+.checklist li::before{content:'☐';font-size:16px;color:#94a3b8;flex-shrink:0;line-height:1.2}
+.checklist li.done::before{content:'✅';color:#22c55e}
+/* Highlight boxes */
+.hbox{border-radius:12px;padding:14px 18px;margin-bottom:12px}
+.hbox-blue{background:#eff6ff;border-left:4px solid #3b82f6}
+.hbox-green{background:#f0fdf4;border-left:4px solid #22c55e}
+.hbox-amber{background:#fefce8;border-left:4px solid #eab308}
+.hbox-red{background:#fef2f2;border-left:4px solid #ef4444}
+.hbox-purple{background:#faf5ff;border-left:4px solid #a855f7}
+.hbox-title{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;color:#64748b;margin-bottom:6px}
+.hbox-body{font-size:13px;color:#374151;line-height:1.6}
+/* Step list */
+.step-list{list-style:none;counter-reset:s}
+.step-list li{counter-increment:s;display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;font-size:13px;color:#374151;line-height:1.6}
+.step-list li::before{content:counter(s);background:#1d4ed8;color:white;min-width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0;margin-top:1px}
+.section-label{font-size:11px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px}
+.divider{font-size:11px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:0.07em;padding:14px 0 8px;border-top:1px solid #f1f5f9;margin-top:4px}
+.search-result-item{border:1px solid #e2e8f0;border-radius:12px;padding:12px 16px;margin-bottom:8px;background:white;cursor:pointer}
+.search-result-item:hover{border-color:#1d4ed8;background:#f8fafc}
+.sri-title{font-size:14px;font-weight:800;color:#1e293b;margin-bottom:4px}
+.sri-excerpt{font-size:12px;color:#64748b;line-height:1.5}
+.sri-section{font-size:11px;font-weight:800;color:#1d4ed8;margin-top:4px}
+em.hl{background:#fef08a;border-radius:3px;font-style:normal;padding:0 2px}
+@media(max-width:680px){.grid-2,.grid-3{grid-template-columns:1fr}.hero{padding:20px}.hero::after{display:none}}
 </style>
 </head>
 <body>
@@ -84,142 +92,132 @@ body{font-family:'Nunito',sans-serif;background:#f8fafc;color:#1e293b;min-height
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <script type="text/babel">
-const { useState } = React;
+const { useState, useMemo } = React;
 
-// ── OVERVIEW TAB ────────────────────────────────────────────────────────────
-function OverviewTab() {
+// ── SEARCH DATA ───────────────────────────────────────────────────────────────
+const SEARCH_INDEX = [
+  { section:'Getting Started', q:'What should I do before my first day?', a:'Complete your pre-arrival checklist: select benefits on Rippling, choose scrub/white coat size, set up two-factor authentication on Gmail per IT instructions, add your email signature, complete Jumpcloud login setup, and set up your digital signature.' },
+  { section:'Getting Started', q:'What do I wear on my first day?', a:'Wear dark scrubs. Most MDs and APPs wear black.' },
+  { section:'Getting Started', q:'What happens on my first day?', a:'Meet the onboarding team at your designated clinic. You\'ll tour the office, finish setting up your computer, get Nextech and Medwork set up, and begin seeing scheduled patients — starting with shadowing, then supervised visits, then solo. Goal is to confidently complete an initial visit with vein talk by end of day.' },
+  { section:'Systems', q:'What is Nextech used for?', a:'Nextech is your EMR. It handles clinical documentation, patient charts, and generates visit and procedure bills. Daily login: make sure to change your location to the clinic of the day.' },
+  { section:'Systems', q:'What is Medwork used for?', a:'Medwork is the CRM. It tracks patient leads, monitors insurance auth status, tracks completion of approved procedures, and makes sure no leads, patients, or procedures are left behind. The provider-specific prior auth list is the most frequently used feature.' },
+  { section:'Systems', q:'What is Luma used for?', a:'Luma handles patient engagement and communication: automated reminders, digital intake forms, secure patient messaging, and post-visit instructions.' },
+  { section:'Systems', q:'What is Ring Central used for?', a:'Ring Central is the Provider Emergency Line and is used for post-procedure check-ins with patients. It is NOT for scheduling or admin calls.' },
+  { section:'Systems', q:'What is Rippling used for?', a:'Rippling is the HR portal. Use it for your schedule, benefit registration, PTO requests, and HR documents.' },
+  { section:'Systems', q:'How do I sign notes in Nextech?', a:'Ideally sign notes within 24 hours. Do NOT sign same-day — techs need time to finish notes and adjust PRN for insurance. On busy days, sign at end of day or first thing in the morning. If you have pop-ups on your to-do list, you have delinquent notes. For tech issues, email IT with a screenshot of your signature settings and your ANYDESK ID.' },
+  { section:'Systems', q:'What are the different appointment/note types in Nextech?', a:'Initial, US Review, Procedure, Follow Up (post-procedure, 1 mo, 3 mo, 6 mo, 9 mo, f/u other), Conservative Review, plus separate notes for US results, compression Rx, and US orders. The EMN type must match what was actually done — this is critical for billing.' },
+  { section:'Systems', q:'What are the Note Section / Social Notes used for?', a:'The Note section is for intra-office personal use (not part of the official medical record). You must place a note for every patient you see. Use it to avoid awkward re-introductions, help the call center, and capture personal details for rapport-building (e.g., "patient\'s son is starting college at GW").' },
+  { section:'Systems', q:'How does prior authorization work?', a:'After a US review, tell staff to submit for procedures. The tech clicks a box in the review note generating a LOMN. The LOMN team reviews, ensures medical necessity criteria are met, and passes to the PA team who submits to insurance and follows up. Check status via Medwork. Always verify PA is approved for the correct provider, location, and dates before performing a procedure.' },
+  { section:'Systems', q:'What are the PA email contacts by region?', a:'NYC Vein (Midtown, FIDI, Bronx, Brooklyn): NYC Vein PA@lomn | Long Island: LI Vein PA | Hartsdale: Hartsdale Vein PA | Maryland/DC: MD Vein PA | New Jersey: NJ Vein PA | California (SD, SJ, PA): SD/SJ/PA Vein | Connecticut: CT Vein PA | Texas: TX Vein PA' },
+  { section:'FAQs', q:'How do I call out sick or handle a family emergency?', a:'As soon as you know you\'ll be out, EMAIL Gabriella Soares, Dr. Caroline Novak, HR, and your ROD. They will initiate rescheduling patients and relocating staff.' },
+  { section:'FAQs', q:'How do I block days for a meeting or personal appointment?', a:'Enter the block yourself in Nextech (include a reason if under 1 hour), then email your region-specific scheduling listserv (e.g. nyc.veinscheduling@vipmedicalgroup.com) and cc Gabriella Soares.' },
+  { section:'FAQs', q:'What do I do if there is a scheduling error?', a:'Email schedulingerror@vipmedicalgroup.com. Mistakes happen — sending them to the team helps identify patterns and improve workflow.' },
+  { section:'FAQs', q:'What do I do if there is no front desk?', a:'Sonographers should know how to check in patients, scan insurance, verify coverage, collect copays, and schedule patients. Marjorie Vandermeulen can help set up a virtual front desk via iPad.' },
+  { section:'FAQs', q:'How do I handle a walk-in patient?', a:'If you have reasonable availability, try to accommodate. Collect insurance and ID, send to verification-team@medwork.io marked URGENT. If the schedule can\'t accommodate, ask front desk to collect info and schedule an appointment.' },
+  { section:'FAQs', q:'How do I request vacation or time off?', a:'Request in Rippling. If no response within a week, email HR and cc Dr. Caroline Novak with your dates and note it was requested in Rippling. Always request at least one month in advance — ideally more. You can take up to two consecutive weeks.' },
+  { section:'FAQs', q:'What do I do with an unhappy patient?', a:'Room the patient quickly to get them out of the waiting room. Inform the doctor who should come quickly to mitigate. Leave a note in the chart and email customerservice@medwork.io. To "fire" a patient (DNC), reach out to Dr. Caroline Novak and customerservice@medwork.io with full context.' },
+  { section:'FAQs', q:'How do I handle medical records requests?', a:'Have the front desk handle all records requests. If you receive a direct request, reply to all MR team emails within 24-48 hours. For insurance requests, skim and reply "approved." For non-insurance, review and consider a brief cover letter.' },
+  { section:'FAQs', q:'How do I write a work or jury duty excuse note?', a:'Email/chat your front desk the text in quotes (e.g. "To Whom It May Concern — Patient had procedures on [date]...") and ask them to place it on letterhead. For jury duty, stay vague — you can provide lifestyle modifications and exercise restrictions, but you cannot excuse a patient from jury duty — that is for a judge.' },
+  { section:'FAQs', q:'What is the supply closet/login password?', a:'Usually 4141 for supply closets. Passwords/logins are usually 414141. For inventory requests: inventorymanager@vipmedicalgroup.com. For facility issues (leak, AC, etc.): facilities@vipmedicalgroup.com.' },
+  { section:'FAQs', q:'What about the after-hours / emergency line?', a:'Login info sent to your Gmail — use the Ring Central app. Expectations: respond within 24 hours to after-hours communications. Redirect scheduling requests to the appropriate team. If working with an APP, MDs and APPs share monitoring on an alternating schedule.' },
+  { section:'Clinical', q:'What should I expect at an initial consultation?', a:'MA/sonographer does intake → presents to MD/APP at a med-student level. MD/APP confirms history and does the Vein Talk (script and slides). Sonographer scans (~35 min). Front desk checks out and books next appointment. Timing: 10-15 min intake, 10-15 min physician encounter, 35 min scan. Never let patients leave without their next appointment scheduled.' },
+  { section:'Clinical', q:'What is the Vein Talk?', a:'A scripted but adaptable patient education session explaining venous insufficiency pathophysiology, the patient\'s individual risk factors, and next steps. Always do the vein talk — even if a patient has seen another doctor. Use the script and slides from your Google Drive Resource Folder. Develop your own style over time.' },
+  { section:'Clinical', q:'What are the classic symptoms of vein disease?', a:'Dull, achy, heavy, fatigue, throbbing — worse at end of day, worse with prolonged standing or sitting. Often improves with elevation or compression. Symptoms are subtle and progress slowly. Always try to elicit symptoms even if the sonographer says "asymptomatic" or "only cosmetic."' },
+  { section:'Clinical', q:'What are the US thresholds for treatment?', a:'Minimum vein diameter: 3 mm. Minimum reflux time: 500 ms. Proximal GSV → RFA. Distal GSV → Varithena (UGFS). SSV → RFA. Varicose veins → UGFS. Duplicate veins → anatomy dependent.' },
+  { section:'Clinical', q:'When is conservative therapy required?', a:'Many insurers require a documented conservative trial (usually 6 or 12 weeks of compression stocking use) before approving procedures. Always prescribe compression stockings at the first visit so the clock starts. Check the Vein Policy Hub for payer-specific requirements. Exceptions: active VV rupture, ulceration, recurrent thrombophlebitis.' },
+  { section:'Clinical', q:'How does the conservative therapy workflow go?', a:'6-week trial: Initial → Conservative Review → 6-week phone follow-up with RN → Auth submitted → patient called to schedule when approved. 12-week trial: Initial → Conservative Review → 6-week follow-up visit → 12-week phone follow-up → Auth submitted → procedures scheduled.' },
+  { section:'Clinical', q:'What is the US Review appointment?', a:'The second visit where physician reviews scan results with patient, explains treatment plan, and communicates plan to the IB team. When you leave the room, communicate the plan to the sonographer: e.g. "BL GSV RFA, BL Varithena x2." Patient leaves without a scheduled appointment — the team calls them when procedures are approved.' },
+  { section:'Clinical', q:'What happens at follow-up appointments?', a:'Post-procedure scan: ideally 3-7 days post-procedure (acceptable 2 days to 2 weeks). Always take new photos at every follow-up. Schedule full scans at 1, 3, 6, 9, and 12 months with photos.' },
+  { section:'Clinical', q:'What are the Varithena CPT codes?', a:'CPT 36465: Injection of foam sclerosant into a single incompetent extremity truncal vein (ultrasound guided). CPT 36466: Injection into multiple incompetent extremity truncal veins in the same leg. These apply to GSV, SSV, and their accessory veins.' },
+  { section:'Clinical', q:'What is phlebolymphedema?', a:'The coexistence of chronic venous insufficiency (CVI) and lymphedema. Caused by lymphatic overload from chronic venous hypertension, leading to lymphatic dysfunction and protein-rich fluid accumulation. Management includes compression therapy (Class II 20-30 mmHg), CDT (complete decongestive therapy) via certified lymphedema therapist, and venous ablation if significant reflux confirmed. VIP uses Tactile as the main referral for pneumatic compression pumps.' },
+  { section:'Protocols', q:'What is the needlestick injury protocol?', a:'1. Assess risk and document in Nextech using the Needlestick Protocol note. 2. Ask patient about HBV vaccination, needle contamination, recent HBV/HCV/HIV testing, and risk factors. 3. Get verbal consent for testing and document it. 4. Contact Medical Directors IMMEDIATELY (Dr. Caroline Novak / Dr. Schoenfeld for Vein; Dr. Hanna for Pain). 5. Send patient to Quest Diagnostics — VIP reimburses travel and testing costs (patient brings receipt). 6. Email HR to complete OSHA incident form at hr@vipmedicalgroup.com. Tests: Rapid HIV, HCV antibody, HBV antigen and antibody. For employees: go to ER/Urgent Care/Concentra immediately. NYC employees: NYU ED at 570 1st Ave. Workers Comp: AP Intego Insurance Group, Policy #76WEGZU7497.' },
+  { section:'Protocols', q:'What do I do for an aborted procedure?', a:'You still bill for an aborted procedure — supplies and time were used. Make sure to free-text the note to include the reason for aborting. If a patient checks in but the visit is determined to be in error (scheduling/insurance issue), you can reschedule or remove the appointment.' },
+  { section:'Marketing', q:'How does the referral system work?', a:'Outbound: Clinical staff generate a Nextech Outbound Referral Form → referrals team sends via email/fax. Inbound: Referrals team creates profile on ClickUp, Medwork, and Nextech, contacts patient 4+ times to book. Internal (Vein ↔ Pain): Generate Nextech Internal Referral Form or book directly using the Internal Referrals Appointment Type.' },
+  { section:'Marketing', q:'What are my marketing responsibilities?', a:'Attend an introductory meeting with the CMO. Participate in an onboarding photoshoot (coordinated by marketing). Encourage social media — marketing handles editing and publishing. Submit Before & After photos 2x/month. Encourage Google reviews — QR codes and email templates are available.' },
+];
+
+// ── FAQ ITEM ────────────────────────────────────────────────────────────────
+function FaqItem({ q, a, section, highlight }) {
+  const [open, setOpen] = useState(false);
+  const hl = (text) => {
+    if (!highlight) return text;
+    const re = new RegExp(`(${highlight.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+    const parts = text.split(re);
+    return parts.map((p,i) => re.test(p) ? <em key={i} className="hl">{p}</em> : p);
+  };
   return (
-    <div>
-      <div className="hero">
-        <h1>Welcome to VIP Medical Group 👋</h1>
-        <p>This hub is your go-to resource throughout onboarding and beyond. Whether you're preparing for your first week or looking up a clinical protocol, everything you need is here.</p>
+    <div className="faq-item">
+      <div className="faq-q" onClick={()=>setOpen(o=>!o)}>
+        <span>{hl(q)}</span>
+        <span className="faq-chevron">{open ? '▲' : '▼'}</span>
       </div>
-
-      <div className="card">
-        <div className="card-title">🗓️ Your Onboarding Journey</div>
-        <p style={{fontSize:13,color:'#64748b',marginBottom:20}}>Onboarding is structured across two key meetings before your first day. The <strong>overall goal</strong> is smooth sailing on arrival.</p>
-        <div className="grid-2">
-          <div className="meeting-card">
-            <div className="meeting-num">MEETING 1</div>
-            <div style={{fontWeight:800,fontSize:15,color:'#1e293b',marginBottom:10}}>Getting the Big Picture</div>
-            <ul className="step-list">
-              <li><div className="step-text">Overview of VIP workflows and how the practice operates</div></li>
-              <li><div className="step-text">Walk-through of all operations software & tools</div></li>
-              <li><div className="step-text">Introduction to your Regional Operations Director</div></li>
-              <li><div className="step-text">Review of resources available to you</div></li>
-            </ul>
-          </div>
-          <div className="meeting-card">
-            <div className="meeting-num">MEETING 2</div>
-            <div style={{fontWeight:800,fontSize:15,color:'#1e293b',marginBottom:10}}>Preparing for Day One</div>
-            <ul className="step-list">
-              <li><div className="step-text">Review any questions from Meeting 1</div></li>
-              <li><div className="step-text">First day and first week expectations</div></li>
-              <li><div className="step-text">Review your Clinical Skill Set Checklist (self-evaluation)</div></li>
-              <li><div className="step-text">Mock Initials — practice patient encounter walkthrough</div></li>
-              <li><div className="step-text">Didactics as needed</div></li>
-            </ul>
-          </div>
+      {open && (
+        <div className="faq-a">
+          {section && <div style={{marginBottom:8}}><span className="faq-tag tag-blue">{section}</span></div>}
+          <div style={{whiteSpace:'pre-wrap'}}>{hl(a)}</div>
         </div>
-      </div>
-
-      <div className="card">
-        <div className="card-title">📁 Resources Available to You</div>
-        <div className="grid-2">
-          <div className="highlight-box box-blue">
-            <div className="box-title">📂 Your Personal Google Drive Folder</div>
-            <div className="box-body">
-              <div>• Clinical Skill Set Checklist (provided at Meeting 1 for self-evaluation)</div>
-              <div style={{marginTop:6}}>• Conversion Spreadsheet</div>
-            </div>
-          </div>
-          <div className="highlight-box box-green">
-            <div className="box-title">📂 VIP Resource Google Drive Folder</div>
-            <div className="box-body">
-              <div>• Provider Clinical and Systems Manuals</div>
-              <div style={{marginTop:6}}>• Educational resources</div>
-              <div style={{marginTop:6}}>• Scripts and Slides</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
 
-// ── TOOLS TAB ───────────────────────────────────────────────────────────────
-function ToolsTab() {
-  const tools = [
-    {
-      icon: '🟣', name: 'Luma', color: '#7c3aed', bg: '#faf5ff',
-      tagline: 'Patient Engagement & Communication',
-      uses: ['Automated appointment reminders', 'Digital intake forms', 'Secure patient messaging', 'Post-visit instructions'],
-      notFor: [],
-    },
-    {
-      icon: '🔵', name: 'Nextech', color: '#0369a1', bg: '#eff6ff',
-      tagline: 'EMR — Electronic Medical Record',
-      uses: ['Clinical documentation', 'Patient chart management', 'Generates visit and procedure bills'],
-      notFor: [],
-    },
-    {
-      icon: '🟠', name: 'Medwork', color: '#c2410c', bg: '#fff7ed',
-      tagline: 'CRM — Customer Relationship Management',
-      uses: ['Tracks patient leads', 'Monitors insurance auth status', 'Tracks completion of approved procedures', 'Ensures no leads, patients, or procedures are left behind'],
-      notFor: [],
-    },
-    {
-      icon: '🟢', name: 'Rippling', color: '#15803d', bg: '#f0fdf4',
-      tagline: 'HR Portal',
-      uses: ['Your schedule', 'Benefit registration', 'HR documents and policies'],
-      notFor: [],
-    },
-    {
-      icon: '🔴', name: 'Ring Central', color: '#dc2626', bg: '#fef2f2',
-      tagline: 'Provider Communication Line',
-      uses: ['Provider Emergency Line', 'Post-procedure check-ins with patients'],
-      notFor: ['Scheduling or admin calls — use the main office line for those'],
-    },
+// ── HOME TAB ────────────────────────────────────────────────────────────────
+function HomeTab({ setTab }) {
+  const quickLinks = [
+    { icon:'📋', label:'Pre-Arrival Checklist', tab:'start' },
+    { icon:'🛠️', label:'Tools & Systems', tab:'systems' },
+    { icon:'🩺', label:'Clinical Guide', tab:'clinical' },
+    { icon:'💉', label:'Treatment Guide', tab:'treatment' },
+    { icon:'❓', label:'FAQs', tab:'faq' },
+    { icon:'📞', label:'Contacts', tab:'contacts' },
+    { icon:'🚨', label:'Protocols', tab:'protocols' },
+    { icon:'🎯', label:'Marketing', tab:'marketing' },
   ];
-
   return (
     <div>
-      <div className="card" style={{marginBottom:20}}>
-        <div className="card-title">🛠️ Operations Software & Tools</div>
-        <p style={{fontSize:13,color:'#64748b',marginBottom:4}}>You'll use these platforms daily. Each one has a specific purpose — knowing which tool to use for what will make your life much easier.</p>
+      <div className="card">
+        <div className="card-title">⚡ Quick Access</div>
+        <div className="ql-grid">
+          {quickLinks.map(l => (
+            <div key={l.tab} className="ql-tile" onClick={()=>setTab(l.tab)}>
+              <div className="ql-icon">{l.icon}</div>
+              <div className="ql-label">{l.label}</div>
+            </div>
+          ))}
+        </div>
       </div>
 
-      <div className="grid-2">
-        {tools.map(t => (
-          <div key={t.name} className="tool-card" style={{borderColor: t.bg === '#f8fafc' ? '#e2e8f0' : t.bg, background: t.bg}}>
-            <div className="tool-icon">{t.icon}</div>
-            <div className="tool-name" style={{color: t.color}}>{t.name}</div>
-            <div style={{fontSize:12,fontWeight:700,color:'#64748b',marginBottom:10}}>{t.tagline}</div>
-            <div className="tool-uses">
-              {t.uses.map((u,i) => <div key={i} className="tool-use">{u}</div>)}
-              {t.notFor.map((u,i) => <div key={i} className="tool-not">{u}</div>)}
-            </div>
+      <div className="card">
+        <div className="card-title">🚨 Emergency Quick Reference</div>
+        <div className="grid-2">
+          <div className="hbox hbox-red">
+            <div className="hbox-title">Needlestick Injury</div>
+            <div className="hbox-body">Contact medical director IMMEDIATELY. Document in Nextech. Send patient to Quest. Email HR: <strong>hr@vipmedicalgroup.com</strong>. NYC employees → NYU ED, 570 1st Ave.</div>
           </div>
-        ))}
+          <div className="hbox hbox-amber">
+            <div className="hbox-title">Unhappy Patient</div>
+            <div className="hbox-body">Room the patient quickly. Inform the doctor. Email <strong>customerservice@medwork.io</strong>. To DNC a patient: contact Dr. Novak + customerservice@medwork.io.</div>
+          </div>
+          <div className="hbox hbox-blue">
+            <div className="hbox-title">Calling Out Sick</div>
+            <div className="hbox-body">Email <strong>Gabriella Soares + Dr. Novak + HR + ROD</strong> as soon as you know. They initiate rescheduling and staff reallocation.</div>
+          </div>
+          <div className="hbox hbox-green">
+            <div className="hbox-title">Scheduling Error</div>
+            <div className="hbox-body">Email <strong>schedulingerror@vipmedicalgroup.com</strong>. Helps identify patterns and improve workflow.</div>
+          </div>
+        </div>
       </div>
 
-      <div className="card" style={{marginTop:8}}>
-        <div className="card-title">🧭 Regional Operations Directors (RODs)</div>
-        <p style={{fontSize:13,color:'#64748b',marginBottom:16}}>RODs work closely with RCM, HR, Patient Success, Appointment Services, Marketing, IT, and Data — bringing real-time insights from the clinics to guide decisions. <strong>For local issues, contact your ROD first</strong> so they can properly triage your needs.</p>
-        <div style={{display:'flex',flexDirection:'column',gap:10}}>
+      <div className="card">
+        <div className="card-title">🏢 2026 Company Holidays</div>
+        <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
           {[
-            { region: 'New York & Long Island', name: 'Pam Sheamon' },
-            { region: 'New Jersey', name: 'Kelly Walsh' },
-            { region: 'California', name: 'Tracey Jaksch' },
-            { region: 'Texas, Connecticut & Maryland', name: 'Katherine Genao' },
-          ].map(r => (
-            <div key={r.region} className="rod-card">
-              <div style={{fontSize:28}}>👤</div>
-              <div>
-                <div className="rod-region">{r.region}</div>
-                <div className="rod-name">{r.name}</div>
-              </div>
-            </div>
+            'Jan 1 – New Year\'s Day','May 25 – Memorial Day','Jul 3 – Independence Day (observed)',
+            'Sep 7 – Labor Day','Nov 25 – Clinical half day','Nov 26 – Thanksgiving',
+            'Nov 27 – Black Friday','Dec 24 – Christmas Eve','Dec 25 – Christmas Day','Dec 31 – New Year\'s Eve',
+          ].map(h=>(
+            <span key={h} className="faq-tag tag-blue" style={{padding:'5px 12px',fontSize:12}}>{h}</span>
           ))}
         </div>
       </div>
@@ -227,454 +225,637 @@ function ToolsTab() {
   );
 }
 
-// ── CLINICAL GUIDE TAB ──────────────────────────────────────────────────────
-function ClinicalTab() {
-  const [open, setOpen] = useState({ defs: true, eval: false, exam: false, epi: false, dx: false, conservative: false });
-  const toggle = (k) => setOpen(o => ({...o, [k]: !o[k]}));
-
-  const Section = ({ id, title, children }) => (
-    <div className="card" style={{marginBottom:16}}>
-      <div className="acc-header" onClick={()=>toggle(id)}>
-        <div className="card-title" style={{marginBottom:0}}>{title}</div>
-        <span style={{color:'#94a3b8',fontSize:14}}>{open[id] ? '▲' : '▼'}</span>
+// ── GETTING STARTED TAB ─────────────────────────────────────────────────────
+function StartTab() {
+  const preArrival = [
+    'Select benefits on Rippling (insurance, direct deposit, PTO)',
+    'Select scrub size and style',
+    'Select white coat size',
+    'Set up two-factor authentication on Gmail per IT instructions',
+    'Add email signature per IT directions',
+    'Set up Jumpcloud login (allows remote desktop access)',
+    'Set up digital signature (using online tool → draw/upload → download as PDF → send to Carly Sarch, Support - Medwork, Tiffany Gunter, Kelly Jackson)',
+    'Watch Google Workspace training videos (see Resources tab)',
+    'Review Nextech training videos (see Resources tab)',
+  ];
+  const firstDay = [
+    'Wear dark scrubs (most wear black)',
+    'Meet onboarding team at designated clinic',
+    'Tour of office — familiarize yourself with supplies and resources',
+    'Finish setting up your computer',
+    'Nextech & Medwork setup with IT',
+    'See scheduled patients: shadowing → supervised → solo',
+    'Complete an initial visit with vein talk confidently by end of day',
+    'Review clinical training checklist — identify areas needing attention',
+    'Review systems training checklist — identify areas needing attention',
+  ];
+  const meetingStructure = [
+    { num:'MEETING 1', title:'Big Picture', items:['Overview of VIP workflows', 'Walk-through of all operations software & tools', 'Introduction to your Regional Operations Director', 'Review of available resources'] },
+    { num:'MEETING 2', title:'Day One Prep', items:['Review questions from Meeting 1', 'Mock Initials — practice patient encounter', 'First day and first week expectations', 'Review Clinical Skill Set Checklist (self-evaluation)'] },
+  ];
+  return (
+    <div>
+      <div className="grid-2" style={{marginBottom:16}}>
+        {meetingStructure.map(m=>(
+          <div key={m.num} className="card">
+            <div style={{background:'#1d4ed8',color:'white',fontSize:11,fontWeight:900,padding:'3px 12px',borderRadius:20,display:'inline-block',marginBottom:10}}>{m.num}</div>
+            <div className="card-title" style={{marginBottom:10}}>{m.title}</div>
+            <ul className="step-list">
+              {m.items.map((i,idx)=><li key={idx}>{i}</li>)}
+            </ul>
+          </div>
+        ))}
       </div>
-      {open[id] && <div className="acc-body">{children}</div>}
+
+      <div className="card">
+        <div className="card-title">📋 Pre-Arrival Checklist</div>
+        <ul className="checklist">
+          {preArrival.map((i,idx)=><li key={idx}>{i}</li>)}
+        </ul>
+      </div>
+
+      <div className="card">
+        <div className="card-title">🏥 First Day Checklist</div>
+        <ul className="checklist">
+          {firstDay.map((i,idx)=><li key={idx}>{i}</li>)}
+        </ul>
+      </div>
+
+      <div className="card">
+        <div className="card-title">📚 Google Workspace Resources</div>
+        <div className="hbox hbox-blue" style={{marginBottom:0}}>
+          <div className="hbox-body">
+            <div>• <strong>Google Drive for Beginners</strong> — Complete course including Docs, Sheets, Forms, and Slides (watch at double speed)</div>
+            <div style={{marginTop:6}}>• <strong>Google Workspace Training Playlist</strong></div>
+            <div style={{marginTop:6}}>• <strong>Google Sheets Beginner's Guide</strong></div>
+            <div style={{marginTop:6}}>• <strong>Gmail Basics Tutorial</strong></div>
+            <div style={{marginTop:6}}>• <strong>Advanced Google Drive: Tips, Tricks, and Tools</strong></div>
+            <div style={{marginTop:10,fontSize:12,color:'#64748b'}}>All links available in your Personal Google Drive Folder and the VIP Resource Google Drive Folder.</div>
+          </div>
+        </div>
+      </div>
     </div>
   );
+}
+
+// ── SYSTEMS TAB ─────────────────────────────────────────────────────────────
+function SystemsTab() {
+  const tools = [
+    { icon:'🏥', name:'Nextech', color:'#1d4ed8', bg:'#eff6ff',
+      tagline:'EMR — Electronic Medical Record',
+      uses:['Clinical documentation','Patient charts','Generates visit and procedure bills','Prior auth LOMN generation','Schedule management'],
+      tips:['Change your location to the clinic of the day on every login','Sign notes within 24 hours — not same day','CA providers: use Gen 1 tab for H&P and Procedure Plan'],
+      notFor:[]
+    },
+    { icon:'📊', name:'Medwork', color:'#c2410c', bg:'#fff7ed',
+      tagline:'CRM — Customer Relationship Management',
+      uses:['Check PA approval status for your patients','Track patient leads','Monitor insurance auth status','Track procedure completion'],
+      tips:['Provider-specific prior auth list is your most-used feature','Double-check PA is approved for the correct provider, location, and dates','If procedure in wrong clinic/provider — you are ultimately responsible'],
+      notFor:[]
+    },
+    { icon:'💬', name:'Luma', color:'#7c3aed', bg:'#faf5ff',
+      tagline:'Patient Engagement & Communication',
+      uses:['Automated appointment reminders','Digital intake forms (sent before visit)','Secure patient messaging','Post-visit instructions'],
+      tips:[], notFor:[]
+    },
+    { icon:'👔', name:'Rippling', color:'#15803d', bg:'#f0fdf4',
+      tagline:'HR Portal',
+      uses:['View your schedule','Register for benefits','Request PTO','Access HR documents and tax forms'],
+      tips:['Always request vacation here — if no response in a week, follow up with HR'], notFor:[]
+    },
+    { icon:'📱', name:'Ring Central', color:'#dc2626', bg:'#fef2f2',
+      tagline:'Provider Communication Line',
+      uses:['Provider Emergency Line','Post-procedure patient check-ins'],
+      tips:['Login info sent to your Gmail','Respond within 24 hours to after-hours communications'],
+      notFor:['Scheduling or admin calls — those go through the main office line']
+    },
+    { icon:'🔧', name:'Freshworks / Freshservice', color:'#0369a1', bg:'#f0f9ff',
+      tagline:'IT Help Desk & Ticketing',
+      uses:['Submit IT support tickets','Find FAQs (e.g., how to add email signature)','Track support request status'],
+      tips:['When emailing IT, include a screenshot of your signature settings and your ANYDESK ID'], notFor:[]
+    },
+  ];
 
   return (
     <div>
-      <Section id="defs" title="📖 Definitions">
-        <div className="grid-2" style={{marginBottom:16}}>
-          <div className="highlight-box box-blue">
-            <div className="box-title">🕷️ Spider Veins (Telangiectasias)</div>
-            <div className="box-body">Small red, blue, or purple veins visible on the skin surface. Heterogeneous in appearance — wispy red clusters or dense purple networks. Located between the dermis and epidermis. Found in legs or face. <strong>Often the result of underlying venous insufficiency.</strong></div>
+      <div className="grid-2">
+        {tools.map(t=>(
+          <div key={t.name} className="card" style={{borderTop:`4px solid ${t.color}`}}>
+            <div className="card-title" style={{color:t.color}}>{t.icon} {t.name}</div>
+            <div style={{fontSize:12,fontWeight:700,color:'#64748b',marginBottom:12}}>{t.tagline}</div>
+            <div className="section-label">Used for</div>
+            {t.uses.map((u,i)=><div key={i} style={{fontSize:13,color:'#374151',padding:'4px 0',borderBottom:'1px solid #f1f5f9',display:'flex',gap:6}}><span style={{color:t.color}}>→</span>{u}</div>)}
+            {t.tips.length>0&&<><div className="section-label" style={{marginTop:10}}>💡 Tips</div>{t.tips.map((u,i)=><div key={i} style={{fontSize:12,color:'#64748b',marginBottom:4}}>• {u}</div>)}</>}
+            {t.notFor.length>0&&<><div className="section-label" style={{marginTop:10,color:'#ef4444'}}>Not for</div>{t.notFor.map((u,i)=><div key={i} style={{fontSize:12,color:'#ef4444',marginBottom:4}}>✗ {u}</div>)}</>}
           </div>
-          <div className="highlight-box box-purple">
-            <div className="box-title">🫀 Varicose Veins (Varicosities)</div>
-            <div className="box-body">Large blood vessels visible and often bulging above the skin. Dark purple, green, blue, or red. Most common in legs but can appear in inner thighs, buttocks, and lower pelvis. Follow a <strong>twisting, turning path</strong> unlike healthy straight veins.</div>
-          </div>
-        </div>
-        <div className="highlight-box box-green">
-          <div className="box-title">⚡ Venous Insufficiency (Vein Disease) — What Is It?</div>
-          <div className="box-body">
-            <p style={{marginBottom:8}}>The venous system returns blood from the body back to the heart. Leg veins work against gravity using <strong>one-way valves</strong> that open during muscle contractions and close when muscles relax.</p>
-            <p style={{marginBottom:8}}><strong>When valves fail:</strong> Blood pools in the vein instead of returning to the heart. The resulting increased pressure causes veins to dilate, weaken, and become visible — causing spider veins, varicose veins, and symptoms.</p>
-            <p><strong>Short answer:</strong> Vein walls and/or valves weaken → blood flows backward (reflux) → increased venous pressure → symptoms and visible veins.</p>
-          </div>
-        </div>
-      </Section>
+        ))}
+      </div>
 
-      <Section id="eval" title="🩺 Initial Evaluation — Signs, Symptoms & History">
-        <div className="highlight-box box-blue" style={{marginBottom:16}}>
-          <div className="box-title">💬 Typical Vein Pain</div>
-          <div className="box-body">
-            <div>• Dull, achy, cramps, fatigue, heaviness, poorly localized</div>
-            <div>• <strong>Worse with</strong> prolonged sitting or standing, worse at end of day</div>
-            <div>• <strong>Better with</strong> exercise, generally improves with compression</div>
-            <div style={{marginTop:8,fontWeight:700,color:'#1e40af'}}>⚠️ Symptoms are SUBTLE and PROGRESS SLOWLY. Many patients don't realize they have a treatable medical condition! Very helpful if MA/sonographer primes patient by educating about symptoms.</div>
-          </div>
-        </div>
-
-        <div className="grid-2" style={{marginBottom:16}}>
-          <div>
-            <div className="section-label">Signs (Things you can SEE)</div>
-            {['Spider veins (telangiectasias)','Varicose veins','Skin discoloration (hemosiderin staining)','Lipodermatosclerosis','Venous ulcers','Swelling (edema)','Corona phlebectatica','Atrophie blanche'].map(s=>(
-              <div key={s} style={{fontSize:13,color:'#374151',padding:'5px 0',borderBottom:'1px solid #f1f5f9',display:'flex',gap:8}}><span style={{color:'#2563eb'}}>👁</span>{s}</div>
-            ))}
-          </div>
-          <div>
-            <div className="section-label">Symptoms (Things you can FEEL)</div>
-            {['Leg pain, aching, or cramping','Heaviness or fatigue in the legs','Itching around veins','Burning or throbbing','Restless leg feeling','Swelling (especially at end of day)','Skin irritation or rashes near veins','Night cramps'].map(s=>(
-              <div key={s} style={{fontSize:13,color:'#374151',padding:'5px 0',borderBottom:'1px solid #f1f5f9',display:'flex',gap:8}}><span style={{color:'#9333ea'}}>💭</span>{s}</div>
-            ))}
-          </div>
-        </div>
-
-        <div className="highlight-box box-amber">
-          <div className="box-title">🔍 Other Conditions to Consider (if atypical presentation)</div>
-          <div className="box-body">Arterial disease (dependent rubor, poor pulses), peripheral neuropathy, musculoskeletal causes. If pain is atypical or exam shows no visible veins, broaden the differential.</div>
-        </div>
-      </Section>
-
-      <Section id="exam" title="🔬 Initial Evaluation — Physical Exam">
+      <div className="card">
+        <div className="card-title">📝 Note Types in Nextech</div>
         <div className="grid-2">
           <div>
-            <div className="section-label">Exam Checklist</div>
-            {[
-              ['Full visualization of skin condition','Look for discoloration, ulcers, texture changes on entire leg'],
-              ['CEAP score','Document C0–C6 (see CEAP table below)'],
-              ['Pulses','Dorsalis pedis + posterior tibialis — rule out arterial disease'],
-              ['Edema assessment','Pitting vs. non-pitting; unilateral vs. bilateral'],
-              ['Spider veins','Distribution, density, satellite pattern'],
-              ['Corona phlebectatica','Fan-shaped intradermal veins at ankle — marker of advanced disease'],
-            ].map(([item, note]) => (
-              <div key={item} style={{padding:'8px 0',borderBottom:'1px solid #f1f5f9'}}>
-                <div style={{fontSize:13,fontWeight:700,color:'#1e293b'}}>{item}</div>
-                <div style={{fontSize:12,color:'#64748b',marginTop:2}}>{note}</div>
-              </div>
+            <div className="section-label">EMN Types</div>
+            {['Initial','US Review','Procedure','Post-procedure Follow Up','1 Month / 3 Month / 6 Month / 9 Month Follow Up','Conservative Review','F/U Other (use sparingly)'].map(n=>(
+              <div key={n} style={{fontSize:13,color:'#374151',padding:'5px 0',borderBottom:'1px solid #f1f5f9'}}>{n}</div>
             ))}
           </div>
           <div>
-            <div className="section-label">The Vein Talk</div>
-            <div className="highlight-box box-blue" style={{marginTop:0}}>
-              <div className="box-body">Use the <strong>Script and Slides</strong> from your Google Drive Resource Folder to guide patient education during the initial consultation. The goal is to help patients understand their condition and the treatment options clearly.</div>
-            </div>
-            <div style={{marginTop:16}}>
-              <div className="section-label">CEAP Classification</div>
-              <table className="ceap-table">
-                <thead><tr><th>Class</th><th>Description</th></tr></thead>
-                <tbody>
-                  {[
-                    ['C0','No visible or palpable signs of venous disease'],
-                    ['C1','Telangiectasias (spider veins) or reticular veins'],
-                    ['C2','Varicose veins'],
-                    ['C3','Edema'],
-                    ['C4a','Pigmentation or eczema'],
-                    ['C4b','Lipodermatosclerosis or atrophie blanche'],
-                    ['C5','Healed venous ulcer'],
-                    ['C6','Active venous ulcer'],
-                  ].map(([c,d])=>(
-                    <tr key={c}><td style={{fontWeight:700,color:'#1e3a5f'}}>{c}</td><td>{d}</td></tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="section-label">Separate Notes</div>
+            {['US Results','Compression Prescription','US Order','Needlestick Protocol','Non-billable follow up (if visit was in error or only counseling)'].map(n=>(
+              <div key={n} style={{fontSize:13,color:'#374151',padding:'5px 0',borderBottom:'1px solid #f1f5f9'}}>{n}</div>
+            ))}
+            <div className="hbox hbox-amber" style={{marginTop:12}}>
+              <div className="hbox-title">⚠️ Critical Rule</div>
+              <div className="hbox-body">EMN type must match what was actually done. Wrong appointment type = billing errors. If a procedure is started but aborted, you still need a procedure note and still bill.</div>
             </div>
           </div>
         </div>
-      </Section>
+      </div>
+    </div>
+  );
+}
 
-      <Section id="epi" title="📊 Epidemiology & Risk Factors">
+// ── CLINICAL TAB ────────────────────────────────────────────────────────────
+function ClinicalTab() {
+  const [open, setOpen] = useState({consult:true, review:false, conservative:false, followup:false, scheduling:false, lymph:false});
+  const T = ({id,title,children}) => (
+    <div className="card" style={{marginBottom:12}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',cursor:'pointer'}} onClick={()=>setOpen(o=>({...o,[id]:!o[id]}))}>
+        <div className="card-title" style={{marginBottom:0}}>{title}</div>
+        <span style={{color:'#94a3b8',fontSize:13}}>{open[id]?'▲':'▼'}</span>
+      </div>
+      {open[id]&&<div style={{marginTop:14}}>{children}</div>}
+    </div>
+  );
+  return (
+    <div>
+      <T id="consult" title="🩺 Initial Consultation (Consult Appointment)">
+        <div className="hbox hbox-blue" style={{marginBottom:14}}>
+          <div className="hbox-title">Timing Targets</div>
+          <div className="hbox-body">10–15 min: forms + sonographer intake → 10–15 min: physician encounter → 35 min: duplex scan. <strong>Never let a patient leave without their next appointment scheduled.</strong></div>
+        </div>
+        <div className="section-label">Workflow</div>
+        <ul className="step-list">
+          {[
+            'Front desk checks patient in (Orange in Nextech)',
+            'Sonographer or MA brings patient back (Green in Nextech), completes clinical intake, presents to MD/APP at intern/med-student level',
+            'MD/APP confirms history — say "here\'s what I heard about you from [name]" and repeat back, adding questions',
+            'Always try to elicit symptoms even if sonographer says "asymptomatic" — use the vein symptom script',
+            'MD/APP does the Vein Talk (use script and slides from Google Drive)',
+            'Communicate index of suspicion to the tech ("low/med/high index of suspicion") and any special areas to focus on',
+            'Explain next steps: sonographer will scan, then come back in a week to review results',
+            'Prescribe compression stockings if conservative therapy will be needed — clock starts here',
+            'Sonographer scans; optisigns video plays during scan',
+            'Front desk books next appointment — patient should NEVER leave without one',
+          ].map((s,i)=><li key={i}>{s}</li>)}
+        </ul>
+        <div className="hbox hbox-green" style={{marginTop:12}}>
+          <div className="hbox-title">Building Rapport — Key Tip</div>
+          <div className="hbox-body">Try to ask every patient about their 1) Job, 2) Kids, or 3) Country/culture of origin. Write it in the Notes section so you can reference it at every future visit.</div>
+        </div>
+      </T>
+
+      <T id="review" title="📊 First Follow-Up — Ultrasound Review">
+        <ul className="step-list">
+          {[
+            'Staff brings patient back, rescan if indicated (positive for reflux but numbers don\'t meet criteria, or negative but high index of suspicion)',
+            'Physician reviews results — use the Review Script (script is comprehensive, includes FAQ and ASC introduction)',
+            'Explain treatment plan and conservative trial if required',
+            'Introduce ASC if relevant',
+            'When you leave the room: communicate the plan to the sonographer — e.g. "BL GSV RFA, BL Varithena x2"',
+            'Sonographer communicates plan to the IB team via group chat and fills out the plan form',
+            'Patient does NOT leave with a scheduled appointment — team calls when procedures are approved',
+            'Provide patient folder: pre/post-op instructions, insurance team info, business cards, vein procedure form',
+            'If negative for reflux and not submitting for procedures: check the appropriate box in Nextech, counsel on cosmetic sclerotherapy if appropriate',
+          ].map((s,i)=><li key={i}>{s}</li>)}
+        </ul>
+        <div className="hbox hbox-amber" style={{marginTop:12}}>
+          <div className="hbox-title">Insurance Timing</div>
+          <div className="hbox-body">Approval takes 2 days (Medicare, HMOs) to 4 weeks (OON PPOs). Schedule review at least 3 days after initial for RPVI read.</div>
+        </div>
+      </T>
+
+      <T id="conservative" title="🧦 Conservative Therapy">
+        <div className="grid-2" style={{marginBottom:12}}>
+          <div className="hbox hbox-blue">
+            <div className="hbox-title">6-Week Trial</div>
+            <div className="hbox-body">Initial → Conservative Review → 6-week phone follow-up (RN) → Auth submitted → Patient called to schedule when approved</div>
+          </div>
+          <div className="hbox hbox-purple">
+            <div className="hbox-title">12-Week Trial</div>
+            <div className="hbox-body">Initial → Conservative Review → 6-week follow-up visit → 12-week phone follow-up → Auth submitted → Procedures scheduled</div>
+          </div>
+        </div>
+        <div className="hbox hbox-red">
+          <div className="hbox-title">Exceptions — Conservative Therapy Can Be Bypassed</div>
+          <div className="hbox-body">Active/healing varicose vein rupture • Ulceration • Recurrent thrombophlebitis<br/><strong>Always tell the sonographer</strong> and document your reasoning in the free text: "Exam indicates [finding], therefore conservative therapy may be bypassed."</div>
+        </div>
+        <div className="hbox hbox-amber" style={{marginTop:8}}>
+          <div className="hbox-title">⚠️ Important Notes</div>
+          <div className="hbox-body">Conservative therapy is a separate note type. Prior compression stocking use does not count until they have a physical prescription from VIP. If a patient had prior treatment elsewhere with documentation, it may count — check case by case.</div>
+        </div>
+      </T>
+
+      <T id="followup" title="📅 Post-Procedure Follow-Ups">
+        <div className="section-label">Post-Procedure Scan</div>
+        <div style={{fontSize:13,color:'#374151',marginBottom:12}}>Ideal: 3–7 days post-procedure. Acceptable: 2 days to 2 weeks. <strong>Never let a patient leave without a post-scan scheduled.</strong></div>
+        <div className="section-label">Long-Term Follow-Up Schedule</div>
+        {[['1 Month','Full scan of all treated veins, PHOTOS (+/- cosmetics)'],['3 Months','Full scan, PHOTOS'],['6 Months','Scan PRN, PHOTOS — graduate if doing great'],['9 Months','Scan PRN, PHOTOS'],['12 Months','Scan PRN, PHOTOS']].map(([t,d])=>(
+          <div key={t} style={{display:'flex',gap:12,padding:'7px 0',borderBottom:'1px solid #f1f5f9',fontSize:13}}>
+            <div style={{fontWeight:800,color:'#1d4ed8',minWidth:90}}>{t}</div>
+            <div style={{color:'#374151'}}>{d}</div>
+          </div>
+        ))}
+        <div className="hbox hbox-blue" style={{marginTop:12}}>
+          <div className="hbox-title">Returning Patients — Scheduling Rules</div>
+          <div className="hbox-body">
+            <div>• Last visit &lt;12 months → applicable 3/6/9/12-month F/U</div>
+            <div>• Last visit 12 months–3 years → Vein Initial: Vein Reassessment (12M-3Y)</div>
+            <div>• Last visit &gt;3 years → Vein Initial: Vein Consult</div>
+          </div>
+        </div>
+      </T>
+
+      <T id="scheduling" title="📋 Insurance Quirks to Know">
+        <div className="hbox hbox-amber" style={{marginBottom:12}}>
+          <div className="hbox-title">Aetna — SSVs and Accessory Veins</div>
+          <div className="hbox-body">Some Aetna plans require rescan and re-demonstration of reflux in SSVs and accessory veins prior to submission and treatment after GSV treatment. Backend PA team flags this in Nextech alerts and Medwork notes.</div>
+        </div>
+        <div className="hbox hbox-amber">
+          <div className="hbox-title">BCBS — Varithena</div>
+          <div className="hbox-body">Some BCBS plans require rescan and re-demonstration of reflux in distal GSV and accessories after successful GSV treatment. Some require a 6-week wait before rescan. Give patients a heads-up — they're less upset about waiting if forewarned.</div>
+        </div>
+      </T>
+
+      <T id="lymph" title="🦵 Lymphedema + CVI (Phlebolymphedema)">
         <div className="grid-2">
           <div>
-            <div className="section-label">Established Risk Factors</div>
-            {[
-              ['Genetics','Family history is the strongest risk factor'],
-              ['Female Gender','Women are more affected than men'],
-              ['Pregnancy','Increased venous pressure; multiple pregnancies = higher risk'],
-              ['Age','Risk increases with age'],
-              ['History of Blood Clots','Prior DVT can damage valves'],
-              ['Obesity','Increases intra-abdominal pressure, impeding venous return'],
-              ['Occupation','Prolonged standing or sitting (nurses, teachers, office workers)'],
-            ].map(([f,d])=>(
-              <div key={f} style={{padding:'8px 0',borderBottom:'1px solid #f1f5f9'}}>
-                <div style={{fontSize:13,fontWeight:700,color:'#1e293b'}}>{f}</div>
+            <div className="section-label">What it is</div>
+            <div className="hbox hbox-blue" style={{marginTop:0}}>
+              <div className="hbox-body">Chronic venous hypertension → lymphatic overload → lymphatic dysfunction → protein-rich fluid accumulation. Known as <strong>phlebolymphedema</strong> when CVI and lymphedema coexist.</div>
+            </div>
+            <div className="section-label" style={{marginTop:12}}>Diagnosis</div>
+            {['Clinical exam: asymmetric swelling, skin thickening, positive Stemmer sign','Duplex ultrasound to rule out DVT and confirm venous reflux','Photos and circumferential measurements at every follow-up'].map((d,i)=>(
+              <div key={i} style={{fontSize:13,color:'#374151',padding:'5px 0',borderBottom:'1px solid #f1f5f9'}}>• {d}</div>
+            ))}
+          </div>
+          <div>
+            <div className="section-label">Management</div>
+            {[['Compression','Class II 20-30 mmHg; multilayer wraps for decompensated limbs'],['CDT','Refer to certified lymphedema therapist (MLD + compression wrapping + skin care + exercise)'],['Venous ablation','If significant reflux and meets insurance criteria — reduces lymphatic burden'],['Pneumatic pumps','VIP uses Tactile as primary referral for home compression pumps'],['Elevation + exercise','Low-sodium diet, gentle mobility, avoid heat and constrictive garments']].map(([t,d])=>(
+              <div key={t} style={{padding:'7px 0',borderBottom:'1px solid #f1f5f9'}}>
+                <div style={{fontSize:13,fontWeight:800,color:'#1e293b'}}>{t}</div>
                 <div style={{fontSize:12,color:'#64748b',marginTop:2}}>{d}</div>
               </div>
             ))}
           </div>
-          <div>
-            <div className="section-label">Minimal or Negligible Risk</div>
-            <div className="highlight-box box-green" style={{marginTop:0}}>
-              <div className="box-title">✅ These do NOT cause vein disease</div>
-              <div className="box-body">
-                <div>• <strong>Hormone treatment</strong> — minimal risk only</div>
-                <div style={{marginTop:6}}>• <strong>Crossing legs</strong> — minimal risk only</div>
-                <div style={{marginTop:12,fontStyle:'italic',color:'#64748b'}}>Patients often ask about these — reassure them these are not significant causes.</div>
-              </div>
-            </div>
-            <div className="highlight-box box-red" style={{marginTop:12}}>
-              <div className="box-title">❌ Completely B.S. Treatments (to counsel patients against)</div>
-              <div className="box-body">
-                <div>• Apple cider vinegar</div>
-                <div>• Essential oils (also pose skin risks)</div>
-                <div>• Witch hazel</div>
-                <div>• Horse chestnut seed extract</div>
-                <div style={{marginTop:8,fontStyle:'italic'}}>These have no clinical evidence. Patients may ask — be direct.</div>
-              </div>
-            </div>
-          </div>
         </div>
-      </Section>
-
-      <Section id="dx" title="🔍 Diagnosis">
-        <div className="grid-2">
-          <div className="highlight-box box-green">
-            <div className="box-title">✅ RECOMMENDED — Duplex Ultrasound (Most Important)</div>
-            <div className="box-body">The gold standard for diagnosing chronic venous insufficiency. Evaluates both anatomy and blood flow. Identifies reflux (backward flow), obstruction, and valve incompetence. Required before any treatment planning.</div>
-          </div>
-          <div>
-            <div className="highlight-box box-red" style={{marginBottom:12}}>
-              <div className="box-title">❌ NOT RECOMMENDED — MR Venogram</div>
-              <div className="box-body">Expensive, not necessary for routine venous insufficiency. Reserved for rare complex cases.</div>
-            </div>
-            <div className="highlight-box box-red">
-              <div className="box-title">❌ NOT RECOMMENDED — CT Venogram</div>
-              <div className="box-body">Radiation exposure, contrast risk, not routinely needed for vein disease evaluation.</div>
-            </div>
-          </div>
-        </div>
-      </Section>
-
-      <Section id="conservative" title="🧦 Conservative Treatments">
-        <p style={{fontSize:13,color:'#64748b',marginBottom:16}}>Insurance often requires documented conservative treatment before approving procedures. Know what actually helps vs. what doesn't.</p>
-        <div className="grid-2">
-          <div>
-            <div className="section-label">Evidence-Based Conservative Options</div>
-            {[
-              ['Compression Stockings','Most important conservative treatment. 20–30 mmHg for most patients. Must be worn consistently.'],
-              ['Exercise','Calf muscle pump activation helps. Walking, cycling, swimming.'],
-              ['Leg Elevation','Reduces edema and symptom burden, especially at end of day.'],
-              ['Non-Restrictive Clothing','Avoid tight garments that impede venous return.'],
-              ['Weight Management','Reducing obesity reduces venous pressure.'],
-            ].map(([t,d])=>(
-              <div key={t} style={{padding:'8px 0',borderBottom:'1px solid #f1f5f9'}}>
-                <div style={{fontSize:13,fontWeight:700,color:'#1e293b'}}>{t}</div>
-                <div style={{fontSize:12,color:'#64748b',marginTop:2}}>{d}</div>
-              </div>
-            ))}
-          </div>
-          <div className="highlight-box box-amber" style={{alignSelf:'start'}}>
-            <div className="box-title">⚠️ Important for Insurance</div>
-            <div className="box-body">Most payers require <strong>6–12 weeks of documented conservative therapy</strong> (usually compression stocking use) before approving thermal ablation or other procedures. Check the Vein Policy Hub for payer-specific requirements.</div>
-          </div>
-        </div>
-      </Section>
+      </T>
     </div>
   );
 }
 
 // ── TREATMENT TAB ────────────────────────────────────────────────────────────
 function TreatmentTab() {
-  const [open, setOpen] = useState({ us: true, spider: false, varicose: false, surgical: false });
-  const toggle = (k) => setOpen(o => ({...o, [k]: !o[k]}));
-  const Section = ({ id, title, children }) => (
-    <div className="card" style={{marginBottom:16}}>
-      <div className="acc-header" onClick={()=>toggle(id)}>
-        <div className="card-title" style={{marginBottom:0}}>{title}</div>
-        <span style={{color:'#94a3b8',fontSize:14}}>{open[id] ? '▲' : '▼'}</span>
-      </div>
-      {open[id] && <div className="acc-body">{children}</div>}
-    </div>
-  );
   return (
     <div>
-      <Section id="us" title="🔊 Ultrasound Review & Treatment Planning">
+      <div className="card">
+        <div className="card-title">🔊 Treatment Decision by Vein</div>
         <div className="grid-2" style={{marginBottom:16}}>
-          <div className="highlight-box box-blue">
-            <div className="box-title">📏 Minimum Thresholds for Treatment</div>
-            <div className="box-body">
-              <div style={{fontSize:20,fontWeight:900,color:'#1e3a5f'}}>3 mm</div>
-              <div style={{fontSize:13,color:'#374151'}}>Minimum vein diameter for treatment eligibility</div>
-              <div style={{fontSize:20,fontWeight:900,color:'#1e3a5f',marginTop:12}}>500 ms</div>
-              <div style={{fontSize:13,color:'#374151'}}>Minimum reflux time for clinical significance</div>
+          <div className="hbox hbox-blue">
+            <div className="hbox-title">Minimum Thresholds</div>
+            <div className="hbox-body" style={{fontSize:16,fontWeight:900,color:'#1e3a5f'}}>3 mm diameter · 500 ms reflux</div>
+          </div>
+          <div className="hbox hbox-amber">
+            <div className="hbox-title">⚠️ Aberrant Anatomy</div>
+            <div className="hbox-body">Always flag for physician review before proceeding. When in doubt, ask.</div>
+          </div>
+        </div>
+        {[
+          ['Proximal GSV','RFA (36475/36476)','#15803d','First-line. Exception: extremely short segment or too tortuous → primary Varithena'],
+          ['Distal GSV','Varithena (36465/36466)','#7c3aed','Covered by 90%+ of insurers. Fallback: UGFS or sclerotherapy if coverage lost'],
+          ['SSV (Small Saphenous)','RFA','#15803d','Exception: very short/tortuous → primary sclerotherapy or Varithena'],
+          ['Accessory GSV / Dups','RFA','#15803d','Exception: short segment → primary sclerotherapy or Varithena'],
+          ['Large Varicose Veins','UGFS vs Phlebectomy','#0369a1','Treat saphenous source first. Bulkier VVs may be better for phlebectomy (less phlebitis). Varithena >> UGFS in larger veins.'],
+          ['VenaSeal','Thermal ablation alt','#0369a1','No tumescent needed. No compression post-procedure. Excellent for appropriate candidates.'],
+        ].map(([vein,tx,color,note])=>(
+          <div key={vein} style={{padding:'10px 0',borderBottom:'1px solid #f1f5f9'}}>
+            <div style={{display:'flex',gap:12,alignItems:'flex-start'}}>
+              <div style={{flex:1}}>
+                <div style={{fontWeight:800,fontSize:14,color:'#1e293b'}}>{vein}</div>
+                <div style={{fontSize:12,color:'#64748b',marginTop:2}}>{note}</div>
+              </div>
+              <span style={{background:color+'20',color:color,padding:'4px 12px',borderRadius:20,fontSize:12,fontWeight:800,whiteSpace:'nowrap'}}>{tx}</span>
             </div>
           </div>
-          <div>
-            <div className="section-label">Treatment Decision by Vein</div>
-            {[
-              ['Proximal GSV', 'RFA (Radiofrequency Ablation)', '#15803d'],
-              ['Distal GSV', 'UGFS — Varithena', '#9333ea'],
-              ['SSV (Small Saphenous)', 'RFA', '#15803d'],
-              ['Varicose Veins', 'UGFS (foam sclerotherapy)', '#9333ea'],
-              ['Duplicate Veins', 'Anatomy dependent — assess case by case', '#0369a1'],
-            ].map(([vein, tx, color]) => (
-              <div key={vein} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'8px 0',borderBottom:'1px solid #f1f5f9'}}>
-                <div style={{fontSize:13,fontWeight:700,color:'#1e293b'}}>{vein}</div>
-                <span className="badge" style={{background: color+'22', color: color, fontSize:11}}>{tx}</span>
+        ))}
+      </div>
+
+      <div className="card">
+        <div className="card-title">💉 Procedure Quick Reference</div>
+        <div style={{display:'flex',flexDirection:'column',gap:10}}>
+          {[
+            {name:'RFA (Radiofrequency Ablation)',cpt:'36475/36476',rec:true,
+              points:['Requires tumescent anesthesia','Compression stockings post-procedure','Must ambulate after procedure','Well-established, most payers cover']},
+            {name:'Varithena (UGFS — Ultrasound-Guided Foam Sclerotherapy)',cpt:'36465 or 36466',rec:true,
+              points:['CPT 36465 = single truncal vein; 36466 = multiple truncal veins same leg','No catheter or tumescent','Stocking compliance is KEY post-procedure','Some payers require prior auth — check Vein Policy Hub']},
+            {name:'VenaSeal',cpt:'36482',rec:true,
+              points:['No tumescent anesthesia','No compression stocking requirement after','Immediate return to activity','Some payers may not cover — verify before procedure']},
+            {name:'Sclerotherapy (Cosmetic/UGFS)',cpt:'Various',rec:true,
+              points:['Office-based, multiple areas per session','Usually cosmetic → not covered for spider veins without reflux','Post-procedure: compression stockings 1-2 weeks, avoid sun exposure']},
+            {name:'EVLA (Endovenous Laser Ablation)',cpt:'36478',rec:false,
+              points:['Not preferred when RFA or VenaSeal available','More post-procedure pain and bruising','Long track record but superseded by better options']},
+          ].map(t=>(
+            <div key={t.name} style={{background:t.rec?'#f0fdf4':'#fef2f2',border:`1px solid ${t.rec?'#bbf7d0':'#fecaca'}`,borderRadius:12,padding:'14px 18px'}}>
+              <div style={{display:'flex',gap:8,alignItems:'center',marginBottom:8,flexWrap:'wrap'}}>
+                <span>{t.rec?'✅':'⚠️'}</span>
+                <span style={{fontWeight:900,fontSize:14,color:t.rec?'#166534':'#991b1b'}}>{t.name}</span>
+                <span style={{background:'#1e3a5f20',color:'#1e3a5f',padding:'2px 10px',borderRadius:20,fontSize:11,fontWeight:800}}>CPT {t.cpt}</span>
+              </div>
+              {t.points.map((p,i)=><div key={i} style={{fontSize:12,color:'#374151',marginBottom:3}}>• {p}</div>)}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-title">📋 Sample Treatment Sequence — BL GSV Reflux + L SSV</div>
+        {['Initial','Review + Rescan (conservative)','6-week call with RN','L GSV RFA','R GSV RFA + L GSV post-scan','L SSV RFA + R GSV post-scan','R GSV Varithena + L SSV post-scan','L GSV Varithena + R GSV Varithena post-scan','L GSV Varithena post-scan (+/- cosmetics)','1 mo — full scan of all treated veins, PHOTOS','3 mo — full scan, PHOTOS','6 mo — scan PRN, PHOTOS (graduate if doing great)','9 mo — scan PRN, PHOTOS','12 mo — scan PRN, PHOTOS'].map((s,i)=>(
+          <div key={i} style={{display:'flex',gap:10,alignItems:'flex-start',padding:'6px 0',borderBottom:'1px solid #f1f5f9',fontSize:13,color:'#374151'}}>
+            <div style={{background:'#1e3a5f',color:'white',width:22,height:22,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,fontWeight:900,flexShrink:0}}>{i+1}</div>
+            <div>{s}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── FAQ TAB ──────────────────────────────────────────────────────────────────
+function FaqTab({ searchQ }) {
+  const [q, setQ] = useState(searchQ || '');
+  const [section, setSection] = useState('All');
+  const sections = ['All','Getting Started','Systems','Clinical','FAQs','Protocols','Marketing'];
+
+  const filtered = useMemo(() => {
+    return SEARCH_INDEX.filter(item => {
+      const matchSection = section === 'All' || item.section === section;
+      const matchQ = !q || item.q.toLowerCase().includes(q.toLowerCase()) || item.a.toLowerCase().includes(q.toLowerCase());
+      return matchSection && matchQ;
+    });
+  }, [q, section]);
+
+  return (
+    <div>
+      <div className="card" style={{marginBottom:16}}>
+        <div className="card-title">❓ Frequently Asked Questions</div>
+        <div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:14}}>
+          {sections.map(s=>(
+            <button key={s} onClick={()=>setSection(s)} style={{padding:'7px 14px',borderRadius:20,border:'none',cursor:'pointer',fontSize:12,fontWeight:800,background:section===s?'#1d4ed8':'#e2e8f0',color:section===s?'white':'#475569',transition:'all 0.15s'}}>{s}</button>
+          ))}
+        </div>
+        <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search all FAQs..." style={{width:'100%',padding:'10px 16px',border:'2px solid #e2e8f0',borderRadius:10,fontFamily:'Nunito',fontSize:14,fontWeight:600,outline:'none'}} />
+        <div style={{fontSize:12,color:'#94a3b8',marginTop:8,fontWeight:600}}>{filtered.length} result{filtered.length!==1?'s':''}</div>
+      </div>
+      {filtered.length === 0 && <div style={{textAlign:'center',padding:48,color:'#94a3b8'}}>No FAQs match your search</div>}
+      {filtered.map((item,i) => <FaqItem key={i} q={item.q} a={item.a} section={item.section} highlight={q} />)}
+    </div>
+  );
+}
+
+// ── CONTACTS TAB ────────────────────────────────────────────────────────────
+function ContactsTab() {
+  const rods = [
+    {region:'New York & Long Island',name:'Pam Sheamon'},
+    {region:'New Jersey',name:'Kelly Walsh',note:'Long-time VIP leader known for empathy, precision, and operational excellence'},
+    {region:'California',name:'Tracey Jaksch',note:'Seasoned multi-site healthcare leader passionate about communication and growth'},
+    {region:'Texas, Connecticut & Maryland',name:'Katherine Genao',note:'VIP success story — grew from receptionist to regional leader'},
+  ];
+  const contacts = [
+    {cat:'Medical Directors', items:[{name:'Dr. Caroline Novak',role:'Vein — Medical Director'},{name:'Dr. Billy Schoenfeld',role:'Vein'},{name:'Dr. Hanna',role:'Pain'}]},
+    {cat:'Operations', items:[{name:'Gabriella Soares',role:'Scheduling & Operations'},{name:'Carly Sarch',role:'Provider Onboarding & Training'}]},
+    {cat:'Key Emails', items:[
+      {name:'hr@vipmedicalgroup.com',role:'HR — OSHA, incident reports, benefits'},
+      {name:'schedulingerror@vipmedicalgroup.com',role:'Report scheduling errors'},
+      {name:'customerservice@medwork.io',role:'Unhappy patients, DNC requests'},
+      {name:'inventorymanager@vipmedicalgroup.com',role:'Inventory and supply requests'},
+      {name:'facilities@vipmedicalgroup.com',role:'Building issues (leak, AC, etc.)'},
+      {name:'verification-team@medwork.io',role:'Walk-ins and unverified patients (mark URGENT)'},
+      {name:'referrals@vipmedicalgroup.com',role:'Inbound/outbound referrals'},
+    ]},
+    {cat:'Scheduling Listservs (by region)', items:[
+      {name:'nyc.veinscheduling@vipmedicalgroup.com',role:'NYC Vein'},
+      {name:'PA Teams by region — see Systems → Prior Auth section',role:'Prior auth by location'},
+    ]},
+  ];
+  return (
+    <div>
+      <div className="card" style={{marginBottom:16}}>
+        <div className="card-title">🌎 Regional Operations Directors</div>
+        <p style={{fontSize:13,color:'#64748b',marginBottom:14}}>For local issues, contact your ROD first — they properly triage and escalate to corporate teams.</p>
+        <div style={{display:'flex',flexDirection:'column',gap:8}}>
+          {rods.map(r=>(
+            <div key={r.region} className="contact-card">
+              <div className="contact-avatar">👤</div>
+              <div>
+                <div style={{fontSize:10,fontWeight:900,color:'#1d4ed8',textTransform:'uppercase',letterSpacing:'0.05em'}}>{r.region}</div>
+                <div className="contact-name">{r.name}</div>
+                {r.note && <div style={{fontSize:11,color:'#94a3b8',marginTop:2}}>{r.note}</div>}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      {contacts.map(cat=>(
+        <div key={cat.cat} className="card" style={{marginBottom:12}}>
+          <div className="card-title">{cat.cat}</div>
+          <div style={{display:'flex',flexDirection:'column',gap:8}}>
+            {cat.items.map(c=>(
+              <div key={c.name} className="contact-card">
+                <div className="contact-avatar" style={{fontSize:12,background:'#64748b'}}>
+                  {c.name.includes('@')?'✉️':'👤'}
+                </div>
+                <div>
+                  <div className="contact-name" style={{fontSize:13}}>{c.name}</div>
+                  <div className="contact-role">{c.role}</div>
+                </div>
               </div>
             ))}
           </div>
         </div>
-        <div className="highlight-box box-amber">
-          <div className="box-title">⚠️ Special Considerations</div>
-          <div className="box-body">
-            <div>• <strong>Previous treatment?</strong> Review prior procedure notes and post-treatment scans before planning</div>
-            <div style={{marginTop:6}}>• <strong>Accessory veins</strong> — determine if they are in or out of the sheath before planning access</div>
-            <div style={{marginTop:6}}>• <strong>Aberrant anatomy</strong> — flag for physician review before proceeding</div>
-          </div>
-        </div>
-      </Section>
-
-      <Section id="spider" title="🕷️ Treatments for Spider Veins (Without Underlying Reflux)">
-        <div className="grid-2">
-          <div className="highlight-box box-green">
-            <div className="box-title">✅ RECOMMENDED — Sclerotherapy</div>
-            <div className="box-body">
-              <div style={{fontWeight:700,marginBottom:8}}>Advantages:</div>
-              <div>• Effective for spider and small reticular veins</div>
-              <div>• Minimally invasive, office-based</div>
-              <div>• Multiple areas treatable per session</div>
-              <div style={{fontWeight:700,marginTop:10,marginBottom:6}}>Drawbacks / Possible Risks:</div>
-              <div>• Temporary bruising, staining, matting</div>
-              <div>• Multiple sessions often needed</div>
-              <div>• Rare: allergic reaction, skin ulceration</div>
-              <div style={{fontWeight:700,marginTop:10}}>Post-procedure:</div>
-              <div>• Compression stocking use for 1–2 weeks</div>
-              <div>• Avoid sun exposure to treated areas</div>
-              <div style={{fontWeight:700,marginTop:10}}>Insurance: <span style={{fontWeight:400}}>Usually cosmetic only — typically not covered for spider veins without reflux</span></div>
-            </div>
-          </div>
-          <div className="highlight-box box-red">
-            <div className="box-title">❌ NOT RECOMMENDED — Blue Light / Laser Therapy (for Spider Veins)</div>
-            <div className="box-body">
-              <div>Limited efficacy on spider veins vs. sclerotherapy. Works best only on very fine vessels. Higher cost for worse outcomes. Not recommended as primary treatment.</div>
-            </div>
-          </div>
-        </div>
-      </Section>
-
-      <Section id="varicose" title="🫀 Treatments for Varicose Veins & Venous Insufficiency">
-        <div style={{display:'flex',flexDirection:'column',gap:12}}>
-          {[
-            {
-              name:'VenaSeal', rec:true, cpt:'36482',
-              adv:['No tumescent anesthesia needed','Minimal post-procedure pain','Immediate return to activity','No compression stocking requirement post-procedure'],
-              draw:['Higher upfront cost per case','Not all payers cover it — check Vein Policy Hub']
-            },
-            {
-              name:'Radiofrequency Ablation (RFA)', rec:true, cpt:'36475 / 36476',
-              adv:['Well-established evidence base','Covered by most major insurers','Effective for GSV and SSV','Less bruising than EVLA'],
-              draw:['Requires tumescent anesthesia','Compression stockings post-procedure','Must remain ambulatory post-procedure']
-            },
-            {
-              name:'Varithena (UGFS — Ultrasound-Guided Foam Sclerotherapy)', rec:true, cpt:'36478',
-              adv:['No catheter or tumescent required','Effective for distal GSV and varicose veins','Office-based'],
-              draw:['Multiple sessions may be needed','Some payer prior auth hurdles','Foam can disperse — careful with volume']
-            },
-            {
-              name:'Endovenous Laser Ablation (EVLA)', rec:false, cpt:'36478',
-              adv:['Long track record','Widely available'],
-              draw:['More post-procedure pain and bruising than RFA','Not preferred when RFA or VenaSeal is available']
-            },
-          ].map(t => (
-            <div key={t.name} style={{background: t.rec ? '#f0fdf4' : '#fef2f2', border: `1px solid ${t.rec ? '#bbf7d0' : '#fecaca'}`, borderRadius:12, padding:'16px 20px'}}>
-              <div style={{display:'flex',gap:10,alignItems:'center',marginBottom:10}}>
-                <span style={{fontSize:16}}>{t.rec ? '✅' : '⚠️'}</span>
-                <span style={{fontWeight:900,fontSize:15,color: t.rec ? '#166534' : '#991b1b'}}>{t.name}</span>
-                <span className="badge" style={{background:'#1e3a5f22',color:'#1e3a5f',fontSize:11}}>CPT {t.cpt}</span>
-                {!t.rec && <span className="badge tag-red">Not Preferred</span>}
-              </div>
-              <div className="grid-2">
-                <div>
-                  <div style={{fontSize:11,fontWeight:900,color:'#166534',marginBottom:4}}>ADVANTAGES</div>
-                  {t.adv.map(a=><div key={a} style={{fontSize:12,color:'#374151',marginBottom:3}}>• {a}</div>)}
-                </div>
-                <div>
-                  <div style={{fontSize:11,fontWeight:900,color:'#991b1b',marginBottom:4}}>DRAWBACKS</div>
-                  {t.draw.map(a=><div key={a} style={{fontSize:12,color:'#374151',marginBottom:3}}>• {a}</div>)}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Section>
-
-      <Section id="surgical" title="🏥 Surgical Treatments (Not Recommended)">
-        <div className="highlight-box box-red">
-          <div className="box-title">❌ Surgery is NOT Recommended for Routine Vein Disease</div>
-          <div className="box-body">
-            <p style={{marginBottom:8}}>Minimally invasive options are far superior in outcomes, recovery, and patient experience. Surgical options include:</p>
-            <div>• <strong>Vein ligation or stripping</strong> — old-fashioned, high morbidity</div>
-            <div>• <strong>Venous bypass surgery</strong> — reserved for rare severe obstruction cases only</div>
-            <div>• <strong>Phlebectomy (ambulatory)</strong> — may be combined with thermal ablation for bulging varicose veins not amenable to sclerotherapy</div>
-          </div>
-        </div>
-      </Section>
+      ))}
     </div>
   );
 }
 
-// ── SCHEDULES TAB ────────────────────────────────────────────────────────────
-function SchedulesTab() {
-  const schedules = [
-    {
-      title: 'Patient with Bilateral GSV Reflux + Left SSV',
-      steps: [
-        'Initial consultation',
-        'Review + Rescan (conservative therapy period)',
-        '6-week call with RN',
-        'L GSV RFA',
-        'R GSV RFA + L GSV RFA post-scan',
-        'L SSV RFA + R GSV RFA post-scan',
-        'R GSV Varithena + L SSV RFA post-scan',
-        'L GSV Varithena + R GSV Varithena post-scan',
-        'L GSV Varithena post-scan (+/- cosmetics)',
-        '1 month — full scan of all treated veins, PHOTOS (+/- cosmetics)',
-        '3 months — full scan of all treated veins, PHOTOS',
-        '6 months — scan PRN, PHOTOS — graduate if doing great',
-        '9 months — scan PRN, PHOTOS',
-        '12 months — scan PRN, PHOTOS',
-      ]
-    },
-    {
-      title: 'L GSV + R Distal GSV + R SSV (Previous Tx: R Prox GSV)',
-      steps: [
-        'Initial consultation',
-        'Review (not conservative — prior treatment already documented)',
-        'L GSV RFA',
-        'R SSV RFA + L GSV RFA post-scan',
-        'L GSV Varithena + R SSV RFA post-scan',
-        'R GSV Varithena + L GSV Varithena post-scan',
-        'R GSV Varithena post-scan (+/- cosmetics)',
-        '1 month — full scan of all treated veins, PHOTOS (+/- cosmetics)',
-        '3 months — full scan, PHOTOS',
-        '6 months — scan PRN, PHOTOS — graduate if doing great',
-        '9 months — scan PRN, PHOTOS',
-        '12 months — scan PRN, PHOTOS',
-      ]
-    },
-  ];
-
+// ── PROTOCOLS TAB ────────────────────────────────────────────────────────────
+function ProtocolsTab() {
   return (
     <div>
-      <div className="card" style={{marginBottom:20}}>
-        <div className="card-title">📋 Sample Treatment Schedules</div>
-        <p style={{fontSize:13,color:'#64748b'}}>These are representative multi-visit treatment sequences. Actual plans vary by patient anatomy, insurance requirements, and clinical response. Use these as a reference framework for scheduling discussions.</p>
+      <div className="card" style={{borderTop:'4px solid #ef4444'}}>
+        <div className="card-title">🩸 Needlestick Injury Protocol</div>
+        <div className="hbox hbox-red" style={{marginBottom:16}}>
+          <div className="hbox-title">Workers Comp Insurance</div>
+          <div className="hbox-body"><strong>AP Intego Insurance Group, LLC</strong> · Policy #76WEGZU7497<br/>NYC Employees: NYU ED at 570 1st Ave for testing and prophylaxis</div>
+        </div>
+        <div className="section-label">For Supervisor / MD in Clinic</div>
+        <ul className="step-list">
+          {[
+            'Assess risk and DOCUMENT in Nextech using the Needlestick Protocol note',
+            'Ask patient: injury location, needle size and depth, prior HBV vaccination, whether needle was contaminated with blood, recent HBV/HCV/HIV testing, risk factors for bloodborne disease',
+            'Get verbal consent from patient for testing — document that verbal consent was obtained',
+            'Contact Medical Director IMMEDIATELY (Vein: Dr. Novak or Dr. Schoenfeld; Pain: Dr. Hanna)',
+            'Send patient to Quest Diagnostics. VIP reimburses travel and lab costs — patient brings receipt',
+            'Tests ordered: Rapid HIV, HCV antibody, HBV antigen and antibody',
+            'Email HR to complete OSHA incident form: hr@vipmedicalgroup.com',
+          ].map((s,i)=><li key={i}>{s}</li>)}
+        </ul>
+        <div className="section-label" style={{marginTop:16}}>For Employee (You)</div>
+        <ul className="step-list">
+          {[
+            'Get tested immediately and receive prophylaxis',
+            'Determine your HBV vaccination status',
+            'Go to ER, Urgent Care, or Concentra for testing',
+            'NYC Employees: NYU ED at 570 1st Ave for testing and initiation of prophylactic medication',
+            'Contact Medical Director and HR with updates',
+          ].map((s,i)=><li key={i}>{s}</li>)}
+        </ul>
+        <div className="hbox hbox-blue" style={{marginTop:12}}>
+          <div className="hbox-title">CDC Resource</div>
+          <div className="hbox-body">For questions about appropriate medical treatment for occupational exposures:<br/><strong>PEP Line: 1-888-448-1911</strong> or http://www.nccc.ucsf.edu/</div>
+        </div>
       </div>
 
-      {schedules.map((s,i) => (
-        <div key={i} className="schedule-block" style={{marginBottom:20}}>
-          <div className="schedule-title">📍 {s.title}</div>
-          {s.steps.map((step, j) => (
-            <div key={j} className="schedule-step">
-              <div className="schedule-num">{j+1}</div>
-              <div style={{fontSize:13,color:'#374151',lineHeight:1.5,paddingTop:2}}>{step}</div>
-            </div>
-          ))}
-        </div>
-      ))}
+      <div className="card">
+        <div className="card-title">🚫 Aborted Procedure Protocol</div>
+        <ul className="step-list">
+          {[
+            'If a procedure is started but aborted, you still bill — supplies and time were used',
+            'Document the reason for aborting in the free text section of the procedure note',
+            'Change the appointment type if needed to reflect what actually occurred',
+            'If a patient checks in but the visit is in error (scheduling/insurance issue): reschedule or remove the appointment — no billable encounter needed',
+          ].map((s,i)=><li key={i}>{s}</li>)}
+        </ul>
+      </div>
 
       <div className="card">
-        <div className="card-title">📸 Follow-Up Photography — Why It Matters</div>
-        <p style={{fontSize:13,color:'#64748b',lineHeight:1.6}}>
-          Standardized photos at 1, 3, 6, 9, and 12 month visits serve multiple purposes: clinical documentation of treatment response, patient satisfaction (seeing their progress), insurance documentation, and quality improvement. <strong>Always take photos at every follow-up scan visit.</strong>
-        </p>
+        <div className="card-title">💳 Check Collection Protocol (MD Only)</div>
+        <div className="hbox hbox-amber" style={{marginBottom:12}}>
+          <div className="hbox-title">⚠️ This is your responsibility — do not delegate</div>
+          <div className="hbox-body">Insurance sends reimbursement checks directly to patients. Patients are asked to bring them to the office. DO NOT hand off to front desk or sonographer.</div>
+        </div>
+        <ul className="step-list">
+          {[
+            'Front desk collects checks and places in individual sealed envelopes',
+            'Envelopes given to MD → placed in office safe or deposit slot',
+            'Financial office sends prepaid shipping envelopes at regular intervals',
+            'MD is responsible for dropping at the appropriate UPS/FedEx/USPS location',
+            'Any issues: reach out to Dr. Novak ASAP',
+          ].map((s,i)=><li key={i}>{s}</li>)}
+        </ul>
       </div>
     </div>
   );
 }
 
-// ── APP ──────────────────────────────────────────────────────────────────────
+// ── MARKETING TAB ────────────────────────────────────────────────────────────
+function MarketingTab() {
+  return (
+    <div>
+      <div className="card">
+        <div className="card-title">📸 Your Marketing Responsibilities</div>
+        <ul className="step-list">
+          {[
+            'Attend introductory meeting with Chief Marketing Officer — contact: Marketing - VIP Medical',
+            'Participate in onboarding photoshoot (fully coordinated by marketing around your schedule)',
+            'Encourage social media use — marketing handles all editing, publishing, and can provide content ideas',
+            'Submit Before & After photos 2x per month',
+            'Encourage Google reviews — QR code signs in exam rooms, staff badges, and email templates available through marketing',
+            'Business cards, brochures, and other print materials sent for your approval before ordering',
+          ].map((s,i)=><li key={i}>{s}</li>)}
+        </ul>
+      </div>
+
+      <div className="card">
+        <div className="card-title">🔁 How Referrals Work</div>
+        <div className="grid-2" style={{marginBottom:14}}>
+          <div className="hbox hbox-blue">
+            <div className="hbox-title">Outbound Referral</div>
+            <div className="hbox-body">Clinical staff generate the Nextech Outbound Referral Form → automatically transmitted to referrals team → they send via email or fax with all patient info. No need to email the team unless there's an issue.</div>
+          </div>
+          <div className="hbox hbox-green">
+            <div className="hbox-title">Inbound Referral</div>
+            <div className="hbox-body">Referrals team creates patient profile on ClickUp, Medwork, and Nextech → contacts patient 4+ times → books appointment → notifies referring facility. Tracks appointment status and re-books if no-show.</div>
+          </div>
+        </div>
+        <div className="hbox hbox-purple">
+          <div className="hbox-title">Internal Referral (Vein ↔ Pain)</div>
+          <div className="hbox-body">Generate Nextech Internal Referral Form OR book directly using the Internal Referrals Appointment Type (no form needed if booked in real time).</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── APP ───────────────────────────────────────────────────────────────────────
 function App() {
-  const [tab, setTab] = useState('overview');
+  const [tab, setTab] = useState('home');
+  const [globalSearch, setGlobalSearch] = useState('');
+
   const TABS = [
-    { id:'overview', label:'🏠 Overview' },
-    { id:'tools', label:'🛠️ Tools & Systems' },
-    { id:'clinical', label:'🩺 Clinical Guide' },
-    { id:'treatment', label:'💉 Treatments' },
-    { id:'schedules', label:'📋 Sample Schedules' },
+    {id:'home',label:'🏠 Home'},
+    {id:'start',label:'📋 Getting Started'},
+    {id:'systems',label:'🛠️ Tools & Systems'},
+    {id:'clinical',label:'🩺 Clinical Guide'},
+    {id:'treatment',label:'💉 Treatments'},
+    {id:'faq',label:'❓ FAQs'},
+    {id:'contacts',label:'📞 Contacts'},
+    {id:'protocols',label:'🚨 Protocols'},
+    {id:'marketing',label:'🎯 Marketing'},
   ];
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (globalSearch.trim()) {
+      setTab('faq');
+    }
+  };
 
   return (
     <div>
       <nav className="navbar">
-        <div>
+        <div className="navbar-brand">
           <div className="navbar-logo">VIP <span>Provider Training Hub</span></div>
-          <div className="navbar-sub">VIP Medical Group · Provider Onboarding Resources</div>
+          <div className="navbar-sub">VIP Medical Group · Onboarding & Clinical Resources</div>
         </div>
       </nav>
       <div className="tab-bar">
-        {TABS.map(t => (
+        {TABS.map(t=>(
           <button key={t.id} className={`tab${tab===t.id?' active':''}`} onClick={()=>setTab(t.id)}>{t.label}</button>
         ))}
       </div>
+      {tab === 'home' && (
+        <div style={{background:'linear-gradient(135deg,#1e3a5f,#1d4ed8)',padding:'28px 20px'}}>
+          <div style={{maxWidth:1080,margin:'0 auto'}}>
+            <h1 style={{fontSize:26,fontWeight:900,color:'white',marginBottom:8}}>Welcome to VIP Medical Group 👋</h1>
+            <p style={{fontSize:14,color:'rgba(255,255,255,0.85)',maxWidth:560,lineHeight:1.6,marginBottom:18}}>Your one-stop hub for everything you need — from pre-arrival checklists to clinical protocols to FAQs. Use the search below or browse the tabs.</p>
+            <form onSubmit={handleSearch} style={{display:'flex',gap:0,background:'white',borderRadius:50,padding:'4px 6px 4px 20px',maxWidth:480,boxShadow:'0 2px 16px rgba(0,0,0,0.15)'}}>
+              <input value={globalSearch} onChange={e=>setGlobalSearch(e.target.value)} placeholder="Search anything — tools, protocols, FAQs..." style={{flex:1,border:'none',outline:'none',fontFamily:'Nunito',fontSize:14,fontWeight:600,color:'#1e293b',background:'transparent'}} />
+              <button type="submit" style={{background:'#1d4ed8',color:'white',border:'none',borderRadius:50,padding:'8px 18px',fontFamily:'Nunito',fontWeight:800,fontSize:13,cursor:'pointer'}}>Search</button>
+            </form>
+          </div>
+        </div>
+      )}
       <div className="container">
-        {tab === 'overview'   && <OverviewTab />}
-        {tab === 'tools'      && <ToolsTab />}
-        {tab === 'clinical'   && <ClinicalTab />}
-        {tab === 'treatment'  && <TreatmentTab />}
-        {tab === 'schedules'  && <SchedulesTab />}
+        {tab === 'home'      && <HomeTab setTab={setTab} />}
+        {tab === 'start'     && <StartTab />}
+        {tab === 'systems'   && <SystemsTab />}
+        {tab === 'clinical'  && <ClinicalTab />}
+        {tab === 'treatment' && <TreatmentTab />}
+        {tab === 'faq'       && <FaqTab searchQ={globalSearch} />}
+        {tab === 'contacts'  && <ContactsTab />}
+        {tab === 'protocols' && <ProtocolsTab />}
+        {tab === 'marketing' && <MarketingTab />}
       </div>
     </div>
   );
