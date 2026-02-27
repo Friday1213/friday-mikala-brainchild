@@ -50,4 +50,15 @@ try {
   )`).run();
 } catch(e) {}
 
+// Article: Radiology/Diagnostic Ordering
+try {
+  db.prepare(`INSERT OR IGNORE INTO articles (id, title, category, role, module, summary, content, tips, common_mistakes)
+    VALUES (32, 'Radiology/Diagnostic Ordering — Step-by-Step', 'Orders & Results', 'All Staff', 'Orders',
+    'How to place a radiology or diagnostic imaging order in NextGen using the Orders module.',
+    '1. Open the patient chart — use Patient Search or open from the Appointment tab in your inbox.\n2. Complete the 4-Point Check: verify Location, Provider, Patient, and Encounter Date/Time.\n3. Navigate to the Orders Module.\n4. Begin a new radiology/diagnostic order: click the dropdown next to New → select Radiology Order.\n5. Indicate test priority if needed (Stat / Hold / Ordered Elsewhere).\n6. Select ordering diagnosis code(s) from Select Diagnosis. Use Search All if the list is blank or your code is missing.\n7. Select applicable tests — choose from Favorites, By Category, or Search All.\n8. Review assigned tests and diagnosis codes in Assign Diagnosis to Selected Tests.\n9. Add additional details if applicable — General tab: clinical info, comments, Copy To physicians.\n10. Enter tracking information (optional) — add internal comments or actions under the Tracking tab.\n11. Review the order in the Orders Summary grid.\n12. Print if needed: right-click → Print or Print Preview.',
+    'Always complete the 4-Point Check before placing any order.|Use Search All if your diagnosis code does not appear in the default list.|Check Favorites first — common radiology orders may already be saved.',
+    'Forgetting to verify the encounter date/time.|Not linking diagnosis codes to all selected tests.|Skipping the Orders Summary review before submitting.'
+  )`).run();
+} catch(e) {}
+
 module.exports = db;

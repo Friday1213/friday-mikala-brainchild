@@ -718,6 +718,30 @@ const WORKFLOWS = [
       { type:'end', text:'Lab order placed ✅' },
     ]
   },
+  {
+    id: 'rad-ordering',
+    title: 'Radiology/Diagnostic Order Workflow',
+    icon: '🩻',
+    role: 'Provider / MA',
+    color: '#7c3aed',
+    light: '#ede9fe',
+    steps: [
+      { type:'start', text:'Provider ready to place a radiology/diagnostic order' },
+      { type:'step', text:'Open the patient chart', detail:'Use Patient Search or open from the Appointment tab in your inbox.' },
+      { type:'step', text:'Complete 4-Point Check', detail:'Verify: Location · Provider · Patient · Encounter Date/Time. Do this before every order.' },
+      { type:'step', text:'Navigate to the Orders Module' },
+      { type:'step', text:'Begin a new radiology/diagnostic order', detail:'Click the dropdown next to New → select Radiology Order.' },
+      { type:'step', text:'Indicate test priority (if needed)', detail:'Options: Stat, Hold, Ordered Elsewhere.' },
+      { type:'step', text:'Select ordering diagnosis code(s)', detail:'Add codes from Select Diagnosis. Use Search All if the list is blank or missing your code.' },
+      { type:'step', text:'Select applicable tests', detail:'Choose from Favorites, By Category, or Search All.' },
+      { type:'step', text:'Review assigned tests and diagnosis codes', detail:'Verify selections in Assign Diagnosis to Selected Tests.' },
+      { type:'step', text:'Add additional details (if applicable)', detail:'General tab: clinical info, comments, Copy To physicians.' },
+      { type:'step', text:'Enter tracking information (optional)', detail:'Add internal comments or actions under the Tracking tab.' },
+      { type:'step', text:'Review the order', detail:'Confirm all details in the Orders Summary grid.' },
+      { type:'decision', text:'Does the order need to be printed?', yes:'Right-click → Print or Print Preview', no:'Submit order directly — no print needed' },
+      { type:'end', text:'Radiology/diagnostic order placed ✅' },
+    ]
+  },
 ];
 
 function FlowNode({ node, color, light }) {
