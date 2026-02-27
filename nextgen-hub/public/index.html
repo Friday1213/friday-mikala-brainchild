@@ -694,6 +694,30 @@ const WORKFLOWS = [
       { type:'end', text:'Charges in billing queue ✅' },
     ]
   },
+  {
+    id: 'lab-ordering',
+    title: 'Lab Order Workflow',
+    icon: '🧪',
+    role: 'Provider / MA',
+    color: '#0369a1',
+    light: '#e0f2fe',
+    steps: [
+      { type:'start', text:'Provider ready to place a lab order' },
+      { type:'step', text:'Open the patient chart', detail:'Use Patient Search or open from the Appointment tab in your inbox.' },
+      { type:'step', text:'Complete 4-Point Check', detail:'Verify: Location · Provider · Patient · Encounter Date/Time. Do this before every order.' },
+      { type:'step', text:'Navigate to the Orders Module' },
+      { type:'step', text:'Begin a new lab order', detail:'Click the dropdown next to New → select Lab Order.' },
+      { type:'step', text:'Indicate test priority (if needed)', detail:'Options: Stat, Hold, Ordered Elsewhere.' },
+      { type:'step', text:'Select ordering diagnosis code(s)', detail:'Add codes from Select Diagnosis. Use Search All if the list is blank or missing your code.' },
+      { type:'step', text:'Select applicable tests', detail:'Choose from Favorites, By Category, or Search All.' },
+      { type:'step', text:'Review assigned tests and diagnosis codes', detail:'Verify selections in Assign Diagnosis to Selected Tests.' },
+      { type:'step', text:'Add additional details (if applicable)', detail:'General tab: clinical info, comments, Copy To physicians. Test Details tab: AOE questions, specimen details.' },
+      { type:'step', text:'Enter tracking information (optional)', detail:'Add internal comments or actions under the Tracking tab.' },
+      { type:'step', text:'Review the order', detail:'Confirm all details in the Orders Summary grid.' },
+      { type:'decision', text:'Does the order need to be printed?', yes:'Right-click → Print or Print Preview', no:'Submit order directly — no print needed' },
+      { type:'end', text:'Lab order placed ✅' },
+    ]
+  },
 ];
 
 function FlowNode({ node, color, light }) {
