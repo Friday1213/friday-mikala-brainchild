@@ -26,6 +26,7 @@ if (fs.existsSync(envPath)) {
 
 const HUB_URL = process.env.VEIN_HUB_URL || 'https://vein-policy-hub.onrender.com';
 const OPENCLAW_WA_URL = process.env.OPENCLAW_WA_URL || 'http://localhost:3000';
+const BRAVE_API_KEY = process.env.BRAVE_API_KEY || '';
 
 function fetch(url, timeoutMs = 15000) {
   return new Promise((resolve, reject) => {
@@ -70,6 +71,55 @@ async function apiPost(path, data) {
     req.write(body);
     req.end();
   });
+}
+
+async function braveSearch(query) {
+  if (!BRAVE_API_KEY) return null;
+  return new Promise((resolve) => {
+    const q = encodeURIComponent(query);
+    const req = https.get(`https://api.search.brave.com/res/v1/web/search?q=${q}&count=3`, {
+      headers: { 'Accept': 'application/json', 'X-Subscription-Token': BRAVE_API_KEY }
+    }, res => {
+      let data = '';
+      res.on('data', c => data += c);
+      res.on('end', () => {
+        try {
+          const json = JSON.parse(data);
+          resolve(json.web?.results || []);
+        } catch(e) { resolve([]); }
+      });
+    });
+    req.on('error', () => resolve([]));
+    req.setTimeout(10000, () => { req.destroy(); resolve([]); });
+  });
+}
+
+async function findPolicyUrl(payerName, state) {
+  // Build a targeted search query
+  const query = `"${payerName}" varicose vein treatment medical policy provider site:${
+    payerName.toLowerCase().includes('medicare') ? 'cms.gov OR novitas-solutions.com OR cgsmedicare.com OR palmettogba.com OR ngsmedicare.com' :
+    payerName.toLowerCase().includes('aetna') ? 'aetna.com' :
+    payerName.toLowerCase().includes('cigna') ? 'cigna.com' :
+    payerName.toLowerCase().includes('united') || payerName.toLowerCase().includes('uhc') ? 'uhcprovider.com' :
+    payerName.toLowerCase().includes('humana') ? 'humana.com' :
+    'provider policy'
+  } 2024 OR 2025`;
+
+  console.log(`  🔍 Searching for updated URL: ${payerName}`);
+  const results = await braveSearch(`${payerName} varicose vein treatment medical necessity policy provider 2025`);
+
+  // Filter to likely policy pages
+  const policyKeywords = ['policy', 'medical-policy', 'clinical', 'necessity', 'coverage', 'lcd', 'varicose'];
+  for (const r of results) {
+    const url = r.url || '';
+    const title = (r.title || '').toLowerCase();
+    const desc = (r.description || '').toLowerCase();
+    if (policyKeywords.some(k => url.toLowerCase().includes(k) || title.includes(k) || desc.includes(k))) {
+      return { url: r.url, title: r.title };
+    }
+  }
+  // Return first result as fallback
+  return results[0] ? { url: results[0].url, title: results[0].title } : null;
 }
 
 async function main() {
@@ -133,7 +183,30 @@ async function main() {
 
     } catch(e) {
       console.log(`  ❌ Error checking ${payer.name}: ${e.message}`);
-      errors.push({ name: payer.name, state: payer.state, error: e.message });
+
+      // Try to find a working URL via Brave search
+      if (BRAVE_API_KEY) {
+        const found = await findPolicyUrl(payer.name, payer.state);
+        if (found && found.url && found.url !== payer.source_url) {
+          console.log(`  🔍 Found possible replacement: ${found.url}`);
+          errors.push({ name: payer.name, state: payer.state, error: e.message, suggested_url: found.url, suggested_title: found.title });
+          // Auto-update the URL in the hub
+          try {
+            const updatePayload = JSON.stringify({ ...payer, source_url: found.url, source_url_note: `URL auto-updated ${new Date().toLocaleDateString()} (previous failed: ${e.message})` });
+            const urlObj = new URL(`${HUB_URL}/api/payers/${payer.id}`);
+            await new Promise((res, rej) => {
+              const mod = urlObj.protocol === 'https:' ? https : http;
+              const req = mod.request({ hostname: urlObj.hostname, port: urlObj.port || (urlObj.protocol === 'https:' ? 443 : 80), path: urlObj.pathname, method: 'PUT', headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(updatePayload) } }, r => { r.on('data',()=>{}); r.on('end', res); });
+              req.on('error', rej); req.write(updatePayload); req.end();
+            });
+            console.log(`  ✅ URL auto-updated in hub`);
+          } catch(ue) { console.log(`  ⚠️ Could not auto-update: ${ue.message}`); }
+        } else {
+          errors.push({ name: payer.name, state: payer.state, error: e.message });
+        }
+      } else {
+        errors.push({ name: payer.name, state: payer.state, error: e.message });
+      }
     }
   }
 
@@ -155,8 +228,15 @@ async function main() {
     msg += `\n✅ No changes detected — all policies look stable.`;
   }
 
-  if (errors.length > 0) {
-    msg += `\n\n⚠️ ${errors.length} URL${errors.length > 1 ? 's' : ''} couldn't be checked (login required or site down).`;
+  const autoFixed = errors.filter(e => e.suggested_url);
+  const stillBroken = errors.filter(e => !e.suggested_url);
+
+  if (autoFixed.length > 0) {
+    msg += `\n\n🔍 *${autoFixed.length} broken URL${autoFixed.length > 1 ? 's' : ''} auto-fixed via search:*\n`;
+    autoFixed.forEach(e => msg += `• ${e.name} → ${e.suggested_url}\n`);
+  }
+  if (stillBroken.length > 0) {
+    msg += `\n\n⚠️ ${stillBroken.length} URL${stillBroken.length > 1 ? 's' : ''} couldn't be reached or found (login-required or rare plan).`;
   }
 
   // Send WhatsApp via OpenClaw
