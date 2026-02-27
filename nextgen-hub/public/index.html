@@ -582,6 +582,213 @@ function SuperuserTracker() {
   );
 }
 
+// ─── WORKFLOWS ────────────────────────────────────────────────────────────────
+const WORKFLOWS = [
+  {
+    id: 'scheduling',
+    title: 'New Patient Scheduling',
+    icon: '📅',
+    role: 'Front Desk',
+    color: '#0369a1',
+    light: '#e0f2fe',
+    steps: [
+      { type:'start', text:'Patient calls or submits portal request' },
+      { type:'step', text:'Verify insurance eligibility', detail:'Run eligibility check in NextGen before booking — catch issues before day of visit' },
+      { type:'step', text:'Search for existing patient record', detail:'Use F4 or the search bar. Search by DOB + last name to avoid duplicates' },
+      { type:'decision', text:'Patient already in system?', yes:'Open existing chart → confirm demographics are current', no:'Register new patient: demographics, insurance, guarantor' },
+      { type:'step', text:'Select appointment type & provider', detail:'Match visit type to correct template (New Patient Vein Consult, Follow-Up, Procedure, etc.)' },
+      { type:'step', text:'Choose date, time, and location' },
+      { type:'step', text:'Enter reason for visit / chief complaint', detail:'This populates the HPI starting point for the provider' },
+      { type:'step', text:'Confirm appointment & send patient reminder' },
+      { type:'end', text:'Appointment scheduled ✅' },
+    ]
+  },
+  {
+    id: 'checkin',
+    title: 'Patient Check-In',
+    icon: '🏥',
+    role: 'Front Desk',
+    color: '#065f46',
+    light: '#d1fae5',
+    steps: [
+      { type:'start', text:'Patient arrives at front desk' },
+      { type:'step', text:'Search patient in NextGen', detail:'Use F4 quick search or the Appointments tab. Confirm you have the right patient (DOB, name)' },
+      { type:'step', text:'Verify demographics & insurance', detail:'Ask patient to confirm address, phone, insurance. Re-scan insurance card if first visit of the year' },
+      { type:'decision', text:'Any changes since last visit?', yes:'Update record → re-scan insurance card → re-run eligibility', no:'Confirm as-is and continue' },
+      { type:'step', text:'Collect copay or outstanding balance', detail:'Collect before the visit — much easier than after. Document payment in NextGen' },
+      { type:'step', text:'Mark patient as "Arrived" in the schedule', detail:'This notifies the MA / clinical staff in real time' },
+      { type:'step', text:'Complete consent forms if needed', detail:'New patients, new procedures, or annual re-consent' },
+      { type:'end', text:'Patient checked in ✅' },
+    ]
+  },
+  {
+    id: 'procnote',
+    title: 'Procedure Note Completion',
+    icon: '📋',
+    role: 'Provider',
+    color: '#6d28d9',
+    light: '#ede9fe',
+    steps: [
+      { type:'start', text:'Procedure performed' },
+      { type:'step', text:'Open patient chart → Encounter', detail:'Navigate to today\'s encounter. If not yet created, start a new encounter from the schedule' },
+      { type:'step', text:'Select the correct procedure note template', detail:'Thermal Ablation, Varithena, or Sclerotherapy — use the Templates tab for field-by-field guidance' },
+      { type:'step', text:'Complete pre-procedure section', detail:'Consent obtained, checklist items, patient ID confirmed, site marked' },
+      { type:'step', text:'Document intraoperative findings', detail:'Vein treated, access site, catheter/foam details, duplex scan measurements, junction distance' },
+      { type:'step', text:'Complete post-procedure instructions', detail:'Compression applied, ambulation, follow-up timing, patient education documented' },
+      { type:'step', text:'Enter CPT code(s) for billing', detail:'Ablation: 36475/36476/36478/36479. Add laterality modifier (RT/LT). Multiple veins = multiple lines' },
+      { type:'decision', text:'Ready to sign?', yes:'Sign note → encounter locks. Charges auto-submit or route to billing queue', no:'Save as draft → return before end of day. Unsigned notes = unbilled claims' },
+      { type:'end', text:'Note signed & charges submitted ✅' },
+    ]
+  },
+  {
+    id: 'priorauth',
+    title: 'Prior Authorization & Orders',
+    icon: '📝',
+    role: 'Medical Assistant',
+    color: '#b45309',
+    light: '#fef3c7',
+    steps: [
+      { type:'start', text:'Provider orders a procedure, imaging, or lab' },
+      { type:'step', text:'Open Orders module in NextGen', detail:'Chart → Orders. Select the correct order type: Lab, Imaging, or Procedure' },
+      { type:'step', text:'Enter clinical indication & ICD-10 code', detail:'The ICD-10 must match what the payer requires for that procedure — this is critical for PA approval' },
+      { type:'decision', text:'Does this payer require prior auth?', yes:'Submit PA request → document payer portal confirmation # in chart notes', no:'Proceed to scheduling — no PA needed' },
+      { type:'step', text:'Check Vein Policy Hub for payer-specific rules', detail:'Especially for vein procedures: CEAP score, duplex requirements, conservative therapy weeks, and PA requirements vary by payer' },
+      { type:'step', text:'Document PA approval number in the chart', detail:'Store in the order notes or dedicated PA field. Never schedule before PA is confirmed in writing' },
+      { type:'step', text:'Schedule procedure or imaging', detail:'Coordinate with facility / front desk. Ensure the approval window covers the scheduled date' },
+      { type:'end', text:'Order placed & authorized ✅' },
+    ]
+  },
+  {
+    id: 'erx',
+    title: 'E-Prescribing (eRx)',
+    icon: '💊',
+    role: 'Provider',
+    color: '#be185d',
+    light: '#fce7f3',
+    steps: [
+      { type:'start', text:'Provider ready to prescribe' },
+      { type:'step', text:'Open patient chart → Medications module' },
+      { type:'step', text:'Search medication by name', detail:'Use generic name when possible. NextGen will show formulary options for patient\'s insurance' },
+      { type:'step', text:'Select: strength, form, directions, quantity, refills', detail:'Double-check directions (sig). "Take 1 tablet by mouth daily" vs "twice daily" matters' },
+      { type:'decision', text:'Is this a controlled substance?', yes:'Complete EPCS: requires 2-factor authentication (hard token or app). Provider must be EPCS-enrolled', no:'Standard eRx — no additional steps' },
+      { type:'step', text:'Select patient\'s preferred pharmacy', detail:'Patient\'s preferred pharmacy should be saved in their demographics. Confirm before sending' },
+      { type:'step', text:'Review prescription summary & send', detail:'Last chance to catch errors. Review drug-drug interactions flagged by NextGen before dismissing' },
+      { type:'end', text:'Prescription sent to pharmacy ✅' },
+    ]
+  },
+  {
+    id: 'charges',
+    title: 'Charge Capture (End of Visit)',
+    icon: '💰',
+    role: 'Provider / Biller',
+    color: '#166534',
+    light: '#dcfce7',
+    steps: [
+      { type:'start', text:'Provider signs the encounter note' },
+      { type:'step', text:'Open the Billing section of the encounter' },
+      { type:'step', text:'Confirm E&M level or primary procedure CPT code', detail:'E&M level must match the documented complexity. Undercoding = lost revenue. Overcoding = compliance risk' },
+      { type:'step', text:'Verify ICD-10 diagnosis codes are linked to each CPT', detail:'Every CPT line needs at least one supporting ICD-10. Payers will deny if the link is missing' },
+      { type:'decision', text:'Additional procedures performed today?', yes:'Add a CPT line for each procedure. Apply modifier (RT/LT, 59, 25) where required', no:'Proceed to review' },
+      { type:'step', text:'Review the full charge summary', detail:'Check: correct provider, correct location/POS code, correct date of service' },
+      { type:'step', text:'Submit charges', detail:'Charges route to the billing queue for claim scrubbing and submission. Flag anything unusual in the notes' },
+      { type:'end', text:'Charges in billing queue ✅' },
+    ]
+  },
+];
+
+function FlowNode({ node, color, light }) {
+  const arrowStyle = { display:'flex', justifyContent:'center', alignItems:'center', height:28, color:'#94a3b8', fontSize:18 };
+  if (node.type === 'start') return (
+    <div style={{background:color,color:'white',borderRadius:50,padding:'10px 28px',textAlign:'center',fontWeight:800,fontSize:14,display:'inline-block',margin:'0 auto'}}>{node.text}</div>
+  );
+  if (node.type === 'end') return (
+    <div style={{background:color,color:'white',borderRadius:50,padding:'10px 28px',textAlign:'center',fontWeight:800,fontSize:14,display:'inline-block',margin:'0 auto'}}>{node.text}</div>
+  );
+  if (node.type === 'decision') return (
+    <div style={{border:`2px solid ${color}`,borderRadius:12,padding:'14px 18px',background:'#fffbeb',position:'relative'}}>
+      <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:10}}>
+        <span style={{fontSize:18}}>◆</span>
+        <span style={{fontWeight:900,fontSize:14,color:'#92400e'}}>{node.text}</span>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+        <div style={{background:'#d1fae5',borderRadius:8,padding:'10px 12px',borderLeft:'4px solid #22c55e'}}>
+          <div style={{fontSize:11,fontWeight:900,color:'#166534',marginBottom:4}}>✅ YES</div>
+          <div style={{fontSize:13,color:'#166534',fontWeight:600,lineHeight:1.4}}>{node.yes}</div>
+        </div>
+        <div style={{background:'#fee2e2',borderRadius:8,padding:'10px 12px',borderLeft:'4px solid #ef4444'}}>
+          <div style={{fontSize:11,fontWeight:900,color:'#991b1b',marginBottom:4}}>❌ NO</div>
+          <div style={{fontSize:13,color:'#991b1b',fontWeight:600,lineHeight:1.4}}>{node.no}</div>
+        </div>
+      </div>
+    </div>
+  );
+  // regular step
+  return (
+    <div style={{background:'white',borderRadius:12,padding:'14px 18px',borderLeft:`4px solid ${color}`,boxShadow:'0 1px 6px rgba(0,0,0,0.06)'}}>
+      <div style={{fontWeight:800,fontSize:14,color:'#1e293b',marginBottom:node.detail?6:0}}>{node.text}</div>
+      {node.detail && <div style={{fontSize:13,color:'#64748b',lineHeight:1.5}}>{node.detail}</div>}
+    </div>
+  );
+}
+
+function WorkflowChart({ wf }) {
+  return (
+    <div style={{maxWidth:620,margin:'0 auto'}}>
+      {wf.steps.map((node, i) => (
+        <div key={i}>
+          <div style={{display:'flex',justifyContent:'center'}}>
+            <div style={{width: node.type==='start'||node.type==='end' ? 'auto' : '100%'}}>
+              <FlowNode node={node} color={wf.color} light={wf.light} />
+            </div>
+          </div>
+          {i < wf.steps.length - 1 && (
+            <div style={{display:'flex',justifyContent:'center',padding:'4px 0',color:'#94a3b8',fontSize:20,lineHeight:1}}>↓</div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function WorkflowsView() {
+  const [active, setActive] = useState('scheduling');
+  const wf = WORKFLOWS.find(w => w.id === active);
+  return (
+    <div>
+      {/* Workflow picker */}
+      <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:24}}>
+        {WORKFLOWS.map(w => (
+          <button key={w.id} onClick={()=>setActive(w.id)} style={{
+            padding:'9px 16px', borderRadius:10, border:'none', cursor:'pointer',
+            fontSize:13, fontWeight:800,
+            background: active===w.id ? w.color : '#e2e8f0',
+            color: active===w.id ? 'white' : '#475569',
+            transition:'all 0.15s'
+          }}>
+            {w.icon} {w.title}
+          </button>
+        ))}
+      </div>
+
+      {/* Active workflow */}
+      {wf && (
+        <div style={{background:'white',borderRadius:16,padding:'28px 24px',boxShadow:'0 2px 12px rgba(0,0,0,0.06)'}}>
+          <div style={{marginBottom:20,paddingBottom:16,borderBottom:'1px solid #f1f5f9'}}>
+            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:4}}>
+              <span style={{fontSize:24}}>{wf.icon}</span>
+              <h2 style={{fontSize:20,fontWeight:900,color:wf.color}}>{wf.title}</h2>
+              <span style={{background:wf.light,color:wf.color,fontSize:11,fontWeight:800,padding:'3px 10px',borderRadius:20}}>👤 {wf.role}</span>
+            </div>
+            <p style={{fontSize:13,color:'#64748b',marginLeft:34}}>Step-by-step NextGen workflow. Expand decisions to see both paths.</p>
+          </div>
+          <WorkflowChart wf={wf} />
+        </div>
+      )}
+    </div>
+  );
+}
+// ──────────────────────────────────────────────────────────────────────────────
+
 function TemplatesView() {
   const [active, setActive] = useState('ablation');
   return (
@@ -606,7 +813,7 @@ function App() {
   const [showAdd, setShowAdd] = useState(false);
   const [activeTab, setActiveTab] = useState('All');
 
-  const TABS = ['All', ...CATEGORIES, '🩺 Templates', '⭐ Superusers'];
+  const TABS = ['All', ...CATEGORIES, '🔀 Workflows', '🩺 Templates', '⭐ Superusers'];
 
   const load = async () => {
     const params = new URLSearchParams();
@@ -673,6 +880,9 @@ function App() {
           </div>
         </div>
 
+        {/* Workflows tab */}
+        {activeTab==='🔀 Workflows' && <WorkflowsView />}
+
         {/* Templates tab */}
         {activeTab==='🩺 Templates' && <TemplatesView />}
 
@@ -680,7 +890,7 @@ function App() {
         {activeTab==='⭐ Superusers' && <SuperuserTracker />}
 
         {/* Articles */}
-        {activeTab!=='🩺 Templates' && activeTab!=='⭐ Superusers' && <>
+        {activeTab!=='🔀 Workflows' && activeTab!=='🩺 Templates' && activeTab!=='⭐ Superusers' && <>
         <div className="results-header">
           <div className="results-count">📄 {articles.length} article{articles.length!==1?'s':''}{q||catFilter||roleFilter||activeTab!=='All'?' matching filters':''}</div>
         </div>
