@@ -789,6 +789,28 @@ function ProtocolsTab() {
       </div>
 
       <div className="card">
+        <div className="card-title">💸 Reimbursement Requests</div>
+        <div className="hbox hbox-amber" style={{marginBottom:14}}>
+          <div className="hbox-title">⏰ Deadline</div>
+          <div className="hbox-body">All requests must be submitted <strong>no later than Monday prior to payday by 12pm.</strong> Requests received after this deadline will be reimbursed on the following paycheck.</div>
+        </div>
+        <div className="section-label">Steps</div>
+        <ul className="step-list">
+          {['Navigate to the VIP Homepage and select <strong>Reimbursement</strong>',
+            'Fill in the required information and click <strong>"Add an Expense"</strong>',
+            'Fill in all required expense info and <strong>upload your receipt or invoice</strong>',
+            'Enter the date of the expense and choose the best-fit category',
+            'Fill in the location where the expense was purchased',
+            'Add notes as relevant (e.g. additional people at meals)',
+            'Enter the total amount and upload supporting documentation',
+            'Click <strong>"Add Expense"</strong> again for additional requests',
+            'Once all expenses are listed, click <strong>"Submit Request"</strong>'].map((s,i)=>(
+            <li key={i} dangerouslySetInnerHTML={{__html:s}} />
+          ))}
+        </ul>
+      </div>
+
+      <div className="card">
         <div className="card-title">💳 Check Collection Protocol (MD Only)</div>
         <div className="hbox hbox-amber" style={{marginBottom:12}}>
           <div className="hbox-title">⚠️ This is your responsibility — do not delegate</div>
