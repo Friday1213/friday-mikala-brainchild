@@ -862,38 +862,69 @@ function ProceduresTab() {
   return (
     <div>
       <T id="ablation" title="🔥 Thermal Ablation (RFA) — Procedural Protocol">
-        <div className="hbox hbox-amber" style={{marginBottom:14}}>
-          <div className="hbox-title">⚠️ Aborted Procedure Update (1/5/26)</div>
-          <div className="hbox-body">
-            <div>• For any aborted procedure with intent to re-attempt: a <strong>new LOMN must be created</strong> for resubmission</div>
-            <div style={{marginTop:4}}>• Email <strong>PA Aborted Procedures</strong> immediately when a procedure is aborted</div>
-            <div style={{marginTop:4}}>• Do not reschedule same or next day — allow 3–7 days for new authorization</div>
-            <div style={{marginTop:4}}>• In Medwork: set reattempt to <strong>"Do Not Schedule Pending"</strong>, mark performed attempt as "Completed"</div>
+        <div className="hbox hbox-blue" style={{marginBottom:14}}>
+          <div className="hbox-title">Definition</div>
+          <div className="hbox-body">An aborted procedure is any case where <strong>venous access is attempted but the procedure is not completed</strong> (e.g., wire/catheter can't advance, vein too small/spastic, procedure stopped after partial access). Cases where <strong>no access is attempted</strong> (vein found thrombosed on prescan) are <em>not</em> aborted — document as "not performed" and adjust appointment type.</div>
+        </div>
+        <div className="hbox hbox-green" style={{marginBottom:14}}>
+          <div className="hbox-title">💡 A Note on Aborted Procedures</div>
+          <div className="hbox-body">Aborted ablations are a normal part of vein practice and happen to every provider regardless of experience. Veins can be too small, spasm unexpectedly, or have challenging anatomy — none of which reflect on your skills. What matters is keeping the patient safe, documenting clearly, and communicating next steps.</div>
+        </div>
+
+        <div className="section-label">Step-by-Step Protocol</div>
+        <div className="grid-2" style={{marginBottom:14}}>
+          <div className="card" style={{margin:0,boxShadow:'none',border:'1px solid #e2e8f0'}}>
+            <div style={{fontWeight:900,fontSize:13,color:'#1e293b',marginBottom:10}}>1️⃣ Patient Communication</div>
+            <ul className="step-list">
+              {['Explain why the procedure was not completed (thrombosed vein, unable to access, equipment issue)',
+                'Clearly outline next steps — will it be reattempted? When? If not, explain clinical reasoning',
+                'Reassure patient that their care plan will be updated and scheduling staff will follow up'].map((s,i)=><li key={i}>{s}</li>)}
+            </ul>
+          </div>
+          <div className="card" style={{margin:0,boxShadow:'none',border:'1px solid #e2e8f0'}}>
+            <div style={{fontWeight:900,fontSize:13,color:'#1e293b',marginBottom:10}}>2️⃣ Schedule Changes</div>
+            <ul className="step-list">
+              {['Communicate reattempt plan (or cancellation) to front desk same day',
+                'Change aborted procedure appointment to: post scan / follow-up other / etc.',
+                'Adjust ALL future scheduled procedures accordingly',
+                'Ask staff to update Medwork: set reattempt to "Do Not Schedule Pending," mark attempt as "Completed"'].map((s,i)=><li key={i}>{s}</li>)}
+            </ul>
           </div>
         </div>
-        <div className="section-label">Procedural Choreography</div>
-        <ul className="step-list">
-          {['Staff prescans the vein (and post-scan if applicable). Give physician a heads-up if small, abnormal, or thrombosed',
-            'Staff preps and drapes the patient',
-            'Physician performs procedure. Any access difficulty or unusual findings → free-text in the note',
-            'Free-text required for: wire used, access difficult, procedure aborted, anything out of the ordinary'].map((s,i)=><li key={i}>{s}</li>)}
-        </ul>
-        <div className="grid-2" style={{marginTop:12}}>
+
+        <div className="card" style={{margin:'0 0 14px',boxShadow:'none',border:'1px solid #e2e8f0'}}>
+          <div style={{fontWeight:900,fontSize:13,color:'#1e293b',marginBottom:10}}>3️⃣ Nextech Documentation (Physician Responsibility)</div>
+          <ul className="step-list">
+            {['Change the EMN title to: <strong>ABLATION - ABORTED</strong>',
+              'Complete the required section in the note so it turns green (this generates the narrative)',
+              'Edit the auto-generated narrative to accurately reflect what occurred — including an alteration of your plan',
+              'For any reattempt: a new LOMN must be created for resubmission. Email <strong>PA Aborted Procedures</strong> immediately',
+              'Do not reschedule for same or next day — allow 3–7 days for new authorization'].map((s,i)=>(
+              <li key={i} dangerouslySetInnerHTML={{__html:s}} />
+            ))}
+          </ul>
+        </div>
+
+        <div className="card" style={{margin:'0 0 14px',boxShadow:'none',border:'1px solid #e2e8f0'}}>
+          <div style={{fontWeight:900,fontSize:13,color:'#1e293b',marginBottom:8}}>📝 Example Note Verbiage</div>
+          <div style={{background:'#f8fafc',borderRadius:8,padding:'14px 16px',fontSize:12,color:'#374151',lineHeight:1.8,fontFamily:'monospace'}}>
+            The target vein was accessed under ultrasound guidance using the Seldinger technique. A guide wire was introduced through the needle, and a 7F sheath was successfully placed and flushed. At this point, further progression of the procedure was aborted due to <strong>[insert reason: e.g., inability to advance catheter, vein spasm, thrombosis, small caliber vein]</strong>.<br/><br/>
+            The sheath and wire were removed, and hemostasis was obtained with direct pressure at the access site. A sterile bandage and compression wrap were applied. The patient tolerated the procedure well and was fully ambulatory at the time of discharge.<br/><br/>
+            <strong>ESTIMATED BLOOD LOSS:</strong> Minimal.<br/>
+            <strong>COMPLICATIONS:</strong> No complications. Procedure aborted due to [reason].<br/><br/>
+            <strong>PLAN:</strong> The patient was informed that the ablation was not completed and the reason was explained. Next steps: [reattempt planned (when) vs. no reattempt + rationale]. Patient instructed to continue compression stockings and monitor for pain, bleeding, or swelling. Follow-up ultrasound and clinic appointment to be scheduled.
+          </div>
+        </div>
+
+        <div className="grid-2">
           <div className="hbox hbox-green">
-            <div className="hbox-title">Nervous Patients</div>
-            <div className="hbox-body">Consider 0.5mg PO Xanax (encourage patient to get from PCP). Tell them to arrange a ride. This is rare — "like dental work, but on your leg." Avoid anesthesia — risks outweigh procedure risks.</div>
+            <div className="hbox-title">Nervous Patients — Pre-Procedure</div>
+            <div className="hbox-body">Consider 0.5mg PO Xanax (encourage patient to get from PCP). Tell them to arrange a ride. Rare need — "like dental work, but on your leg." Avoid general anesthesia — risks outweigh procedure risks.</div>
           </div>
-          <div className="hbox hbox-red">
-            <div className="hbox-title">Two Aborted Procedure Scenarios</div>
-            <div className="hbox-body">
-              <strong>Scenario 1 (NOT aborted):</strong> Thrombosed vein found BEFORE prepping → change appt type to follow-up, free-text note, adjust future appointments<br/><br/>
-              <strong>Scenario 2 (IS aborted):</strong> Access attempted then aborted → consent must be in chart, select appropriate options on ablation note, free-text clinical scenario, follow email protocol above
-            </div>
+          <div className="hbox hbox-blue">
+            <div className="hbox-title">4️⃣ Questions & Escalation</div>
+            <div className="hbox-body"><strong>Documentation questions:</strong> Email Carly Sarch<br/><strong>Clinical concerns / safety of reattempt:</strong> Escalate to Dr. Caroline Novak</div>
           </div>
-        </div>
-        <div className="hbox hbox-blue" style={{marginTop:12}}>
-          <div className="hbox-title">Documentation Questions?</div>
-          <div className="hbox-body">Email <strong>Carly Sarch</strong> for documentation questions. Email <strong>Dr. Caroline Novak</strong> for clinical concerns. MD is responsible for properly documenting any aborted ablations.</div>
         </div>
       </T>
 
