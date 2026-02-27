@@ -2,7 +2,12 @@
 // Weekly Monday summary email for Carly
 // Pulls from FridayBrain, Carly Hub, Carly Brain
 
-require('dotenv').config({ path: require('path').join(__dirname, '../.env') });
+const fs = require('fs');
+const envPath = require('path').join(__dirname, '../.env');
+fs.readFileSync(envPath, 'utf8').split('\n').forEach(line => {
+  const m = line.match(/^([^#=]+)=(.*)$/);
+  if (m) process.env[m[1].trim()] = m[2].trim();
+});
 const nodemailer = require('nodemailer');
 
 const FRIDAYBRAIN   = 'https://fridaybrain.onrender.com';
