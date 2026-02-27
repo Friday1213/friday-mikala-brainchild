@@ -12,6 +12,11 @@ body{font-family:'Nunito',sans-serif;background:#f0f4ff;color:#1e293b;min-height
 .navbar h1{font-size:20px;font-weight:900;color:white;letter-spacing:-0.5px}
 .navbar h1 span{color:#93c5fd}
 .navbar-sub{font-size:12px;color:#93c5fd;margin-top:2px;font-weight:600}
+.region-tabs{background:#1e3a8a;border-bottom:none;padding:0 20px;display:flex;gap:2px;align-items:flex-end;overflow-x:auto;scrollbar-width:none}
+.region-tabs::-webkit-scrollbar{display:none}
+.region-tab{padding:8px 18px 10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;border:none;cursor:pointer;border-radius:10px 10px 0 0;transition:all 0.15s;white-space:nowrap;color:rgba(255,255,255,0.65);background:rgba(255,255,255,0.08);margin-top:6px}
+.region-tab:hover{background:rgba(255,255,255,0.18);color:white}
+.region-tab.active{background:#f0f4ff;color:#1e3a8a;margin-top:4px;padding-bottom:12px}
 
 .container{max-width:1200px;margin:0 auto;padding:28px 24px}
 
@@ -382,18 +387,32 @@ function App() {
   const [aiText, setAiText] = useState('');
   const [showAI, setShowAI] = useState(false);
   const [activeTab, setActiveTab] = useState('policies');
+  const [regionFilter, setRegionFilter] = useState('All');
   const searchRef = useRef();
+
+  const REGIONS = [
+    { label: '🌐 All', value: 'All' },
+    { label: '🇺🇸 National', value: 'National' },
+    { label: '🗽 New York', value: 'New York' },
+    { label: '🌿 New Jersey', value: 'New Jersey' },
+    { label: '🌴 California', value: 'California' },
+    { label: '⭐ Texas', value: 'Texas' },
+    { label: '🦀 Maryland/DC', value: 'Maryland' },
+    { label: '🍂 Connecticut', value: 'Connecticut' },
+    { label: '📦 Other', value: 'Various' },
+  ];
 
   const load = async () => {
     const params = new URLSearchParams();
     if (q) params.set('q', q);
-    if (stateFilter) params.set('state', stateFilter);
+    const effectiveState = stateFilter || (regionFilter !== 'All' ? regionFilter : '');
+    if (effectiveState) params.set('state', effectiveState);
     if (typeFilter) params.set('plan_type', typeFilter);
     const [p, s] = await Promise.all([api(`/api/payers?${params}`), api('/api/stats')]);
     setPayers(p); setStats(s);
   };
 
-  useEffect(() => { load(); }, [q, stateFilter, typeFilter]);
+  useEffect(() => { load(); }, [q, stateFilter, typeFilter, regionFilter]);
 
   const savePayer = async (data) => {
     if (modal?.id) await api(`/api/payers/${modal.id}`, {method:'PUT', body:JSON.stringify(data)});
@@ -422,6 +441,15 @@ function App() {
           {activeTab==='policies' && <button className="btn btn-primary btn-sm" onClick={()=>{setModal(null);setShowAdd(true);}}>+ Add Policy</button>}
         </div>
       </nav>
+
+      {activeTab==='policies' && (
+        <div className="region-tabs">
+          {REGIONS.map(r => (
+            <button key={r.value} className={`region-tab${regionFilter===r.value?' active':''}`}
+              onClick={()=>{setRegionFilter(r.value);setStateFilter('');}}>{r.label}</button>
+          ))}
+        </div>
+      )}
 
       <div className="container">
 
