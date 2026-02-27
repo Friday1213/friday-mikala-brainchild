@@ -150,6 +150,7 @@ function PayerCard({ p, onEdit, onDelete, defaultOpen }) {
             {p.last_verified && <span>✓ Verified {p.last_verified}</span>}
           </div>
           <div className="payer-badges">
+            {p.notes && p.notes.includes('NEEDS REVIEW') && <span className="badge" style={{background:'#fef3c7',color:'#92400e',border:'1px solid #fcd34d'}}>🔍 Needs Review</span>}
             {p.plan_type && <TypeBadge type={p.plan_type} />}
             {p.preauth_required === 1 && <span className="badge badge-preauth">⚠️ Prior Auth Required</span>}
             {p.conservative_weeks && <span className="badge badge-weeks">🗓 {p.conservative_weeks} wk conservative</span>}

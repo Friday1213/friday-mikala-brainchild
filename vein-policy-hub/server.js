@@ -91,6 +91,36 @@ app.post('/api/parse-policy', (req, res) => {
   res.json({ message: 'AI parsing coming soon' });
 });
 
+// ── Policy Change Detection ───────────────────────────────────────────────────
+const HASH_FILE = path.join(process.env.DB_PATH ? path.dirname(process.env.DB_PATH) : path.join(__dirname, 'data'), 'policy_hashes.json');
+
+app.get('/api/policy-hashes', (req, res) => {
+  try {
+    if (require('fs').existsSync(HASH_FILE)) res.json(JSON.parse(require('fs').readFileSync(HASH_FILE, 'utf8')));
+    else res.json({});
+  } catch(e) { res.json({}); }
+});
+
+app.post('/api/policy-hashes', (req, res) => {
+  try {
+    require('fs').mkdirSync(path.dirname(HASH_FILE), { recursive: true });
+    require('fs').writeFileSync(HASH_FILE, JSON.stringify(req.body, null, 2));
+    res.json({ ok: true });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/payers/:id/flag-review', (req, res) => {
+  const { reason } = req.body;
+  const note = `⚠️ NEEDS REVIEW: ${reason}`;
+  const p = db.prepare('SELECT notes FROM payers WHERE id=?').get(req.params.id);
+  if (!p) return res.status(404).json({ error: 'Not found' });
+  const existing = p.notes || '';
+  const updated = existing.includes('NEEDS REVIEW') ? existing.replace(/⚠️ NEEDS REVIEW:[^\n]*/g, note) : `${note}\n\n${existing}`;
+  db.prepare('UPDATE payers SET notes=?, updated_at=CURRENT_TIMESTAMP WHERE id=?').run(updated.trim(), req.params.id);
+  db.prepare('INSERT INTO policy_history (payer_id, changed_field, old_value, new_value) VALUES (?,?,?,?)').run(req.params.id, 'needs_review', '', reason);
+  res.json({ ok: true });
+});
+
 // ── Doppler Cheat Sheet ───────────────────────────────────────────────────────
 app.get('/api/cheatsheet', (req, res) => {
   try {
