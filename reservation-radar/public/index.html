@@ -506,6 +506,9 @@ function App() {
 
             <div className="filter-bar">
               <input className="filter-search" placeholder="Search..." value={search} onChange={e=>setSearch(e.target.value)} />
+              <span style={{fontSize:12,color:'#6b7280',padding:'6px 12px',background:'rgba(255,255,255,0.04)',borderRadius:20,border:'1px solid rgba(255,255,255,0.08)',fontWeight:700}}>
+                {filteredRestaurants.length === restaurants.length ? `📍 ${restaurants.length} restaurants` : `📍 ${filteredRestaurants.length} of ${restaurants.length}`}
+              </span>
               {['all','gf','hot','resy','opentable'].map(f => (
                 <button key={f} className={`filter-btn ${filter===f?'active':''}`} onClick={()=>setFilter(f)}>
                   {f==='all'?'All':f==='gf'?'🌿 GF Friendly':f==='hot'?'🔥🔥🔥 Hardest':f==='resy'?'Resy':'OpenTable'}
