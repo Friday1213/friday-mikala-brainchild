@@ -245,9 +245,8 @@ app.get('/api/internal/summary', (req, res) => {
   });
 
   const noActivity = providers.filter(p => {
-    const last = db.prepare(`SELECT MAX(updated_at) as last FROM tasks WHERE provider_id=?`).get(p.id);
-    if (!last?.last) return true;
-    return new Date(last.last) < sevenDaysAgo;
+    if (!p.updated_at) return true;
+    return new Date(p.updated_at) < sevenDaysAgo;
   });
 
   // Progress — furthest behind (lowest % complete)
