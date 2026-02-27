@@ -9,7 +9,7 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #0f0f1a;
+      background: #080812;
       color: white;
       min-height: 100vh;
       display: flex;
@@ -17,21 +17,66 @@
       align-items: center;
       justify-content: center;
       padding: 40px 24px;
+      overflow-x: hidden;
+    }
+
+    /* Animated background orbs */
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.18;
+      animation: drift 12s ease-in-out infinite alternate;
+    }
+    .orb-1 { width: 500px; height: 500px; background: #7c3aed; top: -100px; left: -100px; animation-delay: 0s; }
+    .orb-2 { width: 400px; height: 400px; background: #2563eb; bottom: -80px; right: -80px; animation-delay: -4s; }
+    .orb-3 { width: 300px; height: 300px; background: #059669; top: 40%; left: 40%; animation-delay: -8s; }
+
+    @keyframes drift {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(40px, 30px) scale(1.08); }
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
     }
 
     .header {
       text-align: center;
-      margin-bottom: 48px;
+      margin-bottom: 52px;
+    }
+
+    .header .eyebrow {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #6b7280;
+      margin-bottom: 12px;
     }
 
     .header h1 {
-      font-size: 36px;
-      font-weight: 800;
-      letter-spacing: -1px;
-      margin-bottom: 8px;
-      background: linear-gradient(135deg, #a78bfa, #60a5fa);
+      font-size: 48px;
+      font-weight: 900;
+      letter-spacing: -2px;
+      line-height: 1;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #e879f9, #a78bfa, #60a5fa);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .header p {
@@ -44,102 +89,192 @@
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 20px;
       width: 100%;
-      max-width: 900px;
+      max-width: 920px;
     }
 
     .card {
-      background: #1a1a2e;
-      border: 1px solid #2d2d4e;
-      border-radius: 16px;
-      padding: 28px;
+      position: relative;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 32px 28px;
       cursor: pointer;
       text-decoration: none;
       color: white;
-      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s, background 0.25s;
       display: block;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      background: radial-gradient(circle at 30% 30%, var(--glow), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s;
     }
 
     .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 20px 50px var(--shadow);
       border-color: var(--accent);
+      background: rgba(255,255,255,0.07);
     }
 
+    .card:hover::before { opacity: 1; }
+
+    .card-shine {
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.04) 50%, transparent 60%);
+      transform: translateX(-100%);
+      transition: transform 0.6s;
+    }
+    .card:hover .card-shine { transform: translateX(100%); }
+
     .card-icon {
-      font-size: 36px;
-      margin-bottom: 16px;
+      font-size: 40px;
+      margin-bottom: 18px;
       display: block;
+      filter: drop-shadow(0 0 12px var(--accent));
     }
 
     .card-title {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 6px;
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
     }
 
     .card-desc {
       font-size: 13px;
       color: #9ca3af;
-      line-height: 1.5;
+      line-height: 1.6;
     }
 
     .card-tag {
-      display: inline-block;
-      margin-top: 16px;
-      padding: 3px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 20px;
+      padding: 4px 12px;
       border-radius: 20px;
       font-size: 11px;
-      font-weight: 600;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
       background: var(--accent-bg);
       color: var(--accent);
+      border: 1px solid var(--accent-border);
     }
 
-    .card-1 { --accent: #a78bfa; --accent-bg: #2e1f5e; }
-    .card-2 { --accent: #34d399; --accent-bg: #052e16; }
-    .card-3 { --accent: #60a5fa; --accent-bg: #1e3a5f; }
+    .card-arrow {
+      position: absolute;
+      top: 28px;
+      right: 28px;
+      font-size: 16px;
+      opacity: 0;
+      transform: translate(-4px, 4px);
+      transition: opacity 0.2s, transform 0.2s;
+      color: var(--accent);
+    }
+    .card:hover .card-arrow { opacity: 1; transform: translate(0, 0); }
+
+    .card-1 {
+      --accent: #c084fc;
+      --accent-bg: rgba(139,92,246,0.15);
+      --accent-border: rgba(139,92,246,0.3);
+      --glow: rgba(139,92,246,0.2);
+      --shadow: rgba(139,92,246,0.25);
+    }
+    .card-2 {
+      --accent: #34d399;
+      --accent-bg: rgba(52,211,153,0.12);
+      --accent-border: rgba(52,211,153,0.3);
+      --glow: rgba(52,211,153,0.15);
+      --shadow: rgba(52,211,153,0.2);
+    }
+    .card-3 {
+      --accent: #60a5fa;
+      --accent-bg: rgba(96,165,250,0.12);
+      --accent-border: rgba(96,165,250,0.3);
+      --glow: rgba(96,165,250,0.15);
+      --shadow: rgba(96,165,250,0.2);
+    }
+
+    .card-3 .card-tag { opacity: 0.7; }
 
     .footer {
-      margin-top: 48px;
+      margin-top: 52px;
       font-size: 12px;
       color: #374151;
+      letter-spacing: 0.5px;
     }
+
+    /* Fade-in animation */
+    .content { animation: fadeUp 0.6s ease both; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .card:nth-child(1) { animation: fadeUp 0.6s 0.1s ease both; }
+    .card:nth-child(2) { animation: fadeUp 0.6s 0.2s ease both; }
+    .card:nth-child(3) { animation: fadeUp 0.6s 0.3s ease both; }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <h1>🖤 Friday Launchpad</h1>
-    <p>Your apps, one click away</p>
+  <div class="bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
   </div>
 
-  <div class="grid">
+  <div class="content">
+    <div class="header">
+      <div class="eyebrow">VIP Medical Group</div>
+      <h1>🖤 Friday Launchpad</h1>
+      <p>Your apps, one click away</p>
+    </div>
 
-    <a class="card card-1" href="https://fridaybrain.onrender.com" target="_blank">
-      <span class="card-icon">🧠</span>
-      <div class="card-title">FridayBrain</div>
-      <div class="card-desc">Provider onboarding tracker. Tasks, credentialing, training plans, and progress dashboards.</div>
-      <span class="card-tag">Onboarding</span>
-    </a>
+    <div class="grid">
 
-    <a class="card card-2" href="https://travel-8gnr.onrender.com" target="_blank">
-      <span class="card-icon">🗓</span>
-      <div class="card-title">Carly Hub</div>
-      <div class="card-desc">PTO tracker, work travel log, overtime by category, and holiday calendar.</div>
-      <span class="card-tag">Personal</span>
-    </a>
+      <a class="card card-1" href="https://fridaybrain.onrender.com" target="_blank">
+        <div class="card-shine"></div>
+        <div class="card-arrow">↗</div>
+        <span class="card-icon">🧠</span>
+        <div class="card-title">FridayBrain</div>
+        <div class="card-desc">Provider onboarding tracker. Tasks, credentialing, training plans, and progress dashboards.</div>
+        <span class="card-tag">✦ Onboarding</span>
+      </a>
 
-    <a class="card card-3" href="#" target="_blank">
-      <span class="card-icon">🧩</span>
-      <div class="card-title">Carly Brain</div>
-      <div class="card-desc">Brain dump kanban. Capture ideas, tasks, and thoughts before they disappear.</div>
-      <span class="card-tag">Coming Soon</span>
-    </a>
+      <a class="card card-2" href="https://travel-8gnr.onrender.com" target="_blank">
+        <div class="card-shine"></div>
+        <div class="card-arrow">↗</div>
+        <span class="card-icon">🗓</span>
+        <div class="card-title">Carly Hub</div>
+        <div class="card-desc">PTO tracker, work travel log, overtime by category, and holiday calendar.</div>
+        <span class="card-tag">✦ Personal</span>
+      </a>
 
+      <a class="card card-3" href="#" target="_blank">
+        <div class="card-shine"></div>
+        <span class="card-icon">🧩</span>
+        <div class="card-title">Carly Brain</div>
+        <div class="card-desc">Brain dump kanban. Capture ideas, tasks, and thoughts before they disappear.</div>
+        <span class="card-tag">⏳ Coming Soon</span>
+      </a>
+
+    </div>
+
+    <div class="footer">Built by Friday 🖤</div>
   </div>
-
-  <div class="footer">Built by Friday 🖤</div>
 
 </body>
 </html>
