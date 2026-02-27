@@ -851,54 +851,84 @@ function ServicesPage() {
 
   React.useEffect(() => { load(); const t = setInterval(load, 60000); return () => clearInterval(t); }, []);
 
-  const statusColor = s => s === 'live' ? '#059669' : s === 'build_in_progress' || s === 'deploy_in_progress' ? '#d97706' : '#dc2626';
-  const statusBg = s => s === 'live' ? '#d1fae5' : s === 'build_in_progress' || s === 'deploy_in_progress' ? '#fef3c7' : '#fee2e2';
-  const statusLabel = s => s === 'live' ? '● Live' : s === 'build_in_progress' ? '⟳ Building' : s === 'deploy_in_progress' ? '⟳ Deploying' : s || 'Unknown';
+  const statusColor = s => s === 'live' ? '#059669' : ['build_in_progress','deploy_in_progress'].includes(s) ? '#d97706' : '#dc2626';
+  const statusBg   = s => s === 'live' ? '#d1fae5' : ['build_in_progress','deploy_in_progress'].includes(s) ? '#fef3c7' : '#fee2e2';
+  const statusLabel= s => s === 'live' ? 'Live' : s === 'build_in_progress' ? 'Building' : s === 'deploy_in_progress' ? 'Deploying' : s || 'Unknown';
+  const statusDot  = s => s === 'live' ? '🟢' : ['build_in_progress','deploy_in_progress'].includes(s) ? '🟡' : '🔴';
+  const typeIcon   = t => t === 'web_service' ? '🌐' : t === 'static_site' ? '📄' : t === 'background_worker' ? '⚙️' : t === 'cron_job' ? '⏰' : '📦';
 
-  const live = services.filter(s => s.status === 'live').length;
+  const live      = services.filter(s => s.status === 'live').length;
   const deploying = services.filter(s => ['build_in_progress','deploy_in_progress'].includes(s.status)).length;
-  const down = services.filter(s => !['live','build_in_progress','deploy_in_progress'].includes(s.status) && s.status).length;
+  const down      = services.filter(s => !['live','build_in_progress','deploy_in_progress'].includes(s.status) && s.status).length;
 
   return (
     <div>
       <div className="page-header">
-        <h2>Render Services</h2>
-        <div style={{display:'flex',alignItems:'center',gap:12}}>
-          {lastRefresh && <span style={{fontSize:12,color:'#6b7280'}}>Last updated {lastRefresh.toLocaleTimeString()}</span>}
-          <button className="btn btn-outline btn-sm" onClick={load}>↻ Refresh</button>
+        <div>
+          <h2 style={{marginBottom:4}}>Render Services</h2>
+          <div style={{fontSize:13,color:'#6b7280'}}>Auto-refreshes every 60 seconds{lastRefresh ? ` · Last updated ${lastRefresh.toLocaleTimeString()}` : ''}</div>
         </div>
+        <button className="btn btn-outline" onClick={load} style={{gap:6,display:'flex',alignItems:'center'}}>↻ Refresh</button>
       </div>
-      <div style={{display:'flex',gap:12,marginBottom:24,flexWrap:'wrap'}}>
-        <div className="card" style={{flex:1,minWidth:120,textAlign:'center',padding:'16px'}}>
-          <div style={{fontSize:28,fontWeight:700,color:'#2563eb'}}>{services.length}</div>
-          <div style={{fontSize:12,color:'#6b7280',marginTop:4}}>Total Services</div>
-        </div>
-        <div className="card" style={{flex:1,minWidth:120,textAlign:'center',padding:'16px'}}>
-          <div style={{fontSize:28,fontWeight:700,color:'#059669'}}>{live}</div>
-          <div style={{fontSize:12,color:'#6b7280',marginTop:4}}>Live</div>
-        </div>
-        <div className="card" style={{flex:1,minWidth:120,textAlign:'center',padding:'16px'}}>
-          <div style={{fontSize:28,fontWeight:700,color:'#d97706'}}>{deploying}</div>
-          <div style={{fontSize:12,color:'#6b7280',marginTop:4}}>Deploying</div>
-        </div>
-        <div className="card" style={{flex:1,minWidth:120,textAlign:'center',padding:'16px'}}>
-          <div style={{fontSize:28,fontWeight:700,color:'#dc2626'}}>{down}</div>
-          <div style={{fontSize:12,color:'#6b7280',marginTop:4}}>Down</div>
-        </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(140px,1fr))',gap:16,marginBottom:28}}>
+        {[
+          {label:'Total',value:services.length,color:'#2563eb',bg:'#eff6ff'},
+          {label:'Live',value:live,color:'#059669',bg:'#f0fdf4'},
+          {label:'Deploying',value:deploying,color:'#d97706',bg:'#fffbeb'},
+          {label:'Down',value:down,color:'#dc2626',bg:'#fef2f2'},
+        ].map(stat => (
+          <div key={stat.label} style={{background:stat.bg,borderRadius:12,padding:'18px 20px',textAlign:'center',border:`1px solid ${stat.color}22`}}>
+            <div style={{fontSize:32,fontWeight:800,color:stat.color,lineHeight:1}}>{stat.value}</div>
+            <div style={{fontSize:12,color:'#6b7280',marginTop:6,fontWeight:500,textTransform:'uppercase',letterSpacing:'0.5px'}}>{stat.label}</div>
+          </div>
+        ))}
       </div>
-      {loading ? <div style={{textAlign:'center',padding:40,color:'#6b7280'}}>Loading services...</div> : (
-        <div style={{display:'flex',flexDirection:'column',gap:12}}>
+
+      {loading ? (
+        <div style={{textAlign:'center',padding:'60px 0',color:'#9ca3af'}}>
+          <div style={{fontSize:32,marginBottom:12}}>⚙️</div>
+          <div style={{fontSize:15}}>Loading services...</div>
+        </div>
+      ) : services.length === 0 ? (
+        <div style={{textAlign:'center',padding:'60px 0',color:'#9ca3af'}}>
+          <div style={{fontSize:32,marginBottom:12}}>📭</div>
+          <div style={{fontSize:15}}>No services found</div>
+        </div>
+      ) : (
+        <div style={{display:'flex',flexDirection:'column',gap:10}}>
           {services.map(s => (
-            <div key={s.id} className="card" style={{padding:'16px 20px',display:'flex',alignItems:'center',gap:16,flexWrap:'wrap',borderLeft:`4px solid ${statusColor(s.status)}`}}>
-              <div style={{flex:1,minWidth:200}}>
-                <div style={{fontWeight:600,fontSize:15}}>{s.name}</div>
-                <div style={{fontSize:12,color:'#6b7280',marginTop:2}}>{s.type} · {s.region || 'unknown region'}</div>
+            <div key={s.id} style={{
+              background:'white',borderRadius:12,padding:'16px 20px',
+              display:'flex',alignItems:'center',gap:16,flexWrap:'wrap',
+              boxShadow:'0 1px 3px rgba(0,0,0,0.08)',
+              borderLeft:`4px solid ${statusColor(s.status)}`,
+              transition:'box-shadow 0.15s'
+            }}>
+              <div style={{fontSize:22,lineHeight:1}}>{typeIcon(s.type)}</div>
+              <div style={{flex:1,minWidth:180}}>
+                <div style={{fontWeight:600,fontSize:15,color:'#111827'}}>{s.name}</div>
+                <div style={{fontSize:12,color:'#9ca3af',marginTop:3,textTransform:'capitalize'}}>
+                  {(s.type||'').replace(/_/g,' ')} {s.region ? `· ${s.region}` : ''}
+                </div>
               </div>
-              <span style={{padding:'4px 12px',borderRadius:12,fontSize:12,fontWeight:600,background:statusBg(s.status),color:statusColor(s.status)}}>{statusLabel(s.status)}</span>
-              {s.updatedAt && <span style={{fontSize:12,color:'#6b7280'}}>Updated {new Date(s.updatedAt).toLocaleDateString()}</span>}
-              <div style={{display:'flex',gap:8}}>
-                {s.dashboardUrl && <a href={s.dashboardUrl} target="_blank" rel="noreferrer"><button className="btn btn-outline btn-sm">Dashboard</button></a>}
-              </div>
+              <span style={{
+                display:'inline-flex',alignItems:'center',gap:5,
+                padding:'5px 12px',borderRadius:20,fontSize:12,fontWeight:600,
+                background:statusBg(s.status),color:statusColor(s.status)
+              }}>
+                {statusDot(s.status)} {statusLabel(s.status)}
+              </span>
+              {s.updatedAt && (
+                <span style={{fontSize:12,color:'#9ca3af',whiteSpace:'nowrap'}}>
+                  {new Date(s.updatedAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
+                </span>
+              )}
+              {s.dashboardUrl && (
+                <a href={s.dashboardUrl} target="_blank" rel="noreferrer" style={{textDecoration:'none'}}>
+                  <button className="btn btn-outline btn-sm">Open ↗</button>
+                </a>
+              )}
             </div>
           ))}
         </div>
