@@ -339,6 +339,7 @@ function SystemsTab() {
         {label:'Nextech Basics — Video 1', id:'1127938695', h:'6abb820c40'},
         {label:'Nextech Basics — Video 2', id:'1127938863', h:'711a46d873'},
         {label:'Nextech Basics — Video 3', id:'1127935462', h:'c3ac9fe787'},
+        {label:'How to Sign a Note in Nextech', local:'/sign-note-nextech.mp4'},
       ]
     },
     { icon:'📊', name:'Medwork', color:'#c2410c', bg:'#fff7ed',
@@ -384,15 +385,23 @@ function SystemsTab() {
             {t.videos&&<>
               <div className="section-label" style={{marginTop:14}}>🎬 Training Videos</div>
               {t.videos.map(v=>(
-                <div key={v.id} style={{marginBottom:14}}>
+                <div key={v.label} style={{marginBottom:14}}>
                   <div style={{fontSize:12,fontWeight:800,color:'#1e293b',marginBottom:6}}>{v.label}</div>
                   <div style={{position:'relative',paddingBottom:'56.25%',height:0,borderRadius:10,overflow:'hidden',background:'#000'}}>
-                    <iframe
-                      src={`https://player.vimeo.com/video/${v.id}?h=${v.h}&title=0&byline=0&portrait=0`}
-                      style={{position:'absolute',top:0,left:0,width:'100%',height:'100%',border:'none'}}
-                      allow="autoplay; fullscreen; picture-in-picture"
-                      allowFullScreen
-                    />
+                    {v.local ? (
+                      <video
+                        src={v.local}
+                        controls
+                        style={{position:'absolute',top:0,left:0,width:'100%',height:'100%'}}
+                      />
+                    ) : (
+                      <iframe
+                        src={`https://player.vimeo.com/video/${v.id}?h=${v.h}&title=0&byline=0&portrait=0`}
+                        style={{position:'absolute',top:0,left:0,width:'100%',height:'100%',border:'none'}}
+                        allow="autoplay; fullscreen; picture-in-picture"
+                        allowFullScreen
+                      />
+                    )}
                   </div>
                 </div>
               ))}
