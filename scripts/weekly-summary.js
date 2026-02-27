@@ -45,10 +45,12 @@ function emptyRow(msg) {
 }
 
 async function buildEmail() {
-  const [brain, overtime, ptoSettings] = await Promise.all([
+  const year = new Date().getFullYear();
+  const [brain, overtime, ptoSettings, ptoDays] = await Promise.all([
     fetchJson(`${FRIDAYBRAIN}/api/internal/summary?token=${INTERNAL_TOKEN}`),
     fetchJson(`${CARLY_HUB}/api/overtime`),
-    fetchJson(`${CARLY_HUB}/api/pto-settings`),
+    fetchJson(`${CARLY_HUB}/api/pto/settings`),
+    fetchJson(`${CARLY_HUB}/api/pto?year=${year}`),
   ]);
 
   // Carly Brain stalled items
@@ -71,7 +73,7 @@ async function buildEmail() {
 
   // PTO
   const settings = Array.isArray(ptoSettings) ? ptoSettings[0] : ptoSettings;
-  const ptoUsed = settings?.used_hours || 0;
+  const ptoUsed = Array.isArray(ptoDays) ? ptoDays.filter(d => d.type === 'PTO').reduce((s,d) => s + d.hours, 0) : 0;
   const ptoTotal = settings?.annual_hours || 160;
   const ptoRemaining = ptoTotal - ptoUsed;
 
@@ -206,7 +208,7 @@ async function send() {
 
   await transporter.sendMail({
     from: `"Friday 🖤" <${process.env.GMAIL_USER}>`,
-    to: process.env.GMAIL_USER,
+    to: 'carly.sarch@vipmedicalgroup.com',
     subject: `✦ Weekly Summary — ${new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'})}`,
     html
   });

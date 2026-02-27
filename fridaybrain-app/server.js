@@ -240,8 +240,8 @@ app.get('/api/internal/summary', (req, res) => {
   });
 
   const flagged = providers.filter(p => {
-    const tasks = db.prepare('SELECT * FROM tasks WHERE provider_id=? AND flag=1').all(p.id);
-    return tasks.length > 0;
+    const result = db.prepare(`SELECT COUNT(*) as cnt FROM tasks WHERE provider_id=? AND notes IS NOT NULL AND notes != ''`).get(p.id);
+    return result?.cnt > 0;
   });
 
   const noActivity = providers.filter(p => {
