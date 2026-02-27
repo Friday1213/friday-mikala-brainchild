@@ -664,7 +664,7 @@ function ProgressPage({ providers }) {
     <div className="progress-page">
       <div className="page-header"><h2>Progress Dashboard</h2><div style={{fontSize:13,color:'#6b7280'}}>Updates automatically</div></div>
       <div className="tabs" style={{marginBottom:24}}>
-        {['onboarding','malpractice','credentialing'].map(t=>(
+        {['onboarding','training','malpractice','credentialing'].map(t=>(
           <button key={t} className={`tab ${progressTab===t?'active':''}`} onClick={()=>setProgressTab(t)} style={{textTransform:'capitalize'}}>{t}</button>
         ))}
       </div>
@@ -712,6 +712,84 @@ function ProgressPage({ providers }) {
         );
       })}
       </>}
+
+      {progressTab === 'training' && (() => {
+        const parseTP = (v) => { try { while (typeof v === 'string') v = JSON.parse(v); return v || {}; } catch(e) { return {}; } };
+        const DAYS = ['M','T','W','Th','F'];
+        const DAY_NAMES = { M:'Mon', T:'Tue', W:'Wed', Th:'Thu', F:'Fri' };
+        const hasAny = (tp) => DAYS.some(d => tp[`${d}_1`] || tp[`${d}_2`]);
+        const scheduled = providers.filter(p => hasAny(parseTP(p.training_plan)));
+        const notScheduled = providers.filter(p => !hasAny(parseTP(p.training_plan)));
+        return (
+          <>
+            <div className="stat-cards">
+              <div className="stat-card"><div className="stat-num" style={{color:'#059669'}}>{scheduled.length}</div><div className="stat-label">Schedule Entered</div></div>
+              <div className="stat-card"><div className="stat-num" style={{color:'#d97706'}}>{notScheduled.length}</div><div className="stat-label">Schedule Pending</div></div>
+              <div className="stat-card"><div className="stat-num">{providers.length}</div><div className="stat-label">Total Providers</div></div>
+            </div>
+
+            {/* Scheduled providers */}
+            {scheduled.length > 0 && (
+              <div className="card" style={{marginBottom:20}}>
+                <div className="section-title" style={{marginBottom:16}}>📅 Training Schedules</div>
+                <div style={{overflowX:'auto'}}>
+                  <table style={{width:'100%',borderCollapse:'collapse',fontSize:13}}>
+                    <thead>
+                      <tr style={{background:'#f9fafb'}}>
+                        <th style={{padding:'10px 12px',textAlign:'left',fontWeight:700,borderBottom:'2px solid #e5e7eb',minWidth:160}}>Provider</th>
+                        <th style={{padding:'10px 12px',textAlign:'left',fontWeight:700,borderBottom:'2px solid #e5e7eb',minWidth:100}}>Start Date</th>
+                        {DAYS.map(d => (
+                          <th key={d} style={{padding:'10px 12px',textAlign:'left',fontWeight:700,borderBottom:'2px solid #e5e7eb',minWidth:120}}>{DAY_NAMES[d]}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {scheduled.map(p => {
+                        const tp = parseTP(p.training_plan);
+                        return (
+                          <tr key={p.id} style={{borderBottom:'1px solid #f3f4f6'}}>
+                            <td style={{padding:'10px 12px'}}>
+                              <div style={{fontWeight:600}}>{p.name}</div>
+                              <span style={{fontSize:11,color:'#6b7280'}}>{p.state}</span>
+                            </td>
+                            <td style={{padding:'10px 12px',color:'#374151',fontWeight:500}}>{p.expected_first_day || '—'}</td>
+                            {DAYS.map(d => {
+                              const l1 = tp[`${d}_1`] || '';
+                              const l2 = tp[`${d}_2`] || '';
+                              return (
+                                <td key={d} style={{padding:'10px 12px',verticalAlign:'top'}}>
+                                  {l1 && <div style={{fontWeight:500,color:'#1e293b',fontSize:12}}>{l1}</div>}
+                                  {l2 && <div style={{color:'#6b7280',fontSize:11,marginTop:2}}>{l2}</div>}
+                                  {!l1 && !l2 && <span style={{color:'#d1d5db',fontSize:12}}>—</span>}
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Not yet scheduled */}
+            {notScheduled.length > 0 && (
+              <div className="card">
+                <div className="section-title" style={{marginBottom:12}}>⏳ Schedule Not Yet Entered</div>
+                <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
+                  {notScheduled.map(p => (
+                    <div key={p.id} style={{background:'#fff7ed',border:'1px solid #fed7aa',borderRadius:8,padding:'8px 14px',fontSize:13}}>
+                      <div style={{fontWeight:600,color:'#9a3412'}}>{p.name}</div>
+                      <div style={{fontSize:11,color:'#c2410c',marginTop:2}}>{p.expected_first_day ? `Starts ${p.expected_first_day}` : 'No start date'}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        );
+      })()}
 
       {progressTab === 'malpractice' && (
         <>
