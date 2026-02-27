@@ -131,6 +131,9 @@
   .sidebar-item.active { background: rgba(167,139,250,0.12); color: #5b3f7a; border-left-color: #a78bfa; }
   .sidebar-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   .sidebar-count { margin-left: auto; background: rgba(167,139,250,0.15); border-radius: 10px; padding: 1px 8px; font-size: 11px; color: #a78bfa; }
+  .sidebar-item.drag-over { background: rgba(167,139,250,0.25) !important; border-left-color: #a78bfa !important; transform: scale(1.02); }
+  .item-row[draggable=true] { cursor: grab; }
+  .item-row[draggable=true]:active { cursor: grabbing; opacity: 0.6; }
 
   /* Main content */
   .main-content { flex: 1; padding: 28px 32px; overflow-y: auto; }
@@ -460,11 +463,29 @@ function App() {
     return { label: due.toLocaleDateString('en-US', { month:'short', day:'numeric' }), overdue: false };
   };
 
+  const [draggingId, setDraggingId] = React.useState(null);
+  const [dragOverCat, setDragOverCat] = React.useState(null);
+
+  const dropOnCategory = async (catName) => {
+    if (!draggingId) return;
+    const item = items.find(i => i.id === draggingId);
+    if (!item || item.category === catName) return;
+    await api(`/api/items/${draggingId}`, { method:'PUT', body: JSON.stringify({...item, category: catName}) });
+    setDraggingId(null); setDragOverCat(null);
+    load();
+  };
+
   const ItemRow = ({ item }) => {
     const due = formatDue(item.due_date);
     const color = catColor(item.category);
     return (
-      <div className={`item-row${item.status==='Done'?' done':''}`} onClick={()=>openEdit(item)}>
+      <div
+        className={`item-row${item.status==='Done'?' done':''}`}
+        draggable
+        onDragStart={e=>{ setDraggingId(item.id); e.dataTransfer.effectAllowed='move'; }}
+        onDragEnd={()=>{ setDraggingId(null); setDragOverCat(null); }}
+        onClick={()=>openEdit(item)}
+      >
         <div
           className={`item-row-check${item.status==='Done'?' checked':item.status==='In Progress'?' in-progress':''}`}
           onClick={e=>{ e.stopPropagation(); cycleStatus(item); }}
@@ -484,7 +505,7 @@ function App() {
           </div>
         </div>
         <div className="item-row-actions" onClick={e=>e.stopPropagation()}>
-          <button className="action-btn del" onClick={()=>deleteItem(item.id)}>×</button>
+          <button className="action-btn del" onClick={e=>{ e.stopPropagation(); deleteItem(item.id); }}>×</button>
         </div>
       </div>
     );
@@ -555,7 +576,14 @@ function App() {
             <span className="sidebar-count">{items.length}</span>
           </div>
           {categories.map(c => (
-            <div key={c.name} className={`sidebar-item${activeCategory===c.name?' active':''}`} onClick={()=>setActiveCategory(c.name)}>
+            <div
+              key={c.name}
+              className={`sidebar-item${activeCategory===c.name?' active':''}${dragOverCat===c.name?' drag-over':''}`}
+              onClick={()=>setActiveCategory(c.name)}
+              onDragOver={e=>{ e.preventDefault(); setDragOverCat(c.name); }}
+              onDragLeave={()=>setDragOverCat(null)}
+              onDrop={e=>{ e.preventDefault(); dropOnCategory(c.name); }}
+            >
               <span className="sidebar-dot" style={{background:c.color}} />
               {c.name}
               {categoryCounts[c.name] > 0 && <span className="sidebar-count">{categoryCounts[c.name]}</span>}
