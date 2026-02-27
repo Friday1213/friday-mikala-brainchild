@@ -761,6 +761,137 @@ const WORKFLOWS = [
       { type:'end', text:'MIPS QID 130 documented ✅' },
     ]
   },
+  {
+    id:'standing-orders', title:'Standing Orders', icon:'📋', role:'MA / Clinical Staff', color:'#ea580c', light:'#fff7ed',
+    steps:[
+      {type:'start',text:'Patient appointment status is "Kept"'},
+      {type:'step',text:'Open the patient chart from the Appointment tab in the Inbox'},
+      {type:'step',text:'Complete 4-Point Check',detail:'Verify: Location · Provider · Patient · Encounter Date/Time.'},
+      {type:'step',text:'Open the Intake → click the Standing Orders link'},
+      {type:'step',text:'Select the appropriate test from the grid'},
+      {type:'decision',text:'Is an assessment/diagnosis attached to the test?',yes:'Continue to next step',no:'Click Add or Update Assessment to add a diagnosis'},
+      {type:'step',text:'Enter test interpretation if necessary',detail:'Enter directly or click Details to enter discrete data.'},
+      {type:'decision',text:'Is the test billable?',yes:'Ensure Submit to Superbill is selected',no:'Deselect the Submit to Superbill checkbox'},
+      {type:'step',text:'Click the Place Order button'},
+      {type:'end',text:'Standing order placed ✅'},
+    ]
+  },
+  {
+    id:'clinical-intake', title:'Clinical Staff Intake', icon:'🩺', role:'MA / Clinical Staff', color:'#0891b2', light:'#e0f2fe',
+    steps:[
+      {type:'start',text:'Patient arrives — select from Appointment tab in Inbox'},
+      {type:'step',text:'Update Patient Tracking → "Exam Room" / "with Nursing" / "with MA"'},
+      {type:'step',text:'Complete 4-Point Check',detail:'Verify: Location · Provider · Patient · Encounter Date/Time.'},
+      {type:'step',text:'Open *SOAP template — confirm specialty (General Surgery/Vein or Neurosurgery/Pain). Select Visit Type. Apply Quick Note if appropriate. Open *Intake template.'},
+      {type:'decision',text:'New or established patient?',yes:'NEW: Add Past Medical/Surgical, Family, Social, Confidential histories in History Summary',no:'ESTABLISHED: Review previous histories and update as needed'},
+      {type:'step',text:'Select Chief Complaint and document HPI'},
+      {type:'step',text:'Open Vital Signs panel — add or update vitals'},
+      {type:'step',text:'Open Medications module — import med history, reconcile, check Medications Reconciled'},
+      {type:'step',text:'Add/update Allergies — select Allergies Reviewed when done'},
+      {type:'step',text:'Add POC orders as needed. Use Standing Orders link if applicable.'},
+      {type:'step',text:'Open Review of Systems panel — apply ROS Quick Save, adjust grid'},
+      {type:'step',text:'Generate the Intake Note'},
+      {type:'step',text:'Update Patient Tracking → "Ready for Provider"'},
+      {type:'end',text:'Intake complete ✅'},
+    ]
+  },
+  {
+    id:'provider-visit', title:'Provider Visit', icon:'👨‍⚕️', role:'Provider', color:'#1e3a5f', light:'#e0f2fe',
+    steps:[
+      {type:'start',text:'Patient status shows "Ready for Provider"'},
+      {type:'step',text:'Open patient from Inbox — update Patient Tracking to "With Provider"'},
+      {type:'step',text:'Complete 4-Point Check',detail:'Verify: Location · Provider · Patient · Encounter Date/Time.'},
+      {type:'step',text:'Open SOAP Template — apply Quick Note if needed. Use Quick Save and MyPhrase for efficiency.'},
+      {type:'step',text:'Review Chief Complaint (entered by MA) — update if needed'},
+      {type:'step',text:'Review History Summary — add new history, update History Review indicator'},
+      {type:'step',text:'Review/update Review of Systems, Vital Signs, and Physical Exam panels'},
+      {type:'step',text:'Expand Assessment/Plan panel — select assessments, update A/P Details tab'},
+      {type:'step',text:'Place orders: Labs tab (lab orders) · Diagnostics tab (imaging) · Referrals tab (referrals)'},
+      {type:'step',text:'Open Medication Module (Meds icon) — refill or add medications'},
+      {type:'step',text:'Click EM Coding icon → Finalize template → choose MDM level → Submit Code'},
+      {type:'step',text:'Master Document generates automatically — sign now or later via PAQ'},
+      {type:'end',text:'Patient Tracking auto-updates to "Charges Submitted" ✅'},
+    ]
+  },
+  {
+    id:'chronic-conditions', title:'Chronic Conditions Visit', icon:'🫀', role:'Provider', color:'#15803d', light:'#dcfce7',
+    steps:[
+      {type:'start',text:'Patient status: Waiting for Provider'},
+      {type:'step',text:'Open patient from Appointment tab — update tracking to "With Provider"'},
+      {type:'step',text:'Complete 4-Point Check',detail:'Verify: Location · Provider · Patient · Encounter Date/Time.'},
+      {type:'step',text:'Open Intake template from history toolbar — select SOAP template tab — click Chronic Conditions button under Reason for Visit'},
+      {type:'decision',text:'Is the condition/problem already listed?',yes:'Select the problem, choose diagnosis code and assessment status',no:'Click Add Problem to add a new problem, then select it'},
+      {type:'step',text:'Check for screening questions — if present, click Screening Questions link, document responses, Save & Close'},
+      {type:'step',text:'Review Lab Results, Patient Histories, Vital Signs — document Physical Exam and Patient Instructions'},
+      {type:'decision',text:'Additional problems to address?',yes:'Select next problem and repeat the process',no:'Continue to Assessment & Plan'},
+      {type:'step',text:'All chronic condition assessments auto-populate in Assessment & Plan — add additional assessments, click Add/Update, use Quick Save, Save & Close'},
+      {type:'step',text:'Click EM Coding icon → choose MDM level → Submit Code → Master Document generates'},
+      {type:'end',text:'Encounter finalized — Charges Submitted ✅'},
+    ]
+  },
+  {
+    id:'chart-abstraction', title:'Chart Abstraction', icon:'📂', role:'All Staff', color:'#475569', light:'#f1f5f9',
+    steps:[
+      {type:'start',text:'Ready to abstract a patient chart'},
+      {type:'step',text:'Use Patient Lookup button to find the correct patient — open their chart'},
+      {type:'step',text:'Complete 4-Point Check',detail:'Verify: Location · Provider · Patient · Encounter Date/Time.'},
+      {type:'step',text:'Create a new encounter'},
+      {type:'step',text:'Open *Intake Template — select appropriate Specialty (General Surgery or Neurosurgery)'},
+      {type:'step',text:'Select Visit Type → Chart Abstraction'},
+      {type:'step',text:'Complete History Summary Panel — add Past Medical/Surgical, Family, Social, Confidential histories'},
+      {type:'step',text:'Enter Diagnoses — click Quick Button for Diagnosis List → open Billing ICD/Problems Module → add/update ICD codes'},
+      {type:'step',text:'Document Allergies — Allergies panel → click Add → enter allergies'},
+      {type:'step',text:'Document Medications — click Add/Update → use medication history import or enter manually'},
+      {type:'end',text:'Chart abstraction complete ✅'},
+    ]
+  },
+  {
+    id:'referral-processing', title:'Referral Processing', icon:'📤', role:'Front Desk / MA', color:'#be185d', light:'#fce7f3',
+    steps:[
+      {type:'start',text:'Ready to process and send a referral'},
+      {type:'decision',text:'Is NG Share enabled for this referral?',
+        yes:'Open Referrals via Order template or Referral Management template → locate referral → click Share → sends CCDA + attachments + cover letter electronically → confirm delivery in Orders Panel',
+        no:'Open Checkout template → click Add to open Referrals Order template → highlight referral → click Details to see attachments'},
+      {type:'step',text:'(NG Share NOT enabled) Generate referral documents using document buttons — Referral Document and Referral Letter'},
+      {type:'step',text:'Confirm which documents need to be included — use practice preferred method (Fax, MSU, or Data Share Module)'},
+      {type:'step',text:'File Menu → Custom Print/Send → choose Fax → General & Categories tabs → select all documents → click Fax button → enter recipient info → finalize'},
+      {type:'end',text:'Referral sent and confirmed ✅'},
+    ]
+  },
+  {
+    id:'referral-ordering', title:'Referral Ordering', icon:'🔗', role:'Provider / MA', color:'#7c3aed', light:'#ede9fe',
+    steps:[
+      {type:'start',text:'Provider ready to place a referral order'},
+      {type:'step',text:'Open the Referrals Order template'},
+      {type:'decision',text:'Is NG Share available?',yes:'Click NG Share button → search for provider or organization by name, specialty, or location → click name to select',no:'Proceed with manual referral entry'},
+      {type:'step',text:'Under "To:" select the radio button for the type of referral'},
+      {type:'step',text:'Add Diagnosis — click Description field and select, or use Add Assessment / Add Common Assessment'},
+      {type:'step',text:'Select Services Requested (radio buttons/checkboxes) · Choose Clinical Indication from picklist or free-text · Add Timeframe (optional) · Enter Clinical Information/Comments · Select Specialty'},
+      {type:'step',text:'Add Tasks if needed — use Task section to send tasks to staff'},
+      {type:'step',text:'Click Add to enter referral into the grid'},
+      {type:'step',text:'Add Instructions (checkboxes or Instruction Details hyperlink for free-text) — Add Attachments up to 8 via Details — confirm provider address via Address Detail hyperlink'},
+      {type:'step',text:'Complete Therapies & DME sections if applicable'},
+      {type:'end',text:'Referral order placed ✅'},
+    ]
+  },
+  {
+    id:'unified-workflow', title:'Unified Intake + Provider Visit', icon:'🔄', role:'All Clinical Staff', color:'#065f46', light:'#d1fae5',
+    steps:[
+      {type:'start',text:'PHASE A — Clinical Intake (MA/RN)'},
+      {type:'step',text:'Select patient from Inbox → update tracking to "with Nursing" or "with MA"'},
+      {type:'step',text:'4-Point Check: Location · Provider · Patient · Encounter Date/Time'},
+      {type:'step',text:'Open *SOAP template (confirm specialty) + *Intake template. Select Visit Type.'},
+      {type:'decision',text:'New or established patient?',yes:'NEW: Add all histories (Medical/Surgical, Family, Social, Confidential)',no:'ESTABLISHED: Review and update existing histories'},
+      {type:'step',text:'Select Chief Complaint → document HPI → record Vitals → reconcile Medications → review Allergies → place POC/Standing Orders → complete ROS'},
+      {type:'step',text:'Generate Intake Note → update tracking to "Ready for Provider"'},
+      {type:'start',text:'PHASE B — Provider Visit'},
+      {type:'step',text:'Open patient (status: Ready for Provider) → update tracking to "With Provider"'},
+      {type:'step',text:'4-Point Check → Open SOAP Template → review & update Chief Complaint, Histories, ROS, Vitals, Physical Exam'},
+      {type:'step',text:'Assessment & Plan → place Labs / Diagnostics / Referrals orders → update Medications'},
+      {type:'step',text:'EM Coding → select MDM level → Submit Code → Master Document generates → sign via PAQ'},
+      {type:'end',text:'Patient Tracking → "Charges Submitted" ✅'},
+    ]
+  },
 ];
 
 function FlowNode({ node, color, light }) {
