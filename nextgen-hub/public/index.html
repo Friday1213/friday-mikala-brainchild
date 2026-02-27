@@ -232,7 +232,14 @@ function VeinProcedureTemplate() {
   return (
     <div style={{background:'white',borderRadius:16,padding:28,boxShadow:'0 2px 12px rgba(0,0,0,0.06)'}}>
       <h3 style={{fontSize:18,fontWeight:900,color:'#065f46',marginBottom:4}}>🩺 Vein Procedure Note Template</h3>
-      <p style={{fontSize:13,color:'#64748b',marginBottom:24}}>Use this as a reference checklist when completing the procedure note in NextGen.</p>
+      <p style={{fontSize:13,color:'#64748b',marginBottom:16}}>Use this as a reference checklist when completing the procedure note in NextGen.</p>
+
+      {/* Original template image */}
+      <div style={{marginBottom:24}}>
+        <div style={{fontSize:11,fontWeight:900,color:'#94a3b8',textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:8}}>📄 Original Template Reference</div>
+        <img src="/vein-template-1.png" alt="Vein Procedure Template" style={{width:'100%',borderRadius:10,border:'2px solid #e2e8f0',boxShadow:'0 2px 8px rgba(0,0,0,0.08)',cursor:'pointer'}} onClick={e=>{window.open(e.target.src,'_blank')}} title="Click to view full size" />
+        <div style={{fontSize:11,color:'#94a3b8',marginTop:6,textAlign:'center'}}>Click image to view full size</div>
+      </div>
 
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
         <div>
