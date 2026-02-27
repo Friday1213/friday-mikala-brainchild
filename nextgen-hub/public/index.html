@@ -186,123 +186,182 @@ function ArticleCard({ a, onEdit, onDelete, defaultOpen }) {
 }
 
 function VeinProcedureTemplate() {
-  const [form, setForm] = useState({ side:'Right', vein:'', procedure:'', access:'', pregnant:'Not Pregnant', sonographer:'', hpi:'', tumescent:'', catheter:'', supplies:'', prescan:false, aborted:false });
+  const EMPTY = {side:'Right',vein:'',procedure:'',access:'',pregnant:'Not Pregnant',sonographer:'',hpi:'',anesthesia_none:false,tumescent_dose:'',tumescent_units:'mL',catheter:'',vein_length:'',pullbacks:'',length_ablated:'',dist_junction:'',supplies:'',prescan_notes:'',proc_notes:'',findings:'',post_instructions:'',dressing:'',followup_weeks:'',followup_prn:false,followup_sooner:false,aborted:false,consent:false,risks:false,questions:false,prepped:false,pt_id:false,site_confirmed:false};
+  const [form, setForm] = useState(EMPTY);
   const [submitted, setSubmitted] = useState(false);
   const set = (k,v) => setForm(f=>({...f,[k]:v}));
 
-  const CPT = { 'Radiofrequency Ablation':'36475', 'Laser Ablation':'36478', 'Varithena':'36478', 'VenaSeal':'36483' };
-  const veins = ['Great Saphenous Vein (GSV)', 'Duplicate Great Saphenous Vein', 'Small Saphenous Vein (SSV)'];
-  const procs = Object.keys(CPT);
-  const access = ['Proximal Thigh','Mid-Thigh','Distal Thigh','Below Knee','Mid-Calf'];
-  const catheters = ['3 CM','7 CM','8 CM'];
+  const CPT = {'Radiofrequency':'36475','Laser':'36478','Varithena':'36478','VenaSeal':'36483'};
+  const veins = ['Great Saphenous Vein (GSV)','Duplicate Great Saphenous Vein','Small Saphenous Vein (SSV)'];
+  const accesses = ['Proximal Thigh','Mid-Thigh','Distal Thigh','Below Knee','Mid-Calf'];
+  const catheters = ['3CM','7CM','8CM'];
 
-  const Field = ({label, req, children}) => (
-    <div style={{marginBottom:16}}>
-      <div style={{fontSize:11,fontWeight:900,color:'#065f46',textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:6}}>
+  const SectionHeader = ({children}) => <div style={{fontSize:12,fontWeight:900,color:'white',background:'#047857',padding:'8px 14px',borderRadius:8,marginBottom:12,marginTop:20,letterSpacing:'0.03em'}}>{children}</div>;
+  const Field = ({label,req,hint,children}) => (
+    <div style={{marginBottom:14}}>
+      <div style={{fontSize:11,fontWeight:900,color:'#065f46',textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:4}}>
         {label}{req&&<span style={{color:'#ef4444',marginLeft:3}}>*</span>}
+        {hint&&<span style={{fontWeight:400,color:'#94a3b8',textTransform:'none',marginLeft:6,fontSize:10}}>{hint}</span>}
       </div>
       {children}
     </div>
   );
-
-  const Radio = ({name, value, label, checked, onChange}) => (
-    <label style={{display:'flex',alignItems:'center',gap:8,padding:'8px 12px',borderRadius:8,cursor:'pointer',background:checked?'#d1fae5':'#f8fafc',border:`2px solid ${checked?'#047857':'#e2e8f0'}`,fontWeight:checked?800:600,fontSize:13,marginBottom:6,transition:'all 0.15s'}}>
-      <input type="radio" name={name} value={value} checked={checked} onChange={onChange} style={{accentColor:'#047857'}} />
-      {label}
+  const Radio = ({name,value,label,checked,onChange,color='#047857',bg='#d1fae5'}) => (
+    <label style={{display:'flex',alignItems:'center',gap:8,padding:'7px 11px',borderRadius:8,cursor:'pointer',background:checked?bg:'#f8fafc',border:`2px solid ${checked?color:'#e2e8f0'}`,fontWeight:checked?800:600,fontSize:13,marginBottom:5,transition:'all 0.15s'}}>
+      <input type="radio" name={name} value={value} checked={checked} onChange={onChange} style={{accentColor:color}} />{label}
     </label>
   );
+  const Check = ({label,checked,onChange,color='#047857',bg='#d1fae5'}) => (
+    <label style={{display:'flex',alignItems:'center',gap:8,padding:'7px 11px',borderRadius:8,cursor:'pointer',background:checked?bg:'#f8fafc',border:`2px solid ${checked?color:'#e2e8f0'}`,fontWeight:checked?800:600,fontSize:13,marginBottom:5,transition:'all 0.15s'}}>
+      <input type="checkbox" checked={checked} onChange={onChange} style={{width:15,height:15,accentColor:color}} />{label}
+    </label>
+  );
+  const TextInput = ({k,placeholder,type='text'}) => <input type={type} style={{width:'100%',padding:'9px 12px',border:'2px solid #e2e8f0',borderRadius:8,fontFamily:'Nunito',fontSize:13,fontWeight:600}} value={form[k]||''} onChange={e=>set(k,e.target.value)} placeholder={placeholder} />;
+  const TextArea = ({k,placeholder,rows=3}) => <textarea style={{width:'100%',padding:'9px 12px',border:'2px solid #e2e8f0',borderRadius:8,fontFamily:'Nunito',fontSize:13,fontWeight:600,resize:'vertical'}} rows={rows} value={form[k]||''} onChange={e=>set(k,e.target.value)} placeholder={placeholder} />;
 
   if (submitted) return (
-    <div style={{background:'white',borderRadius:16,padding:40,textAlign:'center',boxShadow:'0 2px 12px rgba(0,0,0,0.06)'}}>
-      <div style={{fontSize:48,marginBottom:12}}>✅</div>
-      <h3 style={{fontSize:20,fontWeight:900,color:'#065f46',marginBottom:8}}>Procedure Note Complete</h3>
-      <div style={{fontSize:14,color:'#64748b',marginBottom:24}}>Summary for: <strong>{form.side} {form.vein}</strong></div>
-      <div style={{background:'#f0fdf4',borderRadius:12,padding:20,textAlign:'left',marginBottom:24}}>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,fontSize:13}}>
-          {[['Procedure', `${form.procedure} (CPT ${CPT[form.procedure]||'—'})`],['Access Site',form.access],['Catheter',form.catheter],['Tumescent',form.tumescent?`${form.tumescent} mL`:'—'],['Sonographer/MA',form.sonographer||'—'],['Pre-Procedure Scan',form.prescan?'✅ Confirmed':'❌ Not confirmed'],['Aborted',form.aborted?'⚠️ Yes':'No'],['Pregnancy Status',form.pregnant]].map(([k,v])=>(
-            <div key={k}><div style={{fontSize:10,fontWeight:900,color:'#94a3b8',textTransform:'uppercase'}}>{k}</div><div style={{fontWeight:700,color:'#1e293b'}}>{v}</div></div>
+    <div style={{background:'white',borderRadius:16,padding:32,boxShadow:'0 2px 12px rgba(0,0,0,0.06)'}}>
+      <div style={{textAlign:'center',marginBottom:24}}><div style={{fontSize:40,marginBottom:8}}>✅</div><h3 style={{fontSize:18,fontWeight:900,color:'#065f46'}}>Note Checklist Complete</h3><div style={{color:'#64748b',fontSize:13,marginTop:4}}>{form.side} {form.vein}</div></div>
+      <div style={{background:'#f0fdf4',borderRadius:12,padding:20,marginBottom:20}}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12,fontSize:13}}>
+          {[['Procedure',`${form.procedure} (CPT ${CPT[form.procedure]||'—'})`],['Access',form.access],['Catheter',form.catheter],['Vein Length',form.vein_length?`${form.vein_length} cm`:'—'],['Pullbacks',form.pullbacks||'—'],['Length Ablated',form.length_ablated?`${form.length_ablated} cm`:'—'],['Dist. to Junction',form.dist_junction?`${form.dist_junction} cm`:'—'],['Tumescent',form.tumescent_dose?`${form.tumescent_dose} ${form.tumescent_units}`:'—'],['Sonographer/MA',form.sonographer||'—'],['Pre-Scan',form.prescan_notes?'✅ Documented':'—'],['Aborted',form.aborted?'⚠️ YES':'No'],['Pregnancy',form.pregnant]].map(([k,v])=>(
+            <div key={k}><div style={{fontSize:10,fontWeight:900,color:'#94a3b8',textTransform:'uppercase'}}>{k}</div><div style={{fontWeight:700,color:'#1e293b',marginTop:2}}>{v}</div></div>
           ))}
         </div>
-        {form.hpi && <div style={{marginTop:12,paddingTop:12,borderTop:'1px solid #d1fae5'}}><div style={{fontSize:10,fontWeight:900,color:'#94a3b8',textTransform:'uppercase',marginBottom:4}}>HPI / Chief Complaint</div><div style={{fontSize:13,color:'#374151'}}>{form.hpi}</div></div>}
+        <div style={{marginTop:12,paddingTop:12,borderTop:'1px solid #d1fae5',fontSize:12}}>
+          <strong>Pre-Procedure Care:</strong> {[form.consent&&'Consent',form.risks&&'Risks explained',form.questions&&'Q&A done',form.prepped&&'Prepped/draped',form.pt_id&&'Pt identified',form.site_confirmed&&'Site confirmed'].filter(Boolean).join(' · ')||'None checked'}
+        </div>
       </div>
-      <button className="btn btn-primary" onClick={()=>{setForm({side:'Right',vein:'',procedure:'',access:'',pregnant:'Not Pregnant',sonographer:'',hpi:'',tumescent:'',catheter:'',supplies:'',prescan:false,aborted:false});setSubmitted(false);}}>Start New Note</button>
+      <button className="btn btn-primary" onClick={()=>{setForm(EMPTY);setSubmitted(false);}}>Start New Note</button>
     </div>
   );
 
   return (
     <div style={{background:'white',borderRadius:16,padding:28,boxShadow:'0 2px 12px rgba(0,0,0,0.06)'}}>
-      <h3 style={{fontSize:18,fontWeight:900,color:'#065f46',marginBottom:4}}>🩺 Vein Procedure Note Template</h3>
-      <p style={{fontSize:13,color:'#64748b',marginBottom:16}}>Use this as a reference checklist when completing the procedure note in NextGen.</p>
+      <h3 style={{fontSize:18,fontWeight:900,color:'#065f46',marginBottom:4}}>🩺 Vein Procedure Note — Field Reference</h3>
+      <p style={{fontSize:13,color:'#64748b',marginBottom:16}}>Reference checklist for completing the procedure note in NextGen. All required fields marked with *.</p>
 
-      {/* Original template image */}
       <div style={{marginBottom:24}}>
-        <div style={{fontSize:11,fontWeight:900,color:'#94a3b8',textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:8}}>📄 Original Template Reference</div>
-        <img src="/vein-template-1.png" alt="Vein Procedure Template" style={{width:'100%',borderRadius:10,border:'2px solid #e2e8f0',boxShadow:'0 2px 8px rgba(0,0,0,0.08)',cursor:'pointer'}} onClick={e=>{window.open(e.target.src,'_blank')}} title="Click to view full size" />
-        <div style={{fontSize:11,color:'#94a3b8',marginTop:6,textAlign:'center'}}>Click image to view full size</div>
+        <div style={{fontSize:11,fontWeight:900,color:'#94a3b8',textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:8}}>📄 Original NextGen Template</div>
+        <img src="/vein-template-1.png" alt="Vein Procedure Template" style={{width:'100%',borderRadius:10,border:'2px solid #e2e8f0',boxShadow:'0 2px 8px rgba(0,0,0,0.08)',cursor:'pointer'}} onClick={e=>window.open(e.target.src,'_blank')} title="Click to view full size" />
+        <div style={{fontSize:11,color:'#94a3b8',marginTop:4,textAlign:'center'}}>Click to view full size</div>
       </div>
 
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
+      {/* Pre-procedure care */}
+      <SectionHeader>☑️ Pre-Procedure Care Checklist</SectionHeader>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:6}}>
+        <Check label="Consent was obtained" checked={form.consent} onChange={e=>set('consent',e.target.checked)} />
+        <Check label="Procedure/risks were explained" checked={form.risks} onChange={e=>set('risks',e.target.checked)} />
+        <Check label="Questions were answered" checked={form.questions} onChange={e=>set('questions',e.target.checked)} />
+        <Check label="Prepped and draped" checked={form.prepped} onChange={e=>set('prepped',e.target.checked)} />
+        <Check label="Correct patient identified" checked={form.pt_id} onChange={e=>set('pt_id',e.target.checked)} />
+        <Check label="Correct site and side confirmed" checked={form.site_confirmed} onChange={e=>set('site_confirmed',e.target.checked)} />
+      </div>
+
+      {/* Provider / Vein / Procedure */}
+      <SectionHeader>🩺 Procedure Details</SectionHeader>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
         <div>
           <Field label="Side" req><div style={{display:'flex',gap:8}}>
-            {['Right','Left'].map(s=><button key={s} onClick={()=>set('side',s)} style={{flex:1,padding:'10px',borderRadius:8,border:`2px solid ${form.side===s?'#047857':'#e2e8f0'}`,background:form.side===s?'#d1fae5':'white',fontWeight:800,fontSize:14,cursor:'pointer',color:form.side===s?'#065f46':'#374151'}}>{s}</button>)}
+            {['Right','Left'].map(s=><button key={s} onClick={()=>set('side',s)} style={{flex:1,padding:'9px',borderRadius:8,border:`2px solid ${form.side===s?'#047857':'#e2e8f0'}`,background:form.side===s?'#d1fae5':'white',fontWeight:800,fontSize:14,cursor:'pointer',color:form.side===s?'#065f46':'#374151'}}>{s}</button>)}
           </div></Field>
-
           <Field label="Vein" req>
             {veins.map(v=><Radio key={v} name="vein" value={v} label={`${form.side} ${v}`} checked={form.vein===v} onChange={()=>set('vein',v)} />)}
           </Field>
-
-          <Field label="Procedure Type" req>
-            {procs.map(p=><Radio key={p} name="proc" value={p} label={`${p} — CPT ${CPT[p]}`} checked={form.procedure===p} onChange={()=>set('procedure',p)} />)}
-          </Field>
-
-          <Field label="Access Site" req>
-            {access.map(a=><Radio key={a} name="access" value={a} label={a} checked={form.access===a} onChange={()=>set('access',a)} />)}
+          <Field label="Procedure Type + CPT" req>
+            {Object.entries(CPT).map(([p,c])=><Radio key={p} name="proc" value={p} label={`${p} — ${c}`} checked={form.procedure===p} onChange={()=>set('procedure',p)} />)}
           </Field>
         </div>
-
         <div>
+          <Field label="Access Site" req>
+            {accesses.map(a=><Radio key={a} name="access" value={a} label={a} checked={form.access===a} onChange={()=>set('access',a)} />)}
+          </Field>
           <Field label="Pregnancy Status" req>
             <Radio name="preg" value="Not Pregnant" label="Not Pregnant" checked={form.pregnant==='Not Pregnant'} onChange={()=>set('pregnant','Not Pregnant')} />
           </Field>
-
           <Field label="Sonographer / MA">
-            <input style={{width:'100%',padding:'10px 14px',border:'2px solid #e2e8f0',borderRadius:8,fontFamily:'Nunito',fontSize:14,fontWeight:600}} value={form.sonographer} onChange={e=>set('sonographer',e.target.value)} placeholder="Name of assisting MA or sonographer" />
-          </Field>
-
-          <Field label="Catheter Size" req>
-            <div style={{display:'flex',gap:8}}>
-              {catheters.map(c=><button key={c} onClick={()=>set('catheter',c)} style={{flex:1,padding:'10px',borderRadius:8,border:`2px solid ${form.catheter===c?'#047857':'#e2e8f0'}`,background:form.catheter===c?'#d1fae5':'white',fontWeight:800,fontSize:13,cursor:'pointer',color:form.catheter===c?'#065f46':'#374151'}}>{c}</button>)}
-            </div>
-          </Field>
-
-          <Field label="Tumescent Volume (mL)">
-            <input type="number" style={{width:'100%',padding:'10px 14px',border:'2px solid #e2e8f0',borderRadius:8,fontFamily:'Nunito',fontSize:14,fontWeight:600}} value={form.tumescent} onChange={e=>set('tumescent',e.target.value)} placeholder="e.g. 150" />
-          </Field>
-
-          <Field label="Extra Supplies">
-            <input style={{width:'100%',padding:'10px 14px',border:'2px solid #e2e8f0',borderRadius:8,fontFamily:'Nunito',fontSize:14,fontWeight:600}} value={form.supplies} onChange={e=>set('supplies',e.target.value)} placeholder="Any additional supplies used" />
-          </Field>
-
-          <Field label="Confirmations">
-            <label style={{display:'flex',alignItems:'center',gap:10,padding:'10px 12px',borderRadius:8,cursor:'pointer',background:form.prescan?'#d1fae5':'#f8fafc',border:`2px solid ${form.prescan?'#047857':'#e2e8f0'}`,fontWeight:700,fontSize:13,marginBottom:6}}>
-              <input type="checkbox" checked={form.prescan} onChange={e=>set('prescan',e.target.checked)} style={{width:16,height:16,accentColor:'#047857'}} />
-              ✅ Pre-Procedure Scan Completed
-            </label>
-            <label style={{display:'flex',alignItems:'center',gap:10,padding:'10px 12px',borderRadius:8,cursor:'pointer',background:form.aborted?'#fef3c7':'#f8fafc',border:`2px solid ${form.aborted?'#f59e0b':'#e2e8f0'}`,fontWeight:700,fontSize:13}}>
-              <input type="checkbox" checked={form.aborted} onChange={e=>set('aborted',e.target.checked)} style={{width:16,height:16,accentColor:'#f59e0b'}} />
-              ⚠️ Procedure Was Aborted
-            </label>
+            <TextInput k="sonographer" placeholder="Name of assisting MA or sonographer" />
           </Field>
         </div>
       </div>
 
-      <Field label="HPI / Primary Complaint">
-        <textarea style={{width:'100%',padding:'10px 14px',border:'2px solid #e2e8f0',borderRadius:8,fontFamily:'Nunito',fontSize:14,fontWeight:600,minHeight:80,resize:'vertical'}} value={form.hpi} onChange={e=>set('hpi',e.target.value)} placeholder="Document patient primary complaint, symptom duration, severity, and conservative treatment history..." />
+      {/* HPI */}
+      <SectionHeader>📝 HPI / Primary Complaint</SectionHeader>
+      <Field label="History of Present Illness" req>
+        <TextArea k="hpi" rows={4} placeholder="Document patient primary complaint, symptom duration, severity, prior conservative treatment history..." />
       </Field>
 
-      <div style={{marginTop:8,display:'flex',gap:10}}>
-        <button className="btn btn-primary" onClick={()=>{if(form.vein&&form.procedure&&form.access&&form.catheter&&form.prescan)setSubmitted(true);else alert('Please complete all required fields (*)');}} >✅ Complete Note</button>
-        <button className="btn btn-outline" onClick={()=>setForm({side:'Right',vein:'',procedure:'',access:'',pregnant:'Not Pregnant',sonographer:'',hpi:'',tumescent:'',catheter:'',supplies:'',prescan:false,aborted:false})}>🔄 Reset</button>
+      {/* Anesthesia */}
+      <SectionHeader>💉 Anesthesia</SectionHeader>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12}}>
+        <Field label="None"><Check label="No anesthesia used" checked={form.anesthesia_none} onChange={e=>set('anesthesia_none',e.target.checked)} /></Field>
+        <Field label="Tumescent Dose"><TextInput k="tumescent_dose" placeholder="e.g. 150" type="number" /></Field>
+        <Field label="Units"><select style={{width:'100%',padding:'9px 12px',border:'2px solid #e2e8f0',borderRadius:8,fontFamily:'Nunito',fontSize:13,fontWeight:600}} value={form.tumescent_units} onChange={e=>set('tumescent_units',e.target.value)}><option>mL</option><option>cc</option></select></Field>
+      </div>
+
+      {/* Catheter + Vein Measurements */}
+      <SectionHeader>📏 Catheter & Vein Measurements</SectionHeader>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <Field label="Catheter Size" req>
+          <div style={{display:'flex',gap:8}}>
+            {catheters.map(c=><button key={c} onClick={()=>set('catheter',c)} style={{flex:1,padding:'9px',borderRadius:8,border:`2px solid ${form.catheter===c?'#047857':'#e2e8f0'}`,background:form.catheter===c?'#d1fae5':'white',fontWeight:800,fontSize:13,cursor:'pointer',color:form.catheter===c?'#065f46':'#374151'}}>{c}</button>)}
+          </div>
+        </Field>
+        <Field label="Distance from Catheter to Junction (cm)" hint="Min 1.5 cm" req>
+          <TextInput k="dist_junction" placeholder="e.g. 2.0" type="number" />
+        </Field>
+        <Field label="Length of Vein Treated (cm)">
+          <TextInput k="vein_length" placeholder="e.g. 30" type="number" />
+        </Field>
+        <Field label="Pullbacks">
+          <TextInput k="pullbacks" placeholder="Number of pullbacks" type="number" />
+        </Field>
+        <Field label="Length of Vein Ablated (cm)">
+          <TextInput k="length_ablated" placeholder="e.g. 28" type="number" />
+        </Field>
+        <Field label="Extra Supplies">
+          <TextInput k="supplies" placeholder="Any additional supplies used" />
+        </Field>
+      </div>
+
+      {/* Notes */}
+      <SectionHeader>📋 Documentation</SectionHeader>
+      <Field label="Pre-Procedure Scan Notes" req>
+        <TextArea k="prescan_notes" rows={3} placeholder="Document pre-procedure duplex ultrasound findings..." />
+      </Field>
+      <Field label="Procedure Notes">
+        <TextArea k="proc_notes" rows={3} placeholder="Procedure notes..." />
+      </Field>
+      <Field label="Findings">
+        <TextArea k="findings" rows={3} placeholder="Intra-procedure findings..." />
+      </Field>
+
+      {/* Post Procedure */}
+      <SectionHeader>🏥 Post Procedure</SectionHeader>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <Field label="Post-Procedure Instructions">
+          <TextArea k="post_instructions" rows={3} placeholder="Patient instructions after procedure..." />
+        </Field>
+        <Field label="Dressing / Wound Care">
+          <TextArea k="dressing" rows={3} placeholder="Dressing and wound care instructions..." />
+        </Field>
+      </div>
+      <Field label="Follow-Up">
+        <div style={{display:'flex',gap:8,flexWrap:'wrap',alignItems:'center',marginBottom:8}}>
+          <span style={{fontSize:13,fontWeight:700,color:'#374151'}}>Return in</span>
+          <input type="number" style={{width:70,padding:'7px 10px',border:'2px solid #e2e8f0',borderRadius:8,fontFamily:'Nunito',fontSize:13,fontWeight:600}} value={form.followup_weeks} onChange={e=>set('followup_weeks',e.target.value)} placeholder="wks" />
+          <span style={{fontSize:13,fontWeight:700,color:'#374151'}}>weeks</span>
+        </div>
+        <Check label="Sooner if symptoms persist/worsen" checked={form.followup_sooner} onChange={e=>set('followup_sooner',e.target.checked)} />
+        <Check label="PRN (as needed)" checked={form.followup_prn} onChange={e=>set('followup_prn',e.target.checked)} />
+      </Field>
+
+      {/* Aborted */}
+      <Check label="⚠️ Aborted Procedure" checked={form.aborted} onChange={e=>set('aborted',e.target.checked)} color='#f59e0b' bg='#fef3c7' />
+
+      <div style={{marginTop:20,display:'flex',gap:10}}>
+        <button className="btn btn-primary" onClick={()=>{const req=form.vein&&form.procedure&&form.access&&form.catheter&&form.prescan_notes&&form.dist_junction&&form.pregnant;if(req)setSubmitted(true);else alert('Please complete all required fields (*)');}} style={{background:'#047857'}}>✅ Mark Complete</button>
+        <button className="btn btn-outline" onClick={()=>setForm(EMPTY)}>🔄 Reset</button>
       </div>
     </div>
   );
