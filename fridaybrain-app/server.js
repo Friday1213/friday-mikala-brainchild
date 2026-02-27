@@ -212,4 +212,53 @@ app.get('/api/render-services', requireAuth, async (req, res) => {
   }
 });
 
+// Internal summary endpoint — token protected, no session required
+app.get('/api/internal/summary', (req, res) => {
+  const token = process.env.INTERNAL_TOKEN || 'friday-internal';
+  if (req.query.token !== token) return res.status(401).json({ error: 'unauthorized' });
+
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const nextWeek = new Date(today); nextWeek.setDate(today.getDate() + 7);
+  const twoWeeks = new Date(today); twoWeeks.setDate(today.getDate() + 14);
+  const sevenDaysAgo = new Date(today); sevenDaysAgo.setDate(today.getDate() - 7);
+
+  const fmt = d => d.toISOString().split('T')[0];
+
+  const providers = db.prepare('SELECT * FROM providers WHERE archived=0').all();
+
+  const startingThisWeek = providers.filter(p => {
+    if (!p.expected_first_day) return false;
+    const d = new Date(p.expected_first_day + 'T00:00:00');
+    return d >= today && d < nextWeek;
+  });
+
+  const startingNextWeek = providers.filter(p => {
+    if (!p.expected_first_day) return false;
+    const d = new Date(p.expected_first_day + 'T00:00:00');
+    return d >= nextWeek && d < twoWeeks;
+  });
+
+  const flagged = providers.filter(p => {
+    const tasks = db.prepare('SELECT * FROM tasks WHERE provider_id=? AND flag=1').all(p.id);
+    return tasks.length > 0;
+  });
+
+  const noActivity = providers.filter(p => {
+    const last = db.prepare(`SELECT MAX(updated_at) as last FROM tasks WHERE provider_id=?`).get(p.id);
+    if (!last?.last) return true;
+    return new Date(last.last) < sevenDaysAgo;
+  });
+
+  // Progress — furthest behind (lowest % complete)
+  const withProgress = providers.map(p => {
+    const tasks = db.prepare('SELECT * FROM tasks WHERE provider_id=?').all(p.id);
+    const done = tasks.filter(t => t.status === 'Complete').length;
+    const pct = tasks.length ? Math.round(done / tasks.length * 100) : 0;
+    return { ...p, pct, taskTotal: tasks.length, taskDone: done };
+  }).filter(p => p.pct < 100 && p.taskTotal > 0).sort((a,b) => a.pct - b.pct).slice(0, 5);
+
+  res.json({ startingThisWeek, startingNextWeek, flagged, noActivity: noActivity.slice(0,5), behindOnTasks: withProgress });
+});
+
 app.listen(PORT, () => console.log(`FridayBrain running on port ${PORT}`));
