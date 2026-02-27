@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>VIP Provider Training Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#f8fafc;color:#1e293b;min-height:100vh}
+.navbar{background:linear-gradient(135deg,#1e3a5f,#2563eb);padding:0 28px;height:64px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(30,58,95,0.3)}
+.navbar-logo{font-size:22px;font-weight:900;color:white;letter-spacing:-0.5px}
+.navbar-logo span{color:#93c5fd}
+.navbar-sub{font-size:12px;color:#93c5fd;font-weight:700}
+.tab-bar{background:#1e3a5f;padding:0 20px;display:flex;gap:2px;align-items:flex-end;overflow-x:auto;scrollbar-width:none}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab{padding:8px 18px 10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;border:none;cursor:pointer;border-radius:10px 10px 0 0;transition:all 0.15s;white-space:nowrap;color:rgba(255,255,255,0.65);background:rgba(255,255,255,0.08);margin-top:6px}
+.tab:hover{background:rgba(255,255,255,0.18);color:white}
+.tab.active{background:#f8fafc;color:#1e3a5f;margin-top:4px;padding-bottom:12px}
+.container{max-width:1100px;margin:0 auto;padding:28px 24px}
+.hero{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:white;border-radius:20px;padding:36px 40px;margin-bottom:28px;position:relative;overflow:hidden}
+.hero::after{content:'🩺';position:absolute;right:32px;top:50%;transform:translateY(-50%);font-size:80px;opacity:0.15}
+.hero h1{font-size:28px;font-weight:900;margin-bottom:8px}
+.hero p{font-size:15px;opacity:0.85;max-width:600px;line-height:1.6}
+.card{background:white;border-radius:16px;padding:28px;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin-bottom:20px}
+.card-title{font-size:18px;font-weight:900;color:#1e293b;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.section-label{font-size:11px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.tool-card{background:#f8fafc;border:2px solid #e2e8f0;border-radius:14px;padding:20px}
+.tool-card:hover{border-color:#2563eb;box-shadow:0 2px 8px rgba(37,99,235,0.1)}
+.tool-icon{font-size:28px;margin-bottom:10px}
+.tool-name{font-size:15px;font-weight:900;color:#1e293b;margin-bottom:6px}
+.tool-desc{font-size:13px;color:#64748b;line-height:1.5}
+.tool-uses{margin-top:10px}
+.tool-use{font-size:12px;color:#374151;padding:3px 0;display:flex;align-items:flex-start;gap:6px;line-height:1.4}
+.tool-use::before{content:'→';color:#2563eb;font-weight:700;flex-shrink:0}
+.tool-not{font-size:12px;color:#ef4444;padding:3px 0;display:flex;align-items:flex-start;gap:6px;line-height:1.4}
+.tool-not::before{content:'✗';font-weight:700;flex-shrink:0}
+.step-list{list-style:none;counter-reset:steps}
+.step-list li{counter-increment:steps;display:flex;gap:14px;margin-bottom:14px;align-items:flex-start}
+.step-list li::before{content:counter(steps);background:#2563eb;color:white;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0;margin-top:1px}
+.step-text{font-size:14px;color:#374151;line-height:1.6}
+.step-text strong{color:#1e293b}
+.highlight-box{border-radius:12px;padding:16px 20px;margin-bottom:12px}
+.box-blue{background:#eff6ff;border-left:4px solid #2563eb}
+.box-green{background:#f0fdf4;border-left:4px solid #22c55e}
+.box-amber{background:#fefce8;border-left:4px solid #eab308}
+.box-red{background:#fef2f2;border-left:4px solid #ef4444}
+.box-purple{background:#faf5ff;border-left:4px solid #9333ea}
+.box-title{font-size:12px;font-weight:900;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px}
+.box-body{font-size:14px;color:#374151;line-height:1.6}
+.tag{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;margin:2px}
+.tag-blue{background:#dbeafe;color:#1e40af}
+.tag-green{background:#dcfce7;color:#166534}
+.tag-amber{background:#fef3c7;color:#92400e}
+.tag-red{background:#fee2e2;color:#991b1b}
+.tag-purple{background:#ede9fe;color:#5b21b6}
+.info-row{display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:14px}
+.info-row:last-child{border-bottom:none}
+.info-label{font-weight:700;color:#374151;min-width:180px;flex-shrink:0}
+.info-val{color:#64748b;line-height:1.5}
+.schedule-block{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;margin-bottom:12px}
+.schedule-title{font-size:14px;font-weight:900;color:#1e3a5f;margin-bottom:10px}
+.schedule-step{display:flex;gap:10px;align-items:flex-start;margin-bottom:6px;font-size:13px;color:#374151}
+.schedule-num{background:#1e3a5f;color:white;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.rod-card{background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;padding:16px 20px;display:flex;gap:16px;align-items:center}
+.rod-region{font-size:12px;font-weight:900;color:#2563eb;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px}
+.rod-name{font-size:15px;font-weight:800;color:#1e293b}
+.ceap-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+.ceap-table th{background:#1e3a5f;color:white;padding:10px 12px;text-align:left;font-weight:700}
+.ceap-table td{padding:9px 12px;border-bottom:1px solid #f1f5f9;vertical-align:top}
+.ceap-table tr:hover td{background:#f8fafc}
+.meeting-card{border:2px solid #e2e8f0;border-radius:14px;padding:20px;margin-bottom:12px}
+.meeting-num{background:#2563eb;color:white;font-size:11px;font-weight:900;padding:4px 12px;border-radius:20px;display:inline-block;margin-bottom:10px}
+.badge{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:800}
+.acc-header{display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:4px 0}
+.acc-body{margin-top:12px}
+@media(max-width:700px){.grid-2,.grid-3{grid-template-columns:1fr}.hero{padding:24px 20px}.hero::after{display:none}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel">
+const { useState } = React;
+
+// ── OVERVIEW TAB ────────────────────────────────────────────────────────────
+function OverviewTab() {
+  return (
+    <div>
+      <div className="hero">
+        <h1>Welcome to VIP Medical Group 👋</h1>
+        <p>This hub is your go-to resource throughout onboarding and beyond. Whether you're preparing for your first week or looking up a clinical protocol, everything you need is here.</p>
+      </div>
+
+      <div className="card">
+        <div className="card-title">🗓️ Your Onboarding Journey</div>
+        <p style={{fontSize:13,color:'#64748b',marginBottom:20}}>Onboarding is structured across two key meetings before your first day. The <strong>overall goal</strong> is smooth sailing on arrival.</p>
+        <div className="grid-2">
+          <div className="meeting-card">
+            <div className="meeting-num">MEETING 1</div>
+            <div style={{fontWeight:800,fontSize:15,color:'#1e293b',marginBottom:10}}>Getting the Big Picture</div>
+            <ul className="step-list">
+              <li><div className="step-text">Overview of VIP workflows and how the practice operates</div></li>
+              <li><div className="step-text">Walk-through of all operations software & tools</div></li>
+              <li><div className="step-text">Introduction to your Regional Operations Director</div></li>
+              <li><div className="step-text">Review of resources available to you</div></li>
+            </ul>
+          </div>
+          <div className="meeting-card">
+            <div className="meeting-num">MEETING 2</div>
+            <div style={{fontWeight:800,fontSize:15,color:'#1e293b',marginBottom:10}}>Preparing for Day One</div>
+            <ul className="step-list">
+              <li><div className="step-text">Review any questions from Meeting 1</div></li>
+              <li><div className="step-text">First day and first week expectations</div></li>
+              <li><div className="step-text">Review your Clinical Skill Set Checklist (self-evaluation)</div></li>
+              <li><div className="step-text">Mock Initials — practice patient encounter walkthrough</div></li>
+              <li><div className="step-text">Didactics as needed</div></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-title">📁 Resources Available to You</div>
+        <div className="grid-2">
+          <div className="highlight-box box-blue">
+            <div className="box-title">📂 Your Personal Google Drive Folder</div>
+            <div className="box-body">
+              <div>• Clinical Skill Set Checklist (provided at Meeting 1 for self-evaluation)</div>
+              <div style={{marginTop:6}}>• Conversion Spreadsheet</div>
+            </div>
+          </div>
+          <div className="highlight-box box-green">
+            <div className="box-title">📂 VIP Resource Google Drive Folder</div>
+            <div className="box-body">
+              <div>• Provider Clinical and Systems Manuals</div>
+              <div style={{marginTop:6}}>• Educational resources</div>
+              <div style={{marginTop:6}}>• Scripts and Slides</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── TOOLS TAB ───────────────────────────────────────────────────────────────
+function ToolsTab() {
+  const tools = [
+    {
+      icon: '🟣', name: 'Luma', color: '#7c3aed', bg: '#faf5ff',
+      tagline: 'Patient Engagement & Communication',
+      uses: ['Automated appointment reminders', 'Digital intake forms', 'Secure patient messaging', 'Post-visit instructions'],
+      notFor: [],
+    },
+    {
+      icon: '🔵', name: 'Nextech', color: '#0369a1', bg: '#eff6ff',
+      tagline: 'EMR — Electronic Medical Record',
+      uses: ['Clinical documentation', 'Patient chart management', 'Generates visit and procedure bills'],
+      notFor: [],
+    },
+    {
+      icon: '🟠', name: 'Medwork', color: '#c2410c', bg: '#fff7ed',
+      tagline: 'CRM — Customer Relationship Management',
+      uses: ['Tracks patient leads', 'Monitors insurance auth status', 'Tracks completion of approved procedures', 'Ensures no leads, patients, or procedures are left behind'],
+      notFor: [],
+    },
+    {
+      icon: '🟢', name: 'Rippling', color: '#15803d', bg: '#f0fdf4',
+      tagline: 'HR Portal',
+      uses: ['Your schedule', 'Benefit registration', 'HR documents and policies'],
+      notFor: [],
+    },
+    {
+      icon: '🔴', name: 'Ring Central', color: '#dc2626', bg: '#fef2f2',
+      tagline: 'Provider Communication Line',
+      uses: ['Provider Emergency Line', 'Post-procedure check-ins with patients'],
+      notFor: ['Scheduling or admin calls — use the main office line for those'],
+    },
+  ];
+
+  return (
+    <div>
+      <div className="card" style={{marginBottom:20}}>
+        <div className="card-title">🛠️ Operations Software & Tools</div>
+        <p style={{fontSize:13,color:'#64748b',marginBottom:4}}>You'll use these platforms daily. Each one has a specific purpose — knowing which tool to use for what will make your life much easier.</p>
+      </div>
+
+      <div className="grid-2">
+        {tools.map(t => (
+          <div key={t.name} className="tool-card" style={{borderColor: t.bg === '#f8fafc' ? '#e2e8f0' : t.bg, background: t.bg}}>
+            <div className="tool-icon">{t.icon}</div>
+            <div className="tool-name" style={{color: t.color}}>{t.name}</div>
+            <div style={{fontSize:12,fontWeight:700,color:'#64748b',marginBottom:10}}>{t.tagline}</div>
+            <div className="tool-uses">
+              {t.uses.map((u,i) => <div key={i} className="tool-use">{u}</div>)}
+              {t.notFor.map((u,i) => <div key={i} className="tool-not">{u}</div>)}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="card" style={{marginTop:8}}>
+        <div className="card-title">🧭 Regional Operations Directors (RODs)</div>
+        <p style={{fontSize:13,color:'#64748b',marginBottom:16}}>RODs work closely with RCM, HR, Patient Success, Appointment Services, Marketing, IT, and Data — bringing real-time insights from the clinics to guide decisions. <strong>For local issues, contact your ROD first</strong> so they can properly triage your needs.</p>
+        <div style={{display:'flex',flexDirection:'column',gap:10}}>
+          {[
+            { region: 'New York & Long Island', name: 'Pam Sheamon' },
+            { region: 'New Jersey', name: 'Kelly Walsh' },
+            { region: 'California', name: 'Tracey Jaksch' },
+            { region: 'Texas, Connecticut & Maryland', name: 'Katherine Genao' },
+          ].map(r => (
+            <div key={r.region} className="rod-card">
+              <div style={{fontSize:28}}>👤</div>
+              <div>
+                <div className="rod-region">{r.region}</div>
+                <div className="rod-name">{r.name}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── CLINICAL GUIDE TAB ──────────────────────────────────────────────────────
+function ClinicalTab() {
+  const [open, setOpen] = useState({ defs: true, eval: false, exam: false, epi: false, dx: false, conservative: false });
+  const toggle = (k) => setOpen(o => ({...o, [k]: !o[k]}));
+
+  const Section = ({ id, title, children }) => (
+    <div className="card" style={{marginBottom:16}}>
+      <div className="acc-header" onClick={()=>toggle(id)}>
+        <div className="card-title" style={{marginBottom:0}}>{title}</div>
+        <span style={{color:'#94a3b8',fontSize:14}}>{open[id] ? '▲' : '▼'}</span>
+      </div>
+      {open[id] && <div className="acc-body">{children}</div>}
+    </div>
+  );
+
+  return (
+    <div>
+      <Section id="defs" title="📖 Definitions">
+        <div className="grid-2" style={{marginBottom:16}}>
+          <div className="highlight-box box-blue">
+            <div className="box-title">🕷️ Spider Veins (Telangiectasias)</div>
+            <div className="box-body">Small red, blue, or purple veins visible on the skin surface. Heterogeneous in appearance — wispy red clusters or dense purple networks. Located between the dermis and epidermis. Found in legs or face. <strong>Often the result of underlying venous insufficiency.</strong></div>
+          </div>
+          <div className="highlight-box box-purple">
+            <div className="box-title">🫀 Varicose Veins (Varicosities)</div>
+            <div className="box-body">Large blood vessels visible and often bulging above the skin. Dark purple, green, blue, or red. Most common in legs but can appear in inner thighs, buttocks, and lower pelvis. Follow a <strong>twisting, turning path</strong> unlike healthy straight veins.</div>
+          </div>
+        </div>
+        <div className="highlight-box box-green">
+          <div className="box-title">⚡ Venous Insufficiency (Vein Disease) — What Is It?</div>
+          <div className="box-body">
+            <p style={{marginBottom:8}}>The venous system returns blood from the body back to the heart. Leg veins work against gravity using <strong>one-way valves</strong> that open during muscle contractions and close when muscles relax.</p>
+            <p style={{marginBottom:8}}><strong>When valves fail:</strong> Blood pools in the vein instead of returning to the heart. The resulting increased pressure causes veins to dilate, weaken, and become visible — causing spider veins, varicose veins, and symptoms.</p>
+            <p><strong>Short answer:</strong> Vein walls and/or valves weaken → blood flows backward (reflux) → increased venous pressure → symptoms and visible veins.</p>
+          </div>
+        </div>
+      </Section>
+
+      <Section id="eval" title="🩺 Initial Evaluation — Signs, Symptoms & History">
+        <div className="highlight-box box-blue" style={{marginBottom:16}}>
+          <div className="box-title">💬 Typical Vein Pain</div>
+          <div className="box-body">
+            <div>• Dull, achy, cramps, fatigue, heaviness, poorly localized</div>
+            <div>• <strong>Worse with</strong> prolonged sitting or standing, worse at end of day</div>
+            <div>• <strong>Better with</strong> exercise, generally improves with compression</div>
+            <div style={{marginTop:8,fontWeight:700,color:'#1e40af'}}>⚠️ Symptoms are SUBTLE and PROGRESS SLOWLY. Many patients don't realize they have a treatable medical condition! Very helpful if MA/sonographer primes patient by educating about symptoms.</div>
+          </div>
+        </div>
+
+        <div className="grid-2" style={{marginBottom:16}}>
+          <div>
+            <div className="section-label">Signs (Things you can SEE)</div>
+            {['Spider veins (telangiectasias)','Varicose veins','Skin discoloration (hemosiderin staining)','Lipodermatosclerosis','Venous ulcers','Swelling (edema)','Corona phlebectatica','Atrophie blanche'].map(s=>(
+              <div key={s} style={{fontSize:13,color:'#374151',padding:'5px 0',borderBottom:'1px solid #f1f5f9',display:'flex',gap:8}}><span style={{color:'#2563eb'}}>👁</span>{s}</div>
+            ))}
+          </div>
+          <div>
+            <div className="section-label">Symptoms (Things you can FEEL)</div>
+            {['Leg pain, aching, or cramping','Heaviness or fatigue in the legs','Itching around veins','Burning or throbbing','Restless leg feeling','Swelling (especially at end of day)','Skin irritation or rashes near veins','Night cramps'].map(s=>(
+              <div key={s} style={{fontSize:13,color:'#374151',padding:'5px 0',borderBottom:'1px solid #f1f5f9',display:'flex',gap:8}}><span style={{color:'#9333ea'}}>💭</span>{s}</div>
+            ))}
+          </div>
+        </div>
+
+        <div className="highlight-box box-amber">
+          <div className="box-title">🔍 Other Conditions to Consider (if atypical presentation)</div>
+          <div className="box-body">Arterial disease (dependent rubor, poor pulses), peripheral neuropathy, musculoskeletal causes. If pain is atypical or exam shows no visible veins, broaden the differential.</div>
+        </div>
+      </Section>
+
+      <Section id="exam" title="🔬 Initial Evaluation — Physical Exam">
+        <div className="grid-2">
+          <div>
+            <div className="section-label">Exam Checklist</div>
+            {[
+              ['Full visualization of skin condition','Look for discoloration, ulcers, texture changes on entire leg'],
+              ['CEAP score','Document C0–C6 (see CEAP table below)'],
+              ['Pulses','Dorsalis pedis + posterior tibialis — rule out arterial disease'],
+              ['Edema assessment','Pitting vs. non-pitting; unilateral vs. bilateral'],
+              ['Spider veins','Distribution, density, satellite pattern'],
+              ['Corona phlebectatica','Fan-shaped intradermal veins at ankle — marker of advanced disease'],
+            ].map(([item, note]) => (
+              <div key={item} style={{padding:'8px 0',borderBottom:'1px solid #f1f5f9'}}>
+                <div style={{fontSize:13,fontWeight:700,color:'#1e293b'}}>{item}</div>
+                <div style={{fontSize:12,color:'#64748b',marginTop:2}}>{note}</div>
+              </div>
+            ))}
+          </div>
+          <div>
+            <div className="section-label">The Vein Talk</div>
+            <div className="highlight-box box-blue" style={{marginTop:0}}>
+              <div className="box-body">Use the <strong>Script and Slides</strong> from your Google Drive Resource Folder to guide patient education during the initial consultation. The goal is to help patients understand their condition and the treatment options clearly.</div>
+            </div>
+            <div style={{marginTop:16}}>
+              <div className="section-label">CEAP Classification</div>
+              <table className="ceap-table">
+                <thead><tr><th>Class</th><th>Description</th></tr></thead>
+                <tbody>
+                  {[
+                    ['C0','No visible or palpable signs of venous disease'],
+                    ['C1','Telangiectasias (spider veins) or reticular veins'],
+                    ['C2','Varicose veins'],
+                    ['C3','Edema'],
+                    ['C4a','Pigmentation or eczema'],
+                    ['C4b','Lipodermatosclerosis or atrophie blanche'],
+                    ['C5','Healed venous ulcer'],
+                    ['C6','Active venous ulcer'],
+                  ].map(([c,d])=>(
+                    <tr key={c}><td style={{fontWeight:700,color:'#1e3a5f'}}>{c}</td><td>{d}</td></tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      <Section id="epi" title="📊 Epidemiology & Risk Factors">
+        <div className="grid-2">
+          <div>
+            <div className="section-label">Established Risk Factors</div>
+            {[
+              ['Genetics','Family history is the strongest risk factor'],
+              ['Female Gender','Women are more affected than men'],
+              ['Pregnancy','Increased venous pressure; multiple pregnancies = higher risk'],
+              ['Age','Risk increases with age'],
+              ['History of Blood Clots','Prior DVT can damage valves'],
+              ['Obesity','Increases intra-abdominal pressure, impeding venous return'],
+              ['Occupation','Prolonged standing or sitting (nurses, teachers, office workers)'],
+            ].map(([f,d])=>(
+              <div key={f} style={{padding:'8px 0',borderBottom:'1px solid #f1f5f9'}}>
+                <div style={{fontSize:13,fontWeight:700,color:'#1e293b'}}>{f}</div>
+                <div style={{fontSize:12,color:'#64748b',marginTop:2}}>{d}</div>
+              </div>
+            ))}
+          </div>
+          <div>
+            <div className="section-label">Minimal or Negligible Risk</div>
+            <div className="highlight-box box-green" style={{marginTop:0}}>
+              <div className="box-title">✅ These do NOT cause vein disease</div>
+              <div className="box-body">
+                <div>• <strong>Hormone treatment</strong> — minimal risk only</div>
+                <div style={{marginTop:6}}>• <strong>Crossing legs</strong> — minimal risk only</div>
+                <div style={{marginTop:12,fontStyle:'italic',color:'#64748b'}}>Patients often ask about these — reassure them these are not significant causes.</div>
+              </div>
+            </div>
+            <div className="highlight-box box-red" style={{marginTop:12}}>
+              <div className="box-title">❌ Completely B.S. Treatments (to counsel patients against)</div>
+              <div className="box-body">
+                <div>• Apple cider vinegar</div>
+                <div>• Essential oils (also pose skin risks)</div>
+                <div>• Witch hazel</div>
+                <div>• Horse chestnut seed extract</div>
+                <div style={{marginTop:8,fontStyle:'italic'}}>These have no clinical evidence. Patients may ask — be direct.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      <Section id="dx" title="🔍 Diagnosis">
+        <div className="grid-2">
+          <div className="highlight-box box-green">
+            <div className="box-title">✅ RECOMMENDED — Duplex Ultrasound (Most Important)</div>
+            <div className="box-body">The gold standard for diagnosing chronic venous insufficiency. Evaluates both anatomy and blood flow. Identifies reflux (backward flow), obstruction, and valve incompetence. Required before any treatment planning.</div>
+          </div>
+          <div>
+            <div className="highlight-box box-red" style={{marginBottom:12}}>
+              <div className="box-title">❌ NOT RECOMMENDED — MR Venogram</div>
+              <div className="box-body">Expensive, not necessary for routine venous insufficiency. Reserved for rare complex cases.</div>
+            </div>
+            <div className="highlight-box box-red">
+              <div className="box-title">❌ NOT RECOMMENDED — CT Venogram</div>
+              <div className="box-body">Radiation exposure, contrast risk, not routinely needed for vein disease evaluation.</div>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      <Section id="conservative" title="🧦 Conservative Treatments">
+        <p style={{fontSize:13,color:'#64748b',marginBottom:16}}>Insurance often requires documented conservative treatment before approving procedures. Know what actually helps vs. what doesn't.</p>
+        <div className="grid-2">
+          <div>
+            <div className="section-label">Evidence-Based Conservative Options</div>
+            {[
+              ['Compression Stockings','Most important conservative treatment. 20–30 mmHg for most patients. Must be worn consistently.'],
+              ['Exercise','Calf muscle pump activation helps. Walking, cycling, swimming.'],
+              ['Leg Elevation','Reduces edema and symptom burden, especially at end of day.'],
+              ['Non-Restrictive Clothing','Avoid tight garments that impede venous return.'],
+              ['Weight Management','Reducing obesity reduces venous pressure.'],
+            ].map(([t,d])=>(
+              <div key={t} style={{padding:'8px 0',borderBottom:'1px solid #f1f5f9'}}>
+                <div style={{fontSize:13,fontWeight:700,color:'#1e293b'}}>{t}</div>
+                <div style={{fontSize:12,color:'#64748b',marginTop:2}}>{d}</div>
+              </div>
+            ))}
+          </div>
+          <div className="highlight-box box-amber" style={{alignSelf:'start'}}>
+            <div className="box-title">⚠️ Important for Insurance</div>
+            <div className="box-body">Most payers require <strong>6–12 weeks of documented conservative therapy</strong> (usually compression stocking use) before approving thermal ablation or other procedures. Check the Vein Policy Hub for payer-specific requirements.</div>
+          </div>
+        </div>
+      </Section>
+    </div>
+  );
+}
+
+// ── TREATMENT TAB ────────────────────────────────────────────────────────────
+function TreatmentTab() {
+  const [open, setOpen] = useState({ us: true, spider: false, varicose: false, surgical: false });
+  const toggle = (k) => setOpen(o => ({...o, [k]: !o[k]}));
+  const Section = ({ id, title, children }) => (
+    <div className="card" style={{marginBottom:16}}>
+      <div className="acc-header" onClick={()=>toggle(id)}>
+        <div className="card-title" style={{marginBottom:0}}>{title}</div>
+        <span style={{color:'#94a3b8',fontSize:14}}>{open[id] ? '▲' : '▼'}</span>
+      </div>
+      {open[id] && <div className="acc-body">{children}</div>}
+    </div>
+  );
+  return (
+    <div>
+      <Section id="us" title="🔊 Ultrasound Review & Treatment Planning">
+        <div className="grid-2" style={{marginBottom:16}}>
+          <div className="highlight-box box-blue">
+            <div className="box-title">📏 Minimum Thresholds for Treatment</div>
+            <div className="box-body">
+              <div style={{fontSize:20,fontWeight:900,color:'#1e3a5f'}}>3 mm</div>
+              <div style={{fontSize:13,color:'#374151'}}>Minimum vein diameter for treatment eligibility</div>
+              <div style={{fontSize:20,fontWeight:900,color:'#1e3a5f',marginTop:12}}>500 ms</div>
+              <div style={{fontSize:13,color:'#374151'}}>Minimum reflux time for clinical significance</div>
+            </div>
+          </div>
+          <div>
+            <div className="section-label">Treatment Decision by Vein</div>
+            {[
+              ['Proximal GSV', 'RFA (Radiofrequency Ablation)', '#15803d'],
+              ['Distal GSV', 'UGFS — Varithena', '#9333ea'],
+              ['SSV (Small Saphenous)', 'RFA', '#15803d'],
+              ['Varicose Veins', 'UGFS (foam sclerotherapy)', '#9333ea'],
+              ['Duplicate Veins', 'Anatomy dependent — assess case by case', '#0369a1'],
+            ].map(([vein, tx, color]) => (
+              <div key={vein} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'8px 0',borderBottom:'1px solid #f1f5f9'}}>
+                <div style={{fontSize:13,fontWeight:700,color:'#1e293b'}}>{vein}</div>
+                <span className="badge" style={{background: color+'22', color: color, fontSize:11}}>{tx}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="highlight-box box-amber">
+          <div className="box-title">⚠️ Special Considerations</div>
+          <div className="box-body">
+            <div>• <strong>Previous treatment?</strong> Review prior procedure notes and post-treatment scans before planning</div>
+            <div style={{marginTop:6}}>• <strong>Accessory veins</strong> — determine if they are in or out of the sheath before planning access</div>
+            <div style={{marginTop:6}}>• <strong>Aberrant anatomy</strong> — flag for physician review before proceeding</div>
+          </div>
+        </div>
+      </Section>
+
+      <Section id="spider" title="🕷️ Treatments for Spider Veins (Without Underlying Reflux)">
+        <div className="grid-2">
+          <div className="highlight-box box-green">
+            <div className="box-title">✅ RECOMMENDED — Sclerotherapy</div>
+            <div className="box-body">
+              <div style={{fontWeight:700,marginBottom:8}}>Advantages:</div>
+              <div>• Effective for spider and small reticular veins</div>
+              <div>• Minimally invasive, office-based</div>
+              <div>• Multiple areas treatable per session</div>
+              <div style={{fontWeight:700,marginTop:10,marginBottom:6}}>Drawbacks / Possible Risks:</div>
+              <div>• Temporary bruising, staining, matting</div>
+              <div>• Multiple sessions often needed</div>
+              <div>• Rare: allergic reaction, skin ulceration</div>
+              <div style={{fontWeight:700,marginTop:10}}>Post-procedure:</div>
+              <div>• Compression stocking use for 1–2 weeks</div>
+              <div>• Avoid sun exposure to treated areas</div>
+              <div style={{fontWeight:700,marginTop:10}}>Insurance: <span style={{fontWeight:400}}>Usually cosmetic only — typically not covered for spider veins without reflux</span></div>
+            </div>
+          </div>
+          <div className="highlight-box box-red">
+            <div className="box-title">❌ NOT RECOMMENDED — Blue Light / Laser Therapy (for Spider Veins)</div>
+            <div className="box-body">
+              <div>Limited efficacy on spider veins vs. sclerotherapy. Works best only on very fine vessels. Higher cost for worse outcomes. Not recommended as primary treatment.</div>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      <Section id="varicose" title="🫀 Treatments for Varicose Veins & Venous Insufficiency">
+        <div style={{display:'flex',flexDirection:'column',gap:12}}>
+          {[
+            {
+              name:'VenaSeal', rec:true, cpt:'36482',
+              adv:['No tumescent anesthesia needed','Minimal post-procedure pain','Immediate return to activity','No compression stocking requirement post-procedure'],
+              draw:['Higher upfront cost per case','Not all payers cover it — check Vein Policy Hub']
+            },
+            {
+              name:'Radiofrequency Ablation (RFA)', rec:true, cpt:'36475 / 36476',
+              adv:['Well-established evidence base','Covered by most major insurers','Effective for GSV and SSV','Less bruising than EVLA'],
+              draw:['Requires tumescent anesthesia','Compression stockings post-procedure','Must remain ambulatory post-procedure']
+            },
+            {
+              name:'Varithena (UGFS — Ultrasound-Guided Foam Sclerotherapy)', rec:true, cpt:'36478',
+              adv:['No catheter or tumescent required','Effective for distal GSV and varicose veins','Office-based'],
+              draw:['Multiple sessions may be needed','Some payer prior auth hurdles','Foam can disperse — careful with volume']
+            },
+            {
+              name:'Endovenous Laser Ablation (EVLA)', rec:false, cpt:'36478',
+              adv:['Long track record','Widely available'],
+              draw:['More post-procedure pain and bruising than RFA','Not preferred when RFA or VenaSeal is available']
+            },
+          ].map(t => (
+            <div key={t.name} style={{background: t.rec ? '#f0fdf4' : '#fef2f2', border: `1px solid ${t.rec ? '#bbf7d0' : '#fecaca'}`, borderRadius:12, padding:'16px 20px'}}>
+              <div style={{display:'flex',gap:10,alignItems:'center',marginBottom:10}}>
+                <span style={{fontSize:16}}>{t.rec ? '✅' : '⚠️'}</span>
+                <span style={{fontWeight:900,fontSize:15,color: t.rec ? '#166534' : '#991b1b'}}>{t.name}</span>
+                <span className="badge" style={{background:'#1e3a5f22',color:'#1e3a5f',fontSize:11}}>CPT {t.cpt}</span>
+                {!t.rec && <span className="badge tag-red">Not Preferred</span>}
+              </div>
+              <div className="grid-2">
+                <div>
+                  <div style={{fontSize:11,fontWeight:900,color:'#166534',marginBottom:4}}>ADVANTAGES</div>
+                  {t.adv.map(a=><div key={a} style={{fontSize:12,color:'#374151',marginBottom:3}}>• {a}</div>)}
+                </div>
+                <div>
+                  <div style={{fontSize:11,fontWeight:900,color:'#991b1b',marginBottom:4}}>DRAWBACKS</div>
+                  {t.draw.map(a=><div key={a} style={{fontSize:12,color:'#374151',marginBottom:3}}>• {a}</div>)}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section id="surgical" title="🏥 Surgical Treatments (Not Recommended)">
+        <div className="highlight-box box-red">
+          <div className="box-title">❌ Surgery is NOT Recommended for Routine Vein Disease</div>
+          <div className="box-body">
+            <p style={{marginBottom:8}}>Minimally invasive options are far superior in outcomes, recovery, and patient experience. Surgical options include:</p>
+            <div>• <strong>Vein ligation or stripping</strong> — old-fashioned, high morbidity</div>
+            <div>• <strong>Venous bypass surgery</strong> — reserved for rare severe obstruction cases only</div>
+            <div>• <strong>Phlebectomy (ambulatory)</strong> — may be combined with thermal ablation for bulging varicose veins not amenable to sclerotherapy</div>
+          </div>
+        </div>
+      </Section>
+    </div>
+  );
+}
+
+// ── SCHEDULES TAB ────────────────────────────────────────────────────────────
+function SchedulesTab() {
+  const schedules = [
+    {
+      title: 'Patient with Bilateral GSV Reflux + Left SSV',
+      steps: [
+        'Initial consultation',
+        'Review + Rescan (conservative therapy period)',
+        '6-week call with RN',
+        'L GSV RFA',
+        'R GSV RFA + L GSV RFA post-scan',
+        'L SSV RFA + R GSV RFA post-scan',
+        'R GSV Varithena + L SSV RFA post-scan',
+        'L GSV Varithena + R GSV Varithena post-scan',
+        'L GSV Varithena post-scan (+/- cosmetics)',
+        '1 month — full scan of all treated veins, PHOTOS (+/- cosmetics)',
+        '3 months — full scan of all treated veins, PHOTOS',
+        '6 months — scan PRN, PHOTOS — graduate if doing great',
+        '9 months — scan PRN, PHOTOS',
+        '12 months — scan PRN, PHOTOS',
+      ]
+    },
+    {
+      title: 'L GSV + R Distal GSV + R SSV (Previous Tx: R Prox GSV)',
+      steps: [
+        'Initial consultation',
+        'Review (not conservative — prior treatment already documented)',
+        'L GSV RFA',
+        'R SSV RFA + L GSV RFA post-scan',
+        'L GSV Varithena + R SSV RFA post-scan',
+        'R GSV Varithena + L GSV Varithena post-scan',
+        'R GSV Varithena post-scan (+/- cosmetics)',
+        '1 month — full scan of all treated veins, PHOTOS (+/- cosmetics)',
+        '3 months — full scan, PHOTOS',
+        '6 months — scan PRN, PHOTOS — graduate if doing great',
+        '9 months — scan PRN, PHOTOS',
+        '12 months — scan PRN, PHOTOS',
+      ]
+    },
+  ];
+
+  return (
+    <div>
+      <div className="card" style={{marginBottom:20}}>
+        <div className="card-title">📋 Sample Treatment Schedules</div>
+        <p style={{fontSize:13,color:'#64748b'}}>These are representative multi-visit treatment sequences. Actual plans vary by patient anatomy, insurance requirements, and clinical response. Use these as a reference framework for scheduling discussions.</p>
+      </div>
+
+      {schedules.map((s,i) => (
+        <div key={i} className="schedule-block" style={{marginBottom:20}}>
+          <div className="schedule-title">📍 {s.title}</div>
+          {s.steps.map((step, j) => (
+            <div key={j} className="schedule-step">
+              <div className="schedule-num">{j+1}</div>
+              <div style={{fontSize:13,color:'#374151',lineHeight:1.5,paddingTop:2}}>{step}</div>
+            </div>
+          ))}
+        </div>
+      ))}
+
+      <div className="card">
+        <div className="card-title">📸 Follow-Up Photography — Why It Matters</div>
+        <p style={{fontSize:13,color:'#64748b',lineHeight:1.6}}>
+          Standardized photos at 1, 3, 6, 9, and 12 month visits serve multiple purposes: clinical documentation of treatment response, patient satisfaction (seeing their progress), insurance documentation, and quality improvement. <strong>Always take photos at every follow-up scan visit.</strong>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ── APP ──────────────────────────────────────────────────────────────────────
+function App() {
+  const [tab, setTab] = useState('overview');
+  const TABS = [
+    { id:'overview', label:'🏠 Overview' },
+    { id:'tools', label:'🛠️ Tools & Systems' },
+    { id:'clinical', label:'🩺 Clinical Guide' },
+    { id:'treatment', label:'💉 Treatments' },
+    { id:'schedules', label:'📋 Sample Schedules' },
+  ];
+
+  return (
+    <div>
+      <nav className="navbar">
+        <div>
+          <div className="navbar-logo">VIP <span>Provider Training Hub</span></div>
+          <div className="navbar-sub">VIP Medical Group · Provider Onboarding Resources</div>
+        </div>
+      </nav>
+      <div className="tab-bar">
+        {TABS.map(t => (
+          <button key={t.id} className={`tab${tab===t.id?' active':''}`} onClick={()=>setTab(t.id)}>{t.label}</button>
+        ))}
+      </div>
+      <div className="container">
+        {tab === 'overview'   && <OverviewTab />}
+        {tab === 'tools'      && <ToolsTab />}
+        {tab === 'clinical'   && <ClinicalTab />}
+        {tab === 'treatment'  && <TreatmentTab />}
+        {tab === 'schedules'  && <SchedulesTab />}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
