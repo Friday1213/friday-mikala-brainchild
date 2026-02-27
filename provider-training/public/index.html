@@ -12,11 +12,30 @@ body{font-family:'Nunito',sans-serif;background:#f1f5f9;color:#1e293b;min-height
 .navbar-logo{font-size:20px;font-weight:900;color:white;letter-spacing:-0.3px}
 .navbar-logo span{color:#93c5fd}
 .navbar-sub{font-size:11px;color:#93c5fd;font-weight:700;margin-top:1px}
-.tab-bar{background:#1e3a5f;padding:0 20px;display:flex;gap:2px;align-items:flex-end;overflow-x:auto;scrollbar-width:none}
-.tab-bar::-webkit-scrollbar{display:none}
+/* Mode toggle bar */
+.mode-bar{background:#0f2240;padding:10px 24px;display:flex;align-items:center;gap:8px;position:sticky;top:64px;z-index:99;box-shadow:0 2px 8px rgba(0,0,0,0.2)}
+.mode-home{background:none;border:none;color:rgba(255,255,255,0.55);font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;padding:7px 14px;border-radius:8px;transition:all 0.15s;display:flex;align-items:center;gap:6px}
+.mode-home:hover{color:white;background:rgba(255,255,255,0.1)}
+.mode-home.active{color:white;background:rgba(255,255,255,0.15)}
+.mode-divider{width:1px;height:22px;background:rgba(255,255,255,0.15);margin:0 4px}
+.mode-toggle{display:flex;background:rgba(255,255,255,0.08);border-radius:12px;padding:4px;gap:4px}
+.mode-btn{border:none;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;cursor:pointer;padding:8px 20px;border-radius:9px;transition:all 0.18s;display:flex;align-items:center;gap:7px;letter-spacing:0.01em}
+.mode-btn-clinical{background:transparent;color:rgba(255,255,255,0.6)}
+.mode-btn-clinical:hover{color:white;background:rgba(16,185,129,0.2)}
+.mode-btn-clinical.active{background:linear-gradient(135deg,#059669,#10b981);color:white;box-shadow:0 2px 10px rgba(5,150,105,0.4)}
+.mode-btn-admin{background:transparent;color:rgba(255,255,255,0.6)}
+.mode-btn-admin:hover{color:white;background:rgba(139,92,246,0.2)}
+.mode-btn-admin.active{background:linear-gradient(135deg,#7c3aed,#8b5cf6);color:white;box-shadow:0 2px 10px rgba(124,58,237,0.4)}
+/* Sub-tab bar */
+.sub-bar{padding:0 20px;display:flex;gap:2px;align-items:flex-end;overflow-x:auto;scrollbar-width:none}
+.sub-bar::-webkit-scrollbar{display:none}
+.sub-bar-clinical{background:#065f46}
+.sub-bar-admin{background:#4c1d95}
 .tab{padding:8px 16px 10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;border:none;cursor:pointer;border-radius:10px 10px 0 0;transition:all 0.15s;white-space:nowrap;color:rgba(255,255,255,0.65);background:rgba(255,255,255,0.08);margin-top:6px}
 .tab:hover{background:rgba(255,255,255,0.18);color:white}
-.tab.active{background:#f1f5f9;color:#1e3a5f;margin-top:4px;padding-bottom:12px}
+.tab.active{background:#f1f5f9;margin-top:4px;padding-bottom:12px}
+.tab.active-clinical{color:#065f46}
+.tab.active-admin{color:#4c1d95}
 .container{max-width:1080px;margin:0 auto;padding:24px 20px}
 .hero{background:linear-gradient(135deg,#1e3a5f,#1d4ed8);color:white;border-radius:20px;padding:32px 36px;margin-bottom:24px;position:relative;overflow:hidden}
 .hero::after{content:'🏥';position:absolute;right:28px;top:50%;transform:translateY(-50%);font-size:72px;opacity:0.12}
@@ -162,16 +181,20 @@ function FaqItem({ q, a, section, highlight }) {
 }
 
 // ── HOME TAB ────────────────────────────────────────────────────────────────
-function HomeTab({ setTab }) {
+function HomeTab({ setMode, setAdminTab, setClinicalTab }) {
+  const go = (mode, sub) => {
+    if (mode === 'admin') { setAdminTab(sub); setMode('admin'); }
+    else { setClinicalTab(sub); setMode('clinical'); }
+  };
   const quickLinks = [
-    { icon:'📋', label:'Pre-Arrival Checklist', tab:'start' },
-    { icon:'🛠️', label:'Tools & Systems', tab:'systems' },
-    { icon:'🩺', label:'Clinical Guide', tab:'clinical' },
-    { icon:'💉', label:'Treatment Guide', tab:'treatment' },
-    { icon:'❓', label:'FAQs', tab:'faq' },
-    { icon:'📞', label:'Contacts', tab:'contacts' },
-    { icon:'🚨', label:'Protocols', tab:'protocols' },
-    { icon:'🎯', label:'Marketing', tab:'marketing' },
+    { icon:'📋', label:'Pre-Arrival Checklist', mode:'admin', sub:'start' },
+    { icon:'🛠️', label:'Tools & Systems', mode:'admin', sub:'systems' },
+    { icon:'🩺', label:'Clinical Guide', mode:'clinical', sub:'clinical' },
+    { icon:'💉', label:'Treatment Guide', mode:'clinical', sub:'treatment' },
+    { icon:'❓', label:'FAQs', mode:'admin', sub:'faq' },
+    { icon:'📞', label:'Contacts', mode:'admin', sub:'contacts' },
+    { icon:'🚨', label:'Protocols', mode:'admin', sub:'protocols' },
+    { icon:'🎯', label:'Marketing', mode:'admin', sub:'marketing' },
   ];
   return (
     <div>
@@ -179,9 +202,11 @@ function HomeTab({ setTab }) {
         <div className="card-title">⚡ Quick Access</div>
         <div className="ql-grid">
           {quickLinks.map(l => (
-            <div key={l.tab} className="ql-tile" onClick={()=>setTab(l.tab)}>
+            <div key={l.sub} className="ql-tile" onClick={()=>go(l.mode, l.sub)}
+              style={{borderColor: l.mode==='clinical' ? '#d1fae5' : '#ede9fe'}}>
               <div className="ql-icon">{l.icon}</div>
               <div className="ql-label">{l.label}</div>
+              <div style={{fontSize:10,fontWeight:800,marginTop:6,color:l.mode==='clinical'?'#059669':'#7c3aed'}}>{l.mode==='clinical'?'🩺 Clinical':'⚙️ Admin'}</div>
             </div>
           ))}
         </div>
@@ -798,64 +823,120 @@ function MarketingTab() {
 }
 
 // ── APP ───────────────────────────────────────────────────────────────────────
+const CLINICAL_TABS = [
+  {id:'clinical', label:'🩺 Clinical Guide'},
+  {id:'treatment', label:'💉 Treatments'},
+];
+const ADMIN_TABS = [
+  {id:'start',    label:'📋 Getting Started'},
+  {id:'systems',  label:'🛠️ Tools & Systems'},
+  {id:'faq',      label:'❓ FAQs'},
+  {id:'contacts', label:'📞 Contacts'},
+  {id:'protocols',label:'🚨 Protocols'},
+  {id:'marketing',label:'🎯 Marketing'},
+];
+
 function App() {
-  const [tab, setTab] = useState('home');
+  const [mode, setMode] = useState('home');      // 'home' | 'clinical' | 'admin'
+  const [clinicalTab, setClinicalTab] = useState('clinical');
+  const [adminTab, setAdminTab] = useState('start');
   const [globalSearch, setGlobalSearch] = useState('');
 
-  const TABS = [
-    {id:'home',label:'🏠 Home'},
-    {id:'start',label:'📋 Getting Started'},
-    {id:'systems',label:'🛠️ Tools & Systems'},
-    {id:'clinical',label:'🩺 Clinical Guide'},
-    {id:'treatment',label:'💉 Treatments'},
-    {id:'faq',label:'❓ FAQs'},
-    {id:'contacts',label:'📞 Contacts'},
-    {id:'protocols',label:'🚨 Protocols'},
-    {id:'marketing',label:'🎯 Marketing'},
-  ];
+  const goMode = (m) => {
+    setMode(m);
+    window.scrollTo(0,0);
+  };
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (globalSearch.trim()) {
-      setTab('faq');
-    }
+    if (globalSearch.trim()) { setMode('admin'); setAdminTab('faq'); }
   };
+
+  const activeTab = mode === 'clinical' ? clinicalTab : adminTab;
 
   return (
     <div>
+      {/* Navbar */}
       <nav className="navbar">
         <div className="navbar-brand">
           <div className="navbar-logo">VIP <span>Provider Training Hub</span></div>
           <div className="navbar-sub">VIP Medical Group · Onboarding & Clinical Resources</div>
         </div>
       </nav>
-      <div className="tab-bar">
-        {TABS.map(t=>(
-          <button key={t.id} className={`tab${tab===t.id?' active':''}`} onClick={()=>setTab(t.id)}>{t.label}</button>
-        ))}
+
+      {/* Mode toggle bar */}
+      <div className="mode-bar">
+        <button className={`mode-home${mode==='home'?' active':''}`} onClick={()=>goMode('home')}>
+          🏠 Home
+        </button>
+        <div className="mode-divider"/>
+        <div className="mode-toggle">
+          <button
+            className={`mode-btn mode-btn-clinical${mode==='clinical'?' active':''}`}
+            onClick={()=>goMode('clinical')}
+          >
+            🩺 Clinical
+          </button>
+          <button
+            className={`mode-btn mode-btn-admin${mode==='admin'?' active':''}`}
+            onClick={()=>goMode('admin')}
+          >
+            ⚙️ Administrative
+          </button>
+        </div>
       </div>
-      {tab === 'home' && (
-        <div style={{background:'linear-gradient(135deg,#1e3a5f,#1d4ed8)',padding:'28px 20px'}}>
+
+      {/* Sub-tab bar — only when not on home */}
+      {mode === 'clinical' && (
+        <div className="sub-bar sub-bar-clinical">
+          {CLINICAL_TABS.map(t=>(
+            <button key={t.id}
+              className={`tab${clinicalTab===t.id?' active active-clinical':''}`}
+              onClick={()=>setClinicalTab(t.id)}
+            >{t.label}</button>
+          ))}
+        </div>
+      )}
+      {mode === 'admin' && (
+        <div className="sub-bar sub-bar-admin">
+          {ADMIN_TABS.map(t=>(
+            <button key={t.id}
+              className={`tab${adminTab===t.id?' active active-admin':''}`}
+              onClick={()=>setAdminTab(t.id)}
+            >{t.label}</button>
+          ))}
+        </div>
+      )}
+
+      {/* Hero search — home only */}
+      {mode === 'home' && (
+        <div style={{background:'linear-gradient(135deg,#1e3a5f,#1d4ed8)',padding:'32px 24px'}}>
           <div style={{maxWidth:1080,margin:'0 auto'}}>
             <h1 style={{fontSize:26,fontWeight:900,color:'white',marginBottom:8}}>Welcome to VIP Medical Group 👋</h1>
-            <p style={{fontSize:14,color:'rgba(255,255,255,0.85)',maxWidth:560,lineHeight:1.6,marginBottom:18}}>Your one-stop hub for everything you need — from pre-arrival checklists to clinical protocols to FAQs. Use the search below or browse the tabs.</p>
-            <form onSubmit={handleSearch} style={{display:'flex',gap:0,background:'white',borderRadius:50,padding:'4px 6px 4px 20px',maxWidth:480,boxShadow:'0 2px 16px rgba(0,0,0,0.15)'}}>
+            <p style={{fontSize:14,color:'rgba(255,255,255,0.85)',maxWidth:560,lineHeight:1.6,marginBottom:18}}>Your one-stop hub for everything you need — from pre-arrival checklists to clinical protocols to FAQs.</p>
+            <form onSubmit={handleSearch} style={{display:'flex',background:'white',borderRadius:50,padding:'4px 6px 4px 20px',maxWidth:480,boxShadow:'0 2px 16px rgba(0,0,0,0.15)'}}>
               <input value={globalSearch} onChange={e=>setGlobalSearch(e.target.value)} placeholder="Search anything — tools, protocols, FAQs..." style={{flex:1,border:'none',outline:'none',fontFamily:'Nunito',fontSize:14,fontWeight:600,color:'#1e293b',background:'transparent'}} />
               <button type="submit" style={{background:'#1d4ed8',color:'white',border:'none',borderRadius:50,padding:'8px 18px',fontFamily:'Nunito',fontWeight:800,fontSize:13,cursor:'pointer'}}>Search</button>
             </form>
+            <div style={{display:'flex',gap:10,marginTop:20}}>
+              <button onClick={()=>goMode('clinical')} style={{background:'linear-gradient(135deg,#059669,#10b981)',color:'white',border:'none',borderRadius:12,padding:'12px 24px',fontFamily:'Nunito',fontWeight:900,fontSize:14,cursor:'pointer',boxShadow:'0 2px 10px rgba(5,150,105,0.35)'}}>🩺 Clinical Content →</button>
+              <button onClick={()=>goMode('admin')} style={{background:'linear-gradient(135deg,#7c3aed,#8b5cf6)',color:'white',border:'none',borderRadius:12,padding:'12px 24px',fontFamily:'Nunito',fontWeight:900,fontSize:14,cursor:'pointer',boxShadow:'0 2px 10px rgba(124,58,237,0.35)'}}>⚙️ Administrative →</button>
+            </div>
           </div>
         </div>
       )}
+
+      {/* Content */}
       <div className="container">
-        {tab === 'home'      && <HomeTab setTab={setTab} />}
-        {tab === 'start'     && <StartTab />}
-        {tab === 'systems'   && <SystemsTab />}
-        {tab === 'clinical'  && <ClinicalTab />}
-        {tab === 'treatment' && <TreatmentTab />}
-        {tab === 'faq'       && <FaqTab searchQ={globalSearch} />}
-        {tab === 'contacts'  && <ContactsTab />}
-        {tab === 'protocols' && <ProtocolsTab />}
-        {tab === 'marketing' && <MarketingTab />}
+        {mode === 'home'     && <HomeTab setMode={goMode} setAdminTab={setAdminTab} setClinicalTab={setClinicalTab} />}
+        {mode === 'clinical' && clinicalTab === 'clinical'  && <ClinicalTab />}
+        {mode === 'clinical' && clinicalTab === 'treatment' && <TreatmentTab />}
+        {mode === 'admin'    && adminTab === 'start'      && <StartTab />}
+        {mode === 'admin'    && adminTab === 'systems'    && <SystemsTab />}
+        {mode === 'admin'    && adminTab === 'faq'        && <FaqTab searchQ={globalSearch} />}
+        {mode === 'admin'    && adminTab === 'contacts'   && <ContactsTab />}
+        {mode === 'admin'    && adminTab === 'protocols'  && <ProtocolsTab />}
+        {mode === 'admin'    && adminTab === 'marketing'  && <MarketingTab />}
       </div>
     </div>
   );
