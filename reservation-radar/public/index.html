@@ -196,8 +196,20 @@ function RestaurantCard({ r, onWatch, onEdit }) {
             </div>
           )}
           {r.my_notes && <div className="detail-notes">📝 {r.my_notes}</div>}
-          {r.booking_url && (
-            <a href={r.booking_url} target="_blank" rel="noreferrer" className="detail-link">🔗 Book on {r.platform} ↗</a>
+          <div style={{display:'flex',gap:8,flexWrap:'wrap',marginTop:10}}>
+            {r.booking_url && (
+              <a href={r.booking_url} target="_blank" rel="noreferrer" className="detail-link">🔗 Book on {r.platform} ↗</a>
+            )}
+            {r.platform === 'Resy' && r.booking_url && (
+              <a href={r.booking_url} target="_blank" rel="noreferrer" style={{display:'inline-flex',alignItems:'center',gap:6,padding:'7px 14px',background:'rgba(251,191,36,0.1)',border:'1px solid rgba(251,191,36,0.25)',borderRadius:8,color:'#fbbf24',fontSize:12,fontWeight:700,marginTop:0}}>
+                🔔 Turn On Resy Notify ↗
+              </a>
+            )}
+          </div>
+          {r.platform === 'Resy' && (
+            <div style={{marginTop:8,fontSize:11,color:'#6b7280',fontStyle:'italic'}}>
+              💡 If fully booked, hit "Notify" in the Resy app — you'll get a text the moment a spot opens
+            </div>
           )}
           <div className="r-actions">
             <button className="btn btn-primary btn-sm" onClick={() => onWatch(r)}>+ Add to Watchlist</button>
