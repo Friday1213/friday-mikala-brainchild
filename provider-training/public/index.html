@@ -187,14 +187,18 @@ function HomeTab({ setMode, setAdminTab, setClinicalTab }) {
     else { setClinicalTab(sub); setMode('clinical'); }
   };
   const quickLinks = [
-    { icon:'📋', label:'Pre-Arrival Checklist', mode:'admin', sub:'start' },
+    { icon:'📋', label:'Getting Started', mode:'admin', sub:'start' },
     { icon:'🛠️', label:'Tools & Systems', mode:'admin', sub:'systems' },
     { icon:'🩺', label:'Clinical Guide', mode:'clinical', sub:'clinical' },
-    { icon:'💉', label:'Treatment Guide', mode:'clinical', sub:'treatment' },
+    { icon:'💉', label:'Treatments', mode:'clinical', sub:'treatment' },
+    { icon:'🔬', label:'Procedures', mode:'clinical', sub:'procedures' },
+    { icon:'⚠️', label:'Complications', mode:'clinical', sub:'complications' },
+    { icon:'🔤', label:'Glossary', mode:'clinical', sub:'glossary' },
     { icon:'❓', label:'FAQs', mode:'admin', sub:'faq' },
     { icon:'📞', label:'Contacts', mode:'admin', sub:'contacts' },
     { icon:'🚨', label:'Protocols', mode:'admin', sub:'protocols' },
     { icon:'🎯', label:'Marketing', mode:'admin', sub:'marketing' },
+    { icon:'🔗', label:'Resources & Links', mode:'admin', sub:'resources' },
   ];
   return (
     <div>
@@ -822,10 +826,486 @@ function MarketingTab() {
   );
 }
 
+// ── PROCEDURES TAB ───────────────────────────────────────────────────────────
+function ProceduresTab() {
+  const [open, setOpen] = useState({ablation:true,varithena:false,cosmetic:false,misc:false});
+  const T = ({id,title,children}) => (
+    <div className="card" style={{marginBottom:12}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',cursor:'pointer'}} onClick={()=>setOpen(o=>({...o,[id]:!o[id]}))}>
+        <div className="card-title" style={{marginBottom:0}}>{title}</div>
+        <span style={{color:'#94a3b8',fontSize:13}}>{open[id]?'▲':'▼'}</span>
+      </div>
+      {open[id]&&<div style={{marginTop:14}}>{children}</div>}
+    </div>
+  );
+  return (
+    <div>
+      <T id="ablation" title="🔥 Thermal Ablation (RFA) — Procedural Protocol">
+        <div className="hbox hbox-amber" style={{marginBottom:14}}>
+          <div className="hbox-title">⚠️ Aborted Procedure Update (1/5/26)</div>
+          <div className="hbox-body">
+            <div>• For any aborted procedure with intent to re-attempt: a <strong>new LOMN must be created</strong> for resubmission</div>
+            <div style={{marginTop:4}}>• Email <strong>PA Aborted Procedures</strong> immediately when a procedure is aborted</div>
+            <div style={{marginTop:4}}>• Do not reschedule same or next day — allow 3–7 days for new authorization</div>
+            <div style={{marginTop:4}}>• In Medwork: set reattempt to <strong>"Do Not Schedule Pending"</strong>, mark performed attempt as "Completed"</div>
+          </div>
+        </div>
+        <div className="section-label">Procedural Choreography</div>
+        <ul className="step-list">
+          {['Staff prescans the vein (and post-scan if applicable). Give physician a heads-up if small, abnormal, or thrombosed',
+            'Staff preps and drapes the patient',
+            'Physician performs procedure. Any access difficulty or unusual findings → free-text in the note',
+            'Free-text required for: wire used, access difficult, procedure aborted, anything out of the ordinary'].map((s,i)=><li key={i}>{s}</li>)}
+        </ul>
+        <div className="grid-2" style={{marginTop:12}}>
+          <div className="hbox hbox-green">
+            <div className="hbox-title">Nervous Patients</div>
+            <div className="hbox-body">Consider 0.5mg PO Xanax (encourage patient to get from PCP). Tell them to arrange a ride. This is rare — "like dental work, but on your leg." Avoid anesthesia — risks outweigh procedure risks.</div>
+          </div>
+          <div className="hbox hbox-red">
+            <div className="hbox-title">Two Aborted Procedure Scenarios</div>
+            <div className="hbox-body">
+              <strong>Scenario 1 (NOT aborted):</strong> Thrombosed vein found BEFORE prepping → change appt type to follow-up, free-text note, adjust future appointments<br/><br/>
+              <strong>Scenario 2 (IS aborted):</strong> Access attempted then aborted → consent must be in chart, select appropriate options on ablation note, free-text clinical scenario, follow email protocol above
+            </div>
+          </div>
+        </div>
+        <div className="hbox hbox-blue" style={{marginTop:12}}>
+          <div className="hbox-title">Documentation Questions?</div>
+          <div className="hbox-body">Email <strong>Carly Sarch</strong> for documentation questions. Email <strong>Dr. Caroline Novak</strong> for clinical concerns. MD is responsible for properly documenting any aborted ablations.</div>
+        </div>
+      </T>
+
+      <T id="varithena" title="💜 Foam Sclerotherapy / Varithena — Detailed Protocol">
+        <div className="grid-2" style={{marginBottom:14}}>
+          <div className="hbox hbox-purple">
+            <div className="hbox-title">Session Limits</div>
+            <div className="hbox-body"><strong>Per session max:</strong> 2 IVs, 1 body position, OR 10cc total — whichever comes first.<br/>Exception: impatient patient → can do more IVs/positions but <strong>never exceed 10cc total</strong> for safety.</div>
+          </div>
+          <div className="hbox hbox-blue">
+            <div className="hbox-title">Needle Selection</div>
+            <div className="hbox-body">
+              <div>• <strong>Catheter:</strong> Veins deeper than 1–1.5cm, veins within fascia (saphenous veins almost always use catheter)</div>
+              <div style={{marginTop:4}}>• <strong>Butterfly:</strong> Veins &lt;1cm from skin (most varicosities). Rule of thumb: visible vein, no ultrasound needed → butterfly!</div>
+            </div>
+          </div>
+        </div>
+        <div className="section-label">Classic Plan — Distal GSV with Mid-Calf Perforators</div>
+        <ul className="step-list">
+          {['Staff prescans and marks perforators. Rule: any perf >50% diameter of GSV → compress it and inject past, OR go proximal',
+            'Place all IVs BEFORE injecting any sclero (injecting first causes vein to spasm)',
+            'Place catheter distal to the perf → attach closed stopcock',
+            'Place catheter just proximal to the perf',
+            'Inject proximal portion while holding pressure on the perf → remove proximal IV',
+            'Inject distal portion while holding pressure on perf and proximal IV site (~1 minute)',
+            'Call for foam. Staff should be making Tessari foam or readying Varithena when they see flash',
+            'Inject slowly: ½–1cc every 20 seconds. Watch for bruising (extravasation). Massage and scan — watch it travel up the saphenous vein, check if going deep',
+            'If foam goes deep: point and flex toe, calf raises x20 before dressing. Consider earlier follow-up (non-billable)',
+            'Scan in multiple planes — quick pass posterior and lateral calf even if GSV is medial'].map((s,i)=><li key={i}>{s}</li>)}
+        </ul>
+        <div className="grid-2" style={{marginTop:12}}>
+          <div>
+            <div className="section-label">Goals by Vein</div>
+            {[['GSV','Close proximal ⅓ of calf (essential). Distal ⅓ rarely needed. Middle ⅓ — assess: large VVs/tribs? GSV large or refluxing?'],
+              ['Any VV','Understand source (closed saphenous vs perf vs both). Compress any connections to deep system. Inject distal → proximal.']].map(([v,d])=>(
+              <div key={v} style={{padding:'7px 0',borderBottom:'1px solid #f1f5f9'}}>
+                <div style={{fontSize:13,fontWeight:800,color:'#7c3aed'}}>{v}</div>
+                <div style={{fontSize:12,color:'#64748b',marginTop:2}}>{d}</div>
+              </div>
+            ))}
+          </div>
+          <div>
+            <div className="section-label">⚠️ Special Considerations</div>
+            {['Lactating women must pump and dump for 48 hours post-procedure',
+              'Headache/migraine immediately after injection → STOP, lay on left side, wait 1 hour. If not resolved → send to ER. If resolved → refer to cardiology to rule out PFO before more foam',
+              'Smokers: terrible phlebitis → prefer phlebectomy',
+              'Tamoxifen: widespread phlebitis risk — use with caution'].map((s,i)=>(
+              <div key={i} style={{fontSize:12,color:'#374151',padding:'5px 0',borderBottom:'1px solid #f1f5f9',display:'flex',gap:6}}><span style={{color:'#ef4444'}}>⚠️</span>{s}</div>
+            ))}
+          </div>
+        </div>
+        <div className="section-label" style={{marginTop:14}}>Post-Procedure Results & Management</div>
+        <div className="hbox hbox-green">
+          <div className="hbox-body">
+            <div>• Vein will be hard and palpable for 3 weeks–3 months, then shrinks. Barely palpable at 6 months — <strong>reassure patients</strong></div>
+            <div style={{marginTop:4}}>• Hyperpigmentation: mild, like a bruise, fades by 1 year in &gt;95%. Recommend Shea Butter or Dermaka</div>
+            <div style={{marginTop:4}}>• Significant phlebitis → consider trigger point injection: methylpred 1 vial (~2cc) + 2-3cc lido, inject at most dense phlebitis area under US</div>
+          </div>
+        </div>
+      </T>
+
+      <T id="cosmetic" title="✨ Cosmetic Sclerotherapy">
+        <div className="hbox hbox-blue" style={{marginBottom:14}}>
+          <div className="hbox-title">Indications</div>
+          <div className="hbox-body">Patient negative for VI, OR positive for mild reflux but asymptomatic. If any reflux present: set expectations that veins will return sooner since the underlying problem isn't addressed.</div>
+        </div>
+        <div className="grid-2" style={{marginBottom:14}}>
+          <div>
+            <div className="section-label">Medication</div>
+            {[['Polidocanol (Asclera)','Liquid only for cosmetics'],['Concentration','0.5% standard; rarely 1% for reticulars'],['Mix ratio','NSS + poli 9:1 (diluted in vial = 0.5%)'],['Foam option','2.5cc air + 0.8cc poli (higher pigmentation risk)'],['Max per leg','6 × 3cc syringes (18cc total)'],['Session max','10cc including any Varithena received that day']].map(([k,v])=>(
+              <div key={k} style={{fontSize:13,padding:'5px 0',borderBottom:'1px solid #f1f5f9',display:'flex',gap:8}}>
+                <span style={{fontWeight:800,color:'#1e293b',minWidth:130}}>{k}</span>
+                <span style={{color:'#64748b'}}>{v}</span>
+              </div>
+            ))}
+          </div>
+          <div>
+            <div className="section-label">Pricing</div>
+            <div className="hbox hbox-green" style={{marginTop:0}}>
+              <div className="hbox-body">
+                <div>• <strong>$1,000 per leg/per session</strong> (location-dependent)</div>
+                <div style={{marginTop:4}}>• Not by area, injection, or time increment</div>
+                <div style={{marginTop:4}}>• Large area (entire lateral thigh): $750, but second round complimentary</div>
+                <div style={{marginTop:4}}>• Refer to Patient Success to provide quote with anticipated sessions</div>
+                <div style={{marginTop:4}}>• Do NOT offer payment plans for cosmetic treatments</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="section-label">Injection Technique</div>
+        <ul className="step-list">
+          {['Bevel up, same angle as the vein. Stretch skin with one hand or vein light',
+            'Aim at the center of the patch if possible. Anything that blanches will see improvement',
+            'If vein flushes/blanches → keep going. If you see a wheal → stop. Inject up to ~1cc SLOWLY',
+            'Large clusters (≥1mm): hold manual pressure briefly after injecting each area',
+            'Change needle tip every 5–10 injections (tip gets dull)',
+            'Avoid injecting below the medial malleolus without guidance from experienced injector',
+            'Use cotton balls for extra compression on larger reticulars/spiders to avoid trapped blood'].map((s,i)=><li key={i}>{s}</li>)}
+        </ul>
+        <div className="grid-2" style={{marginTop:12}}>
+          <div className="hbox hbox-amber">
+            <div className="hbox-title">Hyperpigmentation Risk Groups</div>
+            <div className="hbox-body">Light-skinned Hispanic, biracial or light-skinned African American, South Asian (Indian/Pakistani). Very difficult to predict — always set expectations and show photos. Consider test injection first (1cc above the knee, hidden).</div>
+          </div>
+          <div className="hbox hbox-green">
+            <div className="hbox-title">Aftercare</div>
+            <div className="hbox-body">
+              <div>• Gauze wrap tightly, then compression/ACE for 24 hours</div>
+              <div>• Shower after 24 hours (cool, quick)</div>
+              <div>• Stockings 5+ days, daytime only (~12h/day)</div>
+              <div>• Avoid sun x3 weeks, SPF 30+ for another 3 weeks. High-risk: no tanning 6–8 weeks</div>
+            </div>
+          </div>
+        </div>
+        <div className="hbox hbox-red" style={{marginTop:12}}>
+          <div className="hbox-title">Who NOT to Treat</div>
+          <div className="hbox-body">
+            <div>• Veins too small for needle → refer to MDCS/Derm for laser</div>
+            <div>• Significant hyperpigmentation from prior injections or Keloids</div>
+            <div>• Difficult patients with unrealistic expectations — not worth it</div>
+            <div>• <strong>Tamoxifen patients → widespread phlebitis risk</strong></div>
+          </div>
+        </div>
+        <div className="hbox hbox-blue" style={{marginTop:12}}>
+          <div className="hbox-title">Results / Expectations</div>
+          <div className="hbox-body">20–60% improvement per round (wide range is deliberate). Reinject at 4 weeks minimum (6 weeks if still healing/trapped blood — never sooner than 4 weeks). Results visible at 3 weeks, maximum at 6 weeks. Matting: wait 3–6 months before re-injection.</div>
+        </div>
+      </T>
+
+      <T id="misc" title="🌍 Misc Clinical Pearls">
+        <div className="grid-2">
+          <div className="hbox hbox-blue">
+            <div className="hbox-title">Translator App</div>
+            <div className="hbox-body">At least 1 iPad per clinic has the translator app. You can also call directly: <strong>718-838-9317, PIN 94291926</strong>. Spanish and Russian slides available for initial and review visits.</div>
+          </div>
+          <div className="hbox hbox-green">
+            <div className="hbox-title">Travel Precautions</div>
+            <div className="hbox-body">Recommend at least 1 week before long-distance travel after any procedure (want post-scan first). During travel: increase hydration, get up frequently, wear compression.</div>
+          </div>
+          <div className="hbox hbox-purple">
+            <div className="hbox-title">Pregnant Patients</div>
+            <div className="hbox-body">Generally avoid procedures during pregnancy. If terrible symptoms: consider ablation only (NO polidocanol/Asclera/Varithena, no NSAIDs). Recommend treatment starting 3 months postpartum. Prescribe pregnancy compression garments for pelvic support.</div>
+          </div>
+          <div className="hbox hbox-amber">
+            <div className="hbox-title">Medical Clearances</div>
+            <div className="hbox-body">Almost never needed — creates unnecessary delays and decreases conversions. You can calculate DVT risk better than most specialists given your procedure knowledge. Use your medical judgement. If in doubt, contact Dr. Caroline Novak.</div>
+          </div>
+        </div>
+      </T>
+    </div>
+  );
+}
+
+// ── COMPLICATIONS TAB ─────────────────────────────────────────────────────────
+function ComplicationsTab() {
+  const [open, setOpen] = useState({dvt:true,svt:false,ehit:false,varithenacx:false});
+  const T = ({id,title,children}) => (
+    <div className="card" style={{marginBottom:12}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',cursor:'pointer'}} onClick={()=>setOpen(o=>({...o,[id]:!o[id]}))}>
+        <div className="card-title" style={{marginBottom:0}}>{title}</div>
+        <span style={{color:'#94a3b8',fontSize:13}}>{open[id]?'▲':'▼'}</span>
+      </div>
+      {open[id]&&<div style={{marginTop:14}}>{children}</div>}
+    </div>
+  );
+  return (
+    <div>
+      <div className="hbox hbox-red" style={{marginBottom:16}}>
+        <div className="hbox-title">Any concerns or questions → contact Dr. Caroline Novak directly</div>
+        <div className="hbox-body">Do not manage complications in isolation. Reach out early.</div>
+      </div>
+      <T id="dvt" title="🩸 DVT — Deep Vein Thrombosis">
+        <div className="grid-2" style={{marginBottom:14}}>
+          <div>
+            <div className="section-label">Risk Factors</div>
+            {['Age >60','Immobility (bed-bound OR travel)','Recent surgery','Family history or known hypercoagulability','Active cancer','OCPs or HRT','Pregnancy','Smoking'].map(r=>(
+              <div key={r} style={{fontSize:13,color:'#374151',padding:'4px 0',borderBottom:'1px solid #f1f5f9',display:'flex',gap:6}}><span style={{color:'#ef4444'}}>•</span>{r}</div>
+            ))}
+          </div>
+          <div>
+            <div className="section-label">Ultrasound Findings</div>
+            <div style={{marginBottom:8,fontSize:12,fontWeight:800,color:'#1e3a5f'}}>ACUTE (&lt;4 weeks)</div>
+            {['Non-compressibility','Hypoechoic thrombus within lumen','Venous distension','Complete absence of color Doppler signal','Loss of response to Valsalva or augmentation'].map(f=>(
+              <div key={f} style={{fontSize:12,color:'#374151',padding:'3px 0',borderBottom:'1px solid #f1f5f9'}}>• {f}</div>
+            ))}
+            <div style={{marginTop:10,marginBottom:6,fontSize:12,fontWeight:800,color:'#1e3a5f'}}>CHRONIC (&gt;4 weeks)</div>
+            {['Non-compressibility','Vein may be narrow and irregular, or normal size','Hyperechoic thrombus','Development of collaterals','Calcifications'].map(f=>(
+              <div key={f} style={{fontSize:12,color:'#374151',padding:'3px 0',borderBottom:'1px solid #f1f5f9'}}>• {f}</div>
+            ))}
+          </div>
+        </div>
+      </T>
+      <T id="svt" title="🔴 SVT — Superficial Venous Thrombosis">
+        <div className="hbox hbox-amber" style={{marginBottom:12}}>
+          <div className="hbox-title">⚠️ Commonly Mistaken for DVT in the ER</div>
+          <div className="hbox-body">Provide reassurance to patients who have been seen in the ER and explain the difference between SVT and DVT.</div>
+        </div>
+        <div className="grid-2">
+          <div className="hbox hbox-red">
+            <div className="hbox-title">SVT ≥5cm OR within 3cm of deep system</div>
+            <div className="hbox-body">Treat like a DVT — full anticoagulation. Follow-up scan within 3–7 days to evaluate for progression. Anticoagulation duration: 6–12 weeks (or longer based on response, symptoms, risk factors).</div>
+          </div>
+          <div className="hbox hbox-amber">
+            <div className="hbox-title">SVT &lt;5cm AND &gt;3cm from deep veins</div>
+            <div className="hbox-body">Follow SVT treatment paradigm. Early follow-up scan within 3–7 days to evaluate for progression. Instruct patient to call if signs of spreading.</div>
+          </div>
+        </div>
+        <div className="hbox hbox-blue" style={{marginTop:12}}>
+          <div className="hbox-title">Elective Vein Treatments After SVT</div>
+          <div className="hbox-body">Delay elective vein treatments for at least 12 weeks from SVT onset due to increased clotting risk. Longer conservative care may be needed in the area of the SVT prior to treatment.</div>
+        </div>
+      </T>
+      <T id="ehit" title="⚡ EHIT — Endothermal Heat-Induced Thrombosis">
+        <div className="hbox hbox-blue" style={{marginBottom:12}}>
+          <div className="hbox-title">What is EHIT?</div>
+          <div className="hbox-body">Direct propagation of clot from an ablated vein into the deep system at the junction.</div>
+        </div>
+        <div className="hbox hbox-green">
+          <div className="hbox-title">Prevention</div>
+          <div className="hbox-body">Adjust distance from junction (maintain 3–3.5cm) in higher-risk patients: older patients, known hypercoagulable states.</div>
+        </div>
+        <div className="hbox hbox-amber" style={{marginTop:10}}>
+          <div className="hbox-title">Treatment</div>
+          <div className="hbox-body">See EHIT treatment algorithm (linked in your Google Drive Resource Folder). Contact Dr. Caroline Novak for any EHIT concerns.</div>
+        </div>
+      </T>
+      <T id="varithenacx" title="💜 Varithena-Specific Complications">
+        {[
+          ['Failed perforator mitigation','Careful scanning by operator before AND during procedure. See DVT treatment algorithm if foam travels deep.'],
+          ['Headache/migraine at time of injection','STOP immediately. Lay patient on left side. Wait for headache to resolve. If not resolved in 1 hour or symptoms worsen → send to ER. If resolved → refer for cardiology evaluation for PFO before further foam treatments.'],
+          ['Significant phlebitis','Consider trigger point injection: methylpred 1 vial (~2cc) + 2-3cc lido. Inject at area of most dense phlebitis (most hyperechoic, usually most tender) under ultrasound. Offer tincture of time and compression first — let patient decide.'],
+        ].map(([t,d])=>(
+          <div key={t} className="hbox hbox-amber" style={{marginBottom:10}}>
+            <div className="hbox-title">{t}</div>
+            <div className="hbox-body">{d}</div>
+          </div>
+        ))}
+      </T>
+    </div>
+  );
+}
+
+// ── GLOSSARY TAB ──────────────────────────────────────────────────────────────
+function GlossaryTab() {
+  const [q, setQ] = useState('');
+  const sections = [
+    { title:'🫀 Superficial Venous System', items:[
+      ['GSV','Great Saphenous Vein — longest superficial vein, runs from foot up inner leg/thigh to join CFV at SFJ. Primary source of varicose veins when refluxing.'],
+      ['SSV','Small Saphenous Vein — superficial vein along the back of the calf, joins popliteal vein at SPJ.'],
+      ['AASV','Anterior Accessory Saphenous Vein — branch of GSV along the front of the thigh; common site of recurrent reflux.'],
+      ['PASV','Posterior Accessory Saphenous Vein — branch of GSV along the posterior thigh; may cause posterior thigh varicosities.'],
+      ['ISV','Intersaphenous Vein (Vein of Giacomini) — communicating vein between GSV and SSV systems.'],
+      ['Tributary Veins','Smaller veins draining into larger superficial veins (GSV or SSV). "Trib/s" in documentation.'],
+      ['Reticular Veins','Small bluish veins beneath the skin, usually cosmetic. "Retics."'],
+      ['Posterior Arch Vein',"Leonardo's Vein — superficial communicating vein along the inner calf connecting with perforators."],
+      ['SFJ','Saphenofemoral Junction — where GSV drains into CFV (common femoral vein).'],
+      ['SPJ','Saphenopopliteal Junction — where SSV drains into the popliteal vein.'],
+    ]},
+    { title:'🔵 Deep Venous System', items:[
+      ['CFV','Common Femoral Vein — main deep vein of upper thigh; receives the GSV, drains into external iliac vein.'],
+      ['FV','Femoral Vein — deep vein of the thigh, from popliteal vein to CFV.'],
+      ['PFV','Profunda Femoris / Deep Femoral Vein — major deep vein draining thigh musculature.'],
+      ['Popliteal Vein','Deep vein behind the knee receiving SSV and gastrocnemius veins.'],
+      ['PTVs','Posterior Tibial Veins — deep veins of the posterior lower leg; join peroneal veins to form popliteal vein.'],
+      ['ATVs','Anterior Tibial Veins — deep veins draining the anterior compartment of the leg.'],
+      ['Peroneal Veins','Deep veins along the lateral leg, joining with PTVs.'],
+      ['Gastrocnemius Veins','Paired deep veins within the calf muscle draining into the popliteal vein. "Gastrocs."'],
+      ['Soleal Veins','Deep calf veins draining into the posterior tibial or peroneal systems.'],
+      ['Perforator Veins','Connect superficial and deep systems. Flow: superficial → deep (one-way). Incompetent perfs allow backward flow → localized venous hypertension.'],
+    ]},
+    { title:'🩺 Venous Conditions', items:[
+      ['Venous Insufficiency (VI)','General term for valve dysfunction causing backward blood flow (reflux).'],
+      ['CVI','Chronic Venous Insufficiency — longstanding reflux causing swelling, pain, skin changes, ulceration.'],
+      ['Varicose Veins (VVs)','Enlarged, twisted superficial veins from reflux.'],
+      ['SVT','Superficial Venous Thrombosis — clot in a superficial vein, often painful and palpable.'],
+      ['DVT','Deep Vein Thrombosis — clot in a deep vein; risk of pulmonary embolism.'],
+      ['EHIT','Endothermal Heat-Induced Thrombosis — clot propagation from an ablated superficial vein into the deep system.'],
+      ['Lipodermatosclerosis','Chronic inflammation and fibrosis of lower leg skin/subcutaneous tissue due to venous disease. Hyperpigmentation, induration, "inverted champagne bottle" legs.'],
+      ['Corona Phlebectatica (CP)','Fan-shaped network of dilated intradermal veins around the ankle. Early sign of advanced venous disease.'],
+      ['Phlebolymphedema','Coexistence of CVI and lymphedema. Chronic venous hypertension overwhelms lymphatic drainage → protein-rich edema.'],
+      ['PFO','Patent Foramen Ovale — cardiac variant relevant in foam sclerotherapy due to embolic risk.'],
+    ]},
+    { title:'📊 Diagnostics & Classification', items:[
+      ['CEAP','Standard classification of chronic venous disease: C=Clinical (C0–C6), E=Etiologic, A=Anatomic, P=Pathophysiologic.'],
+      ['RPVI / PRVI','Post-Radiofrequency Venous Inspection — US performed after RFA to confirm closure and rule out EHIT.'],
+      ['LVM','Lower Venous Mapping — ultrasound assessment of reflux and anatomy.'],
+      ['Dupe','Duplicated Vein — anatomical variant where two parallel veins exist (commonly GSV).'],
+      ['TTP','Tender to Palpation — physical exam finding of localized pain.'],
+      ['Stemmer Sign','Inability to pinch skin at base of 2nd toe — positive in lymphedema.'],
+    ]},
+    { title:'💉 Procedures & Treatments', items:[
+      ['RFA','Radiofrequency Ablation — heat-based closure of refluxing veins; standard at VIP. CPT 36475/36476.'],
+      ['EVLT','Endovenous Laser Treatment — laser-based thermal ablation (less commonly used at VIP). CPT 36478.'],
+      ['UGFS','Ultrasound-Guided Foam Sclerotherapy — injection of foam sclerosant under ultrasound to close veins.'],
+      ['Varithena','Brand name foam sclerosant (polidocanol injectable foam). CPT 36465 (single vein) / 36466 (multiple veins same leg).'],
+      ['VenaSeal','Cyanoacrylate-based closure. No tumescent. No compression post-procedure. CPT 36482.'],
+      ['Sclerotherapy (Sclero)','Chemical vein closure; medical (for refluxing veins) or cosmetic (for spider veins).'],
+      ['Phlebectomy','Surgical removal of varicose veins through micro-incisions. Faster result but downtime and small scars.'],
+      ['AC','Anticoagulation — medication preventing or treating thrombosis.'],
+      ['Tumescent','Local anesthetic solution injected around the vein before thermal ablation to provide anesthesia and protect surrounding tissue.'],
+    ]},
+    { title:'⚙️ Insurance & Billing', items:[
+      ['LOMN','Letter of Medical Necessity — documentation supporting insurance coverage for procedures.'],
+      ['PA','Prior Authorization — required insurance approval before procedures.'],
+      ['IC','Insurance Criteria — clinical and imaging requirements for authorization.'],
+      ['IB','Insurance Billing — team handling claims submission and management.'],
+      ['OON','Out of Network — provider not contracted with patient\'s insurance.'],
+      ['OOP','Out of Pocket — direct patient payment.'],
+      ['CPT Code','Current Procedural Terminology — standardized billing codes for procedures.'],
+      ['ICD-10','International Classification of Diseases — diagnosis codes required on all claims.'],
+      ['HMO / PPO','Insurance plan models — HMO: restricted network; PPO: flexible network.'],
+    ]},
+    { title:'👥 Roles & Teams', items:[
+      ['APP','Advanced Practice Provider — Nurse Practitioners (NPs) and Physician Assistants (PAs).'],
+      ['RVT / RVS','Registered Vascular Technologist / Sonographer — certified vascular ultrasound specialists.'],
+      ['ROD','Regional Operations Director — oversees clinic operations for a region. First contact for local issues.'],
+      ['FD','Front Desk — handles check-in/out, forms, scheduling.'],
+      ['ASC','Ambulatory Surgery Center — outpatient procedural facility.'],
+      ['IB Team','Insurance/Billing team — receives treatment plan from sonographer, processes PA and LOMN.'],
+    ]},
+    { title:'🖥️ Systems & Tech', items:[
+      ['Nextech / NT','VIP\'s EMR (Electronic Medical Record). Clinical documentation, billing, scheduling.'],
+      ['Medwork / MW','VIP\'s CRM. Patient leads, PA status, procedure tracking.'],
+      ['Luma','Patient engagement platform. Reminders, intake forms, secure messaging.'],
+      ['Rippling','HR portal. Schedule, benefits, PTO.'],
+      ['Ring Central','Provider emergency line and post-procedure patient check-in tool.'],
+      ['GE','Ultrasound machine used at VIP.'],
+      ['Terason','Legacy ultrasound machine being phased out.'],
+      ['EMN','Electronic Medical Note — the formal clinical note in Nextech that goes to insurance/medical records.'],
+      ['Social Notes','Informal note section in Nextech for intra-office use. Not part of the official medical record.'],
+    ]},
+  ];
+
+  const allItems = sections.flatMap(s => s.items.map(([term,def]) => ({term, def, section:s.title})));
+  const filtered = q ? allItems.filter(i => i.term.toLowerCase().includes(q.toLowerCase()) || i.def.toLowerCase().includes(q.toLowerCase())) : null;
+
+  return (
+    <div>
+      <div className="card" style={{marginBottom:16}}>
+        <div className="card-title">🔤 Clinical Glossary</div>
+        <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search terms, acronyms, definitions..." style={{width:'100%',padding:'10px 16px',border:'2px solid #e2e8f0',borderRadius:10,fontFamily:'Nunito',fontSize:14,fontWeight:600,outline:'none'}} />
+        {q && <div style={{fontSize:12,color:'#94a3b8',marginTop:6,fontWeight:600}}>{filtered.length} result{filtered.length!==1?'s':''}</div>}
+      </div>
+
+      {filtered ? (
+        <div className="card">
+          {filtered.length === 0 && <div style={{textAlign:'center',padding:32,color:'#94a3b8'}}>No terms found</div>}
+          {filtered.map(({term,def,section}) => (
+            <div key={term} style={{padding:'10px 0',borderBottom:'1px solid #f1f5f9'}}>
+              <div style={{display:'flex',gap:10,alignItems:'flex-start'}}>
+                <div style={{minWidth:160,fontWeight:900,fontSize:14,color:'#1e293b'}}>{term}</div>
+                <div style={{flex:1,fontSize:13,color:'#374151',lineHeight:1.5}}>{def}</div>
+              </div>
+              <div style={{fontSize:11,color:'#94a3b8',marginTop:2,marginLeft:170}}>{section}</div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        sections.map(s=>(
+          <div key={s.title} className="card" style={{marginBottom:12}}>
+            <div className="card-title">{s.title}</div>
+            {s.items.map(([term,def])=>(
+              <div key={term} style={{display:'flex',gap:10,alignItems:'flex-start',padding:'8px 0',borderBottom:'1px solid #f1f5f9'}}>
+                <div style={{minWidth:160,fontWeight:900,fontSize:13,color:'#1e293b',flexShrink:0}}>{term}</div>
+                <div style={{fontSize:13,color:'#64748b',lineHeight:1.5}}>{def}</div>
+              </div>
+            ))}
+          </div>
+        ))
+      )}
+    </div>
+  );
+}
+
+// ── RESOURCES TAB ─────────────────────────────────────────────────────────────
+function ResourcesTab() {
+  const accessible = [
+    { label:'AJR — Interpretation of Venous Studies (Naoum, 2021)', url:'https://www.ajronline.org/doi/full/10.2214/AJR.13.11465' },
+    { label:'Elsevier eBooks (courtesy Dr. Sareh Rajaee)', url:'https://ebooks.health.elsevier.com', note:'Login: sarehsan@gmail.com / PW: ForVIPdocs1' },
+    { label:'Nextech Training Video 1 — Basics', url:'https://vimeo.com/1127938695/6abb820c40' },
+    { label:'Nextech Training Video 2', url:'https://vimeo.com/1127938863/711a46d873' },
+    { label:'Nextech Training Video 3', url:'https://vimeo.com/1127935462/c3ac9fe787' },
+  ];
+  const needSending = [
+    { cat:'📹 Nextech / Systems Videos', items:['How to sign an EMN in Nextech (MP4)','How to submit a Freshworks ticket (MP4)','Schedule color coding key'] },
+    { cat:'🩺 Clinical Training Videos', items:['Step-by-Step Guide to Ablations','RFA Training Video','Animation of Endovenous RFA','Radiofrequency Ablation of Varicose Vein — How It Works','Varithena Mechanism of Action video','How To Lower Extremity Ultrasound (video)','Vein Board Review Videos (ABVLM review)','A&P Guide to Superficial Venous US (Medtronic)'] },
+    { cat:'📄 Clinical Documents', items:['SVT Ultrasound Findings and Treatment Recommendations','EHIT Treatment Algorithm','Conservative Slideshow','Doctor Conservative Treatment Script CA — 6 week','Doctor Conservative Treatment Script CA — 12 week','Conservative Trials by Insurance Type by State','Conservative Treatment Requirement Summary (1-2024)','Doppler Insurance Cheat Sheet (6-2024)','Medtronic PPT (vein disease overview)','Versana Active Quick Reference','Aborted Procedure Protocol document'] },
+    { cat:'📋 Operations Documents', items:['How to Add a Signature to Your Email (guide)','Reimbursement Request SOP (Freshworks)','VTC Referral Directory','PTS Referral Directory','Medical Records Request Guide (non-insurance requests)'] },
+    { cat:'📚 Recommended Reading (Books)', items:['Handbook of Venous and Lymphatic Disorders (short manual — strongly recommended)','Fundamentals of Phlebology (EPUB — needs EPUB reader, or buy formally; available on iPad/Mac Books)','Atlas of Endovascular Venous Surgery','Introduction to Vascular Ultrasonography',"Rutherford's Vascular Surgery and Endovascular Therapy (2-Volume Set)",'Great Saphenous Vein Anatomy Animation (YouTube — USMLE Review)'] },
+    { cat:'📊 Google Workspace Training Links', items:['Google Drive for Beginners — Complete Course (Docs, Sheets, Forms, Slides)','Google Workspace Training Playlist','Beginner\'s Guide to Google Sheets','Gmail Basics Tutorial','Advanced Google Drive: Tips, Tricks and Tools'] },
+  ];
+  return (
+    <div>
+      <div className="card" style={{marginBottom:16}}>
+        <div className="card-title">🔗 Accessible Links</div>
+        <div style={{display:'flex',flexDirection:'column',gap:8}}>
+          {accessible.map(r=>(
+            <a key={r.url} href={r.url} target="_blank" rel="noreferrer" style={{background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:10,padding:'12px 16px',textDecoration:'none',display:'block'}}>
+              <div style={{fontWeight:800,fontSize:14,color:'#166534'}}>{r.label}</div>
+              <div style={{fontSize:11,color:'#64748b',marginTop:2}}>{r.url}</div>
+              {r.note && <div style={{fontSize:11,color:'#059669',marginTop:3,fontWeight:700}}>🔑 {r.note}</div>}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-title">📥 Links Needing Google Drive Access</div>
+        <p style={{fontSize:13,color:'#64748b',marginBottom:16}}>These resources are referenced in the Provider Manuals but require access to VIP's Google Drive or internal systems. Ask Carly to share the links or download and re-upload.</p>
+        <div style={{display:'flex',flexDirection:'column',gap:12}}>
+          {needSending.map(cat=>(
+            <div key={cat.cat} style={{background:'#f8fafc',border:'1px solid #e2e8f0',borderRadius:12,padding:'14px 18px'}}>
+              <div style={{fontWeight:900,fontSize:13,color:'#1e293b',marginBottom:8}}>{cat.cat}</div>
+              {cat.items.map(item=>(
+                <div key={item} style={{fontSize:13,color:'#64748b',padding:'4px 0',borderBottom:'1px solid #f1f5f9',display:'flex',gap:6}}>
+                  <span style={{color:'#94a3b8'}}>↳</span>{item}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── APP ───────────────────────────────────────────────────────────────────────
 const CLINICAL_TABS = [
   {id:'clinical', label:'🩺 Clinical Guide'},
   {id:'treatment', label:'💉 Treatments'},
+  {id:'procedures', label:'🔬 Procedures'},
+  {id:'complications', label:'⚠️ Complications'},
+  {id:'glossary', label:'🔤 Glossary'},
 ];
 const ADMIN_TABS = [
   {id:'start',    label:'📋 Getting Started'},
@@ -834,6 +1314,7 @@ const ADMIN_TABS = [
   {id:'contacts', label:'📞 Contacts'},
   {id:'protocols',label:'🚨 Protocols'},
   {id:'marketing',label:'🎯 Marketing'},
+  {id:'resources',label:'🔗 Resources'},
 ];
 
 function App() {
@@ -929,14 +1410,18 @@ function App() {
       {/* Content */}
       <div className="container">
         {mode === 'home'     && <HomeTab setMode={goMode} setAdminTab={setAdminTab} setClinicalTab={setClinicalTab} />}
-        {mode === 'clinical' && clinicalTab === 'clinical'  && <ClinicalTab />}
-        {mode === 'clinical' && clinicalTab === 'treatment' && <TreatmentTab />}
+        {mode === 'clinical' && clinicalTab === 'clinical'       && <ClinicalTab />}
+        {mode === 'clinical' && clinicalTab === 'treatment'      && <TreatmentTab />}
+        {mode === 'clinical' && clinicalTab === 'procedures'     && <ProceduresTab />}
+        {mode === 'clinical' && clinicalTab === 'complications'  && <ComplicationsTab />}
+        {mode === 'clinical' && clinicalTab === 'glossary'       && <GlossaryTab />}
         {mode === 'admin'    && adminTab === 'start'      && <StartTab />}
         {mode === 'admin'    && adminTab === 'systems'    && <SystemsTab />}
         {mode === 'admin'    && adminTab === 'faq'        && <FaqTab searchQ={globalSearch} />}
         {mode === 'admin'    && adminTab === 'contacts'   && <ContactsTab />}
         {mode === 'admin'    && adminTab === 'protocols'  && <ProtocolsTab />}
         {mode === 'admin'    && adminTab === 'marketing'  && <MarketingTab />}
+        {mode === 'admin'    && adminTab === 'resources'  && <ResourcesTab />}
       </div>
     </div>
   );
