@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>NextGen Hub — VIP Medical Group</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#f0f7f4;color:#1e293b;min-height:100vh}
+.navbar{background:linear-gradient(135deg,#065f46,#047857);padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(6,95,70,0.3)}
+.navbar h1{font-size:20px;font-weight:900;color:white;letter-spacing:-0.5px}
+.navbar h1 span{color:#6ee7b7}
+.navbar-sub{font-size:12px;color:#6ee7b7;margin-top:2px;font-weight:600}
+.tab-bar{background:#065f46;padding:0 20px;display:flex;gap:2px;align-items:flex-end;overflow-x:auto;scrollbar-width:none}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab{padding:8px 18px 10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;border:none;cursor:pointer;border-radius:10px 10px 0 0;transition:all 0.15s;white-space:nowrap;color:rgba(255,255,255,0.65);background:rgba(255,255,255,0.08);margin-top:6px}
+.tab:hover{background:rgba(255,255,255,0.18);color:white}
+.tab.active{background:#f0f7f4;color:#065f46;margin-top:4px;padding-bottom:12px}
+.container{max-width:1100px;margin:0 auto;padding:28px 24px}
+.stats-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px}
+.stat-card{background:white;border-radius:12px;padding:16px 20px;box-shadow:0 1px 8px rgba(0,0,0,0.06);min-width:120px}
+.stat-num{font-size:28px;font-weight:900;color:#065f46}
+.stat-label{font-size:12px;color:#64748b;font-weight:700;margin-top:2px}
+.search-hero{background:white;border-radius:16px;padding:28px;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.search-hero h2{font-size:22px;font-weight:900;color:#065f46;margin-bottom:6px}
+.search-hero p{font-size:13px;color:#64748b;margin-bottom:20px}
+.search-box{display:flex;gap:10px;flex-wrap:wrap}
+.search-main{flex:2;min-width:200px;padding:12px 16px;border:2px solid #e2e8f0;border-radius:10px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:600;transition:border-color 0.15s}
+.search-main:focus{outline:none;border-color:#047857}
+.filter{padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;background:white;color:#374151;cursor:pointer}
+.filter:focus{outline:none;border-color:#047857}
+.btn{padding:10px 20px;border-radius:10px;border:none;font-family:'Nunito',sans-serif;font-weight:800;cursor:pointer;font-size:14px;transition:all 0.15s}
+.btn-primary{background:#047857;color:white}
+.btn-primary:hover{background:#065f46}
+.btn-outline{background:white;color:#374151;border:2px solid #e2e8f0}
+.btn-outline:hover{border-color:#047857;color:#047857}
+.btn-sm{padding:7px 14px;font-size:13px}
+.btn-red{background:none;border:none;color:#ef4444;cursor:pointer;font-size:16px;padding:4px 8px}
+.results-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.results-count{font-size:13px;font-weight:800;color:#64748b}
+.article-card{background:white;border-radius:14px;margin-bottom:12px;box-shadow:0 1px 8px rgba(0,0,0,0.06);overflow:hidden;transition:box-shadow 0.2s}
+.article-card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.1)}
+.article-header{padding:18px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.article-title{font-size:16px;font-weight:900;color:#1e293b;margin-bottom:6px}
+.article-summary{font-size:13px;color:#64748b;line-height:1.5}
+.article-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:800;white-space:nowrap}
+.badge-cat{background:#d1fae5;color:#065f46}
+.badge-role{background:#dbeafe;color:#1e40af}
+.badge-mod{background:#f3e8ff;color:#6b21a8}
+.article-detail{padding:0 20px 20px;border-top:1px solid #f1f5f9}
+.detail-section{margin-top:16px}
+.detail-label{font-size:11px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
+.detail-value{font-size:14px;color:#374151;line-height:1.7;white-space:pre-wrap}
+.tips-box{background:#f0fdf4;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin-top:4px}
+.mistakes-box{background:#fff7ed;border-left:4px solid #f97316;border-radius:0 8px 8px 0;padding:12px 16px;margin-top:4px}
+.card-actions{display:flex;gap:8px;margin-top:16px;padding-top:12px;border-top:1px solid #f1f5f9}
+.empty{text-align:center;padding:60px 20px;color:#94a3b8}
+.empty-icon{font-size:48px;margin-bottom:12px}
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:white;border-radius:20px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto;padding:32px}
+.modal h2{font-size:20px;font-weight:900;color:#065f46;margin-bottom:24px}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:12px;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px}
+.form-input{width:100%;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;transition:border-color 0.15s}
+.form-input:focus{outline:none;border-color:#047857}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-actions{display:flex;gap:10px;margin-top:24px}
+.section-divider{font-size:11px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:0.08em;padding:16px 0 8px;border-top:1px solid #f1f5f9;margin-top:8px}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+const CATEGORIES = ['General','Scheduling','Clinical Documentation','Billing','Orders','Reporting','Patient Portal','Admin','Templates','Troubleshooting'];
+const ROLES = ['All Staff','Front Desk','Medical Assistant','Provider','Biller','Superuser','Manager'];
+const MODULES = ['General','Scheduling','Chart','E-Prescribing','Billing','Lab/Orders','Reporting','Patient Portal','Admin'];
+
+async function api(path, opts={}) {
+  const res = await fetch(path, { headers:{'Content-Type':'application/json'}, ...opts });
+  return res.json();
+}
+
+function ArticleModal({ article, onSave, onClose }) {
+  const [form, setForm] = useState(article || { title:'', category:'General', role:'All Staff', module:'General', summary:'', content:'', tips:'', common_mistakes:'', video_url:'' });
+  const set = (k,v) => setForm(f=>({...f,[k]:v}));
+  return (
+    <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="modal">
+        <h2>{article ? '✏️ Edit Article' : '✦ New Article'}</h2>
+        <div className="form-group"><label className="form-label">Title *</label><input className="form-input" value={form.title} onChange={e=>set('title',e.target.value)} placeholder="e.g. How to Schedule a New Patient Appointment" /></div>
+        <div className="form-grid">
+          <div className="form-group"><label className="form-label">Category</label>
+            <select className="form-input" value={form.category} onChange={e=>set('category',e.target.value)}>
+              {CATEGORIES.map(c=><option key={c}>{c}</option>)}
+            </select>
+          </div>
+          <div className="form-group"><label className="form-label">Role</label>
+            <select className="form-input" value={form.role||''} onChange={e=>set('role',e.target.value)}>
+              <option value="">All Roles</option>
+              {ROLES.map(r=><option key={r}>{r}</option>)}
+            </select>
+          </div>
+        </div>
+        <div className="form-group"><label className="form-label">Module</label>
+          <select className="form-input" value={form.module||''} onChange={e=>set('module',e.target.value)}>
+            <option value="">Select module...</option>
+            {MODULES.map(m=><option key={m}>{m}</option>)}
+          </select>
+        </div>
+        <div className="form-group"><label className="form-label">Summary <span style={{fontWeight:400,color:'#64748b'}}>(one-liner shown on card)</span></label><input className="form-input" value={form.summary||''} onChange={e=>set('summary',e.target.value)} placeholder="Brief description of what this article covers" /></div>
+
+        <div className="section-divider">Content</div>
+        <div className="form-group"><label className="form-label">Step-by-Step Instructions</label><textarea className="form-input" rows={8} value={form.content||''} onChange={e=>set('content',e.target.value)} placeholder="Write the full instructions here. Use numbered steps for clarity.&#10;&#10;1. First step&#10;2. Second step&#10;3. Third step" /></div>
+        <div className="form-group"><label className="form-label">💡 Tips & Shortcuts</label><textarea className="form-input" rows={3} value={form.tips||''} onChange={e=>set('tips',e.target.value)} placeholder="Helpful tips, keyboard shortcuts, things that make this easier..." /></div>
+        <div className="form-group"><label className="form-label">⚠️ Common Mistakes</label><textarea className="form-input" rows={3} value={form.common_mistakes||''} onChange={e=>set('common_mistakes',e.target.value)} placeholder="What do people get wrong? What should they watch out for?" /></div>
+        <div className="form-group"><label className="form-label">🎥 Video URL <span style={{fontWeight:400,color:'#64748b'}}>(optional)</span></label><input className="form-input" value={form.video_url||''} onChange={e=>set('video_url',e.target.value)} placeholder="https://..." /></div>
+
+        <div className="form-actions">
+          <button className="btn btn-primary" onClick={()=>form.title&&onSave(form)}>Save Article</button>
+          <button className="btn btn-outline" onClick={onClose}>Cancel</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ArticleCard({ a, onEdit, onDelete, defaultOpen }) {
+  const [open, setOpen] = useState(defaultOpen || false);
+  return (
+    <div className="article-card">
+      <div className="article-header" onClick={()=>setOpen(o=>!o)}>
+        <div style={{flex:1}}>
+          <div className="article-title">{a.title}</div>
+          {a.summary && <div className="article-summary">{a.summary}</div>}
+          <div className="article-badges">
+            <span className="badge badge-cat">📁 {a.category}</span>
+            {a.role && <span className="badge badge-role">👤 {a.role}</span>}
+            {a.module && <span className="badge badge-mod">🔧 {a.module}</span>}
+          </div>
+        </div>
+        <span style={{color:'#94a3b8',fontSize:12,flexShrink:0}}>{open?'▲':'▼'}</span>
+      </div>
+
+      {open && (
+        <div className="article-detail">
+          {a.content && (
+            <div className="detail-section">
+              <div className="detail-label">📋 Instructions</div>
+              <div className="detail-value">{a.content}</div>
+            </div>
+          )}
+          {a.tips && (
+            <div className="detail-section">
+              <div className="detail-label">💡 Tips & Shortcuts</div>
+              <div className="tips-box detail-value">{a.tips}</div>
+            </div>
+          )}
+          {a.common_mistakes && (
+            <div className="detail-section">
+              <div className="detail-label">⚠️ Common Mistakes</div>
+              <div className="mistakes-box detail-value">{a.common_mistakes}</div>
+            </div>
+          )}
+          {a.video_url && (
+            <div className="detail-section">
+              <div className="detail-label">🎥 Video Reference</div>
+              <a href={a.video_url} target="_blank" rel="noreferrer" style={{color:'#047857',fontWeight:700,fontSize:14}}>Watch Video ↗</a>
+            </div>
+          )}
+          <div className="card-actions">
+            <button className="btn btn-outline btn-sm" onClick={()=>onEdit(a)}>✏️ Edit</button>
+            <button className="btn-red" onClick={()=>onDelete(a.id)}>🗑</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function App() {
+  const [articles, setArticles] = useState([]);
+  const [stats, setStats] = useState({});
+  const [q, setQ] = useState('');
+  const [catFilter, setCatFilter] = useState('');
+  const [roleFilter, setRoleFilter] = useState('');
+  const [modal, setModal] = useState(null);
+  const [showAdd, setShowAdd] = useState(false);
+  const [activeTab, setActiveTab] = useState('All');
+
+  const TABS = ['All', ...CATEGORIES];
+
+  const load = async () => {
+    const params = new URLSearchParams();
+    if (q) params.set('q', q);
+    const effectiveCat = catFilter || (activeTab !== 'All' ? activeTab : '');
+    if (effectiveCat) params.set('category', effectiveCat);
+    if (roleFilter) params.set('role', roleFilter);
+    const [a, s] = await Promise.all([api(`/api/articles?${params}`), api('/api/stats')]);
+    setArticles(a); setStats(s);
+  };
+
+  useEffect(() => { load(); }, [q, catFilter, roleFilter, activeTab]);
+
+  const saveArticle = async (data) => {
+    if (modal?.id) await api(`/api/articles/${modal.id}`, {method:'PUT', body:JSON.stringify(data)});
+    else await api('/api/articles', {method:'POST', body:JSON.stringify(data)});
+    setModal(null); setShowAdd(false); load();
+  };
+
+  const deleteArticle = async (id) => {
+    if (!confirm('Delete this article?')) return;
+    await api(`/api/articles/${id}`, {method:'DELETE'});
+    load();
+  };
+
+  return (
+    <div>
+      <nav className="navbar">
+        <div>
+          <h1>⚡ NextGen <span>Hub</span></h1>
+          <div className="navbar-sub">Quick reference guide · VIP Medical Group</div>
+        </div>
+        <button className="btn btn-primary btn-sm" style={{background:'rgba(255,255,255,0.2)',border:'1px solid rgba(255,255,255,0.3)'}} onClick={()=>{setModal(null);setShowAdd(true);}}>+ Add Article</button>
+      </nav>
+
+      {/* Category tabs */}
+      <div className="tab-bar">
+        {TABS.map(t => (
+          <button key={t} className={`tab${activeTab===t?' active':''}`} onClick={()=>{setActiveTab(t);setCatFilter('');}}>{t}</button>
+        ))}
+      </div>
+
+      <div className="container">
+
+        {/* Stats */}
+        <div className="stats-row">
+          <div className="stat-card"><div className="stat-num">{stats.total||0}</div><div className="stat-label">Total Articles</div></div>
+          {(stats.byCategory||[]).slice(0,4).map(c=>(
+            <div key={c.category} className="stat-card"><div className="stat-num">{c.c}</div><div className="stat-label">{c.category}</div></div>
+          ))}
+        </div>
+
+        {/* Search */}
+        <div className="search-hero">
+          <h2>🔍 How do I...?</h2>
+          <p>Search by keyword, topic, or role. Click any result to expand the full instructions.</p>
+          <div className="search-box">
+            <input className="search-main" placeholder="Search articles, steps, tips..." value={q} onChange={e=>setQ(e.target.value)} />
+            <select className="filter" value={roleFilter} onChange={e=>setRoleFilter(e.target.value)}>
+              <option value="">All Roles</option>
+              {ROLES.map(r=><option key={r}>{r}</option>)}
+            </select>
+            {(q||catFilter||roleFilter) && <button className="btn btn-outline" onClick={()=>{setQ('');setCatFilter('');setRoleFilter('');}}>Clear</button>}
+          </div>
+        </div>
+
+        {/* Results */}
+        <div className="results-header">
+          <div className="results-count">📄 {articles.length} article{articles.length!==1?'s':''}{q||catFilter||roleFilter||activeTab!=='All'?' matching filters':''}</div>
+        </div>
+
+        {articles.length === 0 && (
+          <div className="empty">
+            <div className="empty-icon">📭</div>
+            <h3>No articles yet</h3>
+            <p style={{marginTop:8}}>Click "+ Add Article" to create your first guide</p>
+          </div>
+        )}
+
+        {articles.map(a => (
+          <ArticleCard key={a.id} a={a} onEdit={a=>{setModal(a);setShowAdd(true);}} onDelete={deleteArticle} defaultOpen={articles.length===1} />
+        ))}
+
+      </div>
+
+      {showAdd && <ArticleModal article={modal} onSave={saveArticle} onClose={()=>{setShowAdd(false);setModal(null);}} />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

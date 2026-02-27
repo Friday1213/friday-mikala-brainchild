@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: nextgen-hub
+    runtime: node
+    rootDir: nextgen-hub
+    buildCommand: npm install --build-from-source
+    startCommand: node server.js
+    envVars:
+      - key: DB_PATH
+        value: /data/nextgen.db
+    disk:
+      name: nextgen-data
+      mountPath: /data
+      sizeGB: 1
