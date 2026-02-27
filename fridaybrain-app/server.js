@@ -212,6 +212,68 @@ app.get('/api/render-services', requireAuth, async (req, res) => {
   }
 });
 
+// ── Conference routes ──────────────────────────────────────────────────────
+app.get('/api/conferences', requireAuth, (req, res) => {
+  const conferences = db.prepare('SELECT * FROM conferences ORDER BY date DESC').all();
+  res.json(conferences.map(c => ({
+    ...c,
+    agenda: db.prepare('SELECT * FROM conference_agenda WHERE conference_id=? ORDER BY sort_order').all(c.id),
+    actions: db.prepare('SELECT * FROM conference_actions WHERE conference_id=? ORDER BY created_at').all(c.id)
+  })));
+});
+
+app.post('/api/conferences', requireAuth, (req, res) => {
+  const { title, date, meeting_link, notes } = req.body;
+  const r = db.prepare('INSERT INTO conferences (title, date, meeting_link, notes) VALUES (?,?,?,?)').run(title, date, meeting_link, notes);
+  res.json({ id: r.lastInsertRowid });
+});
+
+app.put('/api/conferences/:id', requireAuth, (req, res) => {
+  const { title, date, meeting_link, notes, recap } = req.body;
+  db.prepare('UPDATE conferences SET title=?, date=?, meeting_link=?, notes=?, recap=?, updated_at=CURRENT_TIMESTAMP WHERE id=?').run(title, date, meeting_link, notes, recap, req.params.id);
+  res.json({ ok: true });
+});
+
+app.delete('/api/conferences/:id', requireAuth, (req, res) => {
+  db.prepare('DELETE FROM conferences WHERE id=?').run(req.params.id);
+  res.json({ ok: true });
+});
+
+app.post('/api/conferences/:id/agenda', requireAuth, (req, res) => {
+  const { topic, presenter, duration_min } = req.body;
+  const maxOrder = db.prepare('SELECT MAX(sort_order) as m FROM conference_agenda WHERE conference_id=?').get(req.params.id);
+  const r = db.prepare('INSERT INTO conference_agenda (conference_id, topic, presenter, duration_min, sort_order) VALUES (?,?,?,?,?)').run(req.params.id, topic, presenter, duration_min, (maxOrder.m || 0) + 1);
+  res.json({ id: r.lastInsertRowid });
+});
+
+app.put('/api/agenda/:id', requireAuth, (req, res) => {
+  const { topic, presenter, duration_min } = req.body;
+  db.prepare('UPDATE conference_agenda SET topic=?, presenter=?, duration_min=? WHERE id=?').run(topic, presenter, duration_min, req.params.id);
+  res.json({ ok: true });
+});
+
+app.delete('/api/agenda/:id', requireAuth, (req, res) => {
+  db.prepare('DELETE FROM conference_agenda WHERE id=?').run(req.params.id);
+  res.json({ ok: true });
+});
+
+app.post('/api/conferences/:id/actions', requireAuth, (req, res) => {
+  const { action_text, assigned_to } = req.body;
+  const r = db.prepare('INSERT INTO conference_actions (conference_id, action_text, assigned_to) VALUES (?,?,?)').run(req.params.id, action_text, assigned_to);
+  res.json({ id: r.lastInsertRowid });
+});
+
+app.put('/api/actions/:id', requireAuth, (req, res) => {
+  const { action_text, assigned_to, done } = req.body;
+  db.prepare('UPDATE conference_actions SET action_text=?, assigned_to=?, done=? WHERE id=?').run(action_text, assigned_to, done ? 1 : 0, req.params.id);
+  res.json({ ok: true });
+});
+
+app.delete('/api/actions/:id', requireAuth, (req, res) => {
+  db.prepare('DELETE FROM conference_actions WHERE id=?').run(req.params.id);
+  res.json({ ok: true });
+});
+
 // Internal summary endpoint — token protected, no session required
 app.get('/api/internal/summary', (req, res) => {
   const token = process.env.INTERNAL_TOKEN || 'friday-internal';

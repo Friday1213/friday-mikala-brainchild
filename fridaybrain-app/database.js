@@ -79,6 +79,38 @@ db.exec(`
   );
 `);
 
+// Conference tables
+db.exec(`
+  CREATE TABLE IF NOT EXISTS conferences (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    date TEXT,
+    meeting_link TEXT,
+    notes TEXT,
+    recap TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE TABLE IF NOT EXISTS conference_agenda (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    conference_id INTEGER NOT NULL,
+    topic TEXT NOT NULL,
+    presenter TEXT,
+    duration_min INTEGER,
+    sort_order INTEGER DEFAULT 0,
+    FOREIGN KEY (conference_id) REFERENCES conferences(id) ON DELETE CASCADE
+  );
+  CREATE TABLE IF NOT EXISTS conference_actions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    conference_id INTEGER NOT NULL,
+    action_text TEXT NOT NULL,
+    assigned_to TEXT,
+    done INTEGER DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (conference_id) REFERENCES conferences(id) ON DELETE CASCADE
+  );
+`);
+
 // Seed default team members
 const existingMembers = db.prepare('SELECT COUNT(*) as count FROM team_members').get();
 if (existingMembers.count === 0) {

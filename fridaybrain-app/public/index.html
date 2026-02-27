@@ -937,6 +937,224 @@ function ServicesPage() {
   );
 }
 
+// ── Conference Page ──────────────────────────────────────────────────────────
+function ConferencePage() {
+  const [conferences, setConferences] = useState([]);
+  const [expanded, setExpanded] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  const [editConf, setEditConf] = useState(null);
+  const [form, setForm] = useState({ title:'', date:'', meeting_link:'', notes:'' });
+  const [newTopic, setNewTopic] = useState({ topic:'', presenter:'', duration_min:'' });
+  const [newAction, setNewAction] = useState({ action_text:'', assigned_to:'' });
+  const [editingRecap, setEditingRecap] = useState(null);
+  const [recapText, setRecapText] = useState('');
+
+  const load = () => api('/api/conferences').then(setConferences);
+  useEffect(() => { load(); }, []);
+
+  const saveConf = async () => {
+    if (editConf) {
+      await api(`/api/conferences/${editConf.id}`, { method:'PUT', body: JSON.stringify(form) });
+    } else {
+      await api('/api/conferences', { method:'POST', body: JSON.stringify(form) });
+    }
+    setShowForm(false); setEditConf(null); setForm({ title:'', date:'', meeting_link:'', notes:'' });
+    load();
+  };
+
+  const deleteConf = async (id) => {
+    if (!confirm('Delete this conference?')) return;
+    await api(`/api/conferences/${id}`, { method:'DELETE' });
+    load();
+  };
+
+  const addTopic = async (confId) => {
+    if (!newTopic.topic.trim()) return;
+    await api(`/api/conferences/${confId}/agenda`, { method:'POST', body: JSON.stringify(newTopic) });
+    setNewTopic({ topic:'', presenter:'', duration_min:'' });
+    load();
+  };
+
+  const deleteTopic = async (id) => {
+    await api(`/api/agenda/${id}`, { method:'DELETE' });
+    load();
+  };
+
+  const addAction = async (confId) => {
+    if (!newAction.action_text.trim()) return;
+    await api(`/api/conferences/${confId}/actions`, { method:'POST', body: JSON.stringify(newAction) });
+    setNewAction({ action_text:'', assigned_to:'' });
+    load();
+  };
+
+  const toggleAction = async (action) => {
+    await api(`/api/actions/${action.id}`, { method:'PUT', body: JSON.stringify({ ...action, done: !action.done }) });
+    load();
+  };
+
+  const deleteAction = async (id) => {
+    await api(`/api/actions/${id}`, { method:'DELETE' });
+    load();
+  };
+
+  const saveRecap = async (conf) => {
+    await api(`/api/conferences/${conf.id}`, { method:'PUT', body: JSON.stringify({ ...conf, recap: recapText }) });
+    setEditingRecap(null);
+    load();
+  };
+
+  const totalMin = (agenda) => agenda.reduce((s, a) => s + (a.duration_min || 0), 0);
+
+  const quarterLabel = (dateStr) => {
+    if (!dateStr) return '';
+    const d = new Date(dateStr + 'T00:00:00');
+    const q = Math.ceil((d.getMonth() + 1) / 3);
+    return `Q${q} ${d.getFullYear()}`;
+  };
+
+  return (
+    <div>
+      <div className="page-header">
+        <h2>📋 APP Conference</h2>
+        <button className="btn btn-primary" onClick={()=>{ setEditConf(null); setForm({ title:'', date:'', meeting_link:'', notes:'' }); setShowForm(true); }}>+ New Session</button>
+      </div>
+
+      {showForm && (
+        <div style={{background:'#f9fafb',border:'1px solid #e5e7eb',borderRadius:12,padding:24,marginBottom:24}}>
+          <h3 style={{marginBottom:16,fontSize:16,fontWeight:700}}>{editConf ? 'Edit Session' : 'New Session'}</h3>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:12}}>
+            <div>
+              <label style={{fontSize:12,fontWeight:600,color:'#6b7280',display:'block',marginBottom:4}}>TITLE</label>
+              <input value={form.title} onChange={e=>setForm(f=>({...f,title:e.target.value}))} placeholder="e.g. Q1 2026 APP Conference" style={{width:'100%',padding:'8px 10px',border:'1px solid #d1d5db',borderRadius:6,fontSize:14,boxSizing:'border-box'}} />
+            </div>
+            <div>
+              <label style={{fontSize:12,fontWeight:600,color:'#6b7280',display:'block',marginBottom:4}}>DATE</label>
+              <input type="date" value={form.date} onChange={e=>setForm(f=>({...f,date:e.target.value}))} style={{width:'100%',padding:'8px 10px',border:'1px solid #d1d5db',borderRadius:6,fontSize:14,boxSizing:'border-box'}} />
+            </div>
+          </div>
+          <div style={{marginBottom:12}}>
+            <label style={{fontSize:12,fontWeight:600,color:'#6b7280',display:'block',marginBottom:4}}>MEETING LINK</label>
+            <input value={form.meeting_link} onChange={e=>setForm(f=>({...f,meeting_link:e.target.value}))} placeholder="Zoom / Teams link" style={{width:'100%',padding:'8px 10px',border:'1px solid #d1d5db',borderRadius:6,fontSize:14,boxSizing:'border-box'}} />
+          </div>
+          <div style={{marginBottom:16}}>
+            <label style={{fontSize:12,fontWeight:600,color:'#6b7280',display:'block',marginBottom:4}}>NOTES / PREP</label>
+            <textarea value={form.notes} onChange={e=>setForm(f=>({...f,notes:e.target.value}))} rows={3} placeholder="Pre-meeting notes, things to prepare..." style={{width:'100%',padding:'8px 10px',border:'1px solid #d1d5db',borderRadius:6,fontSize:14,resize:'vertical',boxSizing:'border-box'}} />
+          </div>
+          <div style={{display:'flex',gap:8}}>
+            <button className="btn btn-primary" onClick={saveConf}>Save</button>
+            <button className="btn btn-outline" onClick={()=>{setShowForm(false);setEditConf(null);}}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {conferences.length === 0 && !showForm && (
+        <div className="empty-state"><h3>No conferences yet</h3><p>Create your first quarterly APP session</p></div>
+      )}
+
+      {conferences.map(conf => (
+        <div key={conf.id} style={{background:'white',border:'1px solid #e5e7eb',borderRadius:12,marginBottom:16,overflow:'hidden'}}>
+          {/* Header */}
+          <div style={{padding:'16px 20px',display:'flex',alignItems:'center',justifyContent:'space-between',cursor:'pointer',background: expanded===conf.id ? '#f5f3ff' : 'white'}} onClick={()=>setExpanded(e=>e===conf.id?null:conf.id)}>
+            <div>
+              <div style={{display:'flex',alignItems:'center',gap:10}}>
+                <span style={{fontSize:18}}>📅</span>
+                <div>
+                  <div style={{fontWeight:700,fontSize:16}}>{conf.title}</div>
+                  <div style={{fontSize:13,color:'#6b7280',marginTop:2}}>
+                    {conf.date ? `${new Date(conf.date+'T00:00:00').toLocaleDateString('en-US',{weekday:'short',month:'long',day:'numeric',year:'numeric'})} · ${quarterLabel(conf.date)}` : 'Date TBD'}
+                    {conf.agenda?.length > 0 && <span style={{marginLeft:8}}>· {conf.agenda.length} topic{conf.agenda.length!==1?'s':''}{totalMin(conf.agenda)>0?` · ~${totalMin(conf.agenda)} min`:''}</span>}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style={{display:'flex',alignItems:'center',gap:8}}>
+              {conf.meeting_link && <a href={conf.meeting_link} target="_blank" rel="noreferrer" onClick={e=>e.stopPropagation()} style={{fontSize:12,color:'#6366f1',textDecoration:'none',background:'#eef2ff',padding:'4px 10px',borderRadius:20}}>Join Meeting</a>}
+              <button className="btn btn-sm btn-ghost" onClick={e=>{e.stopPropagation();setEditConf(conf);setForm({title:conf.title,date:conf.date||'',meeting_link:conf.meeting_link||'',notes:conf.notes||''});setShowForm(true);}}>✏️</button>
+              <button className="btn btn-sm btn-ghost" onClick={e=>{e.stopPropagation();deleteConf(conf.id);}} style={{color:'#ef4444'}}>🗑</button>
+              <span style={{fontSize:12,color:'#9ca3af'}}>{expanded===conf.id?'▲':'▼'}</span>
+            </div>
+          </div>
+
+          {expanded===conf.id && (
+            <div style={{padding:'0 20px 20px',borderTop:'1px solid #f3f4f6'}}>
+
+              {/* Notes */}
+              {conf.notes && (
+                <div style={{background:'#fffbeb',border:'1px solid #fde68a',borderRadius:8,padding:'10px 14px',margin:'16px 0',fontSize:14,color:'#92400e'}}>
+                  <strong>Prep Notes:</strong> {conf.notes}
+                </div>
+              )}
+
+              {/* Agenda */}
+              <div style={{marginTop:20}}>
+                <div style={{fontSize:13,fontWeight:700,color:'#374151',textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:10}}>Agenda</div>
+                {conf.agenda?.length === 0 && <div style={{fontSize:13,color:'#9ca3af',fontStyle:'italic',marginBottom:10}}>No topics yet</div>}
+                {conf.agenda?.map((item, idx) => (
+                  <div key={item.id} style={{display:'flex',alignItems:'center',gap:8,padding:'8px 12px',background:'#f9fafb',borderRadius:8,marginBottom:6}}>
+                    <span style={{fontSize:12,color:'#9ca3af',width:20,textAlign:'center',fontWeight:600}}>{idx+1}</span>
+                    <div style={{flex:1}}>
+                      <div style={{fontSize:14,fontWeight:600}}>{item.topic}</div>
+                      <div style={{fontSize:12,color:'#6b7280'}}>{item.presenter && <span>👤 {item.presenter}</span>}{item.duration_min ? <span style={{marginLeft:8}}>⏱ {item.duration_min} min</span> : ''}</div>
+                    </div>
+                    <button onClick={()=>deleteTopic(item.id)} style={{background:'none',border:'none',cursor:'pointer',color:'#d1d5db',fontSize:16,padding:4}}>×</button>
+                  </div>
+                ))}
+                {/* Add topic */}
+                <div style={{display:'flex',gap:8,marginTop:8,flexWrap:'wrap'}}>
+                  <input value={newTopic.topic} onChange={e=>setNewTopic(t=>({...t,topic:e.target.value}))} onKeyDown={e=>e.key==='Enter'&&addTopic(conf.id)} placeholder="Topic..." style={{flex:2,minWidth:120,padding:'7px 10px',border:'1px solid #d1d5db',borderRadius:6,fontSize:13}} />
+                  <input value={newTopic.presenter} onChange={e=>setNewTopic(t=>({...t,presenter:e.target.value}))} placeholder="Presenter" style={{flex:1,minWidth:90,padding:'7px 10px',border:'1px solid #d1d5db',borderRadius:6,fontSize:13}} />
+                  <input value={newTopic.duration_min} onChange={e=>setNewTopic(t=>({...t,duration_min:e.target.value}))} placeholder="Min" type="number" style={{width:60,padding:'7px 10px',border:'1px solid #d1d5db',borderRadius:6,fontSize:13}} />
+                  <button className="btn btn-sm btn-primary" onClick={()=>addTopic(conf.id)}>+ Add</button>
+                </div>
+              </div>
+
+              {/* Action Items */}
+              <div style={{marginTop:24}}>
+                <div style={{fontSize:13,fontWeight:700,color:'#374151',textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:10}}>Action Items</div>
+                {conf.actions?.length === 0 && <div style={{fontSize:13,color:'#9ca3af',fontStyle:'italic',marginBottom:10}}>No action items</div>}
+                {conf.actions?.map(action => (
+                  <div key={action.id} style={{display:'flex',alignItems:'center',gap:10,padding:'8px 12px',background:'#f9fafb',borderRadius:8,marginBottom:6}}>
+                    <input type="checkbox" checked={!!action.done} onChange={()=>toggleAction(action)} style={{cursor:'pointer',width:16,height:16,accentColor:'#6366f1'}} />
+                    <div style={{flex:1,textDecoration:action.done?'line-through':'none',color:action.done?'#9ca3af':'#374151',fontSize:14}}>
+                      {action.action_text}
+                      {action.assigned_to && <span style={{marginLeft:8,fontSize:12,color:'#6b7280'}}>→ {action.assigned_to}</span>}
+                    </div>
+                    <button onClick={()=>deleteAction(action.id)} style={{background:'none',border:'none',cursor:'pointer',color:'#d1d5db',fontSize:16,padding:4}}>×</button>
+                  </div>
+                ))}
+                <div style={{display:'flex',gap:8,marginTop:8}}>
+                  <input value={newAction.action_text} onChange={e=>setNewAction(a=>({...a,action_text:e.target.value}))} onKeyDown={e=>e.key==='Enter'&&addAction(conf.id)} placeholder="Action item..." style={{flex:2,minWidth:140,padding:'7px 10px',border:'1px solid #d1d5db',borderRadius:6,fontSize:13}} />
+                  <input value={newAction.assigned_to} onChange={e=>setNewAction(a=>({...a,assigned_to:e.target.value}))} placeholder="Assign to" style={{flex:1,minWidth:90,padding:'7px 10px',border:'1px solid #d1d5db',borderRadius:6,fontSize:13}} />
+                  <button className="btn btn-sm btn-primary" onClick={()=>addAction(conf.id)}>+ Add</button>
+                </div>
+              </div>
+
+              {/* Recap */}
+              <div style={{marginTop:24}}>
+                <div style={{fontSize:13,fontWeight:700,color:'#374151',textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:10}}>Session Recap / Notes</div>
+                {editingRecap===conf.id ? (
+                  <div>
+                    <textarea value={recapText} onChange={e=>setRecapText(e.target.value)} rows={4} style={{width:'100%',padding:'8px 10px',border:'1px solid #d1d5db',borderRadius:6,fontSize:14,resize:'vertical',boxSizing:'border-box'}} />
+                    <div style={{display:'flex',gap:8,marginTop:8}}>
+                      <button className="btn btn-sm btn-primary" onClick={()=>saveRecap(conf)}>Save</button>
+                      <button className="btn btn-sm btn-outline" onClick={()=>setEditingRecap(null)}>Cancel</button>
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{background:'#f9fafb',borderRadius:8,padding:'10px 14px',fontSize:14,color:conf.recap?'#374151':'#9ca3af',fontStyle:conf.recap?'normal':'italic',minHeight:40,cursor:'pointer'}} onClick={()=>{setEditingRecap(conf.id);setRecapText(conf.recap||'');}}>
+                    {conf.recap || 'Click to add a recap or session notes...'}
+                  </div>
+                )}
+              </div>
+
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function App() {
   const [me, setMe] = useState(null);
   const [providers, setProviders] = useState([]);
@@ -1002,6 +1220,7 @@ function App() {
         <div className="nav-right">
           <button className={`btn btn-ghost btn-sm`} onClick={()=>{setView('dashboard');setSelectedProvider(null);}}>Dashboard</button>
           <button className={`btn btn-ghost btn-sm`} onClick={()=>{setView('progress');setSelectedProvider(null);}}>Progress</button>
+          <button className={`btn btn-ghost btn-sm`} onClick={()=>{setView('conference');setSelectedProvider(null);}}>APP Conference</button>
           <button className="btn btn-ghost btn-sm" onClick={()=>setShowTeam(true)}>Team</button>
           {me.user && <span className="user">{me.user.name}</span>}
           <a href="/auth/logout"><button className="btn btn-ghost btn-sm">Sign out</button></a>
@@ -1069,6 +1288,7 @@ function App() {
         )}
 
         {view === 'progress' && <ProgressPage providers={providers} />}
+        {view === 'conference' && <ConferencePage />}
 
 
         {view === 'detail' && selectedProvider && (
