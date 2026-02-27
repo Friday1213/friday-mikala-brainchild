@@ -44,6 +44,7 @@ if (existing.count === 0) {
     ['NextGen',    '#60a5fa', 3],
     ['Audits',     '#f472b6', 4],
     ['Side Projects', '#34d399', 5],
+    ['Personal',      '#f472b6', 6],
   ].forEach(([n,c,s]) => insert.run(n, c, s));
 }
 
