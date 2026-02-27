@@ -25,7 +25,9 @@ db.exec(`
     preauth_notes TEXT,
     gotchas TEXT,
     source_url TEXT,
+    source_url_note TEXT,
     last_verified TEXT,
+    tech_summary TEXT,
     notes TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -43,6 +45,10 @@ db.exec(`
 `);
 
 try { db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_payer_name_state ON payers(name, state)'); } catch(e) {}
+// Migrations for new columns
+['tech_summary TEXT', 'source_url_note TEXT'].forEach(col => {
+  try { db.exec(`ALTER TABLE payers ADD COLUMN ${col}`); } catch(e) {}
+});
 
 const ins = db.prepare(`INSERT OR IGNORE INTO payers
   (name, state, plan_type, conservative_weeks, conservative_notes, reflux_duration_sec, vessel_diameter_mm,

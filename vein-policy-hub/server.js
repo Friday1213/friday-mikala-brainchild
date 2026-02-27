@@ -30,8 +30,8 @@ app.get('/api/payers/:id', (req, res) => {
 
 app.post('/api/payers', (req, res) => {
   const f = req.body;
-  const r = db.prepare(`INSERT INTO payers (name,state,plan_type,conservative_weeks,conservative_notes,reflux_duration_sec,vessel_diameter_mm,ultrasound_notes,ceap_required,documentation,cpt_codes,icd10_codes,preauth_required,preauth_notes,gotchas,source_url,last_verified,notes) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`)
-    .run(f.name,f.state,f.plan_type,f.conservative_weeks||null,f.conservative_notes||null,f.reflux_duration_sec||null,f.vessel_diameter_mm||null,f.ultrasound_notes||null,f.ceap_required||null,f.documentation||null,f.cpt_codes||null,f.icd10_codes||null,f.preauth_required?1:0,f.preauth_notes||null,f.gotchas||null,f.source_url||null,f.last_verified||null,f.notes||null);
+  const r = db.prepare(`INSERT INTO payers (name,state,plan_type,conservative_weeks,conservative_notes,reflux_duration_sec,vessel_diameter_mm,ultrasound_notes,ceap_required,documentation,cpt_codes,icd10_codes,preauth_required,preauth_notes,gotchas,source_url,source_url_note,last_verified,tech_summary,notes) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`)
+    .run(f.name,f.state,f.plan_type,f.conservative_weeks||null,f.conservative_notes||null,f.reflux_duration_sec||null,f.vessel_diameter_mm||null,f.ultrasound_notes||null,f.ceap_required||null,f.documentation||null,f.cpt_codes||null,f.icd10_codes||null,f.preauth_required?1:0,f.preauth_notes||null,f.gotchas||null,f.source_url||null,f.source_url_note||null,f.last_verified||null,f.tech_summary||null,f.notes||null);
   res.json({ id: r.lastInsertRowid });
 });
 
@@ -49,8 +49,8 @@ app.put('/api/payers/:id', (req, res) => {
     }
   });
 
-  db.prepare(`UPDATE payers SET name=?,state=?,plan_type=?,conservative_weeks=?,conservative_notes=?,reflux_duration_sec=?,vessel_diameter_mm=?,ultrasound_notes=?,ceap_required=?,documentation=?,cpt_codes=?,icd10_codes=?,preauth_required=?,preauth_notes=?,gotchas=?,source_url=?,last_verified=?,notes=?,updated_at=CURRENT_TIMESTAMP WHERE id=?`)
-    .run(f.name,f.state,f.plan_type,f.conservative_weeks||null,f.conservative_notes||null,f.reflux_duration_sec||null,f.vessel_diameter_mm||null,f.ultrasound_notes||null,f.ceap_required||null,f.documentation||null,f.cpt_codes||null,f.icd10_codes||null,f.preauth_required?1:0,f.preauth_notes||null,f.gotchas||null,f.source_url||null,f.last_verified||null,f.notes||null,req.params.id);
+  db.prepare(`UPDATE payers SET name=?,state=?,plan_type=?,conservative_weeks=?,conservative_notes=?,reflux_duration_sec=?,vessel_diameter_mm=?,ultrasound_notes=?,ceap_required=?,documentation=?,cpt_codes=?,icd10_codes=?,preauth_required=?,preauth_notes=?,gotchas=?,source_url=?,source_url_note=?,last_verified=?,tech_summary=?,notes=?,updated_at=CURRENT_TIMESTAMP WHERE id=?`)
+    .run(f.name,f.state,f.plan_type,f.conservative_weeks||null,f.conservative_notes||null,f.reflux_duration_sec||null,f.vessel_diameter_mm||null,f.ultrasound_notes||null,f.ceap_required||null,f.documentation||null,f.cpt_codes||null,f.icd10_codes||null,f.preauth_required?1:0,f.preauth_notes||null,f.gotchas||null,f.source_url||null,f.source_url_note||null,f.last_verified||null,f.tech_summary||null,f.notes||null,req.params.id);
   res.json({ ok: true });
 });
 

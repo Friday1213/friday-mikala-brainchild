@@ -138,6 +138,8 @@ function CodeList({ codes, type }) {
   ))}</div>;
 }
 
+const NA = <span style={{color:'#94a3b8',fontStyle:'italic',fontWeight:400}}>Not mentioned in policy</span>;
+
 function PayerCard({ p, onEdit, onDelete, defaultOpen }) {
   const [open, setOpen] = useState(defaultOpen || false);
   return (
@@ -153,8 +155,8 @@ function PayerCard({ p, onEdit, onDelete, defaultOpen }) {
             {p.notes && p.notes.includes('NEEDS REVIEW') && <span className="badge" style={{background:'#fef3c7',color:'#92400e',border:'1px solid #fcd34d'}}>🔍 Needs Review</span>}
             {p.plan_type && <TypeBadge type={p.plan_type} />}
             {p.preauth_required === 1 && <span className="badge badge-preauth">⚠️ Prior Auth Required</span>}
-            {p.conservative_weeks && <span className="badge badge-weeks">🗓 {p.conservative_weeks} wk conservative</span>}
-            {p.reflux_duration_sec && <span className="badge badge-reflux">📊 Reflux >{p.reflux_duration_sec}s</span>}
+            {p.conservative_weeks != null ? <span className="badge badge-weeks">🗓 {p.conservative_weeks === 0 ? 'No conservative req.' : `${p.conservative_weeks} wk conservative`}</span> : <span className="badge" style={{background:'#f1f5f9',color:'#94a3b8'}}>🗓 Conservative: not mentioned</span>}
+            {p.reflux_duration_sec ? <span className="badge badge-reflux">📊 Reflux >{p.reflux_duration_sec}s</span> : <span className="badge" style={{background:'#f1f5f9',color:'#94a3b8'}}>📊 Reflux: not mentioned</span>}
             {p.ceap_required && <span className="badge badge-ceap">CEAP {p.ceap_required}</span>}
           </div>
         </div>
@@ -163,28 +165,48 @@ function PayerCard({ p, onEdit, onDelete, defaultOpen }) {
 
       {open && (
         <div className="payer-detail">
+
+          {/* Tech Summary — prominent at top */}
+          <div style={{background:'#1e3a8a',borderRadius:10,padding:'14px 18px',marginBottom:16}}>
+            <div style={{fontSize:11,fontWeight:800,color:'#93c5fd',textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:6}}>👩‍⚕️ Tech Summary</div>
+            {p.tech_summary
+              ? <div style={{color:'white',fontSize:14,lineHeight:1.6,whiteSpace:'pre-wrap'}}>{p.tech_summary}</div>
+              : <div style={{color:'rgba(255,255,255,0.4)',fontSize:13,fontStyle:'italic'}}>No tech summary yet — click Edit to add one.</div>
+            }
+          </div>
+
           <div className="detail-grid">
 
-            {p.conservative_notes && (
-              <div className="detail-section highlight" style={{gridColumn:'1/-1'}}>
-                <div className="detail-label">🗓 Conservative Treatment Requirement</div>
-                <div className="detail-value">{p.conservative_notes}</div>
-              </div>
-            )}
+            <div className="detail-section highlight" style={{gridColumn:'1/-1'}}>
+              <div className="detail-label">🗓 Conservative Treatment Requirement</div>
+              <div className="detail-value">{p.conservative_notes || NA}</div>
+              {p.conservative_weeks == null && <div style={{fontSize:11,color:'#f59e0b',marginTop:4}}>⚠️ Conservative trial duration not mentioned in policy — do not assume it applies</div>}
+            </div>
 
-            {p.ultrasound_notes && (
-              <div className="detail-section">
-                <div className="detail-label">📡 Ultrasound Requirements</div>
-                <div className="detail-value">{p.ultrasound_notes}</div>
-              </div>
-            )}
+            <div className="detail-section">
+              <div className="detail-label">📡 Ultrasound Requirements</div>
+              <div className="detail-value">{p.ultrasound_notes || NA}</div>
+            </div>
 
-            {p.documentation && (
-              <div className="detail-section">
-                <div className="detail-label">📋 Documentation Required</div>
-                <div className="detail-value">{p.documentation}</div>
-              </div>
-            )}
+            <div className="detail-section">
+              <div className="detail-label">📋 Documentation Required</div>
+              <div className="detail-value">{p.documentation || NA}</div>
+            </div>
+
+            <div className="detail-section">
+              <div className="detail-label">📊 Reflux Threshold</div>
+              <div className="detail-value">{p.reflux_duration_sec ? `≥ ${p.reflux_duration_sec}s (${p.reflux_duration_sec * 1000}ms)` : NA}</div>
+            </div>
+
+            <div className="detail-section">
+              <div className="detail-label">📏 Vessel Diameter</div>
+              <div className="detail-value">{p.vessel_diameter_mm ? `≥ ${p.vessel_diameter_mm}mm` : NA}</div>
+            </div>
+
+            <div className="detail-section">
+              <div className="detail-label">🔬 CEAP Required</div>
+              <div className="detail-value">{p.ceap_required || NA}</div>
+            </div>
 
             {p.preauth_notes && (
               <div className="detail-section">
@@ -223,12 +245,16 @@ function PayerCard({ p, onEdit, onDelete, defaultOpen }) {
 
           </div>
 
-          {p.source_url && (
-            <a href={p.source_url} target="_blank" rel="noreferrer" className="source-link">
-              🔗 View Source Policy ↗
-            </a>
-          )}
-          {p.last_verified && <div className="last-verified">Last verified: {p.last_verified}</div>}
+          {/* Source URL with note */}
+          <div style={{marginTop:12,padding:'10px 14px',background:'#f8fafc',borderRadius:8,fontSize:12}}>
+            <div style={{fontWeight:800,color:'#475569',marginBottom:4}}>🔗 Policy Source</div>
+            {p.source_url
+              ? <a href={p.source_url} target="_blank" rel="noreferrer" className="source-link" style={{display:'inline'}}>View Source Policy ↗</a>
+              : <span style={{color:'#94a3b8',fontStyle:'italic'}}>No source URL on file</span>
+            }
+            {p.source_url_note && <div style={{color:'#64748b',marginTop:4}}>ℹ️ {p.source_url_note}</div>}
+            {p.last_verified && <div className="last-verified" style={{marginTop:4}}>Last verified: {p.last_verified}</div>}
+          </div>
 
           <div className="card-actions">
             <button className="btn btn-outline btn-sm" onClick={()=>onEdit(p)}>✏️ Edit</button>
@@ -288,12 +314,24 @@ function PayerModal({ payer, onSave, onClose }) {
         </div>
         {form.preauth_required ? <div className="form-group"><label className="form-label">Prior Auth Notes</label><textarea className="form-input" rows={2} value={form.preauth_notes||''} onChange={e=>set('preauth_notes',e.target.value)} placeholder="Portal name, turnaround time, submission tips..." /></div> : null}
 
+        <div className="section-divider">Tech Summary</div>
+        <div className="form-group">
+          <label className="form-label">👩‍⚕️ Tech Summary <span style={{fontWeight:400,color:'#64748b'}}>(shown prominently at top of card — write for techs, not policy verbatim)</span></label>
+          <textarea className="form-input" rows={4} value={form.tech_summary||''} onChange={e=>set('tech_summary',e.target.value)} placeholder="e.g. 3-month conservative req. with stockings. Need junction reflux + GSV ≥4.5mm. Prior auth via AIM. Document compliance at every visit or they'll deny. No Varithena coverage." />
+        </div>
+
         <div className="section-divider">Gotchas & Notes</div>
         <div className="form-group"><label className="form-label">🚨 Gotchas / Watch Out For</label><textarea className="form-input" rows={3} value={form.gotchas||''} onChange={e=>set('gotchas',e.target.value)} placeholder="Common denial reasons, tricky requirements, things that get people..." /></div>
         <div className="form-group"><label className="form-label">Additional Notes</label><textarea className="form-input" rows={2} value={form.notes||''} onChange={e=>set('notes',e.target.value)} /></div>
+
+        <div className="section-divider">Source</div>
         <div className="form-grid">
           <div className="form-group"><label className="form-label">Source URL</label><input className="form-input" value={form.source_url||''} onChange={e=>set('source_url',e.target.value)} placeholder="https://..." /></div>
           <div className="form-group"><label className="form-label">Last Verified Date</label><input type="date" className="form-input" value={form.last_verified||''} onChange={e=>set('last_verified',e.target.value)} /></div>
+        </div>
+        <div className="form-group">
+          <label className="form-label">Source Note <span style={{fontWeight:400,color:'#64748b'}}>(e.g. "BCBS uses Carelon policy" or "This URL requires provider login")</span></label>
+          <input className="form-input" value={form.source_url_note||''} onChange={e=>set('source_url_note',e.target.value)} placeholder="e.g. BCBS uses Carelon/AIM for prior auth decisions — policy URL may differ from auth criteria" />
         </div>
 
         <div className="form-actions">
