@@ -835,6 +835,78 @@ function TeamSettings({ onClose }) {
   );
 }
 
+function ServicesPage() {
+  const [services, setServices] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const [lastRefresh, setLastRefresh] = React.useState(null);
+
+  const load = () => {
+    setLoading(true);
+    api('/api/render-services').then(data => {
+      setServices(data.services || []);
+      setLastRefresh(new Date());
+      setLoading(false);
+    }).catch(() => setLoading(false));
+  };
+
+  React.useEffect(() => { load(); const t = setInterval(load, 60000); return () => clearInterval(t); }, []);
+
+  const statusColor = s => s === 'live' ? '#059669' : s === 'build_in_progress' || s === 'deploy_in_progress' ? '#d97706' : '#dc2626';
+  const statusBg = s => s === 'live' ? '#d1fae5' : s === 'build_in_progress' || s === 'deploy_in_progress' ? '#fef3c7' : '#fee2e2';
+  const statusLabel = s => s === 'live' ? '● Live' : s === 'build_in_progress' ? '⟳ Building' : s === 'deploy_in_progress' ? '⟳ Deploying' : s || 'Unknown';
+
+  const live = services.filter(s => s.status === 'live').length;
+  const deploying = services.filter(s => ['build_in_progress','deploy_in_progress'].includes(s.status)).length;
+  const down = services.filter(s => !['live','build_in_progress','deploy_in_progress'].includes(s.status) && s.status).length;
+
+  return (
+    <div>
+      <div className="page-header">
+        <h2>Render Services</h2>
+        <div style={{display:'flex',alignItems:'center',gap:12}}>
+          {lastRefresh && <span style={{fontSize:12,color:'#6b7280'}}>Last updated {lastRefresh.toLocaleTimeString()}</span>}
+          <button className="btn btn-outline btn-sm" onClick={load}>↻ Refresh</button>
+        </div>
+      </div>
+      <div style={{display:'flex',gap:12,marginBottom:24,flexWrap:'wrap'}}>
+        <div className="card" style={{flex:1,minWidth:120,textAlign:'center',padding:'16px'}}>
+          <div style={{fontSize:28,fontWeight:700,color:'#2563eb'}}>{services.length}</div>
+          <div style={{fontSize:12,color:'#6b7280',marginTop:4}}>Total Services</div>
+        </div>
+        <div className="card" style={{flex:1,minWidth:120,textAlign:'center',padding:'16px'}}>
+          <div style={{fontSize:28,fontWeight:700,color:'#059669'}}>{live}</div>
+          <div style={{fontSize:12,color:'#6b7280',marginTop:4}}>Live</div>
+        </div>
+        <div className="card" style={{flex:1,minWidth:120,textAlign:'center',padding:'16px'}}>
+          <div style={{fontSize:28,fontWeight:700,color:'#d97706'}}>{deploying}</div>
+          <div style={{fontSize:12,color:'#6b7280',marginTop:4}}>Deploying</div>
+        </div>
+        <div className="card" style={{flex:1,minWidth:120,textAlign:'center',padding:'16px'}}>
+          <div style={{fontSize:28,fontWeight:700,color:'#dc2626'}}>{down}</div>
+          <div style={{fontSize:12,color:'#6b7280',marginTop:4}}>Down</div>
+        </div>
+      </div>
+      {loading ? <div style={{textAlign:'center',padding:40,color:'#6b7280'}}>Loading services...</div> : (
+        <div style={{display:'flex',flexDirection:'column',gap:12}}>
+          {services.map(s => (
+            <div key={s.id} className="card" style={{padding:'16px 20px',display:'flex',alignItems:'center',gap:16,flexWrap:'wrap',borderLeft:`4px solid ${statusColor(s.status)}`}}>
+              <div style={{flex:1,minWidth:200}}>
+                <div style={{fontWeight:600,fontSize:15}}>{s.name}</div>
+                <div style={{fontSize:12,color:'#6b7280',marginTop:2}}>{s.type} · {s.region || 'unknown region'}</div>
+              </div>
+              <span style={{padding:'4px 12px',borderRadius:12,fontSize:12,fontWeight:600,background:statusBg(s.status),color:statusColor(s.status)}}>{statusLabel(s.status)}</span>
+              {s.updatedAt && <span style={{fontSize:12,color:'#6b7280'}}>Updated {new Date(s.updatedAt).toLocaleDateString()}</span>}
+              <div style={{display:'flex',gap:8}}>
+                {s.dashboardUrl && <a href={s.dashboardUrl} target="_blank" rel="noreferrer"><button className="btn btn-outline btn-sm">Dashboard</button></a>}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function App() {
   const [me, setMe] = useState(null);
   const [providers, setProviders] = useState([]);
@@ -900,6 +972,7 @@ function App() {
         <div className="nav-right">
           <button className={`btn btn-ghost btn-sm`} onClick={()=>{setView('dashboard');setSelectedProvider(null);}}>Dashboard</button>
           <button className={`btn btn-ghost btn-sm`} onClick={()=>{setView('progress');setSelectedProvider(null);}}>Progress</button>
+          <button className={`btn btn-ghost btn-sm`} onClick={()=>{setView('services');setSelectedProvider(null);}}>Services</button>
           <button className="btn btn-ghost btn-sm" onClick={()=>setShowTeam(true)}>Team</button>
           {me.user && <span className="user">{me.user.name}</span>}
           <a href="/auth/logout"><button className="btn btn-ghost btn-sm">Sign out</button></a>
@@ -967,6 +1040,7 @@ function App() {
         )}
 
         {view === 'progress' && <ProgressPage providers={providers} />}
+        {view === 'services' && <ServicesPage />}
 
         {view === 'detail' && selectedProvider && (
           <ProviderDetail provider={selectedProvider} onBack={()=>{setView('dashboard');api('/api/providers').then(setProviders);}} onEdit={openEdit} />

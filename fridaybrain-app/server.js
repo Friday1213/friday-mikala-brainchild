@@ -186,4 +186,30 @@ app.delete('/api/team/:id', requireAuth, (req, res) => {
   res.json({ ok: true });
 });
 
+app.get('/api/render-services', requireAuth, async (req, res) => {
+  try {
+    const token = process.env.RENDER_TOKEN;
+    if (!token) return res.json({ services: [] });
+    const r = await fetch('https://api.render.com/v1/services?limit=50', {
+      headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' }
+    });
+    const data = await r.json();
+    const services = (data || []).map(item => {
+      const s = item.service || item;
+      return {
+        id: s.id,
+        name: s.name,
+        type: s.type,
+        status: s.suspended === 'suspended' ? 'suspended' : (s.serviceDetails?.buildCommand !== undefined ? s.status : s.status),
+        region: s.serviceDetails?.region || s.region,
+        updatedAt: s.updatedAt,
+        dashboardUrl: `https://dashboard.render.com/web/${s.id}`
+      };
+    });
+    res.json({ services });
+  } catch (e) {
+    res.status(500).json({ services: [], error: e.message });
+  }
+});
+
 app.listen(PORT, () => console.log(`FridayBrain running on port ${PORT}`));
