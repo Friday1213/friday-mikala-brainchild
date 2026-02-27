@@ -2,7 +2,7 @@
   "name": "reservation-radar",
   "version": "1.0.0",
   "main": "server.js",
-  "scripts": { "start": "node server.js" },
+  "scripts": { "start": "node server.js", "build": "npm install --build-from-source" },
   "dependencies": {
     "better-sqlite3": "^9.4.3",
     "express": "^4.18.2"
