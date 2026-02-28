@@ -1462,9 +1462,9 @@ function RussianPage() {
       } else if (q.type === 'flashcard_vocab') {
         speak(q.item.russian);
       } else if (q.type === 'mc') {
-        // Speak the prompt if it contains Russian (cyrillic check)
+        // Speak the prompt if it contains Russian — use only the uppercase form (first char before space)
         const hasCyrillic = /[\u0400-\u04FF]/.test(q.prompt);
-        if (hasCyrillic) speak(q.prompt);
+        if (hasCyrillic) speak(q.prompt.split(' ')[0]);
       }
     }, 500);
     return () => clearTimeout(timer);
