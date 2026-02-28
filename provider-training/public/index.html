@@ -1469,6 +1469,316 @@ function ResourcesTab() {
   );
 }
 
+// ── VEIN GAME ─────────────────────────────────────────────────────────────────
+function VeinGameTab() {
+  const [view, setView]           = React.useState('anterior');
+  const [mode, setMode]           = React.useState('study');
+  const [highlighted, setHL]      = React.useState(null);
+  const [quizState, setQS]        = React.useState(null);
+  const [score, setScore]         = React.useState({c:0,t:0});
+  const [feedback, setFeedback]   = React.useState(null); // 'correct'|'wrong'
+
+  const VEINS = {
+    anterior: [
+      { id:'sfj',      name:'Sapheno-Femoral Junction (SFJ)',   type:'s',
+        path:'M 103,50 L 103,50',  dot:{cx:103,cy:50},
+        desc:'Where the GSV drains into the common femoral vein at the groin crease. Key landmark — incompetence here drives most GSV reflux.' },
+      { id:'gsv',      name:'Great Saphenous Vein (GSV)',        type:'s',
+        path:'M 103,50 L 98,110 L 93,175 L 88,245 L 84,305 L 82,365 L 82,430 L 84,490 L 87,555',
+        desc:'Longest vein in the body. Runs medially from ankle to SFJ. Primary RFA target. Needs ≥3 mm diameter + ≥500 ms reflux time.' },
+      { id:'agsv',     name:'Accessory Saphenous Vein (AGSV)',   type:'s',
+        path:'M 88,245 Q 102,265 107,300 Q 108,330 100,355',
+        desc:'Runs parallel to GSV in the anterior thigh. Often the source of reflux even when the main GSV is competent. May require separate ablation.' },
+      { id:'cfv',      name:'Common Femoral Vein (CFV)',          type:'d',
+        path:'M 130,22 L 130,55 L 128,100',
+        dot:{cx:130,cy:22},
+        desc:'Receives the GSV at the SFJ. Transitions to the femoral vein distally. Always evaluate for DVT before any endovenous procedure.' },
+      { id:'fv',       name:'Femoral Vein',                       type:'d',
+        path:'M 128,100 L 126,170 L 124,240 L 122,290',
+        desc:'Continuation of CFV in the thigh. Main deep vein of the thigh — despite the old name "superficial femoral vein," this is a TRUE deep vein.' },
+      { id:'profunda', name:'Deep Femoral Vein (Profunda Femoris)', type:'d',
+        path:'M 128,100 Q 150,115 163,138 L 170,162',
+        desc:'Drains the thigh musculature. Branches off CFV/proximal femoral vein. Important collateral pathway when the femoral vein is obstructed.' },
+      { id:'pop',      name:'Popliteal Vein',                     type:'d',
+        path:'M 122,290 L 122,320 L 123,355 L 124,375',
+        desc:'Deep vein at the popliteal fossa (back of knee). Receives the SSV at the SPJ. Common site for DVT — scan carefully.' },
+      { id:'atib',     name:'Anterior Tibial Vein',               type:'d',
+        path:'M 124,375 Q 140,405 150,445 L 156,500 L 160,558',
+        desc:'Paired deep veins of the anterior compartment. Drain the dorsum of the foot and anterior leg muscles.' },
+      { id:'ptib',     name:'Posterior Tibial Vein',              type:'d',
+        path:'M 124,375 Q 107,415 101,462 L 98,518 L 96,558',
+        desc:'Paired deep veins of the posterior compartment. The largest calf deep veins. Primary route for isolated calf DVT.' },
+      { id:'peroneal', name:'Peroneal Vein',                      type:'d',
+        path:'M 124,375 Q 128,425 130,468 L 131,522 L 131,558',
+        desc:'Deep veins running in the lateral compartment between anterior and posterior tibial veins. Also commonly involved in calf DVT.' },
+    ],
+    posterior: [
+      { id:'spj',      name:'Sapheno-Popliteal Junction (SPJ)',   type:'s',
+        path:'M 130,308 L 130,308', dot:{cx:130,cy:308},
+        desc:'Where the SSV drains into the popliteal vein. Highly variable anatomy — the SPJ level ranges from mid-calf to above knee. Always confirm with duplex ultrasound.' },
+      { id:'ssv',      name:'Small Saphenous Vein (SSV)',          type:'s',
+        path:'M 164,558 L 163,495 L 160,430 L 157,375 L 151,335 L 144,315 L 130,308',
+        desc:'Posterior calf vein running from lateral ankle to SPJ. Target for RFA when posterior/lateral reflux is present. Must confirm anatomy — termination is variable.' },
+      { id:'giacomini', name:'Giacomini Vein',                    type:'s',
+        path:'M 130,308 Q 117,325 107,345 Q 97,362 90,352',
+        desc:'Thigh extension of the SSV connecting it to the GSV territory. Clinically important when SSV reflux extends proximally without a low SPJ.' },
+      { id:'pop_post', name:'Popliteal Vein (posterior view)',     type:'d',
+        path:'M 128,270 L 129,292 L 130,308 L 132,338 L 134,365',
+        desc:'Same vessel seen from behind. Receives the SSV at the SPJ. Key structure — always scan to confirm SPJ level before SSV ablation.' },
+      { id:'gastro',   name:'Gastrocnemius Veins',                 type:'d',
+        path:'M 130,365 Q 119,382 115,405 M 130,365 Q 141,384 145,408',
+        desc:'Paired muscular veins draining the gastrocnemius. Prone to isolated DVT (especially post-op or travel). Usually managed conservatively unless propagating.' },
+      { id:'soleal',   name:'Soleal Sinuses',                      type:'d',
+        path:'M 121,432 Q 119,458 120,483 L 121,512 M 139,432 Q 141,458 140,483 L 139,512',
+        desc:'Large venous sinusoids within the soleus muscle. High-risk DVT site due to slow flow. Often missed on US — require careful prone or reverse Trendelenburg scanning.' },
+    ],
+  };
+
+  const LEG_ANTERIOR = 'M 72,0 C 62,32 59,72 61,112 C 63,165 68,222 72,268 C 75,293 77,314 79,338 C 83,378 87,418 91,456 C 94,486 96,512 98,542 C 99,556 100,570 98,588 L 100,592 L 160,592 L 162,588 C 160,570 161,556 162,542 C 164,512 166,486 169,456 C 173,418 177,378 181,338 C 183,314 185,293 188,268 C 192,222 197,165 199,112 C 201,72 198,32 188,0 Z';
+  const LEG_POSTERIOR = LEG_ANTERIOR;
+
+  const legPath = view === 'anterior' ? LEG_ANTERIOR : LEG_POSTERIOR;
+  const veins   = VEINS[view];
+
+  /* ── Quiz helpers ── */
+  function startQuiz() {
+    setMode('quiz'); setScore({c:0,t:0}); pickQ(veins,[]);
+  }
+  function pickQ(vlist, used) {
+    const avail = vlist.filter(v=>!used.includes(v.id));
+    if (!avail.length) { setQS({done:true}); setHL(null); return; }
+    const tgt  = avail[Math.floor(Math.random()*avail.length)];
+    const pool = vlist.filter(v=>v.id!==tgt.id).sort(()=>Math.random()-.5).slice(0,3);
+    const opts = [...pool,tgt].sort(()=>Math.random()-.5);
+    setQS({tgt,opts,used:[...used,tgt.id]}); setFeedback(null); setHL(tgt.id);
+  }
+  function handleAnswer(id) {
+    if (feedback) return;
+    const ok = id===quizState.tgt.id;
+    setFeedback(ok?'correct':'wrong');
+    setScore(s=>({c:s.c+(ok?1:0),t:s.t+1}));
+  }
+  function switchView(v) { setView(v); setMode('study'); setHL(null); setQS(null); setFeedback(null); }
+
+  /* ── SVG colours ── */
+  const SC='#ef4444', DC='#3b82f6'; // superficial coral, deep blue
+  function vColor(v,hl) { return v.type==='s'?(hl?'#dc2626':SC):(hl?'#1d4ed8':DC); }
+
+  /* ── Styles ── */
+  const btnBase = {border:'none',cursor:'pointer',fontWeight:800,fontSize:12,borderRadius:9,padding:'8px 16px',transition:'all 0.15s'};
+
+  return (
+    <div style={{maxWidth:960,margin:'0 auto',padding:'0 16px 48px'}}>
+      {/* Header */}
+      <div style={{textAlign:'center',margin:'0 0 20px'}}>
+        <h2 style={{fontSize:24,fontWeight:900,color:'#1e3a5f',margin:'0 0 4px'}}>🧠 Vein Anatomy Game</h2>
+        <p style={{color:'#64748b',fontSize:13,margin:0}}>Learn the superficial &amp; deep veins of the lower extremity — study or quiz yourself</p>
+      </div>
+
+      {/* Control bar */}
+      <div style={{display:'flex',gap:10,justifyContent:'center',flexWrap:'wrap',marginBottom:18}}>
+        {/* View toggle */}
+        <div style={{background:'#f1f5f9',borderRadius:12,padding:4,display:'flex',gap:4}}>
+          {[['anterior','👁 Anterior/Medial'],['posterior','🔄 Posterior']].map(([v,lbl])=>(
+            <button key={v} style={{...btnBase,
+              background:view===v?'white':'transparent',
+              color:view===v?'#1e3a5f':'#64748b',
+              boxShadow:view===v?'0 1px 4px rgba(0,0,0,0.12)':'none'}}
+              onClick={()=>switchView(v)}>{lbl}</button>
+          ))}
+        </div>
+        {/* Mode toggle */}
+        <div style={{background:'#f1f5f9',borderRadius:12,padding:4,display:'flex',gap:4}}>
+          <button style={{...btnBase,background:mode==='study'?'white':'transparent',
+            color:mode==='study'?'#059669':'#64748b',
+            boxShadow:mode==='study'?'0 1px 4px rgba(0,0,0,0.12)':'none'}}
+            onClick={()=>{setMode('study');setHL(null);setQS(null);}}>📚 Study</button>
+          <button style={{...btnBase,background:mode==='quiz'?'white':'transparent',
+            color:mode==='quiz'?'#7c3aed':'#64748b',
+            boxShadow:mode==='quiz'?'0 1px 4px rgba(0,0,0,0.12)':'none'}}
+            onClick={startQuiz}>🎮 Quiz</button>
+        </div>
+        {mode==='quiz' && (
+          <div style={{background:'#7c3aed',color:'white',borderRadius:20,padding:'8px 20px',fontWeight:800,fontSize:14,display:'flex',alignItems:'center'}}>
+            ⭐ {score.c}/{score.t}
+          </div>
+        )}
+      </div>
+
+      <div style={{display:'flex',gap:24,alignItems:'flex-start',flexWrap:'wrap',justifyContent:'center'}}>
+
+        {/* ── SVG Diagram ── */}
+        <div style={{flexShrink:0,position:'relative'}}>
+          <svg width={260} height={600} viewBox="0 0 260 600"
+            style={{borderRadius:16,background:'linear-gradient(180deg,#f0f9ff 0%,#f8fafc 100%)',
+              boxShadow:'0 4px 20px rgba(30,58,95,0.12)',display:'block'}}>
+            {/* Leg silhouette */}
+            <path d={legPath} fill='#fde8d8' stroke='#e8b89a' strokeWidth={1.5} opacity={0.8}/>
+            {/* Knee cap hint */}
+            <ellipse cx={130} cy={295} rx={28} ry={18} fill='#f5d0ba' stroke='#e8b89a' strokeWidth={1} opacity={0.6}/>
+
+            {/* Veins */}
+            {veins.map(v => {
+              const hl = highlighted===v.id;
+              const col = vColor(v,hl);
+              const op  = mode==='quiz' ? (hl?1:0.08) : (highlighted&&!hl?0.38:0.9);
+              const sw  = hl ? (v.type==='s'?4.5:4) : (v.type==='s'?2.5:2);
+              const dash= v.type==='d' ? '5,3' : 'none';
+              return (
+                <g key={v.id} opacity={op} style={{cursor:mode==='study'?'pointer':'default'}}
+                  onClick={()=>mode==='study'&&setHL(h=>h===v.id?null:v.id)}>
+                  {hl && <path d={v.path} fill='none' stroke={col} strokeWidth={sw+8} opacity={0.18}
+                    strokeLinecap='round' strokeLinejoin='round'/>}
+                  <path d={v.path} fill='none' stroke={col} strokeWidth={sw}
+                    strokeDasharray={dash} strokeLinecap='round' strokeLinejoin='round'/>
+                  {v.dot && <>
+                    <circle cx={v.dot.cx} cy={v.dot.cy} r={hl?8:5} fill={col} opacity={0.25}/>
+                    <circle cx={v.dot.cx} cy={v.dot.cy} r={hl?5:3.5} fill={col}/>
+                  </>}
+                </g>
+              );
+            })}
+
+            {/* Legend */}
+            <g transform="translate(6,546)">
+              <rect width={108} height={48} rx={8} fill='white' opacity={0.92}/>
+              <line x1={8} y1={14} x2={26} y2={14} stroke={SC} strokeWidth={2.5} strokeLinecap='round'/>
+              <text x={30} y={18} fontSize={9} fontWeight={700} fill='#334155'>Superficial</text>
+              <line x1={8} y1={30} x2={26} y2={30} stroke={DC} strokeWidth={2.5} strokeLinecap='round' strokeDasharray='4,2'/>
+              <text x={30} y={34} fontSize={9} fontWeight={700} fill='#334155'>Deep (dashed)</text>
+            </g>
+
+            {/* View label */}
+            <text x={130} y={14} textAnchor='middle' fontSize={9} fontWeight={800} fill='#94a3b8'>
+              {view==='anterior'?'ANTERIOR / MEDIAL VIEW':'POSTERIOR VIEW'}
+            </text>
+          </svg>
+        </div>
+
+        {/* ── Right Panel ── */}
+        <div style={{flex:1,minWidth:280,maxWidth:420}}>
+
+          {/* STUDY MODE */}
+          {mode==='study' && (
+            <div>
+              <div style={{marginBottom:12}}>
+                <h3 style={{fontSize:15,fontWeight:900,color:'#1e3a5f',margin:'0 0 4px'}}>
+                  {view==='anterior'?'👁 Anterior / Medial View':'🔄 Posterior View'}
+                </h3>
+                <p style={{fontSize:12,color:'#64748b',margin:0}}>Click any vein in the list or diagram to highlight &amp; learn</p>
+              </div>
+              <div style={{display:'flex',gap:12,marginBottom:12}}>
+                <span style={{display:'flex',alignItems:'center',gap:5,fontSize:11,color:'#64748b'}}>
+                  <span style={{width:18,height:3,background:SC,display:'inline-block',borderRadius:2}}></span>Superficial
+                </span>
+                <span style={{display:'flex',alignItems:'center',gap:5,fontSize:11,color:'#64748b'}}>
+                  <span style={{width:18,height:3,display:'inline-block',borderRadius:2,
+                    background:`repeating-linear-gradient(90deg,${DC} 0,${DC} 4px,transparent 4px,transparent 7px)`}}></span>Deep
+                </span>
+              </div>
+              <div style={{display:'flex',flexDirection:'column',gap:6}}>
+                {veins.map(v=>{
+                  const hl=highlighted===v.id;
+                  const col=v.type==='s'?SC:DC;
+                  return (
+                    <div key={v.id} onClick={()=>setHL(h=>h===v.id?null:v.id)}
+                      style={{padding:'10px 14px',borderRadius:10,cursor:'pointer',
+                        background:hl?(v.type==='s'?'#fee2e2':'#dbeafe'):'#f8fafc',
+                        border:`1.5px solid ${hl?col:'#e2e8f0'}`,transition:'all 0.15s'}}>
+                      <div style={{display:'flex',alignItems:'center',gap:8}}>
+                        <span style={{width:10,height:10,borderRadius:'50%',flexShrink:0,background:col}}></span>
+                        <span style={{fontWeight:800,fontSize:13,color:'#1e3a5f'}}>{v.name}</span>
+                      </div>
+                      {hl && <p style={{margin:'8px 0 0 18px',fontSize:12,color:'#475569',lineHeight:1.55}}>{v.desc}</p>}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* QUIZ MODE — active */}
+          {mode==='quiz' && quizState && !quizState.done && (
+            <div>
+              <div style={{background:'#f3e8ff',borderRadius:14,padding:'16px',marginBottom:14,textAlign:'center'}}>
+                <p style={{margin:'0 0 4px',fontSize:13,color:'#7c3aed',fontWeight:800}}>❓ Which vein is highlighted?</p>
+                <p style={{margin:0,fontSize:11,color:'#94a3b8'}}>
+                  Question {quizState.used.length} of {veins.length}
+                </p>
+              </div>
+              <div style={{display:'flex',flexDirection:'column',gap:8}}>
+                {quizState.opts.map(opt=>{
+                  let bg='#f8fafc',border='#e2e8f0',col='#1e3a5f';
+                  if (feedback) {
+                    if (opt.id===quizState.tgt.id) {bg='#dcfce7';border='#22c55e';col='#166534';}
+                    else {bg='#f1f5f9';border='#cbd5e1';col='#94a3b8';}
+                  }
+                  return (
+                    <button key={opt.id} onClick={()=>handleAnswer(opt.id)}
+                      style={{padding:'12px 16px',borderRadius:10,border:`2px solid ${border}`,
+                        background:bg,color:col,fontWeight:700,fontSize:13,cursor:'pointer',
+                        textAlign:'left',transition:'all 0.15s'}}>
+                      {opt.name}
+                    </button>
+                  );
+                })}
+              </div>
+              {feedback && (
+                <div style={{marginTop:14,padding:'14px 16px',borderRadius:10,
+                  background:feedback==='correct'?'#dcfce7':'#fee2e2',
+                  border:`1.5px solid ${feedback==='correct'?'#22c55e':'#ef4444'}`}}>
+                  <p style={{margin:'0 0 4px',fontWeight:800,fontSize:13,
+                    color:feedback==='correct'?'#166534':'#991b1b'}}>
+                    {feedback==='correct'?'✅ Correct!':'❌ Incorrect — that was:'}
+                  </p>
+                  {feedback==='wrong' && <p style={{margin:'0 0 6px',fontWeight:700,fontSize:12,color:'#1e3a5f'}}>{quizState.tgt.name}</p>}
+                  <p style={{margin:'0 0 12px',fontSize:12,color:'#475569',lineHeight:1.5}}>{quizState.tgt.desc}</p>
+                  <button onClick={()=>pickQ(veins,quizState.used)}
+                    style={{padding:'8px 22px',borderRadius:8,border:'none',
+                      background:'#7c3aed',color:'white',fontWeight:800,cursor:'pointer',fontSize:13}}>
+                    Next →
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* QUIZ MODE — done */}
+          {mode==='quiz' && quizState?.done && (
+            <div style={{textAlign:'center',padding:'32px 24px',background:'#f3e8ff',borderRadius:16}}>
+              <div style={{fontSize:52,marginBottom:8}}>
+                {score.c===score.t?'🏆':score.c>=score.t*.8?'🎉':score.c>=score.t*.6?'💪':'📚'}
+              </div>
+              <h3 style={{margin:'0 0 6px',color:'#7c3aed',fontWeight:900,fontSize:20}}>Quiz Complete!</h3>
+              <p style={{fontSize:32,fontWeight:900,color:'#1e3a5f',margin:'0 0 4px'}}>
+                {score.c}/{score.t}
+              </p>
+              <p style={{color:'#64748b',fontSize:14,margin:'0 0 22px'}}>
+                {score.c===score.t?'Perfect score! You know your veins! 🌟':
+                 score.c>=score.t*.8?'Great work — almost there! 💪':
+                 score.c>=score.t*.6?'Good effort — keep studying! 📚':
+                 'Keep at it — these take time to learn! 💙'}
+              </p>
+              <div style={{display:'flex',gap:10,justifyContent:'center',flexWrap:'wrap'}}>
+                <button onClick={startQuiz}
+                  style={{padding:'10px 22px',borderRadius:10,border:'none',
+                    background:'#7c3aed',color:'white',fontWeight:800,cursor:'pointer',fontSize:14}}>
+                  🔄 Try Again
+                </button>
+                <button onClick={()=>{setMode('study');setQS(null);setHL(null);}}
+                  style={{padding:'10px 22px',borderRadius:10,border:'2px solid #7c3aed',
+                    background:'white',color:'#7c3aed',fontWeight:800,cursor:'pointer',fontSize:14}}>
+                  📚 Study Mode
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── APP ───────────────────────────────────────────────────────────────────────
 const CLINICAL_TABS = [
   {id:'clinical', label:'🩺 Clinical Guide'},
@@ -1476,6 +1786,7 @@ const CLINICAL_TABS = [
   {id:'procedures', label:'🔬 Procedures'},
   {id:'complications', label:'⚠️ Complications'},
   {id:'glossary', label:'🔤 Glossary'},
+  {id:'veingame', label:'🧠 Vein Game'},
 ];
 const ADMIN_TABS = [
   {id:'start',    label:'📋 Getting Started'},
@@ -1585,6 +1896,7 @@ function App() {
         {mode === 'clinical' && clinicalTab === 'procedures'     && <ProceduresTab />}
         {mode === 'clinical' && clinicalTab === 'complications'  && <ComplicationsTab />}
         {mode === 'clinical' && clinicalTab === 'glossary'       && <GlossaryTab />}
+        {mode === 'clinical' && clinicalTab === 'veingame'      && <VeinGameTab />}
         {mode === 'admin'    && adminTab === 'start'      && <StartTab />}
         {mode === 'admin'    && adminTab === 'systems'    && <SystemsTab />}
         {mode === 'admin'    && adminTab === 'faq'        && <FaqTab searchQ={globalSearch} />}
