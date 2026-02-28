@@ -1001,6 +1001,25 @@ function BooksPage() {
               )
             )
           ),
+          // Book Club
+          React.createElement('div', { style: { ...s.card, background: 'linear-gradient(135deg, rgba(99,60,180,0.25), rgba(60,20,120,0.2))', border: '1px solid rgba(180,130,255,0.25)' } },
+            React.createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 } },
+              React.createElement('div', { style: s.sectionTitle }, '📖 Next Book Club'),
+              React.createElement('div', { style: { background: 'rgba(180,130,255,0.15)', border: '1px solid rgba(180,130,255,0.3)', borderRadius: 20, padding: '3px 12px', fontSize: 11, fontWeight: 900, color: '#c4a0ff' } }, 'MAR 8')
+            ),
+            React.createElement('div', { style: { display: 'flex', gap: 14, alignItems: 'flex-start' } },
+              React.createElement('div', { style: { flexShrink: 0, width: 64, height: 90, borderRadius: 8, background: 'linear-gradient(135deg,#6b3fa0,#9b59b6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, boxShadow: '0 4px 16px rgba(100,50,180,0.4)' } }, '📚'),
+              React.createElement('div', { style: { flex: 1 } },
+                React.createElement('div', { style: { fontWeight: 900, fontSize: 15, color: '#fff', marginBottom: 4, lineHeight: 1.35 } }, 'The Road to Tender Hearts'),
+                React.createElement('div', { style: { fontSize: 12, color: 'rgba(255,255,255,0.55)', marginBottom: 10 } }, 'Annie Hartnett'),
+                React.createElement('div', { style: { display: 'flex', gap: 8, flexWrap: 'wrap' } },
+                  React.createElement('div', { style: { background: 'rgba(255,255,255,0.07)', borderRadius: 8, padding: '4px 10px', fontSize: 11, color: 'rgba(255,255,255,0.6)' } }, '📅 March 8, 2026'),
+                  React.createElement('div', { style: { background: 'rgba(255,255,255,0.07)', borderRadius: 8, padding: '4px 10px', fontSize: 11, color: 'rgba(255,255,255,0.6)' } }, '🕐 Time TBD')
+                )
+              )
+            )
+          ),
+
           // Favorite Genres/Shelves
           React.createElement('div', { style: s.card },
             React.createElement('div', { style: s.sectionTitle }, '🏷️ Favorite Shelves'),
