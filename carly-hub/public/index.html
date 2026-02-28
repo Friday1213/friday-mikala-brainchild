@@ -28,6 +28,9 @@
   .btn-ghost { background: rgba(255,255,255,0.1); color: white; border: none; }
   .stat-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; margin-bottom: 24px; }
   .stat-card { background: white; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 20px; text-align: center; }
+  .speak-btn { background: rgba(255,255,255,0.1); border: none; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; font-size: 18px; display: inline-flex; align-items: center; justify-content: center; margin-left: 8px; transition: background 0.2s; vertical-align: middle; }
+  .speak-btn:hover { background: rgba(255,255,255,0.2); }
+  .speak-btn:active { transform: scale(0.95); }
   .stat-num { font-size: 32px; font-weight: 800; }
   .stat-label { font-size: 12px; color: #6b7280; margin-top: 4px; }
   .progress-bar { height: 12px; background: #e5e7eb; border-radius: 6px; overflow: hidden; margin: 16px 0 8px; }
@@ -1392,6 +1395,34 @@ function RussianPage() {
     backBtn: { background: 'rgba(255,255,255,0.08)', color: 'white', border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: 13, cursor: 'pointer', marginBottom: 16 },
   };
 
+  const speak = (text, lang = 'ru-RU') => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = lang;
+    utterance.rate = 0.8;
+    utterance.pitch = 1;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  };
+
+  // Auto-speak Russian text when question changes
+  useEffect(() => {
+    if (phase !== 'quiz' || !questions.length) return;
+    const q = questions[qIdx];
+    if (!q) return;
+    const timer = setTimeout(() => {
+      if (q.type === 'flashcard_alpha') {
+        speak(q.item.sound);
+      } else if (q.type === 'flashcard_vocab') {
+        speak(q.item.russian);
+      } else if (q.type === 'mc') {
+        // Speak the prompt if it contains Russian (cyrillic check)
+        const hasCyrillic = /[\u0400-\u04FF]/.test(q.prompt);
+        if (hasCyrillic) speak(q.prompt);
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [qIdx, phase]);
+
   const refresh = () => setState(getRussianState());
 
   const startLesson = (lesson, track) => {
@@ -1504,19 +1535,28 @@ function RussianPage() {
               !flipped ?
                 React.createElement('div', null,
                   q.type === 'flashcard_alpha' ?
-                    React.createElement('div', { style: rs.bigLetter }, q.item.cyrillic) :
-                    React.createElement('div', { style: { fontSize: 28, fontWeight: 700 } }, q.item.russian),
+                    React.createElement('div', null,
+                      React.createElement('div', { style: rs.bigLetter }, q.item.cyrillic),
+                      React.createElement('button', { className: 'speak-btn', onClick: (e) => { e.stopPropagation(); speak(q.item.sound); }, title: 'Hear it' }, '🔊'),
+                      qIdx === 0 ? React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 12, marginTop: 6 } }, '🔊 Tap speaker to hear') : null
+                    ) :
+                    React.createElement('div', null,
+                      React.createElement('div', { style: { fontSize: 28, fontWeight: 700 } }, q.item.russian),
+                      React.createElement('button', { className: 'speak-btn', onClick: (e) => { e.stopPropagation(); speak(q.item.russian); }, title: 'Hear it' }, '🔊')
+                    ),
                   React.createElement('div', { style: rs.fcHint }, '👆 Tap to flip')
                 ) :
                 React.createElement('div', null,
                   q.type === 'flashcard_alpha' ?
                     React.createElement('div', null,
                       React.createElement('div', { style: { fontSize: 18, color: '#f59e0b', fontWeight: 700, marginBottom: 4 } }, q.item.sound),
-                      React.createElement('div', { style: { fontSize: 14, color: 'rgba(255,255,255,0.6)' } }, `Example: ${q.item.example}`),
+                      React.createElement('button', { className: 'speak-btn', onClick: (e) => { e.stopPropagation(); speak(q.item.sound); }, title: 'Hear it again' }, '🔊'),
+                      React.createElement('div', { style: { fontSize: 14, color: 'rgba(255,255,255,0.6)', marginTop: 8 } }, `Example: ${q.item.example}`),
                       React.createElement('div', { style: { fontSize: 12, color: 'rgba(255,255,255,0.4)' } }, q.item.exTrans)
                     ) :
                     React.createElement('div', null,
                       React.createElement('div', { style: { fontSize: 18, color: '#f59e0b', fontWeight: 600, marginBottom: 4 } }, q.item.trans),
+                      React.createElement('button', { className: 'speak-btn', onClick: (e) => { e.stopPropagation(); speak(q.item.russian); }, title: 'Hear Russian again' }, '🔊'),
                       React.createElement('div', { style: { fontSize: 20, fontWeight: 700 } }, q.item.english)
                     )
                 )
@@ -1536,13 +1576,22 @@ function RussianPage() {
         : React.createElement('div', null,
             React.createElement('div', { style: rs.qCard },
               React.createElement('div', { style: rs.promptLabel }, q.promptLabel),
-              React.createElement('div', { style: rs.prompt }, q.prompt)
+              React.createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 } },
+                React.createElement('div', { style: rs.prompt }, q.prompt),
+                /[\u0400-\u04FF]/.test(q.prompt) ? React.createElement('button', { className: 'speak-btn', onClick: () => speak(q.prompt), title: 'Hear it' }, '🔊') : null
+              )
             ),
             q.options.map((opt, i) =>
               React.createElement('button', {
                 key: i, style: rs.optionBtn(opt, q.correct),
                 onClick: () => !feedback && handleAnswer(opt)
-              }, opt)
+              },
+                /[\u0400-\u04FF]/.test(opt) ?
+                  React.createElement('span', null,
+                    opt,
+                    React.createElement('span', { style: { marginLeft: 8, fontSize: 14 }, onClick: (e) => { e.stopPropagation(); speak(opt); } }, '🔊')
+                  ) : opt
+              )
             ),
             feedback ?
               React.createElement('div', { style: rs.feedbackBar(feedback) },
