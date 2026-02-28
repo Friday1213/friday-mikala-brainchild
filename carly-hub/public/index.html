@@ -1343,6 +1343,53 @@ function RussianPage() {
   const [xpGained, setXpGained] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [xpFlash, setXpFlash] = useState(false);
+  const [ruLookupQuery, setRuLookupQuery] = useState('');
+  const [ruLookupResult, setRuLookupResult] = useState(null);
+  const [ruLookupLoading, setRuLookupLoading] = useState(false);
+  const [ruLookupDir, setRuLookupDir] = useState('auto');
+  const [ruWordLog, setRuWordLog] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('russian_word_log') || '[]'); } catch(e) { return []; }
+  });
+
+  const saveRuWordLog = (log) => {
+    const trimmed = log.slice(0, 200);
+    localStorage.setItem('russian_word_log', JSON.stringify(trimmed));
+    setRuWordLog(trimmed);
+  };
+
+  const doRuLookup = async () => {
+    const text = ruLookupQuery.trim();
+    if (!text) return;
+    setRuLookupLoading(true);
+    setRuLookupResult(null);
+    const hasCyrillic = /[\u0400-\u04FF]/.test(text);
+    const dir = ruLookupDir === 'auto' ? (hasCyrillic ? 'ru-en' : 'en-ru') : ruLookupDir;
+    const langpair = dir === 'ru-en' ? 'ru|en' : 'en|ru';
+    try {
+      const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${langpair}`);
+      const data = await res.json();
+      const translation = data.responseData.translatedText;
+      const result = { query: text, translation, direction: dir, date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) };
+      setRuLookupResult(result);
+      saveRuWordLog([result, ...ruWordLog]);
+    } catch(e) {
+      setRuLookupResult({ query: text, translation: 'Error fetching translation', direction: dir, date: '' });
+    }
+    setRuLookupLoading(false);
+  };
+
+  const deleteRuEntry = (idx) => {
+    const updated = ruWordLog.filter((_, i) => i !== idx);
+    saveRuWordLog(updated);
+  };
+
+  const speakText = (text, lang) => {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang;
+    u.rate = 0.8;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  };
 
   const rs = {
     page: { background: '#0d1117', minHeight: 'calc(100vh - 60px)', color: 'white', padding: 20, fontFamily: 'inherit' },
@@ -1694,7 +1741,76 @@ function RussianPage() {
           })
         )
       );
-    })
+    }),
+
+    // ---- LOOKUP BOX ----
+    React.createElement('div', { style: { background: '#1a2332', borderRadius: 14, padding: 20, marginTop: 24, border: '1px solid rgba(245,158,11,0.25)' } },
+      React.createElement('div', { style: { fontSize: 17, fontWeight: 700, marginBottom: 14, color: '#f59e0b' } }, '🔍 Quick Lookup'),
+      React.createElement('div', { style: { display: 'flex', gap: 8, marginBottom: 10 } },
+        React.createElement('input', {
+          type: 'text',
+          value: ruLookupQuery,
+          onChange: e => setRuLookupQuery(e.target.value),
+          onKeyDown: e => e.key === 'Enter' && doRuLookup(),
+          placeholder: 'Type a word in English or Russian…',
+          style: { flex: 1, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 8, padding: '10px 14px', color: 'white', fontSize: 15, outline: 'none' }
+        }),
+        React.createElement('button', {
+          onClick: doRuLookup,
+          style: { background: '#f59e0b', color: '#0d1117', border: 'none', borderRadius: 8, padding: '10px 18px', fontSize: 14, fontWeight: 700, cursor: 'pointer' }
+        }, ruLookupLoading ? '…' : 'Translate')
+      ),
+      React.createElement('div', { style: { display: 'flex', gap: 8, marginBottom: 14 } },
+        ['auto', 'en-ru', 'ru-en'].map(d =>
+          React.createElement('button', {
+            key: d,
+            onClick: () => setRuLookupDir(d),
+            style: { background: ruLookupDir === d ? '#f59e0b' : 'rgba(255,255,255,0.08)', color: ruLookupDir === d ? '#0d1117' : 'rgba(255,255,255,0.7)', border: 'none', borderRadius: 20, padding: '4px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }
+          }, d === 'auto' ? 'Auto' : d === 'en-ru' ? 'EN→RU' : 'RU→EN')
+        )
+      ),
+      ruLookupResult && React.createElement('div', { style: { background: 'rgba(245,158,11,0.1)', borderRadius: 10, padding: '14px 16px', marginBottom: 4, border: '1px solid rgba(245,158,11,0.2)' } },
+        React.createElement('div', { style: { fontSize: 22, fontWeight: 700, color: '#f59e0b', marginBottom: 4 } },
+          ruLookupResult.direction === 'en-ru' ? ruLookupResult.translation : ruLookupResult.query
+        ),
+        React.createElement('div', { style: { color: 'rgba(255,255,255,0.6)', fontSize: 14 } },
+          ruLookupResult.direction === 'en-ru' ? `← ${ruLookupResult.query}` : `→ ${ruLookupResult.translation}`
+        ),
+        React.createElement('button', {
+          onClick: () => speakText(ruLookupResult.direction === 'en-ru' ? ruLookupResult.translation : ruLookupResult.query, 'ru-RU'),
+          style: { marginTop: 10, background: 'rgba(245,158,11,0.2)', color: '#f59e0b', border: '1px solid rgba(245,158,11,0.4)', borderRadius: 8, padding: '6px 14px', fontSize: 13, cursor: 'pointer' }
+        }, '🔊 Hear it')
+      )
+    ),
+
+    // ---- WORD LOG ----
+    React.createElement('div', { style: { background: '#1a2332', borderRadius: 14, padding: 20, marginTop: 16, border: '1px solid rgba(255,255,255,0.08)', marginBottom: 24 } },
+      React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 } },
+        React.createElement('div', { style: { fontSize: 17, fontWeight: 700, color: '#f59e0b' } }, `📖 My Word Log  (${ruWordLog.length} word${ruWordLog.length !== 1 ? 's' : ''})`),
+        ruWordLog.length > 0 && React.createElement('button', {
+          onClick: () => { if (window.confirm('Clear all saved words?')) saveRuWordLog([]); },
+          style: { background: 'rgba(239,68,68,0.15)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '4px 12px', fontSize: 12, cursor: 'pointer' }
+        }, 'Clear All')
+      ),
+      ruWordLog.length === 0
+        ? React.createElement('div', { style: { color: 'rgba(255,255,255,0.35)', fontSize: 14, textAlign: 'center', padding: '20px 0' } }, "Start looking up words — they'll appear here!")
+        : ruWordLog.map((entry, idx) =>
+          React.createElement('div', { key: idx, style: { display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, background: idx % 2 === 0 ? 'rgba(255,255,255,0.04)' : 'transparent', marginBottom: 2 } },
+            React.createElement('span', { style: { flex: 1, fontSize: 14, color: 'white' } },
+              entry.direction === 'en-ru' ? `${entry.query} → ${entry.translation}` : `${entry.query} → ${entry.translation}`
+            ),
+            React.createElement('span', { style: { color: 'rgba(255,255,255,0.35)', fontSize: 12, whiteSpace: 'nowrap' } }, entry.date),
+            React.createElement('button', {
+              onClick: () => speakText(entry.direction === 'en-ru' ? entry.translation : entry.query, 'ru-RU'),
+              style: { background: 'none', border: 'none', cursor: 'pointer', fontSize: 15, padding: '2px 4px' }
+            }, '🔊'),
+            React.createElement('button', {
+              onClick: () => deleteRuEntry(idx),
+              style: { background: 'none', border: 'none', cursor: 'pointer', fontSize: 15, padding: '2px 4px' }
+            }, '🗑')
+          )
+        )
+    )
   );
 }
 
@@ -2091,6 +2207,53 @@ function SpanishPage() {
   const [xpGained, setXpGained] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [xpFlash, setXpFlash] = useState(false);
+  const [esLookupQuery, setEsLookupQuery] = useState('');
+  const [esLookupResult, setEsLookupResult] = useState(null);
+  const [esLookupLoading, setEsLookupLoading] = useState(false);
+  const [esLookupDir, setEsLookupDir] = useState('auto');
+  const [esWordLog, setEsWordLog] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('spanish_word_log') || '[]'); } catch(e) { return []; }
+  });
+
+  const saveEsWordLog = (log) => {
+    const trimmed = log.slice(0, 200);
+    localStorage.setItem('spanish_word_log', JSON.stringify(trimmed));
+    setEsWordLog(trimmed);
+  };
+
+  const doEsLookup = async () => {
+    const text = esLookupQuery.trim();
+    if (!text) return;
+    setEsLookupLoading(true);
+    setEsLookupResult(null);
+    const hasSpanish = /[áéíóúüñÁÉÍÓÚÜÑ]/.test(text);
+    const dir = esLookupDir === 'auto' ? (hasSpanish ? 'es-en' : 'en-es') : esLookupDir;
+    const langpair = dir === 'es-en' ? 'es|en' : 'en|es';
+    try {
+      const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${langpair}`);
+      const data = await res.json();
+      const translation = data.responseData.translatedText;
+      const result = { query: text, translation, direction: dir, date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) };
+      setEsLookupResult(result);
+      saveEsWordLog([result, ...esWordLog]);
+    } catch(e) {
+      setEsLookupResult({ query: text, translation: 'Error fetching translation', direction: dir, date: '' });
+    }
+    setEsLookupLoading(false);
+  };
+
+  const deleteEsEntry = (idx) => {
+    const updated = esWordLog.filter((_, i) => i !== idx);
+    saveEsWordLog(updated);
+  };
+
+  const speakEs = (text, lang) => {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang;
+    u.rate = 0.8;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  };
 
   const ss = {
     page: { background: '#0a1f0a', minHeight: 'calc(100vh - 60px)', color: 'white', padding: 20, fontFamily: 'inherit' },
@@ -2389,7 +2552,76 @@ function SpanishPage() {
           })
         )
       );
-    })
+    }),
+
+    // ---- LOOKUP BOX ----
+    React.createElement('div', { style: { background: '#0f2d1a', borderRadius: 14, padding: 20, marginTop: 24, border: '1px solid rgba(16,185,129,0.25)' } },
+      React.createElement('div', { style: { fontSize: 17, fontWeight: 700, marginBottom: 14, color: '#10b981' } }, '🔍 Quick Lookup'),
+      React.createElement('div', { style: { display: 'flex', gap: 8, marginBottom: 10 } },
+        React.createElement('input', {
+          type: 'text',
+          value: esLookupQuery,
+          onChange: e => setEsLookupQuery(e.target.value),
+          onKeyDown: e => e.key === 'Enter' && doEsLookup(),
+          placeholder: 'Type a word in English or Spanish…',
+          style: { flex: 1, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: 8, padding: '10px 14px', color: 'white', fontSize: 15, outline: 'none' }
+        }),
+        React.createElement('button', {
+          onClick: doEsLookup,
+          style: { background: '#10b981', color: '#0a1f0a', border: 'none', borderRadius: 8, padding: '10px 18px', fontSize: 14, fontWeight: 700, cursor: 'pointer' }
+        }, esLookupLoading ? '…' : 'Translate')
+      ),
+      React.createElement('div', { style: { display: 'flex', gap: 8, marginBottom: 14 } },
+        ['auto', 'en-es', 'es-en'].map(d =>
+          React.createElement('button', {
+            key: d,
+            onClick: () => setEsLookupDir(d),
+            style: { background: esLookupDir === d ? '#10b981' : 'rgba(255,255,255,0.08)', color: esLookupDir === d ? '#0a1f0a' : 'rgba(255,255,255,0.7)', border: 'none', borderRadius: 20, padding: '4px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }
+          }, d === 'auto' ? 'Auto' : d === 'en-es' ? 'EN→ES' : 'ES→EN')
+        )
+      ),
+      esLookupResult && React.createElement('div', { style: { background: 'rgba(16,185,129,0.1)', borderRadius: 10, padding: '14px 16px', marginBottom: 4, border: '1px solid rgba(16,185,129,0.2)' } },
+        React.createElement('div', { style: { fontSize: 22, fontWeight: 700, color: '#10b981', marginBottom: 4 } },
+          esLookupResult.direction === 'en-es' ? esLookupResult.translation : esLookupResult.query
+        ),
+        React.createElement('div', { style: { color: 'rgba(255,255,255,0.6)', fontSize: 14 } },
+          esLookupResult.direction === 'en-es' ? `← ${esLookupResult.query}` : `→ ${esLookupResult.translation}`
+        ),
+        React.createElement('button', {
+          onClick: () => speakEs(esLookupResult.direction === 'en-es' ? esLookupResult.translation : esLookupResult.query, 'es-ES'),
+          style: { marginTop: 10, background: 'rgba(16,185,129,0.2)', color: '#10b981', border: '1px solid rgba(16,185,129,0.4)', borderRadius: 8, padding: '6px 14px', fontSize: 13, cursor: 'pointer' }
+        }, '🔊 Hear it')
+      )
+    ),
+
+    // ---- WORD LOG ----
+    React.createElement('div', { style: { background: '#0f2d1a', borderRadius: 14, padding: 20, marginTop: 16, border: '1px solid rgba(255,255,255,0.08)', marginBottom: 24 } },
+      React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 } },
+        React.createElement('div', { style: { fontSize: 17, fontWeight: 700, color: '#10b981' } }, `📖 My Word Log  (${esWordLog.length} word${esWordLog.length !== 1 ? 's' : ''})`),
+        esWordLog.length > 0 && React.createElement('button', {
+          onClick: () => { if (window.confirm('Clear all saved words?')) saveEsWordLog([]); },
+          style: { background: 'rgba(239,68,68,0.15)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '4px 12px', fontSize: 12, cursor: 'pointer' }
+        }, 'Clear All')
+      ),
+      esWordLog.length === 0
+        ? React.createElement('div', { style: { color: 'rgba(255,255,255,0.35)', fontSize: 14, textAlign: 'center', padding: '20px 0' } }, "Start looking up words — they'll appear here!")
+        : esWordLog.map((entry, idx) =>
+          React.createElement('div', { key: idx, style: { display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, background: idx % 2 === 0 ? 'rgba(255,255,255,0.04)' : 'transparent', marginBottom: 2 } },
+            React.createElement('span', { style: { flex: 1, fontSize: 14, color: 'white' } },
+              `${entry.query} → ${entry.translation}`
+            ),
+            React.createElement('span', { style: { color: 'rgba(255,255,255,0.35)', fontSize: 12, whiteSpace: 'nowrap' } }, entry.date),
+            React.createElement('button', {
+              onClick: () => speakEs(entry.direction === 'en-es' ? entry.translation : entry.query, 'es-ES'),
+              style: { background: 'none', border: 'none', cursor: 'pointer', fontSize: 15, padding: '2px 4px' }
+            }, '🔊'),
+            React.createElement('button', {
+              onClick: () => deleteEsEntry(idx),
+              style: { background: 'none', border: 'none', cursor: 'pointer', fontSize: 15, padding: '2px 4px' }
+            }, '🗑')
+          )
+        )
+    )
   );
 }
 
