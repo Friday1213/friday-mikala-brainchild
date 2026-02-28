@@ -294,10 +294,11 @@ function canPlay(c,pile){
 }
 
 // ── CARD HTML ────────────────────────────────────────────────────────────────
-function cardHTML(c,sel=false,faceDown=false){
+function cardHTML(c,sel=false,faceDown=false,idx=null){
   if(faceDown)return`<div class="card cpu-card"></div>`;
   const red=RED_SUITS.has(c.suit);
-  return`<div class="card${red?' red':' black'}${sel?' selected':''}">
+  const click=idx!==null?`onclick="selectCard(${idx})"`:'' ;
+  return`<div class="card${red?' red':' black'}${sel?' selected':''}" ${click} style="touch-action:manipulation">
     <div class="rank-small">${RANKS[c.rank]}</div>${RANKS[c.rank]}<div class="suit">${c.suit}</div></div>`;
 }
 function centerCardHTML(c){
@@ -347,7 +348,7 @@ function render(){
     else el.classList.remove('valid');
   }
   document.getElementById('player-hand').innerHTML=
-    playerHand.map((c,i)=>`<div onclick="selectCard(${i})">${cardHTML(c,selected===i)}</div>`).join('');
+    playerHand.map((c,i)=>cardHTML(c,selected===i,false,i)).join('');
   document.getElementById('player-count').textContent=playerStock.length;
   document.getElementById('player-stock').style.opacity=playerStock.length?1:.25;
   document.getElementById('deal-count').textContent=deals?`${deals} deal${deals===1?'':'s'}`:'';
