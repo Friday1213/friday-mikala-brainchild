@@ -987,6 +987,244 @@ function WorkflowsView() {
 }
 // ──────────────────────────────────────────────────────────────────────────────
 
+// ── TEMPLATE REVIEW ───────────────────────────────────────────────────────────
+const TEMPLATE_REVIEWS = [
+  {
+    id: 'rfa',
+    title: 'Vein Radiofrequency Ablation (RFA)',
+    cpt: '36475 / 36476',
+    status: 'In Review',
+    color: '#1d4ed8',
+    images: [
+      '51D6F6A3-B5B1-493F-9E88-06325022660B',
+      '28F24709-C3DD-4E63-8A17-1B8FCDE5A979',
+      '0EA3D80A-4371-4F61-8BD7-79CB8DD7A788',
+      'FE866162-0E93-4C3F-8F30-B9B9DBE06414',
+      '4E0ABDB9-2395-4605-BA94-556F91C0A0C1',
+      '12FD2486-27A7-463E-B42A-A0EE6BF61971',
+      'A9F27977-69DC-4047-BF63-6439B1344902',
+      '8FBD6A3E-27C9-4141-9A27-24F253D61EFD',
+      '06A8EB54-D7D5-457B-B787-E72E8F952C01',
+      '70D59F99-B0BE-4992-A4A6-BA8677A9368F',
+      'A5EBA574-AC1B-410C-A99E-F16C9318C21D',
+      '006E3B65-8E63-43B5-B4F2-596DEC4D4B5F',
+      'CC8187D6-B265-45D5-8F5A-C7FCA241AF11',
+      '3AE56A36-2001-4DA2-8E76-9585BDE0DE7F',
+      'AAE6742E-C691-4506-8FB1-385E6EE5B1EC',
+      'BD3FE3A3-55A8-40FB-A803-75E9849805D7',
+    ],
+    fields: [
+      { label: 'Sonographer / MA', type: 'Dropdown' },
+      { label: 'Provider', type: 'Text' },
+      { label: 'Location', type: 'Text' },
+      { label: 'Side', type: 'Checkbox', options: 'Right / Left' },
+      { label: 'Link to Open Surgical Orders', type: 'Link' },
+      { label: 'Vein Ablation Procedure', type: 'Dropdown', options: 'Radiofrequency - 36475 · Laser - 36478 · Varithena - 36478 · VenaSeal - 36482' },
+      { label: 'Vein Treated', type: 'List', options: 'Great Saphenous Vein · Duplicate GSV · Small Saphenous Vein · Accessory GSV' },
+      { label: 'Vein Ablation Access Site', type: 'Dropdown', options: 'Proximal Thigh · Mid-Thigh · Distal Thigh · Below Knee · Mid-Calf' },
+      { label: 'Vein Procedure HPI / Primary Complaint', type: 'Text Input' },
+      { label: 'Volume Tumescent', type: 'Text Input' },
+      { label: 'Vein Catheter', type: 'Dropdown', options: '3CM · 7CM · 8CM' },
+      { label: 'Vein Extra Supplies', type: 'Dropdown' },
+      { label: 'Pre Procedure Scan', type: 'Section' },
+      { label: 'Pregnancy Status', type: 'Header + Checkbox', options: 'Not Pregnant' },
+      { label: 'Medications', type: 'Header + Checkboxes', options: 'Not Taking Antibiotic · Not Taking Blood Thinners' },
+      { label: 'Time Out', type: 'Text Input' },
+      { label: 'Aborted Procedure', type: 'Section', options: 'Checkbox · Reason picklist · Date/User stamp' },
+    ],
+    consultantNotes: [
+      '4-Point alert on template + Encounter Description Remark',
+      'Vein Ablation Procedure and access site linked — copy top 4 encounters from this encounter date or DB Picklist. Link launches copy forward using native NG functionality.',
+      'Include instructional text for the tumescent volume formula',
+      'Potential integration with MICS',
+      'Aborted procedure: who selects checkbox, reason picklist, date/user stamp needed',
+      'Submit to Superbill · Generate Document · Lock down fields at end',
+      'Instead of copying forward — adding links to bring in data from Procedure Note, Finalize, etc.',
+    ],
+  },
+  {
+    id: 'varithena',
+    title: 'Varithena (Foam Sclerotherapy)',
+    cpt: '36465 / 36466',
+    status: 'In Review',
+    color: '#7c3aed',
+    images: [
+      '51D6F6A3-B5B1-493F-9E88-06325022660B',
+      '28F24709-C3DD-4E63-8A17-1B8FCDE5A979',
+      'FE866162-0E93-4C3F-8F30-B9B9DBE06414',
+      '7D7B047B-D169-4888-BCDE-48AF8500EF55',
+      '9242A56E-9330-49E9-9BA7-41B1F8E0B6F1',
+      'A5EBA574-AC1B-410C-A99E-F16C9318C21D',
+      '006E3B65-8E63-43B5-B4F2-596DEC4D4B5F',
+      'CC8187D6-B265-45D5-8F5A-C7FCA241AF11',
+      '3AE56A36-2001-4DA2-8E76-9585BDE0DE7F',
+      'AAE6742E-C691-4506-8FB1-385E6EE5B1EC',
+      'BD3FE3A3-55A8-40FB-A803-75E9849805D7',
+    ],
+    fields: [
+      { label: 'Sonographer / MA', type: 'Dropdown' },
+      { label: 'Provider', type: 'Text' },
+      { label: 'Location', type: 'Text' },
+      { label: 'Side', type: 'Checkbox', options: 'Left Lower Extremity · Right Lower Extremity' },
+      { label: 'Link to Open Surgical Orders', type: 'Link' },
+      { label: 'Prior Auth', type: 'Section' },
+      { label: 'Single Vein - 36465', type: 'Dropdown', options: 'Distal GSV Only · SSV Only · Accessory Vein Only' },
+      { label: 'Multiple Vein - 36466', type: 'Dropdown', options: 'Distal GSV + Accessory Vein · SSV + Accessory Vein · Accessory Vein x 2' },
+      { label: 'Number of Access', type: 'Button/Counter' },
+      { label: 'Access Site 1', type: 'Dropdown' },
+      { label: 'Access Site 2', type: 'Dropdown' },
+      { label: 'Access Site 3', type: 'Dropdown' },
+      { label: 'Cosmetics (Complimentary)', type: 'Button', options: 'Not billed — placed at time of procedure' },
+      { label: 'Pregnancy Status', type: 'Header + Checkbox', options: 'Not Pregnant' },
+      { label: 'Medications', type: 'Header + Checkboxes', options: 'Not Taking Antibiotic · Not Taking Blood Thinners' },
+      { label: 'Time Out', type: 'Text Input' },
+      { label: 'Procedure Status', type: 'Radio', options: 'Aborted Procedure · Completed Procedure' },
+      { label: 'Pre Procedure Scan', type: 'Section' },
+    ],
+    consultantNotes: [
+      'Cosmetics: two separate documents — not billed, placed at time of procedure. Complimentary cosmetics CPT needed.',
+      'Prior Auth section at top',
+      'Ability to pull patient\'s list of diagnoses into this template',
+    ],
+  },
+  {
+    id: 'lomn',
+    title: 'Letter of Medical Necessity (LOMN)',
+    cpt: 'N/A — PA document',
+    status: 'In Review',
+    color: '#059669',
+    images: ['405B4167-B529-4B35-A0FC-C619FFF8778C'],
+    fields: [
+      { label: 'Practice / Provider info', type: 'Auto-populated' },
+      { label: 'Patient demographics', type: 'Auto-populated' },
+      { label: 'Insurance info', type: 'Auto-populated' },
+      { label: 'ICD-10 codes', type: 'Linked from encounter' },
+      { label: 'Recommended procedures', type: 'CPT codes + descriptions' },
+      { label: 'HPI narrative', type: 'Auto-generated from note' },
+      { label: 'Physical exam findings', type: 'Auto-generated' },
+      { label: 'Conservative therapy documentation', type: 'Auto-generated' },
+      { label: 'Physician signature', type: 'Digital signature' },
+    ],
+    consultantNotes: [
+      'Sample LOMN shows NYC Vein RFA request for bilateral GSV + SSV ablation',
+      'Document auto-generates from encounter data — HPI, exam, ICD-10, CPT all pulled from chart',
+    ],
+  },
+  {
+    id: 'proc-ordering',
+    title: 'Procedure Ordering',
+    cpt: 'Various',
+    status: 'Pending — needs DX and CPT/SIM input',
+    color: '#b45309',
+    images: ['FC66774E-5F58-4F4A-B549-A2D7B0A02DBF'],
+    fields: [
+      { label: 'Procedure type', type: 'Dropdown' },
+      { label: 'Side', type: 'Dropdown', options: 'Right · Left · Bilateral' },
+      { label: 'Surgery date', type: 'Date' },
+      { label: 'Provider', type: 'Dropdown' },
+      { label: 'Procedure time limit', type: 'Text' },
+      { label: 'Priority', type: 'Dropdown' },
+      { label: 'Type of service', type: 'Dropdown' },
+      { label: 'Assistant requested', type: 'Checkbox' },
+      { label: 'Special equipment', type: 'Text' },
+      { label: 'Diagnosis codes', type: 'Linked from assessment' },
+    ],
+    consultantNotes: [
+      'Carly to email TempDev with different scenarios for procedure scheduling',
+      'Needs DX codes and CPT/SIM codes defined before this template can be finalized',
+    ],
+  },
+];
+
+function TemplateReviewView() {
+  const [active, setActive] = useState('rfa');
+  const [imgIdx, setImgIdx] = useState(0);
+  const t = TEMPLATE_REVIEWS.find(t => t.id === active);
+
+  React.useEffect(() => { setImgIdx(0); }, [active]);
+
+  return (
+    <div>
+      <div style={{background:'linear-gradient(135deg,#1e3a5f,#2563eb)',borderRadius:16,padding:'20px 24px',marginBottom:20,color:'white'}}>
+        <div style={{fontWeight:900,fontSize:18,marginBottom:4}}>📐 NextGen Template Review</div>
+        <div style={{fontSize:13,opacity:0.85}}>Mockup designs from TempDev/consultant — review each template, check fields and notes, and provide corrections to the dev team.</div>
+      </div>
+
+      {/* Template picker */}
+      <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:20}}>
+        {TEMPLATE_REVIEWS.map(tr => (
+          <button key={tr.id} onClick={()=>setActive(tr.id)} style={{
+            padding:'10px 18px',borderRadius:12,border:'none',cursor:'pointer',
+            fontSize:13,fontWeight:800,
+            background: active===tr.id ? tr.color : '#e2e8f0',
+            color: active===tr.id ? 'white' : '#475569',
+            transition:'all 0.15s',
+          }}>
+            {tr.title}
+            <span style={{marginLeft:8,fontSize:11,opacity:0.8,fontWeight:600}}>CPT {tr.cpt}</span>
+          </button>
+        ))}
+      </div>
+
+      {t && (
+        <div style={{display:'grid',gridTemplateColumns:'1fr 380px',gap:16,alignItems:'start'}}>
+          {/* Left — image viewer */}
+          <div style={{background:'white',borderRadius:16,padding:20,boxShadow:'0 2px 12px rgba(0,0,0,0.06)'}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+              <div style={{fontWeight:900,fontSize:15,color:t.color}}>{t.title}</div>
+              <span style={{background: t.status.includes('Pending')?'#fef3c7':'#dbeafe', color: t.status.includes('Pending')?'#92400e':'#1e40af', padding:'3px 12px',borderRadius:20,fontSize:11,fontWeight:800}}>{t.status}</span>
+            </div>
+            <div style={{background:'#f8fafc',borderRadius:10,overflow:'hidden',marginBottom:10,border:'1px solid #e2e8f0'}}>
+              <img
+                src={`/templates/${t.images[imgIdx]}.jpg`}
+                alt={`${t.title} section ${imgIdx+1}`}
+                style={{width:'100%',display:'block'}}
+                onError={e=>{e.target.style.display='none'}}
+              />
+            </div>
+            <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:8,flexWrap:'wrap'}}>
+              <button onClick={()=>setImgIdx(i=>Math.max(0,i-1))} disabled={imgIdx===0}
+                style={{padding:'6px 16px',borderRadius:8,border:'none',background:imgIdx===0?'#e2e8f0':'#1d4ed8',color:imgIdx===0?'#94a3b8':'white',fontFamily:'Nunito',fontWeight:800,fontSize:12,cursor:imgIdx===0?'default':'pointer'}}>← Prev</button>
+              <span style={{fontSize:12,color:'#64748b',fontWeight:700}}>{imgIdx+1} / {t.images.length}</span>
+              <button onClick={()=>setImgIdx(i=>Math.min(t.images.length-1,i+1))} disabled={imgIdx===t.images.length-1}
+                style={{padding:'6px 16px',borderRadius:8,border:'none',background:imgIdx===t.images.length-1?'#e2e8f0':'#1d4ed8',color:imgIdx===t.images.length-1?'#94a3b8':'white',fontFamily:'Nunito',fontWeight:800,fontSize:12,cursor:imgIdx===t.images.length-1?'default':'pointer'}}>Next →</button>
+            </div>
+            <div style={{display:'flex',gap:4,flexWrap:'wrap',justifyContent:'center',marginTop:8}}>
+              {t.images.map((_,i)=>(
+                <button key={i} onClick={()=>setImgIdx(i)}
+                  style={{width:24,height:24,borderRadius:6,border:'none',background:imgIdx===i?t.color:'#e2e8f0',color:imgIdx===i?'white':'#64748b',fontFamily:'Nunito',fontWeight:800,fontSize:10,cursor:'pointer'}}>{i+1}</button>
+              ))}
+            </div>
+          </div>
+
+          {/* Right — fields + consultant notes */}
+          <div style={{display:'flex',flexDirection:'column',gap:12}}>
+            <div style={{background:'white',borderRadius:14,padding:18,boxShadow:'0 1px 8px rgba(0,0,0,0.06)'}}>
+              <div style={{fontWeight:900,fontSize:14,color:'#1e293b',marginBottom:12}}>📋 Template Fields</div>
+              {t.fields.map((f,i)=>(
+                <div key={i} style={{padding:'6px 0',borderBottom:'1px solid #f1f5f9',display:'flex',flexDirection:'column',gap:2}}>
+                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:8}}>
+                    <span style={{fontSize:13,fontWeight:700,color:'#1e293b'}}>{f.label}</span>
+                    <span style={{background:'#f1f5f9',color:'#64748b',fontSize:10,fontWeight:800,padding:'2px 8px',borderRadius:20,whiteSpace:'nowrap',flexShrink:0}}>{f.type}</span>
+                  </div>
+                  {f.options && <div style={{fontSize:11,color:'#94a3b8',paddingLeft:2}}>{f.options}</div>}
+                </div>
+              ))}
+            </div>
+            <div style={{background:'#fefce8',border:'2px solid #fde047',borderRadius:14,padding:18}}>
+              <div style={{fontWeight:900,fontSize:13,color:'#92400e',marginBottom:10}}>📌 Consultant Notes</div>
+              {t.consultantNotes.map((n,i)=>(
+                <div key={i} style={{fontSize:12,color:'#78350f',marginBottom:6,padding:'6px 8px',background:'rgba(255,255,255,0.6)',borderRadius:6,lineHeight:1.5}}>• {n}</div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 function TemplatesView() {
   const [active, setActive] = useState('ablation');
   return (
@@ -1011,7 +1249,7 @@ function App() {
   const [showAdd, setShowAdd] = useState(false);
   const [activeTab, setActiveTab] = useState('All');
 
-  const TABS = ['All', ...CATEGORIES, '🔀 Workflows', '🩺 Templates', '⭐ Superusers'];
+  const TABS = ['All', ...CATEGORIES, '🔀 Workflows', '🩺 Templates', '📐 Template Review', '⭐ Superusers'];
 
   const load = async () => {
     const params = new URLSearchParams();
@@ -1084,11 +1322,14 @@ function App() {
         {/* Templates tab */}
         {activeTab==='🩺 Templates' && <TemplatesView />}
 
+        {/* Template Review tab */}
+        {activeTab==='📐 Template Review' && <TemplateReviewView />}
+
         {/* Superusers tab */}
         {activeTab==='⭐ Superusers' && <SuperuserTracker />}
 
         {/* Articles */}
-        {activeTab!=='🔀 Workflows' && activeTab!=='🩺 Templates' && activeTab!=='⭐ Superusers' && <>
+        {activeTab!=='🔀 Workflows' && activeTab!=='🩺 Templates' && activeTab!=='📐 Template Review' && activeTab!=='⭐ Superusers' && <>
         <div className="results-header">
           <div className="results-count">📄 {articles.length} article{articles.length!==1?'s':''}{q||catFilter||roleFilter||activeTab!=='All'?' matching filters':''}</div>
         </div>
