@@ -1229,6 +1229,23 @@ function TemplatesView() {
   const [active, setActive] = useState('ablation');
   return (
     <div>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:20,flexWrap:'wrap',gap:10}}>
+        <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+          {[['ablation','🩺 Thermal Ablation (RF / Laser / VenaSeal)'],['varithena','💜 Varithena (Chemical Ablation)']].map(([k,label])=>(
+            <button key={k} onClick={()=>setActive(k)} style={{padding:'10px 20px',borderRadius:10,border:'none',cursor:'pointer',fontSize:13,fontWeight:800,background:active===k?(k==='varithena'?'#7c3aed':'#047857'):'#e2e8f0',color:active===k?'white':'#475569',transition:'all 0.15s'}}>{label}</button>
+          ))}
+        </div>
+        <a href="/builder.html" target="_blank" style={{display:'inline-flex',alignItems:'center',gap:6,background:'#166534',color:'white',textDecoration:'none',padding:'10px 18px',borderRadius:10,fontSize:13,fontWeight:800,boxShadow:'0 2px 8px rgba(22,101,52,0.3)'}}>🏗️ Template Builder →</a>
+      </div>
+      {active==='ablation' ? <VeinProcedureTemplate /> : <VarithenaTemplate />}
+    </div>
+  );
+}
+
+function TemplatesView_OLD() {
+  const [active, setActive] = useState('ablation');
+  return (
+    <div>
       <div style={{display:'flex',gap:8,marginBottom:20}}>
         {[['ablation','🩺 Thermal Ablation (RF / Laser / VenaSeal)'],['varithena','💜 Varithena (Chemical Ablation)']].map(([k,label])=>(
           <button key={k} onClick={()=>setActive(k)} style={{padding:'10px 20px',borderRadius:10,border:'none',cursor:'pointer',fontSize:13,fontWeight:800,background:active===k?(k==='varithena'?'#7c3aed':'#047857'):'#e2e8f0',color:active===k?'white':'#475569',transition:'all 0.15s'}}>{label}</button>

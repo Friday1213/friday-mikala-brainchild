@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NextGen Template Builder</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0fdf4;color:#1a2e1a;min-height:100vh}
+
+/* ─── NAV ─── */
+.topnav{background:#166534;color:white;padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.topnav h1{font-size:16px;font-weight:700;white-space:nowrap}
+.topnav a{color:rgba(255,255,255,.75);text-decoration:none;font-size:13px;font-weight:600}
+.topnav a:hover{color:white}
+.topnav .nav-right{display:flex;gap:12px;align-items:center}
+
+/* ─── LAYOUT ─── */
+.layout{display:grid;grid-template-columns:280px 1fr 320px;gap:0;height:calc(100vh - 56px);overflow:hidden}
+
+/* ─── LEFT: TEMPLATE LIST ─── */
+.sidebar-left{background:#fff;border-right:1px solid #d1fae5;display:flex;flex-direction:column;overflow:hidden}
+.sidebar-left .sh{background:#166534;color:white;padding:12px 16px;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:space-between}
+.tmpl-list{flex:1;overflow-y:auto;padding:8px}
+.tmpl-item{padding:10px 12px;border-radius:8px;cursor:pointer;border:1px solid transparent;margin-bottom:4px;transition:all .15s}
+.tmpl-item:hover{background:#f0fdf4;border-color:#bbf7d0}
+.tmpl-item.active{background:#dcfce7;border-color:#16a34a}
+.tmpl-item .ti-name{font-size:13px;font-weight:700;color:#166534}
+.tmpl-item .ti-cat{font-size:11px;color:#6b7280;margin-top:2px}
+.tmpl-item .ti-date{font-size:10px;color:#9ca3af;margin-top:1px}
+.new-btn{margin:10px;background:#166534;color:white;border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s}
+.new-btn:hover{background:#14532d}
+
+/* ─── CENTER: BUILDER ─── */
+.builder{display:flex;flex-direction:column;overflow:hidden;background:#f9fafb}
+.builder-head{background:#fff;border-bottom:1px solid #e5e7eb;padding:14px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.builder-head input[type=text],.builder-head select{border:1px solid #d1d5db;border-radius:8px;padding:8px 12px;font-size:14px;font-weight:600;outline:none;transition:border .15s}
+.builder-head input[type=text]:focus,.builder-head select:focus{border-color:#16a34a}
+.builder-head input[name=tname]{flex:1;min-width:180px}
+.builder-head select{background:#fff;color:#374151}
+.btn{border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-green{background:#166534;color:white}.btn-green:hover{background:#14532d}
+.btn-outline{background:white;color:#374151;border:1px solid #d1d5db}.btn-outline:hover{border-color:#9ca3af;background:#f9fafb}
+.btn-red{background:#dc2626;color:white}.btn-red:hover{background:#b91c1c}
+.btn-blue{background:#1d4ed8;color:white}.btn-blue:hover{background:#1e40af}
+.btn-sm{padding:5px 10px;font-size:11px}
+
+.sections-area{flex:1;overflow-y:auto;padding:16px 20px}
+.empty-state{text-align:center;padding:60px 20px;color:#6b7280}
+.empty-state .es-icon{font-size:48px;margin-bottom:12px}
+.empty-state p{font-size:14px}
+
+.section-card{background:white;border:1px solid #e5e7eb;border-radius:12px;margin-bottom:16px;overflow:hidden;transition:box-shadow .15s}
+.section-card:hover{box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.section-card.dragging{opacity:.5;border:2px dashed #16a34a}
+.section-head{background:#f0fdf4;border-bottom:1px solid #d1fae5;padding:10px 14px;display:flex;align-items:center;gap:8px}
+.section-head .drag-handle{cursor:grab;color:#9ca3af;font-size:16px;user-select:none}
+.section-head input{flex:1;border:none;background:transparent;font-size:14px;font-weight:700;color:#166534;outline:none}
+.section-head input::placeholder{color:#9ca3af;font-weight:400}
+.section-head .sh-actions{display:flex;gap:4px;margin-left:auto;flex-shrink:0}
+.fields-list{padding:10px 14px;display:flex;flex-direction:column;gap:6px}
+.field-row{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f9fafb;border-radius:8px;border:1px solid #f3f4f6}
+.field-row:hover{border-color:#d1fae5;background:#f0fdf4}
+.field-row .drag-handle{cursor:grab;color:#9ca3af;font-size:14px;flex-shrink:0}
+.field-row .fr-type{font-size:10px;background:#d1fae5;color:#166534;padding:2px 7px;border-radius:10px;font-weight:700;white-space:nowrap;flex-shrink:0}
+.field-row .fr-label{flex:1;font-size:13px;font-weight:600;min-width:0}
+.field-row .fr-hint{font-size:11px;color:#9ca3af;white-space:nowrap}
+.field-row .fr-actions{display:flex;gap:3px;flex-shrink:0}
+.add-field-bar{display:flex;gap:6px;padding:10px 14px;flex-wrap:wrap;border-top:1px solid #f3f4f6;background:#fafafa}
+
+/* ─── RIGHT: FIELD EDITOR + PREVIEW ─── */
+.sidebar-right{background:#fff;border-left:1px solid #d1fae5;display:flex;flex-direction:column;overflow:hidden}
+.sidebar-right .sh{background:#166534;color:white;padding:12px 16px;font-size:13px;font-weight:700;display:flex;gap:8px}
+.sr-tab{background:rgba(255,255,255,.15);border:none;color:white;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer}
+.sr-tab.active{background:white;color:#166534}
+.sr-body{flex:1;overflow-y:auto;padding:14px}
+
+/* ─── FIELD EDITOR ─── */
+.fe-label{font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;margin-top:12px;display:block}
+.fe-label:first-child{margin-top:0}
+.fe-input{width:100%;border:1px solid #d1d5db;border-radius:7px;padding:7px 10px;font-size:13px;outline:none;transition:border .15s}
+.fe-input:focus{border-color:#16a34a}
+.fe-select{width:100%;border:1px solid #d1d5db;border-radius:7px;padding:7px 10px;font-size:13px;background:white;outline:none;cursor:pointer}
+.fe-check{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;cursor:pointer}
+.fe-check input{cursor:pointer}
+.opts-list{display:flex;flex-direction:column;gap:4px;margin-top:6px}
+.opt-row{display:flex;gap:4px;align-items:center}
+.opt-row input{flex:1;border:1px solid #d1d5db;border-radius:6px;padding:5px 8px;font-size:12px;outline:none}
+.opt-row .rm-opt{background:none;border:none;color:#9ca3af;cursor:pointer;font-size:16px;padding:0 2px}
+.opt-row .rm-opt:hover{color:#dc2626}
+.add-opt-btn{background:none;border:1px dashed #d1d5db;border-radius:6px;padding:5px 10px;font-size:12px;color:#6b7280;cursor:pointer;width:100%;margin-top:4px}
+.add-opt-btn:hover{border-color:#16a34a;color:#166534}
+.no-selection{text-align:center;padding:40px 16px;color:#9ca3af;font-size:13px}
+.save-field-btn{width:100%;margin-top:16px;padding:10px;background:#166534;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer}
+.save-field-btn:hover{background:#14532d}
+
+/* ─── PREVIEW ─── */
+.preview-wrap{padding:0}
+.preview-tmpl{font-family:-apple-system,sans-serif}
+.prev-header{background:#166534;color:white;padding:14px 16px;font-size:15px;font-weight:700}
+.prev-header p{font-size:11px;font-weight:400;opacity:.75;margin-top:2px}
+.prev-section{margin-bottom:0;border-bottom:1px solid #e5e7eb}
+.prev-sh{background:#f0fdf4;padding:8px 14px;font-size:12px;font-weight:700;color:#166534;text-transform:uppercase;letter-spacing:.04em}
+.prev-fields{padding:10px 14px;display:flex;flex-direction:column;gap:10px}
+.prev-field label{display:block;font-size:11px;font-weight:700;color:#374151;margin-bottom:3px}
+.prev-field .pf-text{border:1px solid #d1d5db;border-radius:6px;padding:6px 8px;font-size:12px;background:#fafafa;color:#6b7280;width:100%}
+.prev-field .pf-cb{display:flex;align-items:center;gap:6px;font-size:12px;color:#374151}
+.prev-field .pf-cb input{pointer-events:none}
+.prev-field .pf-cbgroup{display:flex;flex-direction:column;gap:4px}
+.prev-field select{border:1px solid #d1d5db;border-radius:6px;padding:6px 8px;font-size:12px;background:#fafafa;width:100%}
+.prev-field textarea{border:1px solid #d1d5db;border-radius:6px;padding:6px 8px;font-size:12px;background:#fafafa;width:100%;resize:none;height:56px}
+.prev-divider{border:none;border-top:2px solid #e5e7eb;margin:6px 0}
+.prev-heading{font-size:13px;font-weight:700;color:#166534;padding:4px 0;border-bottom:1px solid #d1fae5;margin-bottom:4px}
+.vitals-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.vitals-grid .vf{background:#f0fdf4;border:1px solid #d1fae5;border-radius:6px;padding:6px 8px}
+.vitals-grid .vf-label{font-size:10px;font-weight:700;color:#6b7280}
+.vitals-grid .vf-input{font-size:11px;color:#9ca3af;margin-top:2px}
+
+/* ─── MODALS ─── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:white;border-radius:14px;padding:24px;max-width:420px;width:92%;max-height:90vh;overflow-y:auto}
+.modal h2{font-size:18px;font-weight:800;margin-bottom:16px;color:#166534}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+
+/* ─── FIELD TYPE PICKER ─── */
+.ftype-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}
+.ftype-btn{border:1px solid #e5e7eb;border-radius:8px;padding:10px 6px;cursor:pointer;text-align:center;background:white;transition:all .15s}
+.ftype-btn:hover,.ftype-btn.selected{border-color:#16a34a;background:#f0fdf4}
+.ftype-btn .ft-em{font-size:20px;display:block;margin-bottom:4px}
+.ftype-btn .ft-label{font-size:11px;font-weight:700;color:#374151}
+
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr;height:auto;overflow:auto}
+  .sidebar-left,.sidebar-right{max-height:300px}
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <h1>🏗️ NextGen Template Builder</h1>
+  <div class="nav-right">
+    <a href="index.html">← Back to Hub</a>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- LEFT: Template List -->
+  <div class="sidebar-left">
+    <div class="sh">
+      <span>📋 My Templates</span>
+      <span id="tmpl-count" style="opacity:.7;font-size:11px"></span>
+    </div>
+    <button class="new-btn" onclick="newTemplate()">+ New Template</button>
+    <div class="tmpl-list" id="tmpl-list"></div>
+  </div>
+
+  <!-- CENTER: Builder -->
+  <div class="builder">
+    <div class="builder-head" id="builder-head" style="display:none">
+      <input type="text" name="tname" id="tname" placeholder="Template name…" oninput="markDirty()">
+      <select id="tcat" onchange="markDirty()">
+        <option>Procedure</option>
+        <option>Intake</option>
+        <option>SOAP</option>
+        <option>Follow-Up</option>
+        <option>Discharge</option>
+        <option>Pre-Op</option>
+        <option>Post-Op</option>
+        <option>Referral</option>
+        <option>Other</option>
+      </select>
+      <input type="text" id="tdesc" placeholder="Short description (optional)" style="flex:1.5;min-width:160px" oninput="markDirty()">
+      <button class="btn btn-green" onclick="saveTemplate()">💾 Save</button>
+      <button class="btn btn-outline" onclick="previewMode()">👁 Preview</button>
+      <button class="btn btn-red btn-sm" onclick="deleteTemplate()">🗑</button>
+    </div>
+    <div class="sections-area" id="sections-area">
+      <div class="empty-state" id="empty-state">
+        <div class="es-icon">📋</div>
+        <p><strong>Select a template</strong> from the left or create a new one</p>
+        <p style="margin-top:8px;font-size:13px;color:#9ca3af">Build procedure templates with drag-and-drop sections and fields</p>
+      </div>
+    </div>
+    <div id="add-section-bar" style="display:none;padding:10px 20px;background:white;border-top:1px solid #e5e7eb">
+      <button class="btn btn-outline" onclick="addSection()" style="font-size:13px">＋ Add Section</button>
+    </div>
+  </div>
+
+  <!-- RIGHT: Editor / Preview -->
+  <div class="sidebar-right">
+    <div class="sh">
+      <button class="sr-tab active" id="tab-edit" onclick="switchTab('edit')">✏️ Edit Field</button>
+      <button class="sr-tab" id="tab-prev" onclick="switchTab('prev')">👁 Preview</button>
+    </div>
+    <div class="sr-body" id="sr-body">
+      <div class="no-selection">Select a field to edit it</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Field Type Picker Modal -->
+<div class="modal-bg" id="ftype-modal">
+  <div class="modal">
+    <h2>Add Field</h2>
+    <div class="ftype-grid">
+      <button class="ftype-btn" onclick="pickType('text')"><span class="ft-em">📝</span><span class="ft-label">Text Input</span></button>
+      <button class="ftype-btn" onclick="pickType('textarea')"><span class="ft-em">📄</span><span class="ft-label">Text Area</span></button>
+      <button class="ftype-btn" onclick="pickType('checkbox')"><span class="ft-em">☑️</span><span class="ft-label">Checkbox</span></button>
+      <button class="ftype-btn" onclick="pickType('checkbox_group')"><span class="ft-em">✅</span><span class="ft-label">Checkbox Group</span></button>
+      <button class="ftype-btn" onclick="pickType('dropdown')"><span class="ft-em">🔽</span><span class="ft-label">Dropdown</span></button>
+      <button class="ftype-btn" onclick="pickType('date')"><span class="ft-em">📅</span><span class="ft-label">Date</span></button>
+      <button class="ftype-btn" onclick="pickType('vitals')"><span class="ft-em">🩺</span><span class="ft-label">Vitals Panel</span></button>
+      <button class="ftype-btn" onclick="pickType('heading')"><span class="ft-em">🔤</span><span class="ft-label">Heading</span></button>
+      <button class="ftype-btn" onclick="pickType('divider')"><span class="ft-em">➖</span><span class="ft-label">Divider</span></button>
+      <button class="ftype-btn" onclick="pickType('icd')"><span class="ft-em">🏥</span><span class="ft-label">ICD/Diagnosis</span></button>
+      <button class="ftype-btn" onclick="pickType('number')"><span class="ft-em">🔢</span><span class="ft-label">Number</span></button>
+      <button class="ftype-btn" onclick="pickType('yesno')"><span class="ft-em">❓</span><span class="ft-label">Yes / No</span></button>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('ftype-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Preview Modal (full screen) -->
+<div class="modal-bg" id="prev-modal">
+  <div class="modal" style="max-width:560px;padding:0;overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#166534;color:white">
+      <span style="font-weight:700;font-size:14px">📋 Template Preview</span>
+      <button onclick="closeModal('prev-modal')" style="background:none;border:none;color:white;font-size:18px;cursor:pointer">×</button>
+    </div>
+    <div id="prev-modal-body" style="max-height:80vh;overflow-y:auto"></div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────
+let templates = [];
+let current = null;   // { id, name, category, description, sections }
+let dirty = false;
+let activeSection = null;
+let activeField = null;  // { sIdx, fIdx }
+let addFieldTarget = null; // sIdx
+let currentTab = 'edit';
+
+// ─────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────
+async function loadTemplates() {
+  const res = await fetch('/api/templates');
+  templates = await res.json();
+  renderList();
+}
+
+function renderList() {
+  const el = document.getElementById('tmpl-list');
+  document.getElementById('tmpl-count').textContent = templates.length + ' template' + (templates.length===1?'':'s');
+  if (!templates.length) {
+    el.innerHTML = '<div style="text-align:center;padding:24px 12px;color:#9ca3af;font-size:12px">No templates yet.<br>Click + New Template to start.</div>';
+    return;
+  }
+  el.innerHTML = templates.map(t => `
+    <div class="tmpl-item${current&&current.id===t.id?' active':''}" onclick="loadTemplate(${t.id})">
+      <div class="ti-name">${esc(t.name)}</div>
+      <div class="ti-cat">${esc(t.category)}</div>
+      <div class="ti-date">${new Date(t.updated_at).toLocaleDateString()}</div>
+    </div>
+  `).join('');
+}
+
+async function loadTemplate(id) {
+  if (dirty && !confirm('You have unsaved changes. Discard?')) return;
+  const res = await fetch('/api/templates/' + id);
+  current = await res.json();
+  dirty = false;
+  renderBuilder();
+  renderList();
+}
+
+function newTemplate() {
+  if (dirty && !confirm('You have unsaved changes. Discard?')) return;
+  current = { id: null, name: '', category: 'Procedure', description: '', sections: [] };
+  dirty = false;
+  renderBuilder();
+}
+
+// ─────────────────────────────────────────
+// BUILDER RENDER
+// ─────────────────────────────────────────
+function renderBuilder() {
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('builder-head').style.display = 'flex';
+  document.getElementById('add-section-bar').style.display = 'block';
+  document.getElementById('tname').value = current.name;
+  document.getElementById('tcat').value = current.category;
+  document.getElementById('tdesc').value = current.description || '';
+  renderSections();
+  if (currentTab === 'prev') renderRightPreview();
+}
+
+function renderSections() {
+  const area = document.getElementById('sections-area');
+  if (!current.sections.length) {
+    area.innerHTML = `<div style="text-align:center;padding:48px 20px;color:#9ca3af">
+      <div style="font-size:36px;margin-bottom:10px">📂</div>
+      <p style="font-size:14px">No sections yet.</p>
+      <p style="font-size:12px;margin-top:6px">Click <strong>+ Add Section</strong> below to get started.</p>
+    </div>`;
+    return;
+  }
+  area.innerHTML = current.sections.map((sec, si) => `
+    <div class="section-card" id="sec-${si}" draggable="true"
+      ondragstart="dragStart(event,'sec',${si})" ondragover="dragOver(event,'sec',${si})" ondrop="drop(event,'sec',${si})">
+      <div class="section-head">
+        <span class="drag-handle" title="Drag to reorder">⠿</span>
+        <input value="${esc(sec.title)}" placeholder="Section title…" oninput="sec_rename(${si},this.value)" onclick="e=>e.stopPropagation()">
+        <div class="sh-actions">
+          <button class="btn btn-outline btn-sm" onclick="addFieldTo(${si})">＋ Field</button>
+          <button class="btn btn-red btn-sm" onclick="removeSection(${si})">🗑</button>
+        </div>
+      </div>
+      <div class="fields-list" id="fl-${si}">
+        ${sec.fields.map((f, fi) => fieldRowHTML(f, si, fi)).join('')}
+        ${!sec.fields.length ? '<div style="text-align:center;padding:12px;font-size:12px;color:#9ca3af">No fields yet — click + Field</div>' : ''}
+      </div>
+      <div class="add-field-bar">
+        <button class="btn btn-outline btn-sm" onclick="addFieldTo(${si})">＋ Add Field</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+const TYPE_LABELS = {
+  text:'Text', textarea:'Text Area', checkbox:'Checkbox', checkbox_group:'CB Group',
+  dropdown:'Dropdown', date:'Date', vitals:'Vitals', heading:'Heading',
+  divider:'Divider', icd:'ICD', number:'Number', yesno:'Yes/No'
+};
+
+function fieldRowHTML(f, si, fi) {
+  const isActive = activeField && activeField.sIdx===si && activeField.fIdx===fi;
+  const label = f.label || (f.type==='divider'?'—':f.type==='vitals'?'Vitals Panel':'(no label)');
+  return `<div class="field-row${isActive?' ':''}${isActive?'border-green-400':''}" style="${isActive?'border-color:#16a34a;background:#f0fdf4':''}"
+    draggable="true"
+    ondragstart="dragStart(event,'field',${si},${fi})" ondragover="dragOver(event,'field',${si},${fi})" ondrop="drop(event,'field',${si},${fi})">
+    <span class="drag-handle">⠿</span>
+    <span class="fr-type">${TYPE_LABELS[f.type]||f.type}</span>
+    <span class="fr-label">${esc(label)}</span>
+    ${f.required?'<span class="fr-hint" style="color:#dc2626">*req</span>':''}
+    <div class="fr-actions">
+      <button class="btn btn-outline btn-sm" onclick="selectField(${si},${fi})">✏️</button>
+      <button class="btn btn-red btn-sm" onclick="removeField(${si},${fi})">🗑</button>
+    </div>
+  </div>`;
+}
+
+// ─────────────────────────────────────────
+// SECTIONS
+// ─────────────────────────────────────────
+function addSection() {
+  if (!current) return;
+  current.sections.push({ title: 'New Section', fields: [] });
+  markDirty(); renderSections();
+}
+
+function removeSection(si) {
+  if (!confirm('Remove this section and all its fields?')) return;
+  current.sections.splice(si, 1);
+  if (activeField && activeField.sIdx === si) { activeField = null; renderFieldEditor(); }
+  markDirty(); renderSections();
+}
+
+function sec_rename(si, val) {
+  current.sections[si].title = val;
+  markDirty();
+}
+
+// ─────────────────────────────────────────
+// FIELDS
+// ─────────────────────────────────────────
+function addFieldTo(si) {
+  addFieldTarget = si;
+  openModal('ftype-modal');
+}
+
+function pickType(type) {
+  closeModal('ftype-modal');
+  const f = makeField(type);
+  current.sections[addFieldTarget].fields.push(f);
+  const fi = current.sections[addFieldTarget].fields.length - 1;
+  markDirty(); renderSections();
+  selectField(addFieldTarget, fi);
+}
+
+function makeField(type) {
+  const defaults = {
+    text:            { type:'text', label:'Field Label', placeholder:'', required:false },
+    textarea:        { type:'textarea', label:'Notes', placeholder:'', required:false },
+    checkbox:        { type:'checkbox', label:'Check this item', required:false },
+    checkbox_group:  { type:'checkbox_group', label:'Select all that apply', options:['Option 1','Option 2'], required:false },
+    dropdown:        { type:'dropdown', label:'Select one', options:['Option 1','Option 2'], required:false },
+    date:            { type:'date', label:'Date', required:false },
+    vitals:          { type:'vitals', label:'Vitals', fields:['BP','HR','RR','Temp','SpO2','Weight','Height','Pain Scale'] },
+    heading:         { type:'heading', label:'Heading Text' },
+    divider:         { type:'divider' },
+    icd:             { type:'icd', label:'Diagnosis / ICD Code' },
+    number:          { type:'number', label:'Value', unit:'', required:false },
+    yesno:           { type:'yesno', label:'Question', required:false },
+  };
+  return defaults[type] || { type, label: type };
+}
+
+function removeField(si, fi) {
+  current.sections[si].fields.splice(fi, 1);
+  if (activeField && activeField.sIdx===si && activeField.fIdx===fi) { activeField=null; renderFieldEditor(); }
+  markDirty(); renderSections();
+}
+
+function selectField(si, fi) {
+  activeField = { sIdx: si, fIdx: fi };
+  if (currentTab === 'edit') renderFieldEditor();
+  renderSections(); // refresh highlight
+}
+
+// ─────────────────────────────────────────
+// FIELD EDITOR (right panel)
+// ─────────────────────────────────────────
+function renderFieldEditor() {
+  const body = document.getElementById('sr-body');
+  if (!activeField) { body.innerHTML = '<div class="no-selection">Select a field to edit it</div>'; return; }
+  const f = current.sections[activeField.sIdx].fields[activeField.fIdx];
+  if (!f) { body.innerHTML = '<div class="no-selection">Select a field to edit it</div>'; return; }
+
+  let html = `<div style="font-size:12px;font-weight:700;color:#166534;margin-bottom:12px;padding:6px 10px;background:#f0fdf4;border-radius:8px">Editing: ${TYPE_LABELS[f.type]||f.type} field</div>`;
+
+  if (f.type !== 'divider' && f.type !== 'vitals') {
+    html += `<label class="fe-label">Label</label>
+      <input class="fe-input" value="${esc(f.label||'')}" oninput="updateField('label',this.value)" placeholder="Field label…">`;
+  }
+
+  if (f.type === 'text' || f.type === 'textarea' || f.type === 'number') {
+    html += `<label class="fe-label">Placeholder</label>
+      <input class="fe-input" value="${esc(f.placeholder||'')}" oninput="updateField('placeholder',this.value)" placeholder="Placeholder text…">`;
+  }
+
+  if (f.type === 'number') {
+    html += `<label class="fe-label">Unit (e.g. mg, mmHg)</label>
+      <input class="fe-input" value="${esc(f.unit||'')}" oninput="updateField('unit',this.value)" placeholder="Unit…">`;
+  }
+
+  if (f.type === 'dropdown' || f.type === 'checkbox_group') {
+    html += `<label class="fe-label">Options</label><div class="opts-list" id="opts-list">`;
+    (f.options||[]).forEach((o, i) => {
+      html += `<div class="opt-row">
+        <input value="${esc(o)}" oninput="updateOpt(${i},this.value)" placeholder="Option ${i+1}">
+        <button class="rm-opt" onclick="removeOpt(${i})">×</button>
+      </div>`;
+    });
+    html += `</div><button class="add-opt-btn" onclick="addOpt()">＋ Add Option</button>`;
+  }
+
+  if (f.type === 'vitals') {
+    html += `<label class="fe-label">Included Vitals</label><div style="display:flex;flex-direction:column;gap:4px">`;
+    ['BP','HR','RR','Temp','SpO2','Weight','Height','BMI','Pain Scale'].forEach(v => {
+      const checked = (f.fields||[]).includes(v);
+      html += `<label class="fe-check"><input type="checkbox" ${checked?'checked':''} onchange="toggleVital('${v}',this.checked)"> ${v}</label>`;
+    });
+    html += `</div>`;
+  }
+
+  if (!['heading','divider','vitals'].includes(f.type)) {
+    html += `<label class="fe-check" style="margin-top:12px"><input type="checkbox" ${f.required?'checked':''} onchange="updateField('required',this.checked)"> Required field</label>`;
+  }
+
+  html += `<button class="save-field-btn" onclick="doneEditing()">✓ Done</button>`;
+  body.innerHTML = html;
+}
+
+function updateField(key, val) {
+  if (!activeField) return;
+  const f = current.sections[activeField.sIdx].fields[activeField.fIdx];
+  f[key] = val;
+  markDirty();
+  // Re-render the specific field row
+  renderSections();
+}
+
+function updateOpt(i, val) {
+  const f = current.sections[activeField.sIdx].fields[activeField.fIdx];
+  f.options[i] = val;
+  markDirty();
+}
+
+function addOpt() {
+  const f = current.sections[activeField.sIdx].fields[activeField.fIdx];
+  if (!f.options) f.options = [];
+  f.options.push('New option');
+  markDirty(); renderFieldEditor();
+}
+
+function removeOpt(i) {
+  const f = current.sections[activeField.sIdx].fields[activeField.fIdx];
+  f.options.splice(i, 1);
+  markDirty(); renderFieldEditor();
+}
+
+function toggleVital(v, checked) {
+  const f = current.sections[activeField.sIdx].fields[activeField.fIdx];
+  if (!f.fields) f.fields = [];
+  if (checked) { if (!f.fields.includes(v)) f.fields.push(v); }
+  else { f.fields = f.fields.filter(x => x !== v); }
+  markDirty();
+}
+
+function doneEditing() {
+  activeField = null;
+  renderFieldEditor();
+  renderSections();
+}
+
+// ─────────────────────────────────────────
+// PREVIEW
+// ─────────────────────────────────────────
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('tab-edit').classList.toggle('active', tab==='edit');
+  document.getElementById('tab-prev').classList.toggle('active', tab==='prev');
+  if (tab === 'prev') renderRightPreview();
+  else renderFieldEditor();
+}
+
+function renderRightPreview() {
+  document.getElementById('sr-body').innerHTML = current ? buildPreviewHTML() : '<div class="no-selection">No template loaded</div>';
+}
+
+function previewMode() {
+  document.getElementById('prev-modal-body').innerHTML = current ? buildPreviewHTML() : '';
+  openModal('prev-modal');
+}
+
+function buildPreviewHTML() {
+  if (!current) return '';
+  let h = `<div class="preview-tmpl">
+    <div class="prev-header"><div>${esc(current.name||'Untitled Template')}</div>
+      ${current.description?`<p>${esc(current.description)}</p>`:''}
+    </div>`;
+  (current.sections||[]).forEach(sec => {
+    h += `<div class="prev-section">
+      <div class="prev-sh">${esc(sec.title)}</div>
+      <div class="prev-fields">`;
+    (sec.fields||[]).forEach(f => { h += buildFieldPreview(f); });
+    h += `</div></div>`;
+  });
+  h += `</div>`;
+  return h;
+}
+
+function buildFieldPreview(f) {
+  switch(f.type) {
+    case 'heading':  return `<div class="prev-field"><div class="prev-heading">${esc(f.label)}</div></div>`;
+    case 'divider':  return `<hr class="prev-divider">`;
+    case 'text':     return `<div class="prev-field"><label>${esc(f.label)}${f.required?'<span style="color:#dc2626"> *</span>':''}</label><div class="pf-text">${esc(f.placeholder||'')}</div></div>`;
+    case 'textarea': return `<div class="prev-field"><label>${esc(f.label)}${f.required?'<span style="color:#dc2626"> *</span>':''}</label><textarea class="pf-text" style="height:52px;font-size:11px" placeholder="${esc(f.placeholder||'')}" disabled></textarea></div>`;
+    case 'number':   return `<div class="prev-field"><label>${esc(f.label)}${f.unit?` (${esc(f.unit)})`:''}</label><div class="pf-text">${esc(f.placeholder||'')}</div></div>`;
+    case 'date':     return `<div class="prev-field"><label>${esc(f.label)}</label><div class="pf-text" style="font-size:11px;color:#9ca3af">mm / dd / yyyy</div></div>`;
+    case 'checkbox': return `<div class="prev-field"><div class="pf-cb"><input type="checkbox" disabled> <span>${esc(f.label)}</span></div></div>`;
+    case 'yesno':    return `<div class="prev-field"><label>${esc(f.label)}</label><div style="display:flex;gap:12px;margin-top:3px"><label class="pf-cb"><input type="checkbox" disabled> Yes</label><label class="pf-cb"><input type="checkbox" disabled> No</label></div></div>`;
+    case 'checkbox_group': return `<div class="prev-field"><label>${esc(f.label)}</label><div class="pf-cbgroup">${(f.options||[]).map(o=>`<div class="pf-cb"><input type="checkbox" disabled> <span style="font-size:12px">${esc(o)}</span></div>`).join('')}</div></div>`;
+    case 'dropdown': return `<div class="prev-field"><label>${esc(f.label)}</label><select disabled><option value="">— Select —</option>${(f.options||[]).map(o=>`<option>${esc(o)}</option>`).join('')}</select></div>`;
+    case 'icd':      return `<div class="prev-field"><label>${esc(f.label)}</label><div class="pf-text" style="font-size:11px;color:#9ca3af">Search diagnosis / ICD code…</div></div>`;
+    case 'vitals':   return `<div class="prev-field"><div class="vitals-grid">${(f.fields||[]).map(v=>`<div class="vf"><div class="vf-label">${esc(v)}</div><div class="vf-input">—</div></div>`).join('')}</div></div>`;
+    default:         return `<div class="prev-field"><label>${esc(f.label||f.type)}</label><div class="pf-text"></div></div>`;
+  }
+}
+
+// ─────────────────────────────────────────
+// DRAG & DROP (sections + fields)
+// ─────────────────────────────────────────
+let dragData = null;
+function dragStart(e, kind, si, fi) {
+  dragData = { kind, si, fi };
+  e.dataTransfer.effectAllowed = 'move';
+}
+function dragOver(e, kind, si, fi) {
+  if (!dragData) return;
+  if (dragData.kind !== kind) return;
+  e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+}
+function drop(e, kind, toSi, toFi) {
+  e.preventDefault();
+  if (!dragData || dragData.kind !== kind) return;
+  if (kind === 'sec') {
+    const from = dragData.si, to = toSi;
+    if (from === to) return;
+    const [moved] = current.sections.splice(from, 1);
+    current.sections.splice(to, 0, moved);
+  } else {
+    const { si: fromSi, fi: fromFi } = dragData;
+    if (fromSi === toSi && fromFi === toFi) return;
+    if (fromSi === toSi) {
+      const [moved] = current.sections[fromSi].fields.splice(fromFi, 1);
+      current.sections[toSi].fields.splice(toFi, 0, moved);
+    }
+  }
+  markDirty(); renderSections();
+}
+
+// ─────────────────────────────────────────
+// SAVE / DELETE
+// ─────────────────────────────────────────
+function markDirty() { dirty = true; }
+
+async function saveTemplate() {
+  if (!current) return;
+  current.name = document.getElementById('tname').value.trim() || 'Untitled';
+  current.category = document.getElementById('tcat').value;
+  current.description = document.getElementById('tdesc').value.trim();
+
+  const body = JSON.stringify({ name:current.name, category:current.category, description:current.description, sections:current.sections });
+  if (current.id) {
+    await fetch('/api/templates/' + current.id, { method:'PUT', headers:{'Content-Type':'application/json'}, body });
+  } else {
+    const res = await fetch('/api/templates', { method:'POST', headers:{'Content-Type':'application/json'}, body });
+    const data = await res.json();
+    current.id = data.id;
+  }
+  dirty = false;
+  await loadTemplates();
+  showToast('Template saved ✓');
+}
+
+async function deleteTemplate() {
+  if (!current || !current.id) return;
+  if (!confirm('Delete this template permanently?')) return;
+  await fetch('/api/templates/' + current.id, { method:'DELETE' });
+  current = null; dirty = false;
+  document.getElementById('builder-head').style.display = 'none';
+  document.getElementById('add-section-bar').style.display = 'none';
+  document.getElementById('sections-area').innerHTML = `<div class="empty-state" id="empty-state"><div class="es-icon">📋</div><p><strong>Select a template</strong> from the left or create a new one</p></div>`;
+  document.getElementById('sr-body').innerHTML = '<div class="no-selection">Select a field to edit it</div>';
+  await loadTemplates();
+}
+
+// ─────────────────────────────────────────
+// UTILS
+// ─────────────────────────────────────────
+function esc(s) { return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#166534;color:white;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;z-index:2000;animation:fadeUp .3s ease';
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+
+// Keyboard shortcut
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey||e.metaKey) && e.key==='s') { e.preventDefault(); saveTemplate(); }
+});
+
+loadTemplates();
+</script>
+</body>
+</html>

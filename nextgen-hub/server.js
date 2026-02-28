@@ -50,6 +50,34 @@ app.delete('/api/articles/:id', (req, res) => {
   res.json({ ok: true });
 });
 
+// ── Templates ─────────────────────────────────────────────────────────────────
+app.get('/api/templates', (req, res) => {
+  res.json(db.prepare('SELECT id,name,category,description,created_at,updated_at FROM ng_templates ORDER BY updated_at DESC').all());
+});
+app.get('/api/templates/:id', (req, res) => {
+  const t = db.prepare('SELECT * FROM ng_templates WHERE id=?').get(req.params.id);
+  if (!t) return res.status(404).json({ error: 'Not found' });
+  t.sections = JSON.parse(t.sections || '[]');
+  res.json(t);
+});
+app.post('/api/templates', (req, res) => {
+  const { name, category, description, sections } = req.body;
+  if (!name) return res.status(400).json({ error: 'Name required' });
+  const r = db.prepare('INSERT INTO ng_templates (name,category,description,sections) VALUES (?,?,?,?)')
+    .run(name, category||'Procedure', description||'', JSON.stringify(sections||[]));
+  res.json({ id: r.lastInsertRowid, ok: true });
+});
+app.put('/api/templates/:id', (req, res) => {
+  const { name, category, description, sections } = req.body;
+  db.prepare('UPDATE ng_templates SET name=?,category=?,description=?,sections=?,updated_at=CURRENT_TIMESTAMP WHERE id=?')
+    .run(name, category||'Procedure', description||'', JSON.stringify(sections||[]), req.params.id);
+  res.json({ ok: true });
+});
+app.delete('/api/templates/:id', (req, res) => {
+  db.prepare('DELETE FROM ng_templates WHERE id=?').run(req.params.id);
+  res.json({ ok: true });
+});
+
 // ── Stats ─────────────────────────────────────────────────────────────────────
 app.get('/api/stats', (req, res) => {
   const total = db.prepare('SELECT COUNT(*) as c FROM articles').get().c;
