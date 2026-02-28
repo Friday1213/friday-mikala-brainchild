@@ -1824,6 +1824,17 @@ function App() {
           <div className="navbar-logo">VIP <span>Provider Training Hub</span></div>
           <div className="navbar-sub">VIP Medical Group · Onboarding & Clinical Resources</div>
         </div>
+        <form onSubmit={handleSearch} style={{display:'flex',alignItems:'center',background:'rgba(255,255,255,0.12)',borderRadius:50,padding:'5px 6px 5px 16px',gap:6,border:'1px solid rgba(255,255,255,0.2)',backdropFilter:'blur(6px)'}}>
+          <input
+            value={globalSearch}
+            onChange={e=>setGlobalSearch(e.target.value)}
+            placeholder="Search FAQs, tools, protocols..."
+            style={{background:'transparent',border:'none',outline:'none',color:'white',fontFamily:'Nunito',fontSize:13,fontWeight:600,width:220}}
+          />
+          <button type="submit" style={{background:'white',color:'#1d4ed8',border:'none',borderRadius:50,padding:'6px 14px',fontFamily:'Nunito',fontWeight:800,fontSize:12,cursor:'pointer',whiteSpace:'nowrap'}}>
+            Search
+          </button>
+        </form>
       </nav>
 
       {/* Mode toggle bar */}
@@ -1870,17 +1881,13 @@ function App() {
         </div>
       )}
 
-      {/* Hero search — home only */}
+      {/* Hero — home only */}
       {mode === 'home' && (
         <div style={{background:'linear-gradient(135deg,#1e3a5f,#1d4ed8)',padding:'32px 24px'}}>
           <div style={{maxWidth:1080,margin:'0 auto'}}>
             <h1 style={{fontSize:26,fontWeight:900,color:'white',marginBottom:8}}>Welcome to VIP Medical Group 👋</h1>
             <p style={{fontSize:14,color:'rgba(255,255,255,0.85)',maxWidth:560,lineHeight:1.6,marginBottom:18}}>Your one-stop hub for everything you need — from pre-arrival checklists to clinical protocols to FAQs.</p>
-            <form onSubmit={handleSearch} style={{display:'flex',background:'white',borderRadius:50,padding:'4px 6px 4px 20px',maxWidth:480,boxShadow:'0 2px 16px rgba(0,0,0,0.15)'}}>
-              <input value={globalSearch} onChange={e=>setGlobalSearch(e.target.value)} placeholder="Search anything — tools, protocols, FAQs..." style={{flex:1,border:'none',outline:'none',fontFamily:'Nunito',fontSize:14,fontWeight:600,color:'#1e293b',background:'transparent'}} />
-              <button type="submit" style={{background:'#1d4ed8',color:'white',border:'none',borderRadius:50,padding:'8px 18px',fontFamily:'Nunito',fontWeight:800,fontSize:13,cursor:'pointer'}}>Search</button>
-            </form>
-            <div style={{display:'flex',gap:10,marginTop:20}}>
+            <div style={{display:'flex',gap:10,marginTop:8}}>
               <button onClick={()=>goMode('clinical')} style={{background:'linear-gradient(135deg,#059669,#10b981)',color:'white',border:'none',borderRadius:12,padding:'12px 24px',fontFamily:'Nunito',fontWeight:900,fontSize:14,cursor:'pointer',boxShadow:'0 2px 10px rgba(5,150,105,0.35)'}}>🩺 Clinical Content →</button>
               <button onClick={()=>goMode('admin')} style={{background:'linear-gradient(135deg,#7c3aed,#8b5cf6)',color:'white',border:'none',borderRadius:12,padding:'12px 24px',fontFamily:'Nunito',fontWeight:900,fontSize:14,cursor:'pointer',boxShadow:'0 2px 10px rgba(124,58,237,0.35)'}}>⚙️ Administrative →</button>
             </div>
