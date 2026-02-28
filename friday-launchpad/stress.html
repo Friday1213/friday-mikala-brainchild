@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>♠ Stress</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:'Nunito',sans-serif;
+  background:radial-gradient(ellipse at 30% 20%,#1a0033 0%,#0a0014 60%);
+  color:#f0e6ff; display:flex; flex-direction:column; align-items:center;
+  justify-content:space-between; padding:8px; user-select:none;
+}
+
+/* ── OVERLAYS ── */
+.ov{display:none;position:fixed;inset:0;z-index:200;align-items:center;justify-content:center;
+  background:rgba(10,0,20,.9);backdrop-filter:blur(6px)}
+.ov.show{display:flex}
+.obox{background:linear-gradient(145deg,#1e0a40,#0d0020);border:1px solid rgba(200,150,255,.25);
+  border-radius:24px;padding:32px 28px;text-align:center;max-width:310px;width:92%}
+.obox h1{font-size:26px;font-weight:900;margin-bottom:6px}
+.obox p{font-size:13px;color:#94a3b8;margin-bottom:18px;line-height:1.55}
+.obtn{display:block;width:100%;padding:12px;border:none;border-radius:11px;margin-bottom:9px;
+  cursor:pointer;font-family:'Nunito',sans-serif;font-weight:900;font-size:14px;transition:opacity .2s}
+.obtn:last-child{margin-bottom:0}
+.obtn.purple{background:linear-gradient(135deg,#7c3aed,#a855f7);color:white}
+.obtn.ghost{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#d4b0ff}
+.obtn:hover{opacity:.85}
+
+/* ── TOPBAR ── */
+#topbar{width:100%;max-width:480px;display:flex;align-items:center;justify-content:space-between;padding:2px 4px}
+.tbtn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#d4b0ff;
+  border-radius:16px;padding:5px 12px;font-family:'Nunito',sans-serif;font-weight:800;font-size:11px;cursor:pointer;text-decoration:none}
+
+/* ── GAME AREA ── */
+#game{width:100%;max-width:480px;display:flex;flex-direction:column;gap:8px}
+
+/* ── HAND ROWS ── */
+.hand-row{display:flex;align-items:center;justify-content:center;gap:6px;height:100px}
+.stock-pile{width:64px;height:90px;border-radius:10px;border:2px dashed rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:center;font-size:11px;color:rgba(255,255,255,.3);
+  flex-shrink:0;position:relative;cursor:pointer}
+.stock-pile .count{position:absolute;bottom:4px;right:6px;font-size:10px;font-weight:900;color:rgba(255,255,255,.5)}
+
+/* ── CENTER ── */
+#center{display:flex;align-items:center;justify-content:center;gap:16px;position:relative}
+.center-pile{width:72px;height:100px;border-radius:12px;border:2px solid rgba(200,150,255,.25);
+  display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.03);
+  flex-shrink:0;cursor:pointer;transition:border-color .15s;position:relative}
+.center-pile:hover{border-color:rgba(200,150,255,.6)}
+.center-pile.valid{border-color:#a855f7;box-shadow:0 0 20px rgba(168,85,247,.4)}
+.deal-btn{background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border:none;
+  border-radius:12px;padding:10px 18px;font-family:'Nunito',sans-serif;font-weight:900;font-size:13px;
+  cursor:pointer;transition:all .2s;box-shadow:0 4px 20px rgba(168,85,247,.4)}
+.deal-btn:hover{transform:scale(1.05)}
+.deal-btn:disabled{opacity:.4;cursor:default;transform:none}
+.deal-btn.pulse{animation:pulse .6s ease infinite alternate}
+@keyframes pulse{from{box-shadow:0 4px 20px rgba(168,85,247,.4)}to{box-shadow:0 4px 40px rgba(168,85,247,.9)}}
+
+/* ── CARDS ── */
+.card{width:62px;height:88px;border-radius:10px;background:white;border:2px solid #e2e8f0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:22px;font-weight:900;cursor:pointer;transition:all .18s;position:relative;
+  box-shadow:0 3px 12px rgba(0,0,0,.4);flex-shrink:0}
+.card.red{color:#dc2626}
+.card.black{color:#1e293b}
+.card:hover{transform:translateY(-6px);box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.card.selected{transform:translateY(-12px);border-color:#a855f7;box-shadow:0 8px 30px rgba(168,85,247,.6)}
+.card.cpu{background:linear-gradient(135deg,#2d1b4e,#1a0033);border-color:rgba(200,150,255,.3);color:transparent}
+.card .suit{font-size:13px;position:absolute;bottom:4px;right:6px}
+.card .rank-small{font-size:10px;position:absolute;top:3px;left:5px;font-weight:900}
+.card-back{background:repeating-linear-gradient(45deg,#2d1b4e,#2d1b4e 4px,#1a0033 4px,#1a0033 8px)}
+
+/* ── STATUS ── */
+#status{font-size:13px;font-weight:700;color:#a78bfa;text-align:center;height:18px}
+
+/* ── STRESS FLASH ── */
+#stress-flash{position:fixed;inset:0;z-index:150;display:none;align-items:center;justify-content:center;pointer-events:none}
+#stress-flash.show{display:flex}
+#stress-flash .sf-txt{font-size:72px;font-weight:900;color:#f0e6ff;text-shadow:0 0 40px #a855f7,0 0 80px #7c3aed;
+  animation:stressAnim .5s ease forwards}
+@keyframes stressAnim{0%{transform:scale(.5);opacity:0}50%{transform:scale(1.3)}100%{transform:scale(1);opacity:1}}
+
+/* ── LB ── */
+.lbt{width:100%;border-collapse:collapse;margin:6px 0}
+.lbt th{font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.05em;padding:3px 5px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left}
+.lbt td{padding:6px 5px;font-size:13px;font-weight:700}
+.lbt tr:not(:last-child) td{border-bottom:1px solid rgba(255,255,255,.04)}
+.lb-me td{color:#a855f7}
+</style>
+</head>
+<body>
+
+<!-- START -->
+<div class="ov show" id="ov-s">
+  <div class="obox">
+    <div style="font-size:52px;margin-bottom:10px">♠</div>
+    <h1 style="color:#a855f7">Stress</h1>
+    <p>Race to empty your hand before the CPU does.<br>Play cards ±1 rank on either center pile. Hit <strong>DEAL</strong> when stuck.</p>
+    <input id="nmi" type="text" maxlength="16" placeholder="Your name…" autocomplete="off" spellcheck="false"
+      style="width:100%;padding:11px;border-radius:10px;border:2px solid rgba(200,150,255,.3);background:rgba(255,255,255,.06);
+      color:#f0e6ff;font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;outline:none;text-align:center;margin-bottom:12px">
+    <button class="obtn purple" onclick="startGame()">♠ Play</button>
+    <button class="obtn ghost" onclick="openLB()">🏆 Leaderboard</button>
+    <button class="obtn ghost" onclick="location.href='games.html'">← Games</button>
+  </div>
+</div>
+
+<!-- LEADERBOARD -->
+<div class="ov" id="ov-lb">
+  <div class="obox" style="max-width:340px">
+    <div style="font-size:36px;margin-bottom:8px">🏆</div>
+    <h1 style="color:#a855f7">Leaderboard</h1>
+    <p style="margin-bottom:10px">Fastest wins (fewest deals)</p>
+    <div id="lb-body"></div>
+    <button class="obtn purple" id="lb-play" onclick="closeOv('ov-lb');showOv('ov-s')" style="margin-top:10px">♠ Play</button>
+    <button class="obtn ghost" id="lb-back" onclick="closeOv('ov-lb');showOv('ov-o')" style="display:none">← Back</button>
+    <button class="obtn ghost" onclick="if(confirm('Clear?')){localStorage.removeItem(LK);openLB()}">🗑 Clear</button>
+  </div>
+</div>
+
+<!-- GAME OVER -->
+<div class="ov" id="ov-o">
+  <div class="obox">
+    <div id="oe" style="font-size:52px;margin-bottom:10px">🏆</div>
+    <h1 id="ot" style="color:#a855f7">You Win!</h1>
+    <p id="os" style="margin-bottom:12px"></p>
+    <div id="onb" style="display:none;background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.3);border-radius:10px;padding:8px;margin-bottom:12px;font-size:12px;color:#c084fc;font-weight:800">🌟 New Personal Best!</div>
+    <button class="obtn purple" onclick="closeOv('ov-o');startGame()">♠ Play Again</button>
+    <button class="obtn ghost" onclick="openLBfrom('over')">🏆 Leaderboard</button>
+    <button class="obtn ghost" onclick="location.href='games.html'">← Games</button>
+  </div>
+</div>
+
+<!-- STRESS FLASH -->
+<div id="stress-flash"><div class="sf-txt">STRESS!</div></div>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <a class="tbtn" href="games.html">← Games</a>
+  <span id="ptag" style="font-size:12px;font-weight:900;color:#a855f7"></span>
+  <span id="deal-count" style="font-size:11px;font-weight:700;color:#64748b"></span>
+</div>
+
+<!-- GAME -->
+<div id="game">
+  <!-- CPU -->
+  <div class="hand-row" id="cpu-row">
+    <div class="stock-pile" id="cpu-stock">🂠<div class="count" id="cpu-count"></div></div>
+    <div id="cpu-hand" style="display:flex;gap:6px"></div>
+  </div>
+
+  <!-- STATUS -->
+  <div id="status"></div>
+
+  <!-- CENTER -->
+  <div id="center">
+    <div class="center-pile" id="pile-0" onclick="playToCenter(0)"></div>
+    <button class="deal-btn" id="deal-btn" onclick="deal()">DEAL</button>
+    <div class="center-pile" id="pile-1" onclick="playToCenter(1)"></div>
+  </div>
+
+  <div id="status2" style="font-size:12px;font-weight:700;color:#64748b;text-align:center;height:16px"></div>
+
+  <!-- PLAYER -->
+  <div class="hand-row" id="player-row">
+    <div class="stock-pile" id="player-stock" style="cursor:default">🂠<div class="count" id="player-count"></div></div>
+    <div id="player-hand" style="display:flex;gap:6px"></div>
+  </div>
+</div>
+
+<div style="height:4px"></div>
+
+<script>
+'use strict';
+// ── CONSTS ──────────────────────────────────────────────────────────────────
+const SUITS=['♠','♣','♥','♦'], RANKS=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+const RED_SUITS=new Set(['♥','♦']);
+const LK='stress_lb_v1';
+const HAND_SIZE=4;
+const CPU_DELAY_MIN=700, CPU_DELAY_MAX=1400;
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let player='', live=false;
+let playerStock=[], playerHand=[];
+let cpuStock=[], cpuHand=[];
+let centerPiles=[[],[]];
+let selected=null; // index into playerHand
+let deals=0, cpuTimer=null, stuckCount=0;
+
+// ── LB ───────────────────────────────────────────────────────────────────────
+function lbAll(){try{return JSON.parse(localStorage.getItem(LK))||[];}catch{return[];}}
+function lbSave(a){localStorage.setItem(LK,JSON.stringify(a));}
+function lbRecord(name,deals){
+  const all=lbAll(),nx=name.toLowerCase();
+  const ex=all.find(e=>e.n.toLowerCase()===nx);
+  let nb=false;
+  if(ex){if(deals<ex.d){ex.d=deals;nb=true;}ex.g=(ex.g||1)+1;}
+  else{all.push({n:name,d:deals,g:1});nb=true;}
+  all.sort((a,b)=>a.d-b.d);lbSave(all);return nb;
+}
+function lbRank(name){return lbAll().findIndex(e=>e.n.toLowerCase()===name.toLowerCase())+1||null;}
+
+let lbFrom='s';
+function openLB(){lbFrom='s';renderLB();showOv('ov-lb');closeOv('ov-s');}
+function openLBfrom(from){lbFrom=from;renderLB();showOv('ov-lb');closeOv('ov-o');}
+function renderLB(){
+  const all=lbAll(),mx=['🥇','🥈','🥉'];
+  const bp=document.getElementById('lb-play'),bb=document.getElementById('lb-back');
+  bp.style.display=lbFrom==='s'?'block':'none';bb.style.display=lbFrom==='over'?'block':'none';
+  let h='';
+  if(!all.length) h='<div style="text-align:center;padding:18px;color:#475569;font-size:13px">No wins yet — beat the CPU!</div>';
+  else{
+    h='<table class="lbt"><thead><tr><th>#</th><th>Player</th><th>Deals</th><th>Games</th></tr></thead><tbody>';
+    all.slice(0,10).forEach((e,i)=>{
+      const me=player&&e.n.toLowerCase()===player.toLowerCase();
+      h+=`<tr${me?' class="lb-me"':''}><td>${mx[i]||i+1}</td><td>${esc(e.n)}${me?' ◀':''}</td><td style="color:#a855f7;text-align:right">${e.d}</td><td style="color:#64748b;text-align:right;font-size:11px">${e.g}</td></tr>`;
+    });
+    h+='</tbody></table>';
+  }
+  document.getElementById('lb-body').innerHTML=h;
+}
+
+function showOv(id){document.getElementById(id).classList.add('show');}
+function closeOv(id){document.getElementById(id).classList.remove('show');}
+
+// ── CARD UTILS ───────────────────────────────────────────────────────────────
+function makeDeck(){
+  const d=[];
+  for(const s of SUITS) for(let r=0;r<13;r++) d.push({suit:s,rank:r});
+  return d;
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
+function rankLabel(r){return RANKS[r];}
+function cardHTML(c,selected=false,faceDown=false){
+  if(faceDown) return `<div class="card cpu card-back"></div>`;
+  const red=RED_SUITS.has(c.suit);
+  return `<div class="card${red?' red':' black'}${selected?' selected':''}">
+    <div class="rank-small">${rankLabel(c.rank)}</div>
+    ${rankLabel(c.rank)}<div class="suit">${c.suit}</div>
+  </div>`;
+}
+function centerCardHTML(c){
+  if(!c) return '';
+  const red=RED_SUITS.has(c.suit);
+  return `<div class="card${red?' red':' black'}" style="cursor:default;width:100%;height:100%;border-radius:10px">
+    <div class="rank-small">${rankLabel(c.rank)}</div>
+    ${rankLabel(c.rank)}<div class="suit">${c.suit}</div>
+  </div>`;
+}
+function canPlay(card,pile){
+  if(!pile.length) return true;
+  const top=pile[pile.length-1];
+  const diff=Math.abs(card.rank-top.rank);
+  return diff===1||(card.rank===0&&top.rank===12)||(card.rank===12&&top.rank===0);
+}
+
+// ── START ────────────────────────────────────────────────────────────────────
+document.getElementById('nmi').addEventListener('keydown',e=>{if(e.key==='Enter')startGame();});
+function startGame(){
+  const v=(document.getElementById('nmi').value||'').trim();
+  if(!v){document.getElementById('nmi').focus();return;}
+  player=v;
+  document.getElementById('ptag').textContent='♠ '+v;
+  closeOv('ov-s');
+  newGame();
+}
+
+function newGame(){
+  clearTimeout(cpuTimer);
+  const deck=makeDeck(); shuffle(deck);
+  playerStock=deck.slice(0,26); cpuStock=deck.slice(26);
+  playerHand=[]; cpuHand=[];
+  centerPiles=[[],[]];
+  selected=null; deals=0; stuckCount=0; live=true;
+  // Deal initial hands
+  for(let i=0;i<HAND_SIZE;i++){
+    if(playerStock.length) playerHand.push(playerStock.pop());
+    if(cpuStock.length) cpuHand.push(cpuStock.pop());
+  }
+  // Initial center cards
+  if(playerStock.length) centerPiles[0].push(playerStock.pop());
+  if(cpuStock.length) centerPiles[1].push(cpuStock.pop());
+
+  render(); scheduleCPU();
+}
+
+// ── RENDER ───────────────────────────────────────────────────────────────────
+function render(){
+  // CPU hand (face down + one shown)
+  const ch=document.getElementById('cpu-hand');
+  ch.innerHTML=cpuHand.map(c=>cardHTML(c,false,true)).join('');
+  document.getElementById('cpu-count').textContent=cpuStock.length;
+  document.getElementById('cpu-stock').style.opacity=cpuStock.length?1:.3;
+
+  // Center piles
+  for(let i=0;i<2;i++){
+    const el=document.getElementById('pile-'+i);
+    const top=centerPiles[i][centerPiles[i].length-1];
+    el.innerHTML=top?centerCardHTML(top):'';
+    // Highlight valid targets
+    if(selected!==null&&live){
+      const card=playerHand[selected];
+      el.classList.toggle('valid',card&&canPlay(card,centerPiles[i]));
+    } else {
+      el.classList.remove('valid');
+    }
+  }
+
+  // Player hand
+  const ph=document.getElementById('player-hand');
+  ph.innerHTML=playerHand.map((c,i)=>
+    `<div onclick="selectCard(${i})">${cardHTML(c,selected===i)}</div>`
+  ).join('');
+  document.getElementById('player-count').textContent=playerStock.length;
+  document.getElementById('player-stock').style.opacity=playerStock.length?1:.3;
+
+  // Deal count
+  document.getElementById('deal-count').textContent=deals?`Deals: ${deals}`:'';
+
+  // Deal button state
+  const btn=document.getElementById('deal-btn');
+  const stuck=!playerCanMove()&&!cpuCanMove();
+  btn.disabled=!live;
+  btn.classList.toggle('pulse',stuck&&live);
+
+  // Status
+  const ps=playerHand.length+playerStock.length;
+  const cs=cpuHand.length+cpuStock.length;
+  document.getElementById('status').textContent=live?`You: ${ps} cards  |  CPU: ${cs} cards`:'';
+}
+
+// ── PLAYER PLAY ──────────────────────────────────────────────────────────────
+function selectCard(i){
+  if(!live) return;
+  if(selected===i){selected=null;render();return;}
+  selected=i;
+  render();
+  // Auto-play if only one valid pile
+  const card=playerHand[i];
+  const valid=[0,1].filter(p=>canPlay(card,centerPiles[p]));
+  if(valid.length===1){setTimeout(()=>playToCenter(valid[0]),80);}
+}
+
+function playToCenter(pileIdx){
+  if(!live||selected===null) return;
+  const card=playerHand[selected];
+  if(!canPlay(card,centerPiles[pileIdx])){flashInvalid(pileIdx);return;}
+  centerPiles[pileIdx].push(card);
+  playerHand.splice(selected,1);
+  selected=null;
+  // Refill hand
+  if(playerStock.length&&playerHand.length<HAND_SIZE) playerHand.push(playerStock.pop());
+  stuckCount=0;
+  render();
+  checkWin();
+}
+
+function flashInvalid(pi){
+  const el=document.getElementById('pile-'+pi);
+  el.style.borderColor='#dc2626';
+  setTimeout(()=>{el.style.borderColor='';render();},300);
+}
+
+// ── DEAL ─────────────────────────────────────────────────────────────────────
+function deal(){
+  if(!live) return;
+  deals++;
+  selected=null;
+  // Flip one card from each stock to each center pile
+  for(let i=0;i<2;i++){
+    const src=i===0?playerStock:cpuStock;
+    if(src.length) centerPiles[i].push(src.pop());
+  }
+  // Also refill hands
+  if(playerStock.length&&playerHand.length<HAND_SIZE) playerHand.push(playerStock.pop());
+  if(cpuStock.length&&cpuHand.length<HAND_SIZE) cpuHand.push(cpuStock.pop());
+  stuckCount=0;
+  flashStress();
+  render();
+  checkWin();
+}
+
+// ── CPU LOGIC ────────────────────────────────────────────────────────────────
+function cpuCanMove(){
+  return cpuHand.some(c=>centerPiles.some(p=>canPlay(c,p)));
+}
+function playerCanMove(){
+  return playerHand.some(c=>centerPiles.some(p=>canPlay(c,p)));
+}
+
+function scheduleCPU(){
+  if(!live) return;
+  const delay=CPU_DELAY_MIN+Math.random()*(CPU_DELAY_MAX-CPU_DELAY_MIN);
+  cpuTimer=setTimeout(cpuTurn, delay);
+}
+
+function cpuTurn(){
+  if(!live) return;
+  // Find valid moves
+  const moves=[];
+  cpuHand.forEach((c,ci)=>{
+    centerPiles.forEach((p,pi)=>{
+      if(canPlay(c,p)) moves.push({ci,pi});
+    });
+  });
+  if(moves.length){
+    const m=moves[Math.floor(Math.random()*moves.length)];
+    centerPiles[m.pi].push(cpuHand[m.ci]);
+    cpuHand.splice(m.ci,1);
+    if(cpuStock.length&&cpuHand.length<HAND_SIZE) cpuHand.push(cpuStock.pop());
+    stuckCount=0;
+    render();
+    if(!checkWin()) scheduleCPU();
+  } else {
+    scheduleCPU();
+  }
+}
+
+// ── WIN CHECK ────────────────────────────────────────────────────────────────
+function checkWin(){
+  const playerDone=playerHand.length===0&&playerStock.length===0;
+  const cpuDone=cpuHand.length===0&&cpuStock.length===0;
+  if(!playerDone&&!cpuDone) return false;
+  live=false;
+  clearTimeout(cpuTimer);
+  setTimeout(()=>showResult(playerDone&&!cpuDone), 400);
+  return true;
+}
+
+function showResult(win){
+  const nb=win&&player?lbRecord(player,deals):false;
+  const rank=win&&player?lbRank(player):null;
+  const mx=['🥇','🥈','🥉'];
+  document.getElementById('oe').textContent=win?'🏆':'😭';
+  document.getElementById('ot').textContent=win?'You Win!':'CPU Wins';
+  document.getElementById('ot').style.color=win?'#a855f7':'#f87171';
+  document.getElementById('os').textContent=win
+    ? `${player} cleared in ${deals} deal${deals===1?'':'s'}!${rank?' Ranked '+(mx[rank-1]||'#'+rank)+' on this device!':''}`
+    : `The CPU got there first. Better luck next time!`;
+  document.getElementById('onb').style.display=nb?'block':'none';
+  showOv('ov-o');
+}
+
+// ── STRESS FLASH ─────────────────────────────────────────────────────────────
+function flashStress(){
+  const el=document.getElementById('stress-flash');
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),700);
+}
+
+// ── UTILS ────────────────────────────────────────────────────────────────────
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+// Touch support for card selection
+document.getElementById('game').addEventListener('touchstart', e=>{
+  // handled by onclick
+}, {passive:true});
+
+// Boot
+document.getElementById('nmi').focus();
+</script>
+</body>
+</html>
