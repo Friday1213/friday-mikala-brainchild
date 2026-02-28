@@ -1649,6 +1649,701 @@ function RussianPage() {
   );
 }
 
+// ===================== SPANISH TAB =====================
+
+const SPANISH_TRACKS = [
+  {
+    id: 'sp-t1', name: 'Pronunciation Basics', emoji: '🔤', type: 'pronunciation',
+    lessons: [
+      {
+        id: 'sp-1-1', name: 'Vowels & Accents',
+        items: [
+          { rule: 'A', sound: '"ah" (like "father")', example: 'agua (AH-gwah)', exTrans: '= water' },
+          { rule: 'E', sound: '"eh" (like "bed")', example: 'enfermera (en-fer-MEH-rah)', exTrans: '= nurse' },
+          { rule: 'I', sound: '"ee" (like "feet")', example: 'infección (een-fek-SYON)', exTrans: '= infection' },
+          { rule: 'O', sound: '"oh" (like "go")', example: 'ojo (OH-hoh)', exTrans: '= eye' },
+          { rule: 'U', sound: '"oo" (like "food")', example: 'usted (oos-TED)', exTrans: '= you (formal)' },
+          { rule: 'Á/É/Í/Ó/Ú', sound: 'stressed vowel (accent = emphasis)', example: 'síntoma (SEEN-toh-mah)', exTrans: '= symptom' },
+        ]
+      },
+      {
+        id: 'sp-1-2', name: 'Key Consonants',
+        items: [
+          { rule: 'LL', sound: '"y" sound', example: 'llama (YAH-mah)', exTrans: '' },
+          { rule: 'Ñ', sound: '"ny" sound', example: 'año (AH-nyoh)', exTrans: '= year' },
+          { rule: 'H', sound: 'silent', example: 'hospital (os-pee-TAL)', exTrans: '' },
+          { rule: 'J', sound: '"h" sound', example: 'jabón (hah-BON)', exTrans: '= soap' },
+          { rule: 'RR', sound: 'rolled R', example: 'arroz (ah-RROS)', exTrans: '= rice' },
+          { rule: 'QU', sound: '"k" sound', example: 'qué (KAY)', exTrans: '= what' },
+        ]
+      },
+      {
+        id: 'sp-1-3', name: 'Medical Pronunciation',
+        items: [
+          { rule: 'paciente', sound: 'pah-SYEN-teh', example: 'Stress the bold syllable', exTrans: '= patient' },
+          { rule: 'medicina', sound: 'meh-dee-SEE-nah', example: 'Stress the bold syllable', exTrans: '= medicine' },
+          { rule: 'alergia', sound: 'ah-LEHR-hyah', example: 'Stress the bold syllable', exTrans: '= allergy' },
+          { rule: 'emergencia', sound: 'eh-mehr-HEN-syah', example: 'Stress the bold syllable', exTrans: '= emergency' },
+          { rule: 'síntoma', sound: 'SEEN-toh-mah', example: 'Stress the bold syllable', exTrans: '= symptom' },
+          { rule: 'doctor', sound: 'dok-TOR', example: 'Stress the bold syllable', exTrans: '= doctor' },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'sp-t2', name: 'Essential Phrases', emoji: '👋', type: 'vocab',
+    lessons: [
+      {
+        id: 'sp-2-1', name: 'Greetings',
+        items: [
+          { spanish: 'Buenos días', english: 'Good morning', pronunciation: 'BWEH-nos DEE-as' },
+          { spanish: 'Buenas tardes', english: 'Good afternoon', pronunciation: 'BWEH-nas TAR-des' },
+          { spanish: 'Buenas noches', english: 'Good evening/night', pronunciation: 'BWEH-nas NOH-ches' },
+          { spanish: 'Hola', english: 'Hello', pronunciation: 'OH-lah' },
+          { spanish: '¿Cómo está usted?', english: 'How are you? (formal)', pronunciation: 'KOH-moh es-TAH oos-TED' },
+          { spanish: 'Me llamo ___', english: 'My name is ___', pronunciation: 'meh YAH-moh' },
+          { spanish: 'Soy su enfermera/enfermero', english: 'I am your nurse', pronunciation: 'soy soo en-fer-MEH-rah' },
+          { spanish: 'Soy su médico/médica', english: 'I am your doctor', pronunciation: 'soy soo MEH-dee-koh' },
+          { spanish: 'Soy su asistente médico', english: 'I am your physician assistant', pronunciation: 'soy soo ah-sees-TEN-teh' },
+        ]
+      },
+      {
+        id: 'sp-2-2', name: 'Communication',
+        items: [
+          { spanish: 'No hablo español bien', english: "I don't speak Spanish well", pronunciation: 'no AH-bloh es-pah-NYOL byen' },
+          { spanish: '¿Habla usted inglés?', english: 'Do you speak English?', pronunciation: 'AH-blah oos-TED een-GLES' },
+          { spanish: '¿Entiende?', english: 'Do you understand?', pronunciation: 'en-TYEN-deh' },
+          { spanish: 'Por favor', english: 'Please', pronunciation: 'por fah-VOR' },
+          { spanish: 'Gracias', english: 'Thank you', pronunciation: 'GRAH-syas' },
+          { spanish: 'De nada', english: "You're welcome", pronunciation: 'deh NAH-dah' },
+          { spanish: 'Más despacio, por favor', english: 'More slowly please', pronunciation: 'mas des-PAH-syo' },
+          { spanish: '¿Puede repetir?', english: 'Can you repeat?', pronunciation: 'PWEH-deh reh-peh-TEER' },
+          { spanish: 'Un momento, por favor', english: 'One moment please', pronunciation: 'oon moh-MEN-toh' },
+        ]
+      },
+      {
+        id: 'sp-2-3', name: 'Consent & Instructions',
+        items: [
+          { spanish: 'Necesito su permiso', english: 'I need your permission', pronunciation: 'neh-seh-SEE-toh' },
+          { spanish: '¿Está de acuerdo?', english: 'Do you agree/consent?', pronunciation: 'es-TAH deh ah-KWER-doh' },
+          { spanish: 'Voy a...', english: 'I am going to...', pronunciation: 'voy ah' },
+          { spanish: 'Esto no va a doler mucho', english: "This won't hurt much", pronunciation: 'ES-toh no vah ah doh-LER' },
+          { spanish: 'Esto puede sentirse como un pinchazo', english: 'This may feel like a pinch', pronunciation: 'peen-CHA-soh' },
+          { spanish: 'Por favor, no se mueva', english: "Please don't move", pronunciation: 'por fah-VOR no seh MWEH-vah' },
+          { spanish: 'Respire profundo', english: 'Breathe deeply', pronunciation: 'res-PEE-reh pro-FOON-doh' },
+          { spanish: 'Relájese', english: 'Relax', pronunciation: 'reh-LAH-heh-seh' },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'sp-t3', name: 'Numbers & Body Parts', emoji: '🔢', type: 'vocab',
+    lessons: [
+      {
+        id: 'sp-3-1', name: 'Numbers 0-10',
+        items: [
+          { spanish: 'cero', english: 'zero (0)', pronunciation: 'SEH-roh' },
+          { spanish: 'uno', english: 'one (1)', pronunciation: 'OO-noh' },
+          { spanish: 'dos', english: 'two (2)', pronunciation: 'dos' },
+          { spanish: 'tres', english: 'three (3)', pronunciation: 'tres' },
+          { spanish: 'cuatro', english: 'four (4)', pronunciation: 'KWAH-troh' },
+          { spanish: 'cinco', english: 'five (5)', pronunciation: 'SEEN-koh' },
+          { spanish: 'seis', english: 'six (6)', pronunciation: 'says' },
+          { spanish: 'siete', english: 'seven (7)', pronunciation: 'SYEH-teh' },
+          { spanish: 'ocho', english: 'eight (8)', pronunciation: 'OH-choh' },
+          { spanish: 'nueve', english: 'nine (9)', pronunciation: 'NWEH-veh' },
+          { spanish: 'diez', english: 'ten (10)', pronunciation: 'dyes' },
+        ]
+      },
+      {
+        id: 'sp-3-2', name: 'Pain Scale',
+        items: [
+          { spanish: '¿Cuánto dolor tiene del uno al diez?', english: 'How much pain from 1-10?', pronunciation: 'KWAHN-toh doh-LOR' },
+          { spanish: 'Sin dolor', english: 'No pain (0)', pronunciation: 'seen doh-LOR' },
+          { spanish: 'Poco dolor', english: 'A little pain (1-3)', pronunciation: 'POH-koh doh-LOR' },
+          { spanish: 'Dolor moderado', english: 'Moderate pain (4-6)', pronunciation: 'moh-deh-RAH-doh' },
+          { spanish: 'Mucho dolor', english: 'A lot of pain (7-9)', pronunciation: 'MOO-choh doh-LOR' },
+          { spanish: 'Dolor insoportable', english: 'Unbearable pain (10)', pronunciation: 'een-soh-por-TAH-bleh' },
+          { spanish: '¿El dolor es constante o va y viene?', english: 'Is the pain constant or come and go?', pronunciation: 'kons-TAN-teh' },
+        ]
+      },
+      {
+        id: 'sp-3-3', name: 'Body Parts',
+        items: [
+          { spanish: 'cabeza', english: 'head', pronunciation: 'kah-BEH-sah' },
+          { spanish: 'cuello', english: 'neck', pronunciation: 'KWEH-yoh' },
+          { spanish: 'pecho', english: 'chest', pronunciation: 'PEH-choh' },
+          { spanish: 'espalda', english: 'back', pronunciation: 'es-PAL-dah' },
+          { spanish: 'abdomen/barriga', english: 'abdomen/belly', pronunciation: 'ah-DOH-men / bah-REE-gah' },
+          { spanish: 'brazo', english: 'arm', pronunciation: 'BRAH-soh' },
+          { spanish: 'mano', english: 'hand', pronunciation: 'MAH-noh' },
+          { spanish: 'pierna', english: 'leg', pronunciation: 'PYEHR-nah' },
+          { spanish: 'rodilla', english: 'knee', pronunciation: 'roh-DEE-yah' },
+          { spanish: 'tobillo', english: 'ankle', pronunciation: 'toh-BEE-yoh' },
+          { spanish: 'pie', english: 'foot', pronunciation: 'pyeh' },
+          { spanish: 'vena', english: 'vein', pronunciation: 'VEH-nah' },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'sp-t4', name: 'Patient Intake', emoji: '📋', type: 'vocab',
+    lessons: [
+      {
+        id: 'sp-4-1', name: 'Registration',
+        items: [
+          { spanish: '¿Cómo se llama?', english: 'What is your name?', pronunciation: 'KOH-moh seh YAH-mah' },
+          { spanish: '¿Cuál es su fecha de nacimiento?', english: 'What is your date of birth?', pronunciation: 'NAH-see-myen-toh' },
+          { spanish: '¿Cuántos años tiene?', english: 'How old are you?', pronunciation: 'KWAHN-tos AH-nyos' },
+          { spanish: '¿Tiene seguro médico?', english: 'Do you have health insurance?', pronunciation: 'seh-GOO-roh MEH-dee-koh' },
+          { spanish: '¿Cuál es su número de seguro?', english: 'What is your insurance number?', pronunciation: 'NOO-meh-roh' },
+          { spanish: '¿Tiene médico de cabecera?', english: 'Do you have a primary care doctor?', pronunciation: 'kah-beh-SEH-rah' },
+          { spanish: 'En caso de emergencia, ¿a quién llamamos?', english: 'In case of emergency, who do we call?', pronunciation: 'eh-mehr-HEN-syah' },
+        ]
+      },
+      {
+        id: 'sp-4-2', name: 'Chief Complaint',
+        items: [
+          { spanish: '¿Por qué viene hoy?', english: 'Why are you here today?', pronunciation: 'por KAY VYEH-neh oy' },
+          { spanish: '¿Qué le pasa?', english: 'What is wrong?', pronunciation: 'keh leh PAH-sah' },
+          { spanish: '¿Cuándo empezó?', english: 'When did it start?', pronunciation: 'KWAHN-doh em-peh-SOH' },
+          { spanish: '¿Le duele algo?', english: 'Does anything hurt?', pronunciation: 'leh DWEH-leh AL-goh' },
+          { spanish: '¿Ha tenido esto antes?', english: 'Have you had this before?', pronunciation: 'ah teh-NEE-doh' },
+          { spanish: '¿Está embarazada?', english: 'Are you pregnant?', pronunciation: 'es-TAH em-bah-rah-SAH-dah' },
+          { spanish: '¿Está tomando algún medicamento?', english: 'Are you taking any medications?', pronunciation: 'meh-dee-kah-MEN-toh' },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'sp-t5', name: 'Pain & Symptoms', emoji: '🩺', type: 'vocab',
+    lessons: [
+      {
+        id: 'sp-5-1', name: 'Describing Pain',
+        items: [
+          { spanish: '¿Dónde le duele?', english: 'Where does it hurt?', pronunciation: 'DOHN-deh leh DWEH-leh' },
+          { spanish: 'Muéstreme dónde', english: 'Show me where', pronunciation: 'MWES-treh-meh DOHN-deh' },
+          { spanish: '¿Cómo es el dolor?', english: 'What is the pain like?', pronunciation: 'KOH-moh es el doh-LOR' },
+          { spanish: 'Es punzante', english: 'It is sharp/stabbing', pronunciation: 'es poon-SAHN-teh' },
+          { spanish: 'Es sordo/opresivo', english: 'It is dull/pressure', pronunciation: 'es SOR-doh' },
+          { spanish: 'Es ardiente', english: 'It is burning', pronunciation: 'es ar-DYEN-teh' },
+          { spanish: 'Es pulsante', english: 'It is throbbing', pronunciation: 'es pool-SAHN-teh' },
+          { spanish: '¿El dolor se mueve?', english: 'Does the pain move/radiate?', pronunciation: 'el doh-LOR seh MWEH-veh' },
+        ]
+      },
+      {
+        id: 'sp-5-2', name: 'Vein Symptoms',
+        items: [
+          { spanish: '¿Tiene dolor en las piernas?', english: 'Do you have leg pain?', pronunciation: 'TYEH-neh doh-LOR' },
+          { spanish: '¿Tiene hinchazón en las piernas?', english: 'Do you have leg swelling?', pronunciation: 'een-chah-SON' },
+          { spanish: '¿Tiene venas varicosas?', english: 'Do you have varicose veins?', pronunciation: 'VEH-nas vah-ree-KOH-sas' },
+          { spanish: '¿Siente pesadez en las piernas?', english: 'Do you feel heaviness in your legs?', pronunciation: 'peh-sah-DES' },
+          { spanish: '¿Tiene calambres en las piernas?', english: 'Do you have leg cramps?', pronunciation: 'kah-LAM-bres' },
+          { spanish: '¿Empeora al estar de pie?', english: 'Does it worsen when standing?', pronunciation: 'em-peh-OH-rah' },
+          { spanish: '¿Mejora al elevar las piernas?', english: 'Does it improve when elevating legs?', pronunciation: 'meh-HOH-rah' },
+          { spanish: '¿Tiene cambios en la piel?', english: 'Do you have skin changes?', pronunciation: 'KAM-byos en la pyel' },
+          { spanish: '¿Tiene úlceras en las piernas?', english: 'Do you have leg ulcers?', pronunciation: 'OOL-seh-ras' },
+        ]
+      },
+      {
+        id: 'sp-5-3', name: 'General Symptoms',
+        items: [
+          { spanish: 'fiebre', english: 'fever', pronunciation: 'FYEH-breh' },
+          { spanish: 'mareo', english: 'dizziness', pronunciation: 'mah-REH-oh' },
+          { spanish: 'náuseas', english: 'nausea', pronunciation: 'NAH-oo-seh-as' },
+          { spanish: 'vómito', english: 'vomiting', pronunciation: 'VOH-mee-toh' },
+          { spanish: 'dificultad para respirar', english: 'difficulty breathing', pronunciation: 'dee-fee-kool-TAD' },
+          { spanish: 'cansancio', english: 'fatigue/tiredness', pronunciation: 'kan-SAN-syo' },
+          { spanish: 'sangrado', english: 'bleeding', pronunciation: 'san-GRAH-doh' },
+          { spanish: 'entumecimiento', english: 'numbness', pronunciation: 'en-too-meh-see-MYEN-toh' },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'sp-t6', name: 'Medical History', emoji: '📁', type: 'vocab',
+    lessons: [
+      {
+        id: 'sp-6-1', name: 'Allergies & Meds',
+        items: [
+          { spanish: '¿Tiene alergias?', english: 'Do you have allergies?', pronunciation: 'TYEN-eh ah-LEHR-hyas' },
+          { spanish: '¿Es alérgico/a a algún medicamento?', english: 'Are you allergic to any medication?', pronunciation: 'ah-LEHR-hee-koh' },
+          { spanish: '¿Es alérgico/a al látex?', english: 'Are you allergic to latex?', pronunciation: 'LAH-tex' },
+          { spanish: '¿Es alérgico/a al yodo?', english: 'Are you allergic to iodine?', pronunciation: 'YOH-doh' },
+          { spanish: '¿Qué medicamentos toma?', english: 'What medications do you take?', pronunciation: 'meh-dee-kah-MEN-tos' },
+          { spanish: '¿Toma anticoagulantes?', english: 'Do you take blood thinners?', pronunciation: 'an-tee-koh-ah-goo-LAN-tes' },
+          { spanish: '¿Toma aspirina regularmente?', english: 'Do you take aspirin regularly?', pronunciation: 'as-pee-REE-nah' },
+          { spanish: '¿Toma suplementos o vitaminas?', english: 'Do you take supplements or vitamins?', pronunciation: 'soo-pleh-MEN-tos' },
+        ]
+      },
+      {
+        id: 'sp-6-2', name: 'Past History',
+        items: [
+          { spanish: '¿Ha tenido cirugías?', english: 'Have you had surgeries?', pronunciation: 'see-roo-HEE-as' },
+          { spanish: '¿Ha tenido trombosis?', english: 'Have you had blood clots?', pronunciation: 'trom-BOH-sis' },
+          { spanish: '¿Ha tenido problemas del corazón?', english: 'Have you had heart problems?', pronunciation: 'koh-rah-SON' },
+          { spanish: '¿Tiene diabetes?', english: 'Do you have diabetes?', pronunciation: 'dyah-BEH-tes' },
+          { spanish: '¿Tiene presión alta?', english: 'Do you have high blood pressure?', pronunciation: 'preh-SYON AL-tah' },
+          { spanish: '¿Fuma?', english: 'Do you smoke?', pronunciation: 'FOO-mah' },
+          { spanish: '¿Toma alcohol?', english: 'Do you drink alcohol?', pronunciation: 'al-KOHL' },
+          { spanish: '¿Hace ejercicio?', english: 'Do you exercise?', pronunciation: 'AH-seh eh-her-SEE-syo' },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'sp-t7', name: 'Vein-Specific', emoji: '🩸', type: 'vocab',
+    lessons: [
+      {
+        id: 'sp-7-1', name: 'Vein Conditions',
+        items: [
+          { spanish: 'Usted tiene venas varicosas', english: 'You have varicose veins', pronunciation: 'VEH-nas vah-ree-KOH-sas' },
+          { spanish: 'Las venas varicosas son venas agrandadas', english: 'Varicose veins are enlarged veins', pronunciation: 'ah-gran-DAH-das' },
+          { spanish: 'Esto es causado por válvulas débiles', english: 'This is caused by weak valves', pronunciation: 'VAL-voo-las DEH-bee-les' },
+          { spanish: 'La sangre no fluye correctamente', english: 'The blood does not flow correctly', pronunciation: 'FLOO-yeh' },
+          { spanish: 'Vamos a hacer un ultrasonido', english: 'We are going to do an ultrasound', pronunciation: 'ool-trah-soh-NEE-doh' },
+          { spanish: 'El ultrasonido no duele', english: "The ultrasound doesn't hurt", pronunciation: 'ool-trah-soh-NEE-doh' },
+          { spanish: 'Vamos a revisar su circulación', english: 'We are going to check your circulation', pronunciation: 'seer-koo-lah-SYON' },
+        ]
+      },
+      {
+        id: 'sp-7-2', name: 'Treatment',
+        items: [
+          { spanish: 'Tenemos varios tratamientos', english: 'We have several treatments', pronunciation: 'trah-tah-MYEN-tos' },
+          { spanish: 'La ablación térmica', english: 'Thermal ablation (heat treatment)', pronunciation: 'ah-blah-SYON TEHR-mee-kah' },
+          { spanish: 'La escleroterapia', english: 'Sclerotherapy (injection treatment)', pronunciation: 'es-kleh-roh-teh-RAH-pyah' },
+          { spanish: 'Vamos a inyectar un medicamento en la vena', english: 'We will inject medication into the vein', pronunciation: 'een-yek-TAR' },
+          { spanish: 'Esto va a cerrar la vena', english: 'This will close the vein', pronunciation: 'seh-RRAR la VEH-nah' },
+          { spanish: 'El tratamiento dura aproximadamente una hora', english: 'Treatment takes approximately one hour', pronunciation: 'ah-prox-ee-MAH-dah-MEN-teh' },
+          { spanish: 'Necesita usar medias de compresión', english: 'You need to wear compression stockings', pronunciation: 'MEH-dyas deh kom-preh-SYON' },
+        ]
+      },
+      {
+        id: 'sp-7-3', name: 'Post-Procedure',
+        items: [
+          { spanish: 'Después del tratamiento', english: 'After the treatment', pronunciation: 'des-PWES del trah-tah-MYEN-toh' },
+          { spanish: 'Camine por al menos 30 minutos', english: 'Walk for at least 30 minutes', pronunciation: 'kah-MEE-neh' },
+          { spanish: 'No levante objetos pesados', english: 'Do not lift heavy objects', pronunciation: 'leh-VAN-teh peh-SAH-dos' },
+          { spanish: 'Evite el sol directo', english: 'Avoid direct sun', pronunciation: 'eh-VEE-teh el sol' },
+          { spanish: 'Use las medias todos los días', english: 'Wear the stockings every day', pronunciation: 'OO-seh las MEH-dyas' },
+          { spanish: 'Llámenos si tiene dolor severo', english: 'Call us if you have severe pain', pronunciation: 'YAH-meh-nos' },
+          { spanish: 'Llámenos si tiene fiebre', english: 'Call us if you have fever', pronunciation: 'YAH-meh-nos FYEH-breh' },
+          { spanish: 'Regrese en una semana', english: 'Return in one week', pronunciation: 'reh-GREH-seh' },
+          { spanish: '¿Tiene preguntas?', english: 'Do you have questions?', pronunciation: 'preh-GOON-tas' },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'sp-t8', name: 'Emergency Phrases', emoji: '🚨', type: 'vocab',
+    lessons: [
+      {
+        id: 'sp-8-1', name: 'Emergencies',
+        items: [
+          { spanish: '¡Llame al 911!', english: 'Call 911!', pronunciation: 'YAH-meh al nweh-veh-oo-no-oo-no' },
+          { spanish: 'Necesito ayuda', english: 'I need help', pronunciation: 'neh-seh-SEE-toh ah-YOO-dah' },
+          { spanish: 'Es una emergencia', english: 'It is an emergency', pronunciation: 'eh-mehr-HEN-syah' },
+          { spanish: '¿Tiene dolor en el pecho?', english: 'Do you have chest pain?', pronunciation: 'doh-LOR en el PEH-choh' },
+          { spanish: '¿Puede respirar?', english: 'Can you breathe?', pronunciation: 'PWEH-deh res-pee-RAR' },
+          { spanish: 'No se mueva', english: "Don't move", pronunciation: 'no seh MWEH-vah' },
+          { spanish: 'Estamos llamando al doctor', english: 'We are calling the doctor', pronunciation: 'yah-MAN-doh' },
+          { spanish: 'La ayuda viene en camino', english: 'Help is on the way', pronunciation: 'ah-YOO-dah VYEH-neh' },
+          { spanish: 'Quédese calmado/a', english: 'Stay calm', pronunciation: 'KAY-deh-seh kal-MAH-doh' },
+        ]
+      },
+    ]
+  },
+];
+
+function getSpanishState() {
+  const xp = parseInt(localStorage.getItem('spanish_xp') || '0');
+  const completed = JSON.parse(localStorage.getItem('spanish_completed') || '{}');
+  const lastDate = localStorage.getItem('spanish_last_date') || '';
+  const streak = parseInt(localStorage.getItem('spanish_streak') || '0');
+  return { xp, completed, lastDate, streak };
+}
+
+function getSpanishLevel(xp) {
+  if (xp >= 301) return 'Attending 👨‍⚕️';
+  if (xp >= 151) return 'Resident 🩺';
+  if (xp >= 51) return 'Intern 📋';
+  return 'Student 📚';
+}
+
+function updateSpanishStreak() {
+  const today = new Date().toISOString().slice(0, 10);
+  const lastDate = localStorage.getItem('spanish_last_date') || '';
+  let streak = parseInt(localStorage.getItem('spanish_streak') || '0');
+  if (lastDate === today) return streak;
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  if (lastDate === yesterday) { streak++; } else { streak = 1; }
+  localStorage.setItem('spanish_last_date', today);
+  localStorage.setItem('spanish_streak', String(streak));
+  return streak;
+}
+
+function addSpanishXP(amount) {
+  const current = parseInt(localStorage.getItem('spanish_xp') || '0');
+  localStorage.setItem('spanish_xp', String(current + amount));
+}
+
+function markSpanishLessonComplete(lessonId, stars) {
+  const completed = JSON.parse(localStorage.getItem('spanish_completed') || '{}');
+  if (!completed[lessonId] || completed[lessonId] < stars) {
+    completed[lessonId] = stars;
+  }
+  localStorage.setItem('spanish_completed', JSON.stringify(completed));
+}
+
+function buildSpanishQuestions(lesson, track) {
+  const items = lesson.items;
+  const isPron = track.type === 'pronunciation';
+  const questions = [];
+  const shuffled = [...items].sort(() => Math.random() - 0.5).slice(0, 5);
+
+  shuffled.forEach((item, idx) => {
+    const qType = idx % 3;
+    const others = items.filter(i => i !== item).sort(() => Math.random() - 0.5).slice(0, 3);
+    if (isPron) {
+      if (qType === 0) {
+        questions.push({ type: 'flashcard_pronunciation', item });
+      } else if (qType === 1) {
+        const opts = [item.sound, ...others.map(o => o.sound)].sort(() => Math.random() - 0.5);
+        questions.push({ type: 'mc', prompt: item.rule, promptLabel: 'How is this pronounced?', correct: item.sound, options: opts });
+      } else {
+        const opts = [item.rule, ...others.map(o => o.rule)].sort(() => Math.random() - 0.5);
+        questions.push({ type: 'mc', prompt: `"${item.sound}"`, promptLabel: 'Which letter/rule makes this sound?', correct: item.rule, options: opts });
+      }
+    } else {
+      if (qType === 0) {
+        questions.push({ type: 'flashcard_vocab', item });
+      } else if (qType === 1) {
+        const opts = [item.spanish, ...others.map(o => o.spanish)].sort(() => Math.random() - 0.5);
+        questions.push({ type: 'mc', prompt: item.english, promptLabel: 'Choose the correct Spanish:', correct: item.spanish, options: opts });
+      } else {
+        const opts = [item.english, ...others.map(o => o.english)].sort(() => Math.random() - 0.5);
+        questions.push({ type: 'mc', prompt: item.spanish, promptLabel: 'What does this mean?', correct: item.english, options: opts });
+      }
+    }
+  });
+  return questions;
+}
+
+function SpanishPage() {
+  const [state, setState] = useState(() => getSpanishState());
+  const [activeLesson, setActiveLesson] = useState(null);
+  const [activeLessonTrack, setActiveLessonTrack] = useState(null);
+  const [phase, setPhase] = useState('home');
+  const [questions, setQuestions] = useState([]);
+  const [qIdx, setQIdx] = useState(0);
+  const [score, setScore] = useState(0);
+  const [feedback, setFeedback] = useState(null);
+  const [wrongAnswer, setWrongAnswer] = useState(null);
+  const [xpGained, setXpGained] = useState(0);
+  const [flipped, setFlipped] = useState(false);
+  const [xpFlash, setXpFlash] = useState(false);
+
+  const ss = {
+    page: { background: '#0a1f0a', minHeight: 'calc(100vh - 60px)', color: 'white', padding: 20, fontFamily: 'inherit' },
+    topBar: { display: 'flex', gap: 16, alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', background: 'rgba(16,185,129,0.1)', borderRadius: 12, padding: '12px 20px', marginBottom: 24, fontSize: 15, border: '1px solid rgba(16,185,129,0.2)' },
+    statChip: { display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(16,185,129,0.15)', borderRadius: 20, padding: '6px 14px', fontWeight: 600 },
+    trackCard: { background: 'rgba(16,185,129,0.06)', borderRadius: 14, padding: 20, marginBottom: 16, border: '1px solid rgba(16,185,129,0.15)' },
+    trackTitle: { fontSize: 18, fontWeight: 700, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 },
+    progressBar: { background: 'rgba(255,255,255,0.1)', borderRadius: 99, height: 8, overflow: 'hidden', marginBottom: 14 },
+    progressFill: (pct) => ({ background: '#10b981', width: `${pct}%`, height: '100%', borderRadius: 99, transition: 'width 0.4s' }),
+    lessonRow: { display: 'flex', gap: 10, flexWrap: 'wrap' },
+    lessonCircle: (status) => ({
+      width: 48, height: 48, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontSize: 18, fontWeight: 700, cursor: status === 'available' ? 'pointer' : 'default',
+      background: status === 'complete' ? '#10b981' : status === 'available' ? '#059669' : 'rgba(255,255,255,0.08)',
+      color: status === 'locked' ? 'rgba(255,255,255,0.3)' : 'white',
+      border: status === 'available' ? '2px solid #10b981' : 'none',
+      transition: 'transform 0.15s',
+    }),
+    lessonLabel: { textAlign: 'center', fontSize: 11, marginTop: 4, color: 'rgba(255,255,255,0.6)', maxWidth: 60 },
+    introBox: { background: 'rgba(16,185,129,0.08)', borderRadius: 16, padding: 32, maxWidth: 480, margin: '40px auto', textAlign: 'center', border: '1px solid rgba(16,185,129,0.3)' },
+    quizBox: { maxWidth: 520, margin: '0 auto' },
+    progressHeader: { display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 },
+    qCard: { background: 'rgba(16,185,129,0.08)', borderRadius: 16, padding: 28, textAlign: 'center', marginBottom: 16, border: '1px solid rgba(16,185,129,0.15)' },
+    bigLetter: { fontSize: 72, fontWeight: 900, lineHeight: 1, marginBottom: 8, color: '#10b981' },
+    promptLabel: { color: 'rgba(255,255,255,0.5)', fontSize: 13, marginBottom: 8 },
+    prompt: { fontSize: 24, fontWeight: 700, marginBottom: 8 },
+    optionBtn: (sel, correct) => ({
+      display: 'block', width: '100%', padding: '14px 16px', marginBottom: 10, borderRadius: 10, border: '2px solid',
+      cursor: feedback ? 'default' : 'pointer', fontSize: 15, fontWeight: 600, transition: 'all 0.15s', textAlign: 'left',
+      background: feedback && sel === correct ? 'rgba(16,185,129,0.25)' : feedback && sel !== correct ? 'rgba(239,68,68,0.12)' : 'rgba(255,255,255,0.05)',
+      borderColor: feedback && sel === correct ? '#10b981' : feedback && sel !== correct ? '#ef4444' : 'rgba(255,255,255,0.15)',
+      color: 'white',
+    }),
+    flashCard: (flipped) => ({
+      background: flipped ? 'rgba(16,185,129,0.15)' : 'rgba(16,185,129,0.05)', borderRadius: 16, padding: 40, textAlign: 'center',
+      cursor: 'pointer', border: `2px solid ${flipped ? '#10b981' : 'rgba(16,185,129,0.2)'}`,
+      transition: 'all 0.3s', minHeight: 180, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+    }),
+    fcHint: { color: 'rgba(255,255,255,0.4)', fontSize: 13, marginTop: 8 },
+    knowBtn: { background: '#10b981', color: 'white', border: 'none', borderRadius: 10, padding: '12px 28px', fontSize: 15, fontWeight: 700, cursor: 'pointer', marginRight: 10 },
+    learningBtn: { background: 'rgba(239,68,68,0.8)', color: 'white', border: 'none', borderRadius: 10, padding: '12px 28px', fontSize: 15, fontWeight: 700, cursor: 'pointer' },
+    feedbackBar: (type) => ({
+      background: type === 'correct' ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)',
+      border: `1px solid ${type === 'correct' ? '#10b981' : '#ef4444'}`,
+      borderRadius: 10, padding: '12px 16px', marginTop: 12, color: type === 'correct' ? '#10b981' : '#ef4444', fontWeight: 600,
+    }),
+    resultBox: { background: 'rgba(16,185,129,0.08)', borderRadius: 16, padding: 32, maxWidth: 480, margin: '40px auto', textAlign: 'center', border: '1px solid rgba(16,185,129,0.2)' },
+    continueBtn: { background: '#10b981', color: 'white', border: 'none', borderRadius: 10, padding: '14px 32px', fontSize: 16, fontWeight: 700, cursor: 'pointer', marginTop: 20 },
+    startBtn: { background: '#10b981', color: 'white', border: 'none', borderRadius: 10, padding: '14px 32px', fontSize: 16, fontWeight: 700, cursor: 'pointer', marginTop: 20 },
+    backBtn: { background: 'rgba(255,255,255,0.08)', color: 'white', border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: 13, cursor: 'pointer', marginBottom: 16 },
+  };
+
+  const refresh = () => setState(getSpanishState());
+
+  const startLesson = (lesson, track) => {
+    const qs = buildSpanishQuestions(lesson, track);
+    setActiveLesson(lesson);
+    setActiveLessonTrack(track);
+    setQuestions(qs);
+    setQIdx(0);
+    setScore(0);
+    setXpGained(0);
+    setFeedback(null);
+    setWrongAnswer(null);
+    setFlipped(false);
+    setPhase('intro');
+  };
+
+  const beginQuiz = () => { setPhase('quiz'); updateSpanishStreak(); refresh(); };
+
+  const handleAnswer = (answer) => {
+    if (feedback) return;
+    const q = questions[qIdx];
+    const isCorrect = answer === q.correct;
+    if (isCorrect) {
+      setScore(s => s + 1);
+      setXpGained(x => x + 1);
+      addSpanishXP(1);
+      setFeedback('correct');
+      setXpFlash(true);
+      setTimeout(() => setXpFlash(false), 700);
+      setTimeout(nextQ, 900);
+    } else {
+      setFeedback('wrong');
+      setWrongAnswer(q.correct);
+      setTimeout(nextQ, 1800);
+    }
+  };
+
+  const handleFlashcard = (knew) => {
+    if (knew) {
+      setScore(s => s + 1);
+      setXpGained(x => x + 1);
+      addSpanishXP(1);
+    }
+    setFeedback(knew ? 'correct' : 'wrong');
+    setTimeout(nextQ, 600);
+  };
+
+  const nextQ = () => {
+    setFeedback(null);
+    setWrongAnswer(null);
+    setFlipped(false);
+    if (qIdx + 1 >= questions.length) {
+      finishLesson();
+    } else {
+      setQIdx(i => i + 1);
+    }
+  };
+
+  const finishLesson = () => {
+    const total = questions.length;
+    const pct = score / total;
+    const stars = pct === 1 ? 3 : pct >= 0.7 ? 2 : 1;
+    markSpanishLessonComplete(activeLesson.id, stars);
+    addSpanishXP(10);
+    setXpGained(x => x + 10);
+    refresh();
+    setPhase('result');
+  };
+
+  const goHome = () => { setPhase('home'); setActiveLesson(null); };
+
+  if (phase === 'intro' && activeLesson) {
+    return React.createElement('div', { style: ss.page },
+      React.createElement('div', { style: ss.introBox },
+        React.createElement('div', { style: { fontSize: 48, marginBottom: 12 } }, activeLessonTrack.emoji),
+        React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 13, marginBottom: 4 } }, activeLessonTrack.name),
+        React.createElement('div', { style: { fontSize: 24, fontWeight: 700, marginBottom: 16 } }, activeLesson.name),
+        React.createElement('div', { style: { color: 'rgba(255,255,255,0.6)', fontSize: 15, marginBottom: 24 } }, `5 questions · up to ${questions.length + 10} XP to earn`),
+        React.createElement('div', { style: { fontSize: 32, marginBottom: 8 } }, '🇲🇽'),
+        React.createElement('div', { style: { color: 'rgba(255,255,255,0.4)', fontSize: 13, marginBottom: 24 } }, "You've got this, Carly! Every phrase helps a patient 💚"),
+        React.createElement('button', { style: ss.startBtn, onClick: beginQuiz }, 'Start Lesson →'),
+        React.createElement('div', { style: { marginTop: 12 } },
+          React.createElement('button', { style: ss.backBtn, onClick: goHome }, '← Back')
+        )
+      )
+    );
+  }
+
+  if (phase === 'quiz' && activeLesson) {
+    const q = questions[qIdx];
+    const pct = ((qIdx) / questions.length) * 100;
+
+    return React.createElement('div', { style: ss.page },
+      React.createElement('div', { style: ss.quizBox },
+        React.createElement('button', { style: ss.backBtn, onClick: goHome }, '← Exit'),
+        React.createElement('div', { style: ss.progressHeader },
+          React.createElement('div', { style: { flex: 1, background: 'rgba(255,255,255,0.1)', borderRadius: 99, height: 10, overflow: 'hidden' } },
+            React.createElement('div', { style: { background: '#10b981', width: `${pct}%`, height: '100%', borderRadius: 99, transition: 'width 0.3s' } })
+          ),
+          React.createElement('div', { style: { color: '#10b981', fontWeight: 700, fontSize: 14, whiteSpace: 'nowrap' } }, `${qIdx + 1} / ${questions.length}`),
+          xpFlash ? React.createElement('div', { style: { color: '#10b981', fontWeight: 700, fontSize: 14 } }, '+1 ⭐') : null
+        ),
+
+        (q.type === 'flashcard_pronunciation' || q.type === 'flashcard_vocab') ?
+          React.createElement('div', null,
+            React.createElement('div', { style: { ...ss.qCard, cursor: 'pointer' }, onClick: () => !feedback && setFlipped(f => !f) },
+              !flipped ?
+                React.createElement('div', null,
+                  q.type === 'flashcard_pronunciation' ?
+                    React.createElement('div', { style: ss.bigLetter }, q.item.rule) :
+                    React.createElement('div', { style: { fontSize: 26, fontWeight: 700 } }, q.item.spanish),
+                  React.createElement('div', { style: ss.fcHint }, '👆 Tap to flip')
+                ) :
+                React.createElement('div', null,
+                  q.type === 'flashcard_pronunciation' ?
+                    React.createElement('div', null,
+                      React.createElement('div', { style: { fontSize: 18, color: '#10b981', fontWeight: 700, marginBottom: 4 } }, q.item.sound),
+                      React.createElement('div', { style: { fontSize: 14, color: 'rgba(255,255,255,0.6)', marginBottom: 4 } }, `Example: ${q.item.example}`),
+                      React.createElement('div', { style: { fontSize: 12, color: 'rgba(255,255,255,0.4)' } }, q.item.exTrans)
+                    ) :
+                    React.createElement('div', null,
+                      React.createElement('div', { style: { fontSize: 20, fontWeight: 700, marginBottom: 4 } }, q.item.english),
+                      React.createElement('div', { style: { fontSize: 14, color: '#10b981', fontStyle: 'italic' } }, q.item.pronunciation)
+                    )
+                )
+            ),
+            flipped && !feedback ?
+              React.createElement('div', { style: { display: 'flex', gap: 10, justifyContent: 'center', marginTop: 8 } },
+                React.createElement('button', { style: ss.knowBtn, onClick: () => handleFlashcard(true) }, '✓ Know it!'),
+                React.createElement('button', { style: ss.learningBtn, onClick: () => handleFlashcard(false) }, '↻ Still learning')
+              ) : null,
+            feedback ?
+              React.createElement('div', { style: ss.feedbackBar(feedback) },
+                feedback === 'correct' ? '🎉 Great job!' : '💪 Keep practicing!'
+              ) : null
+          )
+
+        : React.createElement('div', null,
+            React.createElement('div', { style: ss.qCard },
+              React.createElement('div', { style: ss.promptLabel }, q.promptLabel),
+              React.createElement('div', { style: ss.prompt }, q.prompt)
+            ),
+            q.options.map((opt, i) =>
+              React.createElement('button', {
+                key: i, style: ss.optionBtn(opt, q.correct),
+                onClick: () => !feedback && handleAnswer(opt)
+              }, opt)
+            ),
+            feedback ?
+              React.createElement('div', { style: ss.feedbackBar(feedback) },
+                feedback === 'correct' ? '🎉 Correcto! +1 XP' : `❌ Correct answer: ${q.correct}`
+              ) : null
+          )
+      )
+    );
+  }
+
+  if (phase === 'result') {
+    const total = questions.length;
+    const pct = Math.round((score / total) * 100);
+    const stars = pct === 100 ? 3 : pct >= 70 ? 2 : 1;
+    const starsDisplay = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+    return React.createElement('div', { style: ss.page },
+      React.createElement('div', { style: ss.resultBox },
+        React.createElement('div', { style: { fontSize: 48, marginBottom: 12 } }, pct === 100 ? '🏆' : pct >= 70 ? '🎉' : '💪'),
+        React.createElement('div', { style: { fontSize: 28, fontWeight: 700, marginBottom: 8 } }, pct === 100 ? '¡Perfecto!' : pct >= 70 ? '¡Muy bien!' : '¡Sigue así!'),
+        React.createElement('div', { style: { fontSize: 36, marginBottom: 16 } }, starsDisplay),
+        React.createElement('div', { style: { display: 'flex', gap: 20, justifyContent: 'center', marginBottom: 20 } },
+          React.createElement('div', { style: { textAlign: 'center' } },
+            React.createElement('div', { style: { fontSize: 28, fontWeight: 700, color: '#10b981' } }, `${score}/${total}`),
+            React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 13 } }, 'Correct')
+          ),
+          React.createElement('div', { style: { textAlign: 'center' } },
+            React.createElement('div', { style: { fontSize: 28, fontWeight: 700, color: '#10b981' } }, `+${xpGained}`),
+            React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 13 } }, 'XP Earned')
+          )
+        ),
+        React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 14, marginBottom: 8 } },
+          pct === 100 ? "Your patients are lucky to have you, Carly! 🌟" :
+          pct >= 70 ? "Great work! Your Spanish is getting stronger every day! 💚" :
+          "Every phrase you learn helps a patient feel heard! Keep going! 🩺"
+        ),
+        React.createElement('button', { style: ss.continueBtn, onClick: goHome }, 'Continue →')
+      )
+    );
+  }
+
+  // HOME
+  const { xp, completed, streak } = state;
+  return React.createElement('div', { style: ss.page },
+    React.createElement('div', { style: ss.topBar },
+      React.createElement('div', { style: ss.statChip }, `🔥 ${streak} day${streak !== 1 ? 's' : ''}`),
+      React.createElement('div', { style: ss.statChip }, `⭐ ${xp} XP`),
+      React.createElement('div', { style: ss.statChip }, getSpanishLevel(xp))
+    ),
+
+    React.createElement('div', { style: { textAlign: 'center', marginBottom: 24 } },
+      React.createElement('div', { style: { fontSize: 28, fontWeight: 700 } }, '🇲🇽 Medical Spanish'),
+      React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 14, marginTop: 4 } }, "Communicate with your Spanish-speaking patients 💚")
+    ),
+
+    SPANISH_TRACKS.map((track, tIdx) => {
+      const allLessons = track.lessons;
+      const completedCount = allLessons.filter(l => completed[l.id] >= 1).length;
+      const pct = allLessons.length ? (completedCount / allLessons.length) * 100 : 0;
+
+      let trackLocked = false;
+      if (tIdx > 0) {
+        const prevTrack = SPANISH_TRACKS[tIdx - 1];
+        const prevDone = prevTrack.lessons.every(l => completed[l.id] >= 1);
+        if (!prevDone) trackLocked = true;
+      }
+
+      return React.createElement('div', { key: track.id, style: { ...ss.trackCard, opacity: trackLocked ? 0.5 : 1 } },
+        React.createElement('div', { style: ss.trackTitle },
+          React.createElement('span', null, track.emoji),
+          React.createElement('span', null, track.name),
+          trackLocked ? React.createElement('span', { style: { marginLeft: 'auto', fontSize: 14, color: 'rgba(255,255,255,0.3)' } }, '🔒') :
+            React.createElement('span', { style: { marginLeft: 'auto', fontSize: 13, color: '#10b981' } }, `${completedCount}/${allLessons.length}`)
+        ),
+        React.createElement('div', { style: ss.progressBar },
+          React.createElement('div', { style: ss.progressFill(trackLocked ? 0 : pct) })
+        ),
+        React.createElement('div', { style: ss.lessonRow },
+          allLessons.map((lesson, lIdx) => {
+            const lessonStars = completed[lesson.id] || 0;
+            let status = 'locked';
+            if (!trackLocked) {
+              if (lessonStars >= 1) status = 'complete';
+              else if (lIdx === 0 || completed[allLessons[lIdx - 1].id] >= 1) status = 'available';
+            }
+            return React.createElement('div', { key: lesson.id, style: { textAlign: 'center' } },
+              React.createElement('div', {
+                style: ss.lessonCircle(status),
+                onClick: () => status === 'available' && startLesson(lesson, track),
+                onMouseEnter: e => { if (status === 'available') e.currentTarget.style.transform = 'scale(1.12)'; },
+                onMouseLeave: e => { e.currentTarget.style.transform = 'scale(1)'; },
+              },
+                status === 'complete' ? ('⭐'.repeat(Math.min(lessonStars, 3))) :
+                status === 'available' ? '▶' : '🔒'
+              ),
+              React.createElement('div', { style: ss.lessonLabel }, lesson.name)
+            );
+          })
+        )
+      );
+    })
+  );
+}
+
 function App() {
   const [tab, setTab] = useState('pto');
   return (
@@ -1662,10 +2357,11 @@ function App() {
           <button className={`nav-tab ${tab==='concerts'?'active':''}`} onClick={()=>setTab('concerts')}>🎸 Concerts</button>
           <button className={`nav-tab ${tab==='books'?'active':''}`} onClick={()=>setTab('books')}>📚 Reading</button>
           <button className={`nav-tab ${tab==='russian'?'active':''}`} onClick={()=>setTab('russian')}>🇷🇺 Russian</button>
+          <button className={`nav-tab ${tab==='spanish'?'active':''}`} onClick={()=>setTab('spanish')}>🇲🇽 Spanish</button>
         </div>
       </nav>
       <div className={tab === 'concerts' || tab === 'books' ? '' : 'container'}>
-        {tab === 'pto' ? <PTOPage /> : tab === 'travel' ? <TravelPage /> : tab === 'overtime' ? <OvertimePage /> : tab === 'concerts' ? <ConcertsPage /> : tab === 'books' ? <BooksPage /> : <RussianPage />}
+        {tab === 'pto' ? <PTOPage /> : tab === 'travel' ? <TravelPage /> : tab === 'overtime' ? <OvertimePage /> : tab === 'concerts' ? <ConcertsPage /> : tab === 'books' ? <BooksPage /> : tab === 'russian' ? <RussianPage /> : <SpanishPage />}
       </div>
     </div>
   );
