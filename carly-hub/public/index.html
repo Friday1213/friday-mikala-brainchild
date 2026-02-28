@@ -1060,6 +1060,595 @@ function BooksPage() {
   );
 }
 
+// ============================================================
+// 🇷🇺 RUSSIAN LANGUAGE LEARNING PAGE
+// ============================================================
+
+const RUSSIAN_TRACKS = [
+  {
+    id: 'track1', emoji: '🔤', name: 'Cyrillic Alphabet', type: 'alphabet',
+    lessons: [
+      {
+        id: 'l1_1', name: 'Vowels', items: [
+          { cyrillic: 'А а', sound: 'ah', example: 'арбуз', exTrans: 'arbuz (watermelon)' },
+          { cyrillic: 'Е е', sound: 'yeh', example: 'если', exTrans: 'yesli (if)' },
+          { cyrillic: 'Ё ё', sound: 'yo', example: 'ёж', exTrans: 'yozh (hedgehog)' },
+          { cyrillic: 'И и', sound: 'ee', example: 'имя', exTrans: 'imya (name)' },
+          { cyrillic: 'О о', sound: 'oh', example: 'окно', exTrans: 'okno (window)' },
+          { cyrillic: 'У у', sound: 'oo', example: 'утро', exTrans: 'utro (morning)' },
+          { cyrillic: 'Ы ы', sound: 'ih (like "i" in "bit")', example: 'рыба', exTrans: 'ryba (fish)' },
+          { cyrillic: 'Э э', sound: 'eh', example: 'это', exTrans: 'eto (this)' },
+          { cyrillic: 'Ю ю', sound: 'yu', example: 'юг', exTrans: 'yug (south)' },
+          { cyrillic: 'Я я', sound: 'ya', example: 'яблоко', exTrans: 'yabloko (apple)' },
+        ]
+      },
+      {
+        id: 'l1_2', name: 'Easy Consonants', items: [
+          { cyrillic: 'Б б', sound: 'b', example: 'банк', exTrans: 'bank (bank)' },
+          { cyrillic: 'В в', sound: 'v', example: 'вода', exTrans: 'voda (water)' },
+          { cyrillic: 'Г г', sound: 'g', example: 'город', exTrans: 'gorod (city)' },
+          { cyrillic: 'Д д', sound: 'd', example: 'дом', exTrans: 'dom (house)' },
+          { cyrillic: 'З з', sound: 'z', example: 'зима', exTrans: 'zima (winter)' },
+          { cyrillic: 'К к', sound: 'k', example: 'кот', exTrans: 'kot (cat)' },
+          { cyrillic: 'Л л', sound: 'l', example: 'лимон', exTrans: 'limon (lemon)' },
+          { cyrillic: 'М м', sound: 'm', example: 'мама', exTrans: 'mama (mom)' },
+          { cyrillic: 'Н н', sound: 'n', example: 'нос', exTrans: 'nos (nose)' },
+          { cyrillic: 'П п', sound: 'p', example: 'папа', exTrans: 'papa (dad)' },
+          { cyrillic: 'Р р', sound: 'r (rolled!)', example: 'рука', exTrans: 'ruka (hand)' },
+          { cyrillic: 'С с', sound: 's', example: 'сок', exTrans: 'sok (juice)' },
+          { cyrillic: 'Т т', sound: 't', example: 'торт', exTrans: 'tort (cake)' },
+          { cyrillic: 'Ф ф', sound: 'f', example: 'фото', exTrans: 'foto (photo)' },
+        ]
+      },
+      {
+        id: 'l1_3', name: 'Tricky Letters', items: [
+          { cyrillic: 'Ж ж', sound: 'zh (like measure)', example: 'жить', exTrans: 'zhit\' (to live)' },
+          { cyrillic: 'Х х', sound: 'kh (like Bach)', example: 'хлеб', exTrans: 'khleb (bread)' },
+          { cyrillic: 'Ц ц', sound: 'ts (like cats)', example: 'цирк', exTrans: 'tsirk (circus)' },
+          { cyrillic: 'Ч ч', sound: 'ch (like cheese)', example: 'чай', exTrans: 'chay (tea)' },
+          { cyrillic: 'Ш ш', sound: 'sh (like shush)', example: 'школа', exTrans: 'shkola (school)' },
+          { cyrillic: 'Щ щ', sound: 'shch (like fresh cheese)', example: 'щи', exTrans: 'shchi (cabbage soup)' },
+          { cyrillic: 'Ъ ъ', sound: 'hard sign (pause)', example: 'объект', exTrans: 'ob\'yekt (object)' },
+          { cyrillic: 'Ь ь', sound: 'soft sign (soften prev)', example: 'пить', exTrans: 'pit\' (to drink)' },
+          { cyrillic: 'Й й', sound: 'y (like yes)', example: 'йогурт', exTrans: 'yogurt (yogurt)' },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'track2', emoji: '👋', name: 'Greetings & Introductions', type: 'vocab',
+    lessons: [
+      {
+        id: 'l2_1', name: 'Basic Greetings', items: [
+          { russian: 'Привет', trans: 'Privet', english: 'Hi / Hello (informal)' },
+          { russian: 'Здравствуйте', trans: 'Zdravstvuyte', english: 'Hello (formal)' },
+          { russian: 'Доброе утро', trans: 'Dobroye utro', english: 'Good morning' },
+          { russian: 'Добрый день', trans: 'Dobryy den\'', english: 'Good afternoon' },
+          { russian: 'Добрый вечер', trans: 'Dobryy vecher', english: 'Good evening' },
+          { russian: 'До свидания', trans: 'Do svidaniya', english: 'Goodbye (formal)' },
+          { russian: 'Пока', trans: 'Poka', english: 'Bye (informal)' },
+        ]
+      },
+      {
+        id: 'l2_2', name: 'Introductions', items: [
+          { russian: 'Меня зовут ___', trans: 'Menya zovut ___', english: 'My name is ___' },
+          { russian: 'Очень приятно', trans: 'Ochen\' priyatno', english: 'Nice to meet you' },
+          { russian: 'Как вас зовут?', trans: 'Kak vas zovut?', english: 'What is your name? (formal)' },
+          { russian: 'Как тебя зовут?', trans: 'Kak tebya zovut?', english: 'What is your name? (informal)' },
+          { russian: 'Я из Америки', trans: 'Ya iz Ameriki', english: 'I am from America' },
+          { russian: 'Я говорю немного по-русски', trans: 'Ya govoryu nemnogo po-russki', english: 'I speak a little Russian' },
+        ]
+      },
+      {
+        id: 'l2_3', name: 'How Are You?', items: [
+          { russian: 'Как дела?', trans: 'Kak dela?', english: 'How are you? (informal)' },
+          { russian: 'Как вы поживаете?', trans: 'Kak vy pozhivayete?', english: 'How are you? (formal)' },
+          { russian: 'Хорошо', trans: 'Khorosho', english: 'Good / Fine' },
+          { russian: 'Отлично', trans: 'Otlichno', english: 'Excellent / Great' },
+          { russian: 'Нормально', trans: 'Normal\'no', english: 'OK / Normal' },
+          { russian: 'Спасибо', trans: 'Spasibo', english: 'Thank you' },
+          { russian: 'Пожалуйста', trans: 'Pozhaluysta', english: 'Please / You\'re welcome' },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'track3', emoji: '👨‍👩‍👧', name: 'Family Words', type: 'vocab',
+    lessons: [
+      {
+        id: 'l3_1', name: 'Immediate Family', items: [
+          { russian: 'Семья', trans: 'Sem\'ya', english: 'Family' },
+          { russian: 'Мама', trans: 'Mama', english: 'Mom' },
+          { russian: 'Папа', trans: 'Papa', english: 'Dad' },
+          { russian: 'Сын', trans: 'Syn', english: 'Son' },
+          { russian: 'Дочь', trans: 'Doch\'', english: 'Daughter' },
+          { russian: 'Брат', trans: 'Brat', english: 'Brother' },
+          { russian: 'Сестра', trans: 'Sestra', english: 'Sister' },
+          { russian: 'Муж', trans: 'Muzh', english: 'Husband' },
+          { russian: 'Жена', trans: 'Zhena', english: 'Wife' },
+          { russian: 'Бабушка', trans: 'Babushka', english: 'Grandmother' },
+          { russian: 'Дедушка', trans: 'Dedushka', english: 'Grandfather' },
+        ]
+      },
+      {
+        id: 'l3_2', name: 'Extended Family', items: [
+          { russian: 'Парень', trans: 'Paren\'', english: 'Boyfriend 💕' },
+          { russian: 'Девушка', trans: 'Devushka', english: 'Girlfriend' },
+          { russian: 'Друг', trans: 'Drug', english: 'Friend (male)' },
+          { russian: 'Подруга', trans: 'Podruga', english: 'Friend (female)' },
+          { russian: 'Тётя', trans: 'Tyotya', english: 'Aunt' },
+          { russian: 'Дядя', trans: 'Dyadya', english: 'Uncle' },
+          { russian: 'Двоюродный брат', trans: 'Dvoyurodnyy brat', english: 'Cousin (male)' },
+          { russian: 'Двоюродная сестра', trans: 'Dvoyurodnaya sestra', english: 'Cousin (female)' },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'track4', emoji: '🙏', name: 'Polite Phrases', type: 'vocab',
+    lessons: [
+      {
+        id: 'l4_1', name: 'Essentials', items: [
+          { russian: 'Спасибо', trans: 'Spasibo', english: 'Thank you' },
+          { russian: 'Большое спасибо', trans: 'Bol\'shoye spasibo', english: 'Thank you very much' },
+          { russian: 'Пожалуйста', trans: 'Pozhaluysta', english: 'Please / You\'re welcome' },
+          { russian: 'Извините', trans: 'Izvinite', english: 'Excuse me / Sorry (formal)' },
+          { russian: 'Простите', trans: 'Prostite', english: 'I\'m sorry / Forgive me' },
+          { russian: 'Не понимаю', trans: 'Ne ponimayu', english: 'I don\'t understand' },
+          { russian: 'Повторите, пожалуйста', trans: 'Povtorite, pozhaluysta', english: 'Please repeat that' },
+          { russian: 'Говорите медленнее', trans: 'Govorite medlenneye', english: 'Speak slower please' },
+          { russian: 'Вы говорите по-английски?', trans: 'Vy govorite po-angliyski?', english: 'Do you speak English?' },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'track5', emoji: '🍽️', name: 'Food & Eating', type: 'vocab',
+    lessons: [
+      {
+        id: 'l5_1', name: 'At the Table', items: [
+          { russian: 'Вкусно!', trans: 'Vkusno!', english: 'Delicious!' },
+          { russian: 'Очень вкусно', trans: 'Ochen\' vkusno', english: 'Very delicious' },
+          { russian: 'Спасибо за угощение', trans: 'Spasibo za ugoshcheniye', english: 'Thank you for the meal' },
+          { russian: 'Можно ещё?', trans: 'Mozhno yeshchyo?', english: 'Can I have more?' },
+          { russian: 'Я не ем глютен ⚠️', trans: 'Ya ne yem glyuten', english: 'I don\'t eat gluten (IMPORTANT!)' },
+          { russian: 'Есть ли глютен в этом?', trans: 'Est\' li glyuten v etom?', english: 'Is there gluten in this?' },
+          { russian: 'Чай', trans: 'Chay', english: 'Tea' },
+          { russian: 'Вода', trans: 'Voda', english: 'Water' },
+          { russian: 'Хлеб', trans: 'Khleb', english: 'Bread (to avoid! 🚫)' },
+          { russian: 'Вино', trans: 'Vino', english: 'Wine' },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'track6', emoji: '🔢', name: 'Numbers & Questions', type: 'vocab',
+    lessons: [
+      {
+        id: 'l6_1', name: 'Numbers 1–10', items: [
+          { russian: 'Один', trans: 'Odin', english: '1 - One' },
+          { russian: 'Два', trans: 'Dva', english: '2 - Two' },
+          { russian: 'Три', trans: 'Tri', english: '3 - Three' },
+          { russian: 'Четыре', trans: 'Chetyre', english: '4 - Four' },
+          { russian: 'Пять', trans: 'Pyat\'', english: '5 - Five' },
+          { russian: 'Шесть', trans: 'Shest\'', english: '6 - Six' },
+          { russian: 'Семь', trans: 'Sem\'', english: '7 - Seven' },
+          { russian: 'Восемь', trans: 'Vosem\'', english: '8 - Eight' },
+          { russian: 'Девять', trans: 'Devyat\'', english: '9 - Nine' },
+          { russian: 'Десять', trans: 'Desyat\'', english: '10 - Ten' },
+        ]
+      },
+      {
+        id: 'l6_2', name: 'Useful Questions', items: [
+          { russian: 'Где?', trans: 'Gde?', english: 'Where?' },
+          { russian: 'Когда?', trans: 'Kogda?', english: 'When?' },
+          { russian: 'Почему?', trans: 'Pochemu?', english: 'Why?' },
+          { russian: 'Как?', trans: 'Kak?', english: 'How?' },
+          { russian: 'Сколько?', trans: 'Skol\'ko?', english: 'How much/many?' },
+          { russian: 'Что это?', trans: 'Chto eto?', english: 'What is this?' },
+          { russian: 'Это правильно?', trans: 'Eto pravil\'no?', english: 'Is this correct?' },
+        ]
+      },
+    ]
+  },
+];
+
+function getRussianState() {
+  const xp = parseInt(localStorage.getItem('russian_xp') || '0');
+  const completed = JSON.parse(localStorage.getItem('russian_completed') || '{}');
+  const lastDate = localStorage.getItem('russian_last_date') || '';
+  const streak = parseInt(localStorage.getItem('russian_streak') || '0');
+  return { xp, completed, lastDate, streak };
+}
+
+function getLevel(xp) {
+  if (xp >= 200) return 'Intermediate 🌟';
+  if (xp >= 80) return 'Elementary 📖';
+  return 'Beginner 🌱';
+}
+
+function updateStreak() {
+  const today = new Date().toISOString().slice(0, 10);
+  const lastDate = localStorage.getItem('russian_last_date') || '';
+  let streak = parseInt(localStorage.getItem('russian_streak') || '0');
+  if (lastDate === today) return streak;
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  if (lastDate === yesterday) { streak++; } else { streak = 1; }
+  localStorage.setItem('russian_last_date', today);
+  localStorage.setItem('russian_streak', String(streak));
+  return streak;
+}
+
+function addXP(amount) {
+  const current = parseInt(localStorage.getItem('russian_xp') || '0');
+  localStorage.setItem('russian_xp', String(current + amount));
+}
+
+function markLessonComplete(lessonId, stars) {
+  const completed = JSON.parse(localStorage.getItem('russian_completed') || '{}');
+  if (!completed[lessonId] || completed[lessonId] < stars) {
+    completed[lessonId] = stars;
+  }
+  localStorage.setItem('russian_completed', JSON.stringify(completed));
+}
+
+function buildQuestions(lesson, track) {
+  const items = lesson.items;
+  const isAlpha = track.type === 'alphabet';
+  const questions = [];
+  const shuffled = [...items].sort(() => Math.random() - 0.5).slice(0, 5);
+
+  shuffled.forEach((item, idx) => {
+    const qType = idx % 3;
+    if (isAlpha) {
+      const others = items.filter(i => i !== item).sort(() => Math.random() - 0.5).slice(0, 3);
+      if (qType === 0) {
+        questions.push({ type: 'flashcard_alpha', item });
+      } else if (qType === 1) {
+        const opts = [item.sound, ...others.map(o => o.sound)].sort(() => Math.random() - 0.5);
+        questions.push({ type: 'mc', prompt: item.cyrillic, promptLabel: 'What sound does this make?', correct: item.sound, options: opts });
+      } else {
+        const opts = [item.cyrillic, ...others.map(o => o.cyrillic)].sort(() => Math.random() - 0.5);
+        questions.push({ type: 'mc', prompt: `"${item.sound}"`, promptLabel: 'Which Cyrillic letter makes this sound?', correct: item.cyrillic, options: opts });
+      }
+    } else {
+      const others = items.filter(i => i !== item).sort(() => Math.random() - 0.5).slice(0, 3);
+      if (qType === 0) {
+        questions.push({ type: 'flashcard_vocab', item });
+      } else if (qType === 1) {
+        const opts = [item.russian, ...others.map(o => o.russian)].sort(() => Math.random() - 0.5);
+        questions.push({ type: 'mc', prompt: item.english, promptLabel: 'Choose the correct Russian:', correct: item.russian, options: opts });
+      } else {
+        const opts = [item.english, ...others.map(o => o.english)].sort(() => Math.random() - 0.5);
+        questions.push({ type: 'mc', prompt: item.russian, promptLabel: 'What does this mean?', correct: item.english, options: opts });
+      }
+    }
+  });
+  return questions;
+}
+
+function RussianPage() {
+  const [state, setState] = useState(() => getRussianState());
+  const [activeLesson, setActiveLesson] = useState(null);
+  const [activeLessonTrack, setActiveLessonTrack] = useState(null);
+  const [phase, setPhase] = useState('home'); // home | intro | quiz | result
+  const [questions, setQuestions] = useState([]);
+  const [qIdx, setQIdx] = useState(0);
+  const [score, setScore] = useState(0);
+  const [feedback, setFeedback] = useState(null); // null | 'correct' | 'wrong'
+  const [wrongAnswer, setWrongAnswer] = useState(null);
+  const [xpGained, setXpGained] = useState(0);
+  const [flipped, setFlipped] = useState(false);
+  const [xpFlash, setXpFlash] = useState(false);
+
+  const rs = {
+    page: { background: '#0d1117', minHeight: 'calc(100vh - 60px)', color: 'white', padding: 20, fontFamily: 'inherit' },
+    topBar: { display: 'flex', gap: 16, alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', background: '#161b22', borderRadius: 12, padding: '12px 20px', marginBottom: 24, fontSize: 15 },
+    statChip: { display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,0.07)', borderRadius: 20, padding: '6px 14px', fontWeight: 600 },
+    trackCard: { background: '#161b22', borderRadius: 14, padding: 20, marginBottom: 16, border: '1px solid rgba(255,255,255,0.08)' },
+    trackTitle: { fontSize: 18, fontWeight: 700, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 },
+    progressBar: { background: 'rgba(255,255,255,0.1)', borderRadius: 99, height: 8, overflow: 'hidden', marginBottom: 14 },
+    progressFill: (pct) => ({ background: '#f59e0b', width: `${pct}%`, height: '100%', borderRadius: 99, transition: 'width 0.4s' }),
+    lessonRow: { display: 'flex', gap: 10, flexWrap: 'wrap' },
+    lessonCircle: (status) => ({
+      width: 48, height: 48, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontSize: 18, fontWeight: 700, cursor: status === 'available' ? 'pointer' : 'default',
+      background: status === 'complete' ? '#f59e0b' : status === 'available' ? '#ef4444' : 'rgba(255,255,255,0.08)',
+      color: status === 'locked' ? 'rgba(255,255,255,0.3)' : 'white',
+      border: status === 'available' ? '2px solid #f59e0b' : 'none',
+      transition: 'transform 0.15s',
+    }),
+    lessonLabel: { textAlign: 'center', fontSize: 11, marginTop: 4, color: 'rgba(255,255,255,0.6)', maxWidth: 60 },
+    introBox: { background: '#161b22', borderRadius: 16, padding: 32, maxWidth: 480, margin: '40px auto', textAlign: 'center', border: '1px solid rgba(245,158,11,0.3)' },
+    quizBox: { maxWidth: 520, margin: '0 auto' },
+    progressHeader: { display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 },
+    qCard: { background: '#161b22', borderRadius: 16, padding: 28, textAlign: 'center', marginBottom: 16, border: '1px solid rgba(255,255,255,0.08)' },
+    bigLetter: { fontSize: 80, fontWeight: 900, lineHeight: 1, marginBottom: 8 },
+    promptLabel: { color: 'rgba(255,255,255,0.5)', fontSize: 13, marginBottom: 8 },
+    prompt: { fontSize: 26, fontWeight: 700, marginBottom: 8 },
+    optionBtn: (sel, correct) => ({
+      display: 'block', width: '100%', padding: '14px 16px', marginBottom: 10, borderRadius: 10, border: '2px solid',
+      cursor: feedback ? 'default' : 'pointer', fontSize: 15, fontWeight: 600, transition: 'all 0.15s', textAlign: 'left',
+      background: feedback && sel === correct ? 'rgba(34,197,94,0.2)' : feedback && sel !== correct ? 'rgba(239,68,68,0.12)' : 'rgba(255,255,255,0.05)',
+      borderColor: feedback && sel === correct ? '#22c55e' : feedback && sel !== correct ? '#ef4444' : 'rgba(255,255,255,0.15)',
+      color: 'white',
+    }),
+    flashCard: (flipped) => ({
+      background: flipped ? 'rgba(245,158,11,0.12)' : '#1c2333', borderRadius: 16, padding: 40, textAlign: 'center',
+      cursor: 'pointer', border: `2px solid ${flipped ? '#f59e0b' : 'rgba(255,255,255,0.12)'}`,
+      transition: 'all 0.3s', minHeight: 180, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+    }),
+    fcHint: { color: 'rgba(255,255,255,0.4)', fontSize: 13, marginTop: 8 },
+    knowBtn: { background: '#22c55e', color: 'white', border: 'none', borderRadius: 10, padding: '12px 28px', fontSize: 15, fontWeight: 700, cursor: 'pointer', marginRight: 10 },
+    learningBtn: { background: 'rgba(239,68,68,0.8)', color: 'white', border: 'none', borderRadius: 10, padding: '12px 28px', fontSize: 15, fontWeight: 700, cursor: 'pointer' },
+    feedbackBar: (type) => ({
+      background: type === 'correct' ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)',
+      border: `1px solid ${type === 'correct' ? '#22c55e' : '#ef4444'}`,
+      borderRadius: 10, padding: '12px 16px', marginTop: 12, color: type === 'correct' ? '#22c55e' : '#ef4444', fontWeight: 600,
+    }),
+    resultBox: { background: '#161b22', borderRadius: 16, padding: 32, maxWidth: 480, margin: '40px auto', textAlign: 'center' },
+    continueBtn: { background: '#ef4444', color: 'white', border: 'none', borderRadius: 10, padding: '14px 32px', fontSize: 16, fontWeight: 700, cursor: 'pointer', marginTop: 20 },
+    startBtn: { background: '#ef4444', color: 'white', border: 'none', borderRadius: 10, padding: '14px 32px', fontSize: 16, fontWeight: 700, cursor: 'pointer', marginTop: 20 },
+    backBtn: { background: 'rgba(255,255,255,0.08)', color: 'white', border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: 13, cursor: 'pointer', marginBottom: 16 },
+  };
+
+  const refresh = () => setState(getRussianState());
+
+  const startLesson = (lesson, track) => {
+    const qs = buildQuestions(lesson, track);
+    setActiveLesson(lesson);
+    setActiveLessonTrack(track);
+    setQuestions(qs);
+    setQIdx(0);
+    setScore(0);
+    setXpGained(0);
+    setFeedback(null);
+    setWrongAnswer(null);
+    setFlipped(false);
+    setPhase('intro');
+  };
+
+  const beginQuiz = () => { setPhase('quiz'); updateStreak(); refresh(); };
+
+  const handleAnswer = (answer) => {
+    if (feedback) return;
+    const q = questions[qIdx];
+    const isCorrect = answer === q.correct;
+    if (isCorrect) {
+      setScore(s => s + 1);
+      setXpGained(x => x + 1);
+      addXP(1);
+      setFeedback('correct');
+      setXpFlash(true);
+      setTimeout(() => setXpFlash(false), 700);
+      setTimeout(nextQ, 900);
+    } else {
+      setFeedback('wrong');
+      setWrongAnswer(q.correct);
+      setTimeout(nextQ, 1800);
+    }
+  };
+
+  const handleFlashcard = (knew) => {
+    if (knew) {
+      setScore(s => s + 1);
+      setXpGained(x => x + 1);
+      addXP(1);
+    }
+    setFeedback(knew ? 'correct' : 'wrong');
+    setTimeout(nextQ, 600);
+  };
+
+  const nextQ = () => {
+    setFeedback(null);
+    setWrongAnswer(null);
+    setFlipped(false);
+    if (qIdx + 1 >= questions.length) {
+      finishLesson();
+    } else {
+      setQIdx(i => i + 1);
+    }
+  };
+
+  const finishLesson = () => {
+    const total = questions.length;
+    const pct = score / total;
+    const stars = pct === 1 ? 3 : pct >= 0.7 ? 2 : 1;
+    markLessonComplete(activeLesson.id, stars);
+    addXP(10);
+    setXpGained(x => x + 10);
+    refresh();
+    setPhase('result');
+  };
+
+  const goHome = () => { setPhase('home'); setActiveLesson(null); };
+
+  // ---- RENDER ----
+
+  if (phase === 'intro' && activeLesson) {
+    return React.createElement('div', { style: rs.page },
+      React.createElement('div', { style: rs.introBox },
+        React.createElement('div', { style: { fontSize: 48, marginBottom: 12 } }, activeLessonTrack.emoji),
+        React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 13, marginBottom: 4 } }, activeLessonTrack.name),
+        React.createElement('div', { style: { fontSize: 24, fontWeight: 700, marginBottom: 16 } }, activeLesson.name),
+        React.createElement('div', { style: { color: 'rgba(255,255,255,0.6)', fontSize: 15, marginBottom: 24 } }, `5 questions · up to ${questions.length + 10} XP to earn`),
+        React.createElement('div', { style: { fontSize: 32, marginBottom: 8 } }, '🇷🇺'),
+        React.createElement('div', { style: { color: 'rgba(255,255,255,0.4)', fontSize: 13, marginBottom: 24 } }, "You've got this, Carly! 💪"),
+        React.createElement('button', { style: rs.startBtn, onClick: beginQuiz }, 'Start Lesson →'),
+        React.createElement('div', { style: { marginTop: 12 } },
+          React.createElement('button', { style: rs.backBtn, onClick: goHome }, '← Back')
+        )
+      )
+    );
+  }
+
+  if (phase === 'quiz' && activeLesson) {
+    const q = questions[qIdx];
+    const pct = ((qIdx) / questions.length) * 100;
+
+    return React.createElement('div', { style: rs.page },
+      React.createElement('div', { style: rs.quizBox },
+        React.createElement('button', { style: rs.backBtn, onClick: goHome }, '← Exit'),
+        React.createElement('div', { style: rs.progressHeader },
+          React.createElement('div', { style: { flex: 1, background: 'rgba(255,255,255,0.1)', borderRadius: 99, height: 10, overflow: 'hidden' } },
+            React.createElement('div', { style: { background: '#ef4444', width: `${pct}%`, height: '100%', borderRadius: 99, transition: 'width 0.3s' } })
+          ),
+          React.createElement('div', { style: { color: '#f59e0b', fontWeight: 700, fontSize: 14, whiteSpace: 'nowrap' } }, `${qIdx + 1} / ${questions.length}`),
+          xpFlash ? React.createElement('div', { style: { color: '#f59e0b', fontWeight: 700, fontSize: 14, animation: 'none' } }, '+1 ⭐') : null
+        ),
+
+        // Flashcard types
+        (q.type === 'flashcard_alpha' || q.type === 'flashcard_vocab') ?
+          React.createElement('div', null,
+            React.createElement('div', { style: { ...rs.qCard, cursor: 'pointer' }, onClick: () => !feedback && setFlipped(f => !f) },
+              !flipped ?
+                React.createElement('div', null,
+                  q.type === 'flashcard_alpha' ?
+                    React.createElement('div', { style: rs.bigLetter }, q.item.cyrillic) :
+                    React.createElement('div', { style: { fontSize: 28, fontWeight: 700 } }, q.item.russian),
+                  React.createElement('div', { style: rs.fcHint }, '👆 Tap to flip')
+                ) :
+                React.createElement('div', null,
+                  q.type === 'flashcard_alpha' ?
+                    React.createElement('div', null,
+                      React.createElement('div', { style: { fontSize: 18, color: '#f59e0b', fontWeight: 700, marginBottom: 4 } }, q.item.sound),
+                      React.createElement('div', { style: { fontSize: 14, color: 'rgba(255,255,255,0.6)' } }, `Example: ${q.item.example}`),
+                      React.createElement('div', { style: { fontSize: 12, color: 'rgba(255,255,255,0.4)' } }, q.item.exTrans)
+                    ) :
+                    React.createElement('div', null,
+                      React.createElement('div', { style: { fontSize: 18, color: '#f59e0b', fontWeight: 600, marginBottom: 4 } }, q.item.trans),
+                      React.createElement('div', { style: { fontSize: 20, fontWeight: 700 } }, q.item.english)
+                    )
+                )
+            ),
+            flipped && !feedback ?
+              React.createElement('div', { style: { display: 'flex', gap: 10, justifyContent: 'center', marginTop: 8 } },
+                React.createElement('button', { style: rs.knowBtn, onClick: () => handleFlashcard(true) }, '✓ Know it!'),
+                React.createElement('button', { style: rs.learningBtn, onClick: () => handleFlashcard(false) }, '↻ Still learning')
+              ) : null,
+            feedback ?
+              React.createElement('div', { style: rs.feedbackBar(feedback) },
+                feedback === 'correct' ? '🎉 Great job!' : '💪 Keep practicing!'
+              ) : null
+          )
+
+        // Multiple choice
+        : React.createElement('div', null,
+            React.createElement('div', { style: rs.qCard },
+              React.createElement('div', { style: rs.promptLabel }, q.promptLabel),
+              React.createElement('div', { style: rs.prompt }, q.prompt)
+            ),
+            q.options.map((opt, i) =>
+              React.createElement('button', {
+                key: i, style: rs.optionBtn(opt, q.correct),
+                onClick: () => !feedback && handleAnswer(opt)
+              }, opt)
+            ),
+            feedback ?
+              React.createElement('div', { style: rs.feedbackBar(feedback) },
+                feedback === 'correct' ? '🎉 Correct! +1 XP' : `❌ Correct answer: ${q.correct}`
+              ) : null
+          )
+      )
+    );
+  }
+
+  if (phase === 'result') {
+    const total = questions.length;
+    const pct = Math.round((score / total) * 100);
+    const stars = pct === 100 ? 3 : pct >= 70 ? 2 : 1;
+    const starsDisplay = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+    return React.createElement('div', { style: rs.page },
+      React.createElement('div', { style: rs.resultBox },
+        React.createElement('div', { style: { fontSize: 48, marginBottom: 12 } }, pct === 100 ? '🏆' : pct >= 70 ? '🎉' : '💪'),
+        React.createElement('div', { style: { fontSize: 28, fontWeight: 700, marginBottom: 8 } }, pct === 100 ? 'Perfect!' : pct >= 70 ? 'Great job!' : 'Keep going!'),
+        React.createElement('div', { style: { fontSize: 36, marginBottom: 16 } }, starsDisplay),
+        React.createElement('div', { style: { display: 'flex', gap: 20, justifyContent: 'center', marginBottom: 20 } },
+          React.createElement('div', { style: { textAlign: 'center' } },
+            React.createElement('div', { style: { fontSize: 28, fontWeight: 700, color: '#f59e0b' } }, `${score}/${total}`),
+            React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 13 } }, 'Correct')
+          ),
+          React.createElement('div', { style: { textAlign: 'center' } },
+            React.createElement('div', { style: { fontSize: 28, fontWeight: 700, color: '#f59e0b' } }, `+${xpGained}`),
+            React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 13 } }, 'XP Earned')
+          )
+        ),
+        React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 14, marginBottom: 8 } },
+          pct === 100 ? "Carly, you're amazing! 🥰 His family is going to love you!" :
+          pct >= 70 ? "Solid work! A little more practice and you'll nail it! 💕" :
+          "Every lesson gets you closer! You can do this! 🌟"
+        ),
+        React.createElement('button', { style: rs.continueBtn, onClick: goHome }, 'Continue →')
+      )
+    );
+  }
+
+  // HOME
+  const { xp, completed, streak } = state;
+  return React.createElement('div', { style: rs.page },
+    // Top bar
+    React.createElement('div', { style: rs.topBar },
+      React.createElement('div', { style: rs.statChip }, `🔥 ${streak} day${streak !== 1 ? 's' : ''}`),
+      React.createElement('div', { style: rs.statChip }, `⭐ ${xp} XP`),
+      React.createElement('div', { style: rs.statChip }, getLevel(xp))
+    ),
+
+    React.createElement('div', { style: { textAlign: 'center', marginBottom: 24 } },
+      React.createElement('div', { style: { fontSize: 28, fontWeight: 700 } }, '🇷🇺 Learn Russian'),
+      React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 14, marginTop: 4 } }, "For talking to your boyfriend's family 💕")
+    ),
+
+    // Track cards
+    RUSSIAN_TRACKS.map((track, tIdx) => {
+      const allLessons = track.lessons;
+      const completedCount = allLessons.filter(l => completed[l.id] >= 1).length;
+      const pct = allLessons.length ? (completedCount / allLessons.length) * 100 : 0;
+
+      // Track is locked if prior track not complete
+      let trackLocked = false;
+      if (tIdx > 0) {
+        const prevTrack = RUSSIAN_TRACKS[tIdx - 1];
+        const prevDone = prevTrack.lessons.every(l => completed[l.id] >= 1);
+        if (!prevDone) trackLocked = true;
+      }
+
+      return React.createElement('div', { key: track.id, style: { ...rs.trackCard, opacity: trackLocked ? 0.5 : 1 } },
+        React.createElement('div', { style: rs.trackTitle },
+          React.createElement('span', null, track.emoji),
+          React.createElement('span', null, track.name),
+          trackLocked ? React.createElement('span', { style: { marginLeft: 'auto', fontSize: 14, color: 'rgba(255,255,255,0.3)' } }, '🔒') :
+            React.createElement('span', { style: { marginLeft: 'auto', fontSize: 13, color: '#f59e0b' } }, `${completedCount}/${allLessons.length}`)
+        ),
+        React.createElement('div', { style: rs.progressBar },
+          React.createElement('div', { style: rs.progressFill(trackLocked ? 0 : pct) })
+        ),
+        React.createElement('div', { style: rs.lessonRow },
+          allLessons.map((lesson, lIdx) => {
+            const lessonStars = completed[lesson.id] || 0;
+            let status = 'locked';
+            if (!trackLocked) {
+              if (lessonStars >= 1) status = 'complete';
+              else if (lIdx === 0 || completed[allLessons[lIdx - 1].id] >= 1) status = 'available';
+            }
+            return React.createElement('div', { key: lesson.id, style: { textAlign: 'center' } },
+              React.createElement('div', {
+                style: rs.lessonCircle(status),
+                onClick: () => status === 'available' && startLesson(lesson, track),
+                onMouseEnter: e => { if (status === 'available') e.currentTarget.style.transform = 'scale(1.12)'; },
+                onMouseLeave: e => { e.currentTarget.style.transform = 'scale(1)'; },
+              },
+                status === 'complete' ? ('⭐'.repeat(Math.min(lessonStars, 3))) :
+                status === 'available' ? '▶' : '🔒'
+              ),
+              React.createElement('div', { style: rs.lessonLabel }, lesson.name)
+            );
+          })
+        )
+      );
+    })
+  );
+}
+
 function App() {
   const [tab, setTab] = useState('pto');
   return (
@@ -1072,10 +1661,11 @@ function App() {
           <button className={`nav-tab ${tab==='overtime'?'active':''}`} onClick={()=>setTab('overtime')}>⏱ Overtime</button>
           <button className={`nav-tab ${tab==='concerts'?'active':''}`} onClick={()=>setTab('concerts')}>🎸 Concerts</button>
           <button className={`nav-tab ${tab==='books'?'active':''}`} onClick={()=>setTab('books')}>📚 Reading</button>
+          <button className={`nav-tab ${tab==='russian'?'active':''}`} onClick={()=>setTab('russian')}>🇷🇺 Russian</button>
         </div>
       </nav>
       <div className={tab === 'concerts' || tab === 'books' ? '' : 'container'}>
-        {tab === 'pto' ? <PTOPage /> : tab === 'travel' ? <TravelPage /> : tab === 'overtime' ? <OvertimePage /> : tab === 'concerts' ? <ConcertsPage /> : tab === 'books' ? <BooksPage /> : <PTOPage />}
+        {tab === 'pto' ? <PTOPage /> : tab === 'travel' ? <TravelPage /> : tab === 'overtime' ? <OvertimePage /> : tab === 'concerts' ? <ConcertsPage /> : tab === 'books' ? <BooksPage /> : <RussianPage />}
       </div>
     </div>
   );
