@@ -122,8 +122,6 @@ bulkArticles.forEach(([id, title, category, role, module, summary, content, tips
   } catch(e) {}
 });
 
-module.exports = db;
-
 // ── Templates ─────────────────────────────────────────────────────────────────
 db.prepare(`
   CREATE TABLE IF NOT EXISTS ng_templates (
@@ -136,3 +134,5 @@ db.prepare(`
     updated_at  DATETIME DEFAULT CURRENT_TIMESTAMP
   )
 `).run();
+
+module.exports = db;
