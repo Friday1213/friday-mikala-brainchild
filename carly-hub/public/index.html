@@ -812,6 +812,254 @@ function ConcertsPage() {
   );
 }
 
+function BooksPage() {
+  const [books, setBooks] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('all');
+
+  useEffect(() => {
+    fetch('/api/books').then(r => r.json()).then(d => { setBooks(d); setLoading(false); });
+  }, []);
+
+  if (loading) return React.createElement('div', { style: { background: '#0a0a0a', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 24 } }, '📚 Loading your reading history...');
+
+  const readBooks = books.filter(b => b.shelf === 'read');
+  const currentlyReading = books.filter(b => b.shelf === 'currently-reading');
+  const toRead = books.filter(b => b.shelf === 'to-read');
+  const fiveStars = readBooks.filter(b => b.my_rating === 5);
+  const totalPages = readBooks.reduce((acc, b) => acc + (b.pages || 0), 0);
+  const ratedBooks = readBooks.filter(b => b.my_rating > 0);
+  const avgRating = ratedBooks.length ? (ratedBooks.reduce((a, b) => a + b.my_rating, 0) / ratedBooks.length).toFixed(1) : '—';
+
+  // Author counts
+  const authorCounts = {};
+  readBooks.forEach(b => {
+    const a = (b.author || '').trim();
+    if (a) authorCounts[a] = (authorCounts[a] || 0) + 1;
+  });
+  const topAuthors = Object.entries(authorCounts).sort((a, b) => b[1] - a[1]).slice(0, 8);
+
+  // Ratings breakdown
+  const ratingCounts = {1:0,2:0,3:0,4:0,5:0};
+  readBooks.forEach(b => { if (b.my_rating >= 1 && b.my_rating <= 5) ratingCounts[b.my_rating]++; });
+  const maxRatingCount = Math.max(...Object.values(ratingCounts), 1);
+
+  // Books per year
+  const booksPerYear = {};
+  readBooks.forEach(b => {
+    if (b.date_read) {
+      const yr = b.date_read.split('/')[0];
+      if (yr >= '2020' && yr <= '2026') booksPerYear[yr] = (booksPerYear[yr] || 0) + 1;
+    }
+  });
+  const maxBooksYear = Math.max(...Object.values(booksPerYear), 1);
+
+  // Shelves/genres
+  const shelfCounts = {};
+  books.forEach(b => {
+    if (!b.bookshelves) return;
+    b.bookshelves.split(',').map(s => s.trim()).filter(s => s && s !== 'read' && s !== 'to-read' && s !== 'currently-reading').forEach(s => {
+      shelfCounts[s] = (shelfCounts[s] || 0) + 1;
+    });
+  });
+  const topShelves = Object.entries(shelfCounts).sort((a,b) => b[1]-a[1]).slice(0,8);
+
+  const getIsbnCover = (isbn, size='M') => isbn ? `https://covers.openlibrary.org/b/isbn/${isbn}-${size}.jpg` : null;
+
+  const BookCover = ({ isbn, title, size = 'S', style = {} }) => {
+    const [failed, setFailed] = useState(false);
+    const coverUrl = getIsbnCover(isbn, size);
+    const dim = size === 'S' ? 40 : size === 'M' ? 80 : 120;
+    const colors = ['#ff6b9d','#ff9a3c','#ffd93d','#6bcb77','#4d96ff','#c77dff','#ff6b6b','#38d9a9'];
+    const colorIdx = title ? title.charCodeAt(0) % colors.length : 0;
+    if (!coverUrl || failed) {
+      return React.createElement('div', { style: { width: dim, height: dim * 1.4, borderRadius: 6, background: colors[colorIdx], display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: dim * 0.4, fontWeight: 900, color: '#000', flexShrink: 0, ...style } }, (title || '?')[0].toUpperCase());
+    }
+    return React.createElement('img', { src: coverUrl, alt: title, onError: () => setFailed(true), style: { width: dim, height: dim * 1.4, objectFit: 'cover', borderRadius: 6, flexShrink: 0, ...style } });
+  };
+
+  const StarRating = ({ rating }) => {
+    if (!rating) return React.createElement('span', { style: { color: 'rgba(255,255,255,0.3)', fontSize: 12 } }, 'unrated');
+    return React.createElement('span', { style: { color: '#ffd93d', fontSize: 13 } }, '★'.repeat(rating) + '☆'.repeat(5 - rating));
+  };
+
+  const filteredBooks = filter === 'all' ? books : filter === 'read' ? readBooks : filter === 'reading' ? currentlyReading : toRead;
+
+  const s = {
+    page: { background: '#0a0a0a', minHeight: '100vh', color: 'white', fontFamily: "'Inter', sans-serif", paddingBottom: 60 },
+    hero: { background: 'linear-gradient(135deg, #2d0a1e 0%, #1a0a2e 50%, #2d1a00 100%)', padding: '48px 24px 40px', textAlign: 'center' },
+    heroTitle: { fontSize: 48, fontWeight: 900, background: 'linear-gradient(90deg, #ff6b9d, #ff9a3c, #ffd93d, #ff6b9d)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: 8, letterSpacing: -1 },
+    heroSub: { color: 'rgba(255,255,255,0.6)', fontSize: 16, marginBottom: 32 },
+    statRow: { display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' },
+    statBox: { background: 'rgba(255,255,255,0.08)', borderRadius: 16, padding: '16px 28px', textAlign: 'center', backdropFilter: 'blur(10px)' },
+    statNum: { fontSize: 36, fontWeight: 900, lineHeight: 1 },
+    statLabel: { fontSize: 12, color: 'rgba(255,255,255,0.5)', marginTop: 4, textTransform: 'uppercase', letterSpacing: 1 },
+    section: { maxWidth: 1100, margin: '0 auto', padding: '32px 24px 0' },
+    sectionTitle: { fontSize: 20, fontWeight: 800, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 },
+    grid2: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20 },
+    card: { background: '#141414', borderRadius: 20, padding: 24, border: '1px solid rgba(255,255,255,0.07)' },
+    filterBtn: (f) => ({ padding: '8px 20px', borderRadius: 30, border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 13, background: filter === f ? '#ff6b9d' : 'rgba(255,255,255,0.08)', color: filter === f ? '#000' : 'rgba(255,255,255,0.7)', transition: 'all 0.2s' }),
+  };
+
+  return (
+    React.createElement('div', { style: s.page },
+      // Hero
+      React.createElement('div', { style: s.hero },
+        React.createElement('div', { style: s.heroTitle }, '📚 Reading Wrapped'),
+        React.createElement('div', { style: s.heroSub }, `Your complete reading life • ${readBooks.length} books conquered`),
+        React.createElement('div', { style: s.statRow },
+          React.createElement('div', { style: s.statBox },
+            React.createElement('div', { style: { ...s.statNum, color: '#ff6b9d' } }, readBooks.length),
+            React.createElement('div', { style: s.statLabel }, 'Books Read')
+          ),
+          React.createElement('div', { style: s.statBox },
+            React.createElement('div', { style: { ...s.statNum, color: '#6bcb77' } }, currentlyReading.length),
+            React.createElement('div', { style: s.statLabel }, 'Reading Now')
+          ),
+          React.createElement('div', { style: s.statBox },
+            React.createElement('div', { style: { ...s.statNum, color: '#4d96ff' } }, toRead.length),
+            React.createElement('div', { style: s.statLabel }, 'Want to Read')
+          ),
+          React.createElement('div', { style: s.statBox },
+            React.createElement('div', { style: { ...s.statNum, color: '#ffd93d' } }, totalPages.toLocaleString()),
+            React.createElement('div', { style: s.statLabel }, 'Pages Read')
+          ),
+          React.createElement('div', { style: s.statBox },
+            React.createElement('div', { style: { ...s.statNum, color: '#ff9a3c' } }, avgRating),
+            React.createElement('div', { style: s.statLabel }, 'Avg Rating')
+          ),
+          React.createElement('div', { style: s.statBox },
+            React.createElement('div', { style: { ...s.statNum, color: '#c77dff' } }, fiveStars.length),
+            React.createElement('div', { style: s.statLabel }, '5-Star Books')
+          )
+        )
+      ),
+
+      // Currently Reading
+      currentlyReading.length > 0 && React.createElement('div', { style: s.section },
+        React.createElement('div', { style: s.sectionTitle }, '📖 Currently Reading'),
+        React.createElement('div', { style: { display: 'flex', gap: 16, flexWrap: 'wrap' } },
+          currentlyReading.map((b, i) =>
+            React.createElement('div', { key: i, style: { ...s.card, display: 'flex', gap: 16, alignItems: 'flex-start', flex: '1 1 300px', maxWidth: 400, background: 'linear-gradient(135deg, #1a1a2e, #16213e)', border: '1px solid rgba(77,150,255,0.3)' } },
+              React.createElement(BookCover, { isbn: b.isbn, title: b.title, size: 'M' }),
+              React.createElement('div', { style: { flex: 1 } },
+                React.createElement('div', { style: { fontSize: 16, fontWeight: 800, marginBottom: 4, color: '#fff' } }, b.title),
+                React.createElement('div', { style: { color: 'rgba(255,255,255,0.6)', fontSize: 13, marginBottom: 8 } }, b.author),
+                React.createElement('div', { style: { fontSize: 11, color: '#4d96ff', background: 'rgba(77,150,255,0.15)', borderRadius: 8, padding: '4px 10px', display: 'inline-block', fontWeight: 700 } }, '📖 IN PROGRESS'),
+                b.pages ? React.createElement('div', { style: { color: 'rgba(255,255,255,0.4)', fontSize: 12, marginTop: 6 } }, `${b.pages} pages`) : null
+              )
+            )
+          )
+        )
+      ),
+
+      // Top Stats Grid
+      React.createElement('div', { style: { ...s.section } },
+        React.createElement('div', { style: s.sectionTitle }, '📊 Your Reading Stats'),
+        React.createElement('div', { style: s.grid2 },
+          // Top Authors
+          React.createElement('div', { style: s.card },
+            React.createElement('div', { style: s.sectionTitle }, '✍️ Top Authors'),
+            topAuthors.map(([author, count], i) =>
+              React.createElement('div', { key: author, style: { display: 'flex', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' } },
+                React.createElement('div', { style: { width: 28, height: 28, borderRadius: '50%', background: ['#ff6b9d','#ff9a3c','#ffd93d','#6bcb77','#4d96ff','#c77dff','#ff6b6b','#38d9a9'][i], display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 900, color: '#000', flexShrink: 0 } }, i+1),
+                React.createElement('div', { style: { flex: 1, fontWeight: 600, fontSize: 13 } }, author),
+                React.createElement('div', { style: { background: 'rgba(255,107,157,0.2)', borderRadius: 12, padding: '2px 10px', fontSize: 12, fontWeight: 700, color: '#ff6b9d' } }, `${count} books`)
+              )
+            )
+          ),
+          // Ratings Breakdown
+          React.createElement('div', { style: s.card },
+            React.createElement('div', { style: s.sectionTitle }, '⭐ Ratings Breakdown'),
+            [5,4,3,2,1].map(star =>
+              React.createElement('div', { key: star, style: { marginBottom: 12 } },
+                React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', marginBottom: 4, fontSize: 13 } },
+                  React.createElement('span', { style: { color: '#ffd93d' } }, '★'.repeat(star) + '☆'.repeat(5-star)),
+                  React.createElement('span', { style: { color: 'rgba(255,255,255,0.5)' } }, ratingCounts[star])
+                ),
+                React.createElement('div', { style: { background: 'rgba(255,255,255,0.08)', borderRadius: 8, height: 20, overflow: 'hidden' } },
+                  React.createElement('div', { style: { background: star === 5 ? '#ffd93d' : star === 4 ? '#ff9a3c' : star === 3 ? '#ff6b9d' : star === 2 ? '#c77dff' : '#666', height: '100%', width: `${(ratingCounts[star] / maxRatingCount) * 100}%`, borderRadius: 8, transition: 'width 1s ease' } })
+                )
+              )
+            )
+          ),
+          // Books Per Year
+          React.createElement('div', { style: s.card },
+            React.createElement('div', { style: s.sectionTitle }, '📅 Books Per Year'),
+            ['2020','2021','2022','2023','2024','2025','2026'].map(yr =>
+              React.createElement('div', { key: yr, style: { marginBottom: 10 } },
+                React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', marginBottom: 4, fontSize: 13 } },
+                  React.createElement('span', { style: { fontWeight: 700, color: '#ff9a3c' } }, yr),
+                  React.createElement('span', { style: { color: 'rgba(255,255,255,0.5)' } }, `${booksPerYear[yr] || 0} books`)
+                ),
+                React.createElement('div', { style: { background: 'rgba(255,255,255,0.08)', borderRadius: 8, height: 22, overflow: 'hidden' } },
+                  React.createElement('div', { style: { background: 'linear-gradient(90deg, #ff6b9d, #ff9a3c)', height: '100%', width: `${((booksPerYear[yr] || 0) / maxBooksYear) * 100}%`, borderRadius: 8, transition: 'width 1s ease' } })
+                )
+              )
+            )
+          ),
+          // Favorite Genres/Shelves
+          React.createElement('div', { style: s.card },
+            React.createElement('div', { style: s.sectionTitle }, '🏷️ Favorite Shelves'),
+            topShelves.length === 0
+              ? React.createElement('div', { style: { color: 'rgba(255,255,255,0.4)', fontSize: 14 } }, 'No custom shelves found')
+              : topShelves.map(([shelf, count], i) =>
+                  React.createElement('div', { key: shelf, style: { display: 'flex', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' } },
+                    React.createElement('div', { style: { width: 8, height: 8, borderRadius: '50%', background: ['#ff6b9d','#ff9a3c','#ffd93d','#6bcb77','#4d96ff','#c77dff','#ff6b6b','#38d9a9'][i] } }),
+                    React.createElement('div', { style: { flex: 1, fontWeight: 600, fontSize: 13, textTransform: 'capitalize' } }, shelf.replace(/-/g, ' ')),
+                    React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 12 } }, `${count}`)
+                  )
+                )
+          )
+        )
+      ),
+
+      // 5-Star Hall of Fame
+      fiveStars.length > 0 && React.createElement('div', { style: s.section },
+        React.createElement('div', { style: s.sectionTitle }, '🏆 5-Star Hall of Fame'),
+        React.createElement('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 16 } },
+          fiveStars.map((b, i) =>
+            React.createElement('div', { key: i, style: { textAlign: 'center' } },
+              React.createElement(BookCover, { isbn: b.isbn, title: b.title, size: 'M', style: { width: '100%', height: 180, objectFit: 'cover', borderRadius: 10, marginBottom: 8, border: '2px solid #ffd93d' } }),
+              React.createElement('div', { style: { fontSize: 12, fontWeight: 800, color: '#fff', marginBottom: 2, lineHeight: 1.3 } }, b.title.length > 40 ? b.title.slice(0, 40) + '…' : b.title),
+              React.createElement('div', { style: { fontSize: 11, color: 'rgba(255,255,255,0.5)', marginBottom: 2 } }, b.author),
+              b.date_read ? React.createElement('div', { style: { fontSize: 10, color: '#ffd93d' } }, b.date_read.split('/')[0]) : null
+            )
+          )
+        )
+      ),
+
+      // All Books
+      React.createElement('div', { style: s.section },
+        React.createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 8 } },
+          React.createElement('div', { style: s.sectionTitle }, '📋 All Books'),
+          React.createElement('div', { style: { display: 'flex', gap: 8, flexWrap: 'wrap' } },
+            [['all','ALL'],['read','READ'],['reading','READING'],['to-read','WANT TO READ']].map(([f, label]) =>
+              React.createElement('button', { key: f, style: s.filterBtn(f), onClick: () => setFilter(f) }, label)
+            )
+          )
+        ),
+        React.createElement('div', { style: s.card },
+          filteredBooks.map((b, i) =>
+            React.createElement('div', { key: i, style: { display: 'flex', gap: 12, alignItems: 'center', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' } },
+              React.createElement(BookCover, { isbn: b.isbn, title: b.title, size: 'S' }),
+              React.createElement('div', { style: { flex: 1, minWidth: 0 } },
+                React.createElement('div', { style: { fontWeight: 700, fontSize: 14, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' } }, b.title),
+                React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 12 } }, b.author)
+              ),
+              React.createElement('div', { style: { textAlign: 'right', flexShrink: 0, fontSize: 12 } },
+                React.createElement(StarRating, { rating: b.my_rating }),
+                b.date_read ? React.createElement('div', { style: { color: 'rgba(255,255,255,0.35)', fontSize: 11, marginTop: 2 } }, b.date_read) : null,
+                b.pages ? React.createElement('div', { style: { color: 'rgba(255,255,255,0.3)', fontSize: 11 } }, `${b.pages}p`) : null
+              )
+            )
+          )
+        )
+      )
+    )
+  );
+}
+
 function App() {
   const [tab, setTab] = useState('pto');
   return (
@@ -823,10 +1071,11 @@ function App() {
           <button className={`nav-tab ${tab==='travel'?'active':''}`} onClick={()=>setTab('travel')}>✈️ Travel</button>
           <button className={`nav-tab ${tab==='overtime'?'active':''}`} onClick={()=>setTab('overtime')}>⏱ Overtime</button>
           <button className={`nav-tab ${tab==='concerts'?'active':''}`} onClick={()=>setTab('concerts')}>🎸 Concerts</button>
+          <button className={`nav-tab ${tab==='books'?'active':''}`} onClick={()=>setTab('books')}>📚 Reading</button>
         </div>
       </nav>
-      <div className={tab === 'concerts' ? '' : 'container'}>
-        {tab === 'pto' ? <PTOPage /> : tab === 'travel' ? <TravelPage /> : tab === 'overtime' ? <OvertimePage /> : <ConcertsPage />}
+      <div className={tab === 'concerts' || tab === 'books' ? '' : 'container'}>
+        {tab === 'pto' ? <PTOPage /> : tab === 'travel' ? <TravelPage /> : tab === 'overtime' ? <OvertimePage /> : tab === 'concerts' ? <ConcertsPage /> : tab === 'books' ? <BooksPage /> : <PTOPage />}
       </div>
     </div>
   );

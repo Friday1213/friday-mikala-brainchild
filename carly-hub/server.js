@@ -2,7 +2,9 @@ const express = require('express');
 const session = require('express-session');
 const db = require('./database');
 const path = require('path');
+const fs = require('fs');
 const { google } = require('googleapis');
+const { parse } = require('csv-parse/sync');
 
 const SPREADSHEET_ID = '119RAKc6-RWEpbvlyXAMkR9rWJRRqXvG7368JT08Tfkw';
 const SHEET_YEARS = ['2026', '2025', '2024', '2023', '2022'];
@@ -106,6 +108,44 @@ app.put('/api/trips/:id', (req, res) => {
 app.delete('/api/trips/:id', (req, res) => {
   db.prepare('DELETE FROM trips WHERE id=?').run(req.params.id);
   res.json({ ok: true });
+});
+
+// Books - Goodreads CSV
+let booksCache = null;
+app.get('/api/books', (req, res) => {
+  if (booksCache) return res.json(booksCache);
+  try {
+    const csvPath = path.join(__dirname, 'goodreads.csv');
+    const content = fs.readFileSync(csvPath, 'utf8');
+    const records = parse(content, { columns: true, skip_empty_lines: true, relax_column_count: true });
+    const cleanIsbn = (raw) => {
+      if (!raw) return '';
+      // CSV-parsed value may be: ="0593873440" or =""0593873440"" after outer quote removal
+      return raw.replace(/^=?"*/, '').replace(/"*$/, '').trim();
+    };
+    const books = records.map(r => ({
+      id: r['Book Id'],
+      title: r['Title'],
+      author: r['Author'],
+      isbn: cleanIsbn(r['ISBN']),
+      isbn13: cleanIsbn(r['ISBN13']),
+      my_rating: parseInt(r['My Rating']) || 0,
+      avg_rating: parseFloat(r['Average Rating']) || 0,
+      shelf: r['Exclusive Shelf'],
+      date_read: r['Date Read'],
+      date_added: r['Date Added'],
+      pages: parseInt(r['Number of Pages']) || 0,
+      year_published: r['Year Published'],
+      binding: r['Binding'],
+      bookshelves: r['Bookshelves'],
+      publisher: r['Publisher'],
+    }));
+    booksCache = books;
+    res.json(books);
+  } catch (e) {
+    console.error('Books error:', e.message);
+    res.status(500).json({ error: e.message });
+  }
 });
 
 // Concerts - Google Sheets
