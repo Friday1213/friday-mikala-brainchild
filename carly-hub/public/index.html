@@ -597,6 +597,170 @@ function TravelPage() {
   );
 }
 
+function ConcertsPage() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [activeYear, setActiveYear] = useState('all');
+
+  useEffect(() => {
+    fetch('/api/concerts').then(r => r.json()).then(d => { setData(d); setLoading(false); });
+  }, []);
+
+  if (loading) return React.createElement('div', { style: { background: '#0a0a0a', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 24 } }, '🎸 Loading your concert history...');
+
+  const years = ['2022','2023','2024','2025','2026'];
+  const yearColors = { '2022': '#ff6b6b', '2023': '#ffd93d', '2024': '#6bcb77', '2025': '#4d96ff', '2026': '#c77dff' };
+  const yearEmojis = { '2022': '🔥', '2023': '⚡', '2024': '🌊', '2025': '🤘', '2026': '🚀' };
+
+  const allConcerts = years.flatMap(y => (data[y] || []).map(c => ({ ...c, year: y })));
+
+  // Stats
+  const totalShows = allConcerts.length;
+  const showsByYear = {};
+  years.forEach(y => showsByYear[y] = (data[y] || []).length);
+
+  // Top venues
+  const venueCounts = {};
+  allConcerts.forEach(c => {
+    const v = c.location.split(',')[0].trim();
+    if (v) venueCounts[v] = (venueCounts[v] || 0) + 1;
+  });
+  const topVenues = Object.entries(venueCounts).sort((a,b) => b[1]-a[1]).slice(0, 5);
+
+  // Top bands (multi-show)
+  const bandCounts = {};
+  allConcerts.forEach(c => {
+    const b = c.band.trim();
+    if (b) bandCounts[b] = (bandCounts[b] || 0) + 1;
+  });
+  const topBands = Object.entries(bandCounts).sort((a,b) => b[1]-a[1]).slice(0, 8);
+
+  // Budget by year
+  const budgets = { '2022': 2185, '2023': 3875, '2024': 3115, '2025': 2715, '2026': 2581 };
+  const totalBudget = Object.values(budgets).reduce((a,b) => a+b, 0);
+  const maxBudget = Math.max(...Object.values(budgets));
+
+  // Displayed concerts
+  const displayed = activeYear === 'all' ? allConcerts : (data[activeYear] || []).map(c => ({ ...c, year: activeYear }));
+
+  const s = {
+    page: { background: '#0a0a0a', minHeight: '100vh', color: 'white', fontFamily: "'Inter', sans-serif", paddingBottom: 60 },
+    hero: { background: 'linear-gradient(135deg, #1a0533 0%, #0d1b3e 50%, #0a2a1a 100%)', padding: '48px 24px 40px', textAlign: 'center', position: 'relative', overflow: 'hidden' },
+    heroTitle: { fontSize: 48, fontWeight: 900, background: 'linear-gradient(90deg, #ff6b6b, #c77dff, #4d96ff, #6bcb77)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: 8, letterSpacing: -1 },
+    heroSub: { color: 'rgba(255,255,255,0.6)', fontSize: 16, marginBottom: 32 },
+    statRow: { display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' },
+    statBox: { background: 'rgba(255,255,255,0.08)', borderRadius: 16, padding: '16px 28px', textAlign: 'center', backdropFilter: 'blur(10px)' },
+    statNum: { fontSize: 36, fontWeight: 900, lineHeight: 1 },
+    statLabel: { fontSize: 12, color: 'rgba(255,255,255,0.5)', marginTop: 4, textTransform: 'uppercase', letterSpacing: 1 },
+    section: { maxWidth: 1100, margin: '0 auto', padding: '32px 24px 0' },
+    sectionTitle: { fontSize: 20, fontWeight: 800, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 },
+    grid2: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20 },
+    card: { background: '#141414', borderRadius: 20, padding: 24, border: '1px solid rgba(255,255,255,0.07)' },
+    yearBtn: (y) => ({ padding: '8px 20px', borderRadius: 30, border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 13, background: activeYear === y ? yearColors[y] || '#c77dff' : 'rgba(255,255,255,0.08)', color: activeYear === y ? '#000' : 'rgba(255,255,255,0.7)', transition: 'all 0.2s' }),
+    concertRow: (y) => ({ display: 'flex', gap: 12, alignItems: 'flex-start', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }),
+    dot: (y) => ({ width: 10, height: 10, borderRadius: '50%', background: yearColors[y], flexShrink: 0, marginTop: 5 }),
+  };
+
+  return (
+    React.createElement('div', { style: s.page },
+      // Hero
+      React.createElement('div', { style: s.hero },
+        React.createElement('div', { style: s.heroTitle }, '🎸 Concert Wrapped'),
+        React.createElement('div', { style: s.heroSub }, `${years[0]}–${years[years.length-1]} • Your complete show history`),
+        React.createElement('div', { style: s.statRow },
+          React.createElement('div', { style: s.statBox },
+            React.createElement('div', { style: { ...s.statNum, color: '#c77dff' } }, totalShows),
+            React.createElement('div', { style: s.statLabel }, 'Total Shows')
+          ),
+          React.createElement('div', { style: s.statBox },
+            React.createElement('div', { style: { ...s.statNum, color: '#ffd93d' } }, `$${totalBudget.toLocaleString()}`),
+            React.createElement('div', { style: s.statLabel }, 'Total Budgeted')
+          ),
+          React.createElement('div', { style: s.statBox },
+            React.createElement('div', { style: { ...s.statNum, color: '#6bcb77' } }, topBands[0] ? topBands[0][0].split(' ').slice(-1)[0] : '—'),
+            React.createElement('div', { style: s.statLabel }, '#1 Most Seen')
+          ),
+          React.createElement('div', { style: s.statBox },
+            React.createElement('div', { style: { ...s.statNum, color: '#ff6b6b' } }, topVenues[0] ? topVenues[0][0] : '—'),
+            React.createElement('div', { style: s.statLabel }, 'Fave Venue')
+          )
+        )
+      ),
+
+      // Year breakdown bars
+      React.createElement('div', { style: s.section },
+        React.createElement('div', { style: s.sectionTitle }, '📅 Shows Per Year'),
+        React.createElement('div', { style: s.card },
+          years.map(y =>
+            React.createElement('div', { key: y, style: { marginBottom: 14 } },
+              React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', marginBottom: 4, fontSize: 13 } },
+                React.createElement('span', { style: { fontWeight: 700, color: yearColors[y] } }, `${yearEmojis[y]} ${y}`),
+                React.createElement('span', { style: { color: 'rgba(255,255,255,0.5)' } }, `${showsByYear[y]} shows • $${budgets[y].toLocaleString()}`)
+              ),
+              React.createElement('div', { style: { background: 'rgba(255,255,255,0.08)', borderRadius: 8, height: 28, overflow: 'hidden' } },
+                React.createElement('div', { style: { background: yearColors[y], height: '100%', width: `${(showsByYear[y] / Math.max(...Object.values(showsByYear))) * 100}%`, borderRadius: 8, display: 'flex', alignItems: 'center', paddingLeft: 10, fontSize: 12, fontWeight: 700, color: '#000', transition: 'width 1s ease' } },
+                  showsByYear[y] > 3 ? `${showsByYear[y]}` : ''
+                )
+              )
+            )
+          )
+        )
+      ),
+
+      // Top bands + top venues
+      React.createElement('div', { style: { ...s.section, ...s.grid2 } },
+        React.createElement('div', { style: s.card },
+          React.createElement('div', { style: s.sectionTitle }, '🎤 Most Seen Artists'),
+          topBands.map(([band, count], i) =>
+            React.createElement('div', { key: band, style: { display: 'flex', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' } },
+              React.createElement('div', { style: { width: 28, height: 28, borderRadius: '50%', background: ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#c77dff','#ff9f43','#ee5a24','#0abde3'][i], display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 900, color: '#000', flexShrink: 0 } }, i+1),
+              React.createElement('div', { style: { flex: 1, fontWeight: 600, fontSize: 14 } }, band),
+              React.createElement('div', { style: { background: 'rgba(255,255,255,0.1)', borderRadius: 12, padding: '2px 10px', fontSize: 12, fontWeight: 700 } }, `${count}x`)
+            )
+          )
+        ),
+        React.createElement('div', { style: s.card },
+          React.createElement('div', { style: s.sectionTitle }, '📍 Top Venues'),
+          topVenues.map(([venue, count], i) =>
+            React.createElement('div', { key: venue, style: { display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' } },
+              React.createElement('div', { style: { fontSize: 20 } }, ['🥇','🥈','🥉','4️⃣','5️⃣'][i]),
+              React.createElement('div', { style: { flex: 1, fontWeight: 600, fontSize: 14 } }, venue),
+              React.createElement('div', { style: { color: 'rgba(255,255,255,0.4)', fontSize: 13 } }, `${count} shows`)
+            )
+          )
+        )
+      ),
+
+      // Full concert list with year filter
+      React.createElement('div', { style: s.section },
+        React.createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 8 } },
+          React.createElement('div', { style: s.sectionTitle }, '🎟️ All Shows'),
+          React.createElement('div', { style: { display: 'flex', gap: 8, flexWrap: 'wrap' } },
+            React.createElement('button', { style: s.yearBtn('all'), onClick: () => setActiveYear('all') }, 'ALL'),
+            years.map(y => React.createElement('button', { key: y, style: s.yearBtn(y), onClick: () => setActiveYear(y) }, `${yearEmojis[y]} ${y}`))
+          )
+        ),
+        React.createElement('div', { style: s.card },
+          displayed.map((c, i) =>
+            React.createElement('div', { key: i, style: s.concertRow(c.year) },
+              React.createElement('div', { style: s.dot(c.year) }),
+              React.createElement('div', { style: { flex: 1 } },
+                React.createElement('div', { style: { fontWeight: 700, fontSize: 14 } }, c.band),
+                React.createElement('div', { style: { color: 'rgba(255,255,255,0.45)', fontSize: 12, marginTop: 2 } }, `${c.date} • ${c.location}`),
+                c.notes ? React.createElement('div', { style: { color: 'rgba(255,255,255,0.3)', fontSize: 11, fontStyle: 'italic', marginTop: 2 } }, c.notes) : null
+              ),
+              React.createElement('div', { style: { textAlign: 'right', flexShrink: 0 } },
+                c.price ? React.createElement('div', { style: { fontSize: 13, fontWeight: 700, color: yearColors[c.year] } }, c.price) : null,
+                c.bought === 'Yes' ? React.createElement('div', { style: { fontSize: 10, background: '#6bcb77', color: '#000', borderRadius: 8, padding: '2px 7px', marginTop: 4, fontWeight: 700 } }, '✓ GOT IT') : null
+              )
+            )
+          )
+        )
+      )
+    )
+  );
+}
+
 function App() {
   const [tab, setTab] = useState('pto');
   return (
@@ -607,10 +771,11 @@ function App() {
           <button className={`nav-tab ${tab==='pto'?'active':''}`} onClick={()=>setTab('pto')}>🏖 PTO</button>
           <button className={`nav-tab ${tab==='travel'?'active':''}`} onClick={()=>setTab('travel')}>✈️ Travel</button>
           <button className={`nav-tab ${tab==='overtime'?'active':''}`} onClick={()=>setTab('overtime')}>⏱ Overtime</button>
+          <button className={`nav-tab ${tab==='concerts'?'active':''}`} onClick={()=>setTab('concerts')}>🎸 Concerts</button>
         </div>
       </nav>
-      <div className="container">
-        {tab === 'pto' ? <PTOPage /> : tab === 'travel' ? <TravelPage /> : <OvertimePage />}
+      <div className={tab === 'concerts' ? '' : 'container'}>
+        {tab === 'pto' ? <PTOPage /> : tab === 'travel' ? <TravelPage /> : tab === 'overtime' ? <OvertimePage /> : <ConcertsPage />}
       </div>
     </div>
   );

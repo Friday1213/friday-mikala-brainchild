@@ -2,6 +2,40 @@ const express = require('express');
 const session = require('express-session');
 const db = require('./database');
 const path = require('path');
+const { google } = require('googleapis');
+
+const SPREADSHEET_ID = '119RAKc6-RWEpbvlyXAMkR9rWJRRqXvG7368JT08Tfkw';
+const SHEET_YEARS = ['2026', '2025', '2024', '2023', '2022'];
+
+async function getConcertData() {
+  const auth = new google.auth.GoogleAuth({
+    keyFile: path.join(__dirname, 'google-service-account.json'),
+    scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly']
+  });
+  const sheets = google.sheets({ version: 'v4', auth });
+  const results = {};
+  for (const year of SHEET_YEARS) {
+    const res = await sheets.spreadsheets.values.get({ spreadsheetId: SPREADSHEET_ID, range: year });
+    const rows = res.data.values || [];
+    const concerts = [];
+    for (let i = 1; i < rows.length; i++) {
+      const r = rows[i];
+      if (!r || !r[0] || !r[1]) continue;
+      const date = r[0] || '';
+      const band = r[1] || '';
+      const location = r[2] || '';
+      const price = r[3] || '';
+      const bought = r[4] || '';
+      const notes = r[5] || '';
+      // skip totals/consideration rows
+      if (band.toLowerCase().includes('total') || date.toUpperCase() === date && date.length > 8) continue;
+      if (!date.match(/\d/) && !band.match(/[A-Za-z]/)) continue;
+      concerts.push({ date, band, location, price, bought, notes });
+    }
+    results[year] = concerts;
+  }
+  return results;
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -72,6 +106,17 @@ app.put('/api/trips/:id', (req, res) => {
 app.delete('/api/trips/:id', (req, res) => {
   db.prepare('DELETE FROM trips WHERE id=?').run(req.params.id);
   res.json({ ok: true });
+});
+
+// Concerts - Google Sheets
+app.get('/api/concerts', async (req, res) => {
+  try {
+    const data = await getConcertData();
+    res.json(data);
+  } catch (e) {
+    console.error('Concerts error:', e.message);
+    res.status(500).json({ error: e.message });
+  }
 });
 
 app.listen(PORT, () => console.log(`Carly Hub running on port ${PORT}`));
