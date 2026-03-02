@@ -2837,6 +2837,241 @@ function CPTGame() {
   );
 }
 
+// ── ACUTE VS CHRONIC DVT GAME ─────────────────────────────────────────────────
+function AcuteChronicGame() {
+  const [gameMode, setGameMode] = React.useState('study');
+  const [quizIdx, setQuizIdx] = React.useState(0);
+  const [choice, setChoice] = React.useState(null);
+  const [score, setScore] = React.useState({c:0,t:0});
+  const [showCard, setShowCard] = React.useState(false);
+
+  // SVG ultrasound simulator — draws a fake US cross-section
+  // bg = vessel background fill, echoes = array of {cx,cy,r,opacity} bright spots
+  // compressed = show compressed oval shape, label = vessel label
+  function USSim({type, label, sub}) {
+    const W=180, H=160;
+    const isAcute = type==='acute';
+    const isNormal = type==='normal';
+
+    // Vessel shapes
+    const vX=90, vY=85, vRx=isNormal?38:40, vRy=isNormal?36:isAcute?38:30;
+    const vFill = isNormal ? '#111' : isAcute ? '#0a0a0a' : '#2a2a2a';
+    const wallColor = isNormal ? '#888' : isAcute ? '#666' : '#aaa';
+    const wallW = isNormal ? 2 : isAcute ? 2.5 : 3.5;
+
+    // Echoes inside vessel (chronic = bright internal echoes; acute = dark/empty)
+    const chronicEchoes = [
+      {cx:82,cy:80,r:5,op:0.7},{cx:96,cy:72,r:4,op:0.6},{cx:104,cy:88,r:6,op:0.65},
+      {cx:78,cy:96,r:4,op:0.55},{cx:90,cy:100,r:5,op:0.6},{cx:70,cy:82,r:3,op:0.5},
+      {cx:108,cy:76,r:4,op:0.6},{cx:86,cy:64,r:3,op:0.45},{cx:100,cy:104,r:4,op:0.5},
+    ];
+
+    // Collateral tiny vessel (chronic only)
+    const showCollateral = type==='chronic';
+    // Compressed shape (show non-compressibility for DVT)
+    const showCompress = false;
+
+    return React.createElement('div', {style:{textAlign:'center'}},
+      React.createElement('svg', {width:W, height:H, viewBox:`0 0 ${W} ${H}`,
+        style:{borderRadius:8, background:'#111', display:'block', margin:'0 auto',
+          border:'2px solid #333', boxShadow:'0 2px 8px rgba(0,0,0,0.4)'}},
+
+        // Surrounding tissue texture (faint speckle)
+        ...[...Array(30)].map((_,i)=>React.createElement('circle', {
+          key:'t'+i, cx:(i*37+13)%W, cy:(i*29+7)%H, r:1.5, fill:'#555', opacity:0.18+((i%5)*0.04)
+        })),
+
+        // Vessel wall
+        React.createElement('ellipse', {cx:vX,cy:vY,rx:vRx+4,ry:vRy+4,fill:'none',stroke:wallColor,strokeWidth:wallW,opacity:0.8}),
+
+        // Vessel lumen
+        React.createElement('ellipse', {cx:vX,cy:vY,rx:vRx,ry:vRy,fill:vFill}),
+
+        // Chronic internal echoes
+        type==='chronic' && chronicEchoes.map((e,i)=>React.createElement('circle', {
+          key:'e'+i, cx:e.cx, cy:e.cy, r:e.r, fill:'#bbb', opacity:e.op
+        })),
+
+        // Chronic: thick irregular wall
+        type==='chronic' && React.createElement('ellipse', {cx:vX,cy:vY,rx:vRx,ry:vRy,fill:'none',stroke:'#aaa',strokeWidth:3,strokeDasharray:'6,3',opacity:0.5}),
+
+        // Collateral vessel (chronic)
+        showCollateral && React.createElement('ellipse', {cx:130,cy:55,rx:10,ry:8,fill:'#111',stroke:'#888',strokeWidth:1.5,opacity:0.8}),
+        showCollateral && React.createElement('text', {x:130,y:42,textAnchor:'middle',fontSize:7,fill:'#aaa',fontWeight:700},'collateral'),
+
+        // Acute: distended dark lumen, no echoes — already handled by dark fill + no echoes
+
+        // Compressed probe indicator (small arrows)
+        React.createElement('text', {x:W/2,y:16,textAnchor:'middle',fontSize:9,fill:'#888',fontWeight:700},'⊗  probe'),
+      ),
+      React.createElement('div', {style:{marginTop:6,fontSize:12,fontWeight:800,color:'#1e293b',textAlign:'center'}},label),
+      sub && React.createElement('div', {style:{fontSize:10,color:'#64748b',marginTop:2}},sub)
+    );
+  }
+
+  const FEATURES = [
+    { feature:'Echogenicity', acute:'Anechoic (black) — fresh clot has no internal echoes', chronic:'Echogenic (bright/grey) — organized thrombus reflects sound' },
+    { feature:'Lumen', acute:'Distended — vein is enlarged, filled with fresh clot', chronic:'Contracted — vein wall thickens, lumen shrinks over time' },
+    { feature:'Compressibility', acute:'Non-compressible — hallmark finding; vein does NOT collapse with probe pressure', chronic:'May partially compress — but still abnormal; walls thick and irregular' },
+    { feature:'Vein walls', acute:'Smooth, thin walls — vein is acutely distended', chronic:'Thick, irregular, hyperechoic walls — fibrosis and scarring' },
+    { feature:'Collaterals', acute:'Usually absent — acute event, no time for collateral development', chronic:'Often present — body has developed bypass vessels around obstruction' },
+    { feature:'Color Doppler', acute:'Absent flow in affected segment — lumen filled with clot', chronic:'May show partial flow or recanalization — partial lysis of clot' },
+    { feature:'Clinical context', acute:'Acute pain, swelling, warmth, sudden onset', chronic:'Months/years of leg heaviness, skin changes, post-thrombotic syndrome' },
+  ];
+
+  const SCENARIOS = [
+    { label:'Patient presents with 3 days of sudden left leg swelling and calf pain after a long flight. Duplex shows a dark, distended popliteal vein that does not compress.', answer:'acute', exp:'Classic acute DVT: sudden onset, anechoic (dark) lumen, distended vein, NON-compressible. The key hallmark is non-compressibility.' },
+    { label:'Duplex shows a popliteal vein with bright internal echoes, thick irregular walls, and a small collateral vessel nearby. The vein partially compresses with probe pressure.', answer:'chronic', exp:'Chronic DVT: echogenic clot, thickened fibrotic walls, collateral formation, and partial compressibility all point to organized/chronic thrombus.' },
+    { label:'A patient with a history of DVT 2 years ago has persistent leg edema and skin discoloration. US shows a contracted femoral vein with echogenic material inside and recanalization on color Doppler.', answer:'chronic', exp:'Post-thrombotic syndrome with chronic DVT changes: contracted lumen, echogenic thrombus, recanalization on Doppler. History of prior DVT supports chronic.' },
+    { label:'A 45-year-old post-operative patient has acute leg swelling 5 days after hip replacement. Duplex shows a dark, enlarged femoral vein with absent color Doppler flow and no compressibility.', answer:'acute', exp:'Acute post-surgical DVT: dark/anechoic lumen, distended vein, no Doppler signal in affected segment, non-compressible. All classic acute findings.' },
+    { label:'US shows a bright, irregular vein wall with heterogeneous echoes inside the lumen. Color Doppler shows partial flow around a filling defect. Patient has chronic venous insufficiency.', answer:'chronic', exp:'Heterogeneous echoes, partial recanalization, irregular walls, and CVI history = chronic DVT with partial lysis. Partial Doppler flow suggests recanalization.' },
+    { label:'A patient reports waking up this morning with a warm, red, swollen calf. Duplex shows a posterior tibial vein that is dark, distended, and incompressible. Walls appear smooth and thin.', answer:'acute', exp:'Acute calf DVT: sudden onset symptoms, anechoic (dark) lumen, distended vein, smooth thin walls, non-compressible. All point to acute/fresh thrombus.' },
+    { label:'Duplex shows a femoral vein with thick echogenic walls, a contracted lumen, and multiple small collateral vessels. Probe compression causes minimal lumen change.', answer:'chronic', exp:'Contracted lumen + thick echogenic walls + collaterals = chronic. The scarring and collateral development indicate long-standing obstruction.' },
+    { label:'Post-procedure duplex on day 2 after RFA shows a dark, non-compressible common femoral vein with a filling defect on color Doppler extending from the SFJ.', answer:'acute', exp:'This is EHIT Class 4 — an ACUTE thrombus. Fresh post-procedure clot: dark, non-compressible, present color Doppler filling defect. Treat as acute DVT.' },
+  ];
+
+  const q = SCENARIOS[quizIdx % SCENARIOS.length];
+  const done = quizIdx >= SCENARIOS.length;
+
+  function handleAnswer(ans) {
+    if (choice) return;
+    setChoice(ans);
+    setScore(s=>({c:s.c+(ans===q.answer?1:0),t:s.t+1}));
+    setTimeout(()=>{ setChoice(null); setQuizIdx(i=>i+1); }, 2200);
+  }
+  function restart() { setQuizIdx(0); setScore({c:0,t:0}); setChoice(null); }
+  const btnB = {border:'none',cursor:'pointer',fontWeight:800,fontSize:12,borderRadius:9,padding:'7px 14px'};
+
+  return React.createElement('div', {style:{maxWidth:960,margin:'0 auto'}},
+    // Header
+    React.createElement('div', {style:{background:'linear-gradient(135deg,#1e3a5f,#0369a1)',borderRadius:16,padding:'20px 24px',marginBottom:20,color:'white',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:10}},
+      React.createElement('div', null,
+        React.createElement('div', {style:{fontSize:22,fontWeight:900,marginBottom:4}}, '🔬 Acute vs Chronic DVT'),
+        React.createElement('div', {style:{fontSize:13,opacity:0.85}}, 'Identify DVT age from ultrasound findings and clinical scenarios')
+      ),
+      React.createElement('button', {onClick:()=>setShowCard(s=>!s),
+        style:{background:'rgba(255,255,255,0.2)',color:'white',border:'none',borderRadius:8,padding:'8px 14px',fontWeight:800,fontSize:12,cursor:'pointer'}},
+        showCard?'Hide Pocket Card ✕':'📋 DVT Pocket Card')
+    ),
+
+    // Pocket card toggle
+    showCard && React.createElement('div', {style:{marginBottom:16,borderRadius:12,overflow:'hidden',boxShadow:'0 4px 20px rgba(0,0,0,0.15)'}},
+      React.createElement('img', {src:'/dvt-pocket-card.jpg', alt:'DVT Ultrasound Pocket Card', style:{width:'100%',display:'block'}})
+    ),
+
+    // Mode toggle
+    React.createElement('div', {style:{display:'flex',gap:8,justifyContent:'center',marginBottom:18}},
+      [['study','📚 Study'],['quiz','🎮 Quiz']].map(([m,lbl])=>
+        React.createElement('button', {key:m, onClick:()=>{setGameMode(m);restart();},
+          style:{...btnB, background:gameMode===m?'#0369a1':'#f1f5f9', color:gameMode===m?'white':'#64748b', fontSize:13}}, lbl)
+      ),
+      gameMode==='quiz' && !done && React.createElement('div', {style:{background:'#0369a1',color:'white',borderRadius:20,padding:'7px 16px',fontWeight:800,fontSize:13}}, `⭐ ${score.c}/${score.t}`)
+    ),
+
+    // STUDY MODE
+    gameMode==='study' && React.createElement('div', null,
+      // US sim comparison
+      React.createElement('div', {style:{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:14,marginBottom:20}},
+        React.createElement('div', {style:{background:'white',borderRadius:12,padding:'14px',border:'2px solid #e2e8f0',textAlign:'center'}},
+          React.createElement(USSim, {type:'normal',label:'Normal Vein',sub:'Dark lumen, compressible'}),
+        ),
+        React.createElement('div', {style:{background:'#fff1f2',borderRadius:12,padding:'14px',border:'2px solid #fca5a5',textAlign:'center'}},
+          React.createElement(USSim, {type:'acute',label:'Acute DVT',sub:'Dark, distended, non-compressible'}),
+        ),
+        React.createElement('div', {style:{background:'#eff6ff',borderRadius:12,padding:'14px',border:'2px solid #93c5fd',textAlign:'center'}},
+          React.createElement(USSim, {type:'chronic',label:'Chronic DVT',sub:'Echogenic, irregular, collaterals'}),
+        )
+      ),
+      // Feature comparison table
+      React.createElement('div', {style:{background:'white',borderRadius:12,border:'1px solid #e2e8f0',overflow:'hidden',marginBottom:16}},
+        React.createElement('div', {style:{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',background:'#1e3a5f',padding:'10px 14px'}},
+          ['Feature','🔴 Acute','🔵 Chronic'].map((h,i)=>React.createElement('div', {key:i, style:{fontWeight:900,fontSize:12,color:'white'}},h))
+        ),
+        FEATURES.map((f,i)=>React.createElement('div', {key:i,
+          style:{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',padding:'10px 14px',background:i%2===0?'#f8fafc':'white',borderBottom:'1px solid #f1f5f9'}},
+          React.createElement('div', {style:{fontSize:12,fontWeight:800,color:'#1e293b'}},f.feature),
+          React.createElement('div', {style:{fontSize:12,color:'#dc2626',lineHeight:1.4}},f.acute),
+          React.createElement('div', {style:{fontSize:12,color:'#2563eb',lineHeight:1.4}},f.chronic)
+        ))
+      ),
+      // DVT mimics reminder
+      React.createElement('div', {style:{background:'#fff7ed',borderRadius:12,padding:'14px 18px',border:'1px solid #fed7aa'}},
+        React.createElement('div', {style:{fontSize:13,fontWeight:900,color:'#9a3412',marginBottom:8}}, '⚠️ DVT False Positives — Know Your Mimics'),
+        React.createElement('div', {style:{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))',gap:8}},
+          [
+            ['Baker\'s Cyst','Posterior knee, transilluminates, compressible, no flow on Doppler'],
+            ['Superficial Thrombophlebitis','Palpable cord, superficial to deep fascia, tender'],
+            ['Lymph Node','Oval, echogenic hilum, color Doppler hilum flow'],
+            ['Hematoma/Groin Hematoma','History of trauma/procedure, no Doppler flow, evolving echogenicity'],
+            ['Pseudoaneurysm','Pulsatile, to-and-fro Doppler signal, post-procedure'],
+          ].map(([name,desc])=>React.createElement('div', {key:name, style:{background:'white',borderRadius:8,padding:'10px 12px',border:'1px solid #fed7aa'}},
+            React.createElement('div', {style:{fontWeight:800,fontSize:12,color:'#9a3412',marginBottom:3}},name),
+            React.createElement('div', {style:{fontSize:11,color:'#374151',lineHeight:1.4}},desc)
+          ))
+        )
+      )
+    ),
+
+    // QUIZ MODE
+    gameMode==='quiz' && done && React.createElement('div', {style:{textAlign:'center',padding:'40px 24px',background:'#eff6ff',borderRadius:16,border:'2px solid #93c5fd'}},
+      React.createElement('div', {style:{fontSize:52,marginBottom:8}}, score.c===SCENARIOS.length?'🏆':score.c>=SCENARIOS.length*.75?'🎉':'📚'),
+      React.createElement('h3', {style:{color:'#0369a1',fontWeight:900,margin:'0 0 8px'}}, 'Quiz Complete!'),
+      React.createElement('div', {style:{fontSize:36,fontWeight:900,color:'#1e293b',marginBottom:8}}, `${score.c}/${SCENARIOS.length}`),
+      React.createElement('div', {style:{fontSize:14,color:'#64748b',marginBottom:20}},
+        score.c===SCENARIOS.length?'Perfect — you can read DVT age on ultrasound! 🌟':
+        score.c>=SCENARIOS.length*.75?'Great work!':
+        'Review the study mode comparison table and try again 📚'
+      ),
+      React.createElement('button', {onClick:restart, style:{padding:'10px 28px',borderRadius:10,border:'none',background:'#0369a1',color:'white',fontWeight:900,cursor:'pointer',fontSize:14}}, '🔄 Try Again')
+    ),
+
+    gameMode==='quiz' && !done && React.createElement('div', {style:{maxWidth:540,margin:'0 auto'}},
+      // Quick reference strip
+      React.createElement('div', {style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:14}},
+        React.createElement('div', {style:{background:'#fff1f2',borderRadius:8,padding:'8px 12px',border:'1px solid #fca5a5'}},
+          React.createElement('div', {style:{fontSize:11,fontWeight:900,color:'#dc2626',marginBottom:3}},'🔴 ACUTE'),
+          React.createElement('div', {style:{fontSize:11,color:'#374151'}},'Dark lumen • Distended • NON-compressible • Smooth walls • No collaterals')
+        ),
+        React.createElement('div', {style:{background:'#eff6ff',borderRadius:8,padding:'8px 12px',border:'1px solid #93c5fd'}},
+          React.createElement('div', {style:{fontSize:11,fontWeight:900,color:'#0369a1',marginBottom:3}},'🔵 CHRONIC'),
+          React.createElement('div', {style:{fontSize:11,color:'#374151'}},'Echogenic • Contracted • Partial compression • Thick walls • Collaterals')
+        )
+      ),
+      // Question
+      React.createElement('div', {style:{background:'#f0f9ff',borderRadius:14,padding:'18px',marginBottom:16,border:'2px solid #bae6fd'}},
+        React.createElement('div', {style:{fontSize:12,color:'#0369a1',fontWeight:800,marginBottom:8}}, `Scenario ${quizIdx+1} of ${SCENARIOS.length}`),
+        React.createElement('div', {style:{fontSize:14,fontWeight:700,color:'#1e293b',lineHeight:1.7}}, q.scenario),
+        React.createElement('div', {style:{marginTop:10,fontSize:12,color:'#0369a1',fontWeight:700}}, '👉 Acute or Chronic DVT?')
+      ),
+      // Answer buttons
+      React.createElement('div', {style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:14}},
+        ['acute','chronic'].map(ans=>{
+          let bg=ans==='acute'?'#fff1f2':'#eff6ff';
+          let border=ans==='acute'?'#fca5a5':'#93c5fd';
+          let col=ans==='acute'?'#dc2626':'#0369a1';
+          if (choice) {
+            if (ans===q.answer) { bg='#dcfce7'; border='#22c55e'; col='#166534'; }
+            else if (ans===choice) { bg='#fee2e2'; border='#ef4444'; col='#991b1b'; }
+            else { bg='#f8fafc'; col='#94a3b8'; }
+          }
+          return React.createElement('button', {key:ans, onClick:()=>handleAnswer(ans),
+            style:{padding:'20px 12px',borderRadius:12,border:`2px solid ${border}`,background:bg,
+              color:col,fontWeight:900,fontSize:16,cursor:choice?'default':'pointer',
+              textAlign:'center',transition:'all 0.15s'}},
+            ans==='acute'?'🔴 Acute':'🔵 Chronic'
+          );
+        })
+      ),
+      choice && React.createElement('div', {style:{background:choice===q.answer?'#f0fdf4':'#fff1f2',borderRadius:10,padding:'14px 16px',
+        border:`1px solid ${choice===q.answer?'#bbf7d0':'#fecaca'}`}},
+        React.createElement('div', {style:{fontSize:13,fontWeight:900,color:choice===q.answer?'#166534':'#991b1b',marginBottom:6}},
+          choice===q.answer?'✅ Correct!':'❌ That was ' + q.answer.toUpperCase()),
+        React.createElement('div', {style:{fontSize:13,color:'#374151',lineHeight:1.6}}, q.exp)
+      )
+    )
+  );
+}
+
 // ── GAMES HUB ────────────────────────────────────────────────────────────────
 function VeinGamesHub() {
   const [game, setGame] = React.useState(null);
@@ -2844,6 +3079,7 @@ function VeinGamesHub() {
     { id:'anatomy', icon:'🫀', title:'Vein Anatomy', desc:'Label the superficial & deep veins of the lower extremity', color:'#059669', ready:true },
     { id:'dvt',     icon:'🩸', title:'DVT Treatment', desc:'Learn DVT classification, PE risk, and treatment by location', color:'#dc2626', ready:true },
     { id:'ehit',    icon:'🔥', title:'EHIT Identification', desc:'Classify EHIT grades and learn post-ablation management', color:'#f97316', ready:true },
+    { id:'acutechronic', icon:'🔬', title:'Acute vs Chronic DVT', desc:'Identify DVT age from ultrasound findings and clinical scenarios', color:'#0369a1', ready:true },
     { id:'us_id',   icon:'🔊', title:'Ultrasound ID', desc:'Identify which vein is shown in the ultrasound image', color:'#2563eb', ready:false },
     { id:'reflux',  icon:'🔄', title:'Reflux or No Reflux?', desc:'Look at the Doppler finding — is there reflux?', color:'#7c3aed', ready:false },
     { id:'cpt',     icon:'💻', title:'CPT Code Challenge', desc:'Match the clinical scenario to the correct CPT code', color:'#f59e0b', ready:true },
@@ -2854,7 +3090,8 @@ function VeinGamesHub() {
   if (game==='anatomy') return React.createElement('div', null, backBtn, React.createElement(VeinAnatomyGame));
   if (game==='dvt')     return React.createElement('div', null, backBtn, React.createElement(DVTGame));
   if (game==='ehit')    return React.createElement('div', null, backBtn, React.createElement(EHITGame));
-  if (game==='cpt')     return React.createElement('div', null, backBtn, React.createElement(CPTGame));
+  if (game==='cpt')          return React.createElement('div', null, backBtn, React.createElement(CPTGame));
+  if (game==='acutechronic') return React.createElement('div', null, backBtn, React.createElement(AcuteChronicGame));
 
   return React.createElement('div', {style:{padding:'0 4px'}},
     React.createElement('div', {style:{background:'linear-gradient(135deg,#1e3a5f,#0ea5e9)',borderRadius:16,padding:'20px 24px',marginBottom:20,color:'white'}},
