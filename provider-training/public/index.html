@@ -2166,6 +2166,15 @@ function VeinAnatomyGame() {
     {src:'/anatomy/reflux-f5.jpg', cap:'[PMC5220199] Fig 5. Right SFJ — color Doppler at three levels showing junctional incompetence and GSV reflux tracking distally into the thigh.'},
     {src:'/anatomy/reflux-f3.jpg', cap:'[PMC5220199] Fig 3. Left GSV at groin — B-mode 4-panel with color Doppler. Demonstrates US assessment technique for GSV at the SFJ level.'},
     {src:'/anatomy/reflux-f4.jpg', cap:'[PMC5220199] Fig 4. Compression study of distal GSV — normal complete compressibility (arrows). Used for DVT evaluation. Compare: incompressible vein = DVT.'},
+    // PMC8175108 — Physical exam & US of superficial venous disease
+    {src:'/anatomy/svd-f1.jpg', cap:'[PMC8175108] Clinical photo: C2 varicose veins — dilated tortuous GSV distribution veins along medial calf. Classic presentation of saphenofemoral reflux with visible varicosities.'},
+    {src:'/anatomy/svd-f3.jpg', cap:'[PMC8175108] Clinical photo: C1 telangiectasias and reticular veins around lateral malleolus. Small intradermal venules (<1mm) and subdermal veins (1–3mm). Often cosmetic concern; may indicate deeper incompetence.'},
+    {src:'/anatomy/svd-f5.jpg', cap:'[PMC8175108] Clinical photo: Bilateral C2–C3 disease with asymmetric varicosities and reticular veins. Right leg more involved. Mild edema present.'},
+    {src:'/anatomy/svd-f7.jpg', cap:'[PMC8175108] Anatomical diagram: Anterior, lateral, and posterior views of lower extremity venous anatomy. GSV, SSV, CFV, FV, popliteal, tibial, peroneal, and gastrocnemius veins labeled.'},
+    {src:'/anatomy/svd-f8.jpg', cap:'[PMC8175108] Duplex US: Right GSV at mid-calf — tortuous, out of fascia, with PATHOLOGIC REFLUX of 6022 ms (>6 seconds). Threshold is 500 ms. Retrograde velocity ~40 cm/s. Classic GSV insufficiency pattern.'},
+    // PMC5024873 — Duplex US assessment
+    {src:'/anatomy/duplex-f3.jpg', cap:'[PMC5024873] Duplex US: Spectral Doppler waveform with compression-release augmentation technique. Demonstrates reflux detection method — retrograde waveform below baseline after release.'},
+    {src:'/anatomy/duplex-f5.jpg', cap:'[PMC5024873] Duplex US: Normal vs refluxing vein Doppler comparison. Normal flow pattern vs prolonged retrograde signal after augmentation.'},
   ];
 
   return React.createElement('div', {style:{maxWidth:960,margin:'0 auto'}},
@@ -2289,7 +2298,7 @@ function VeinAnatomyGame() {
     // ── ARTICLE FIGURES ──
     tab==='figures' && React.createElement('div', null,
       React.createElement('div', {style:{background:'#f3e8ff',borderRadius:10,padding:'12px 16px',marginBottom:14,border:'1px solid #e9d5ff',fontSize:12,color:'#6C3CB5',fontWeight:700}},
-        '📖 Figures from two open-access PMC articles. PMC5381851: Anatomy & basic US approach. PMC5220199: Venous reflux & duplex imaging.'
+        '📖 Figures from four open-access PMC articles: PMC5381851 (anatomy & US approach) · PMC5220199 (venous reflux) · PMC8175108 (physical exam & superficial venous disease, CEAP photos) · PMC5024873 (duplex US assessment). All open access.'
       ),
       React.createElement('div', {style:{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:14}},
         FIGS.map((fig,i)=>React.createElement('div', {key:i, style:{borderRadius:12,overflow:'hidden',border:'1px solid #e9d5ff',background:'white'}},
@@ -3147,6 +3156,12 @@ function RefluxGame() {
     { image:'/anatomy/reflux-f3.jpg', answer:'no_reflux',
       label:'Left GSV at groin — B-mode 4-panel study. Pre-augmentation baseline.',
       exp:'This B-mode study shows the GSV anatomy at the groin without active augmentation. No retrograde flow waveform is demonstrated in this image. Reflux assessment requires active augmentation (calf squeeze + release) and Doppler evaluation — B-mode alone cannot diagnose reflux.' },
+    { image:'/anatomy/svd-f8.jpg', answer:'reflux',
+      label:'Right GSV at mid-calf — spectral Doppler waveform with calipers showing duration of retrograde flow.',
+      exp:'The spectral Doppler waveform shows retrograde flow lasting 6022 ms — more than 12x the 500ms threshold. The GSV is also out of its fascial compartment and tortuous. This is severe GSV insufficiency with pathologic reflux. Compare to the 500 ms cutoff for superficial veins.' },
+    { image:'/anatomy/duplex-f3.jpg', answer:'reflux',
+      label:'Duplex US — spectral Doppler waveform after augmentation. Note the waveform pattern below baseline.',
+      exp:'The spectral Doppler waveform shows flow reversal below the baseline after augmentation (calf compression-release). Any retrograde deflection lasting ≥500ms after release = pathologic reflux. This waveform pattern confirms venous valve incompetence.' },
   ];
 
   const q = QUESTIONS[quizIdx % QUESTIONS.length];
