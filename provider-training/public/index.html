@@ -1691,182 +1691,8 @@ function P2PTab() {
   );
 }
 
-function P2PTab() {
-  const [phase, setPhase] = React.useState(null);
 
-  const objections = [
-    { trigger: '"Compression not long enough."', response: 'Clarify the exact duration and document compliance at every visit. Emphasize that symptoms persisted despite consistent stocking use — we have documented ADL impairment throughout the conservative trial.' },
-    { trigger: '"Vein is too small."', response: 'The size threshold is one criterion, but our policy requires symptomatic disease with documented reflux. This patient has reflux of [X ms] with significant symptom burden interfering with daily activities.' },
-    { trigger: '"Symptoms are not severe enough."', response: 'The patient has documented impairment of activities of daily living including [standing/walking/working]. This is clearly captured in our clinical notes across multiple visits.' },
-    { trigger: '"Try more conservative therapy."', response: 'The patient has completed [X weeks] of documented compression therapy with ongoing symptom burden. Additional conservative therapy is unlikely to change the clinical picture and delays medically necessary care.' },
-    { trigger: '"We need more clinical documentation."', response: 'We\'re happy to submit additional records. Can you tell me specifically what documentation would satisfy your criteria? I want to make sure we provide exactly what you need.' },
-    { trigger: 'Reviewer seems unwilling to approve anything.', response: 'Ask: "What specific finding or documentation would meet your criteria for approval?" Then document their answer verbatim. This protects you on appeal and often shifts the dynamic.' },
-  ];
-
-  const phases = [
-    { id: 1, label: 'Phase 1 — Observation', color: '#3b82f6', steps: [
-      'Listen to live P2P calls (sit in, don\'t speak)',
-      'Review denial letters and understand the denial reason',
-      'Study payer-specific criteria using the Vein Policy Hub cheat sheets',
-      'Ask questions during debrief after each call you observe',
-    ]},
-    { id: 2, label: 'Phase 2 — Supervised Calls', color: '#f59e0b', steps: [
-      'Conduct calls with a supervisor or senior APP available for backup',
-      'Use the Pre-Call Checklist every time — no exceptions',
-      'Debrief after each call: what worked, what was challenging',
-      'Build comfort with common objections before moving to Phase 3',
-    ]},
-    { id: 3, label: 'Phase 3 — Independent', color: '#10b981', steps: [
-      'Manage routine denials independently',
-      'Escalate complex or unusual cases as needed — that\'s not a failure',
-      'Update the P2P chat thread and denial email after every call',
-      'Contribute to payer trend tracking by documenting reviewer patterns',
-    ]},
-  ];
-
-  return React.createElement('div', {style:{padding:'0 4px'}},
-    // Header
-    React.createElement('div', {style:{background:'linear-gradient(135deg,#1e3a5f,#2563eb)',borderRadius:16,padding:'20px 24px',marginBottom:20,color:'white'}},
-      React.createElement('div', {style:{fontSize:22,fontWeight:900,marginBottom:4}}, '📞 Peer-to-Peer (P2P) Calls'),
-      React.createElement('div', {style:{fontSize:13,opacity:0.85}}, 'A practical guide to advocating for your patients when insurance pushes back.')
-    ),
-
-    // What is a P2P
-    React.createElement('div', {style:{background:'#f8fafc',borderRadius:12,padding:'16px 20px',marginBottom:16,border:'1px solid #e2e8f0'}},
-      React.createElement('div', {style:{fontSize:13,fontWeight:900,color:'#1e3a5f',marginBottom:8,textTransform:'uppercase',letterSpacing:'0.05em'}}, 'What Is a P2P?'),
-      React.createElement('div', {style:{fontSize:14,color:'#334155',lineHeight:1.6}},
-        'A peer-to-peer is a scheduled phone call between you (the treating clinician) and the insurance company\'s medical reviewer. The goal is to present the clinical case and argue for medical necessity — often after a prior auth denial. ',
-        React.createElement('strong', null, 'Many denials are overturned simply because the reviewer never actually read our records.')
-      )
-    ),
-
-    // When you'll be asked
-    React.createElement('div', {style:{background:'#eff6ff',borderRadius:12,padding:'16px 20px',marginBottom:16,border:'1px solid #bfdbfe'}},
-      React.createElement('div', {style:{fontSize:13,fontWeight:900,color:'#1e3a5f',marginBottom:10,textTransform:'uppercase',letterSpacing:'0.05em'}}, 'When You\'ll Be Asked'),
-      React.createElement('div', {style:{fontSize:13,color:'#1e40af',marginBottom:8}}, '✅ Appropriate times to step in:'),
-      ['Light clinic days or schedule gaps', 'Administrative blocks', 'Downtime between procedures', 'When the P2P requires a U.S.-based clinician (payer restriction)'].map((item,i) =>
-        React.createElement('div', {key:i, style:{fontSize:13,color:'#334155',marginBottom:4}}, '• ' + item)
-      ),
-      React.createElement('div', {style:{fontSize:13,color:'#dc2626',fontWeight:700,marginTop:12}}, '🚫 Never during:'),
-      ['Active patient visits', 'Procedures in progress', 'Any clinical responsibility that cannot be paused'].map((item,i) =>
-        React.createElement('div', {key:i, style:{fontSize:13,color:'#334155',marginBottom:4}}, '• ' + item)
-      )
-    ),
-
-    // Pre-call checklist
-    React.createElement('div', {style:{background:'#f0fdf4',borderRadius:12,padding:'16px 20px',marginBottom:16,border:'1px solid #bbf7d0'}},
-      React.createElement('div', {style:{fontSize:13,fontWeight:900,color:'#065f46',marginBottom:10,textTransform:'uppercase',letterSpacing:'0.05em'}}, '✅ Pre-Call Checklist'),
-      React.createElement('div', {style:{fontSize:12,color:'#065f46',marginBottom:12,fontStyle:'italic'}}, 'Pull these up before you dial in — every time.'),
-      [
-        ['Patient info', 'Full name, DOB, insurance ID, treating MD name + NPI'],
-        ['Denial reason', 'Read the denial letter — know exactly what they\'re objecting to'],
-        ['Ultrasound findings', 'Reflux times (ms), vein diameters (mm), segments involved, deep vs. superficial'],
-        ['Conservative therapy', 'Start date, duration, stocking compliance documentation, symptom progression'],
-        ['Payer criteria', 'Open the Vein Policy Hub — know this payer\'s specific thresholds before the call'],
-        ['Procedures requested', 'CPT codes, laterality, which veins (GSV/SSV/tributaries)'],
-      ].map(([label, detail], i) =>
-        React.createElement('div', {key:i, style:{display:'flex',gap:10,marginBottom:10,alignItems:'flex-start'}},
-          React.createElement('div', {style:{background:'#10b981',color:'white',borderRadius:6,padding:'2px 8px',fontSize:11,fontWeight:800,whiteSpace:'nowrap',marginTop:1}}, label),
-          React.createElement('div', {style:{fontSize:13,color:'#334155'}}, detail)
-        )
-      )
-    ),
-
-    // Structuring the call
-    React.createElement('div', {style:{background:'white',borderRadius:12,padding:'16px 20px',marginBottom:16,border:'1px solid #e2e8f0'}},
-      React.createElement('div', {style:{fontSize:13,fontWeight:900,color:'#1e3a5f',marginBottom:12,textTransform:'uppercase',letterSpacing:'0.05em'}}, '📋 Structuring the Call'),
-      [
-        { step: '1', title: 'Introduce yourself', detail: '"Hi, this is [Name], I\'m a PA/NP with VIP Medical Group calling for a peer-to-peer review for patient [Name], DOB [DOB], member ID [ID]."' },
-        { step: '2', title: 'State the clinical picture', detail: 'Lead with symptoms: "This patient presents with [symptoms] that have significantly impaired their activities of daily living, documented across [X] visits."' },
-        { step: '3', title: 'Present the ultrasound findings', detail: '"Duplex ultrasound confirmed reflux of [X ms] in the [GSV/SSV], with a diameter of [X mm]. Findings meet criteria for [procedure]."' },
-        { step: '4', title: 'Address the denial reason directly', detail: 'Don\'t wait for them to bring it up — acknowledge it and reframe. "I understand the concern was [X] — I\'d like to walk you through why we believe this meets medical necessity."' },
-        { step: '5', title: 'Be concise', detail: 'Most calls are under 5 minutes. Reviewers respond to clear, organized, confident presentations. Avoid over-explaining.' },
-        { step: '6', title: 'Ask for the determination', detail: '"Based on what I\'ve shared, are you able to approve [procedure] today?" If denied, ask: "What documentation would change that decision?"' },
-      ].map(({step,title,detail},i) =>
-        React.createElement('div', {key:i, style:{display:'flex',gap:12,marginBottom:14,alignItems:'flex-start'}},
-          React.createElement('div', {style:{background:'#2563eb',color:'white',borderRadius:'50%',width:26,height:26,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:900,fontSize:12,flexShrink:0}}, step),
-          React.createElement('div', null,
-            React.createElement('div', {style:{fontSize:13,fontWeight:800,color:'#1e293b',marginBottom:2}}, title),
-            React.createElement('div', {style:{fontSize:12,color:'#64748b',lineHeight:1.5,fontStyle:'italic'}}, detail)
-          )
-        )
-      )
-    ),
-
-    // Tone guide
-    React.createElement('div', {style:{background:'#faf5ff',borderRadius:12,padding:'16px 20px',marginBottom:16,border:'1px solid #e9d5ff'}},
-      React.createElement('div', {style:{fontSize:13,fontWeight:900,color:'#6b21a8',marginBottom:10,textTransform:'uppercase',letterSpacing:'0.05em'}}, '🎙️ Tone on the Call'),
-      React.createElement('div', {style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}},
-        [
-          ['✅ Be', ['Collegial, not adversarial', 'Confident, not defensive', 'Evidence-based, not emotional', 'Concise — they review dozens of cases']],
-          ['🚫 Avoid', ['Arguing or getting frustrated', 'Speculating beyond the chart', 'Exaggerating clinical findings', 'Taking a denial personally']],
-        ].map(([label, items], i) =>
-          React.createElement('div', {key:i, style:{background:'white',borderRadius:8,padding:'10px 14px',border:'1px solid #e9d5ff'}},
-            React.createElement('div', {style:{fontSize:12,fontWeight:900,color:'#6b21a8',marginBottom:8}}, label),
-            items.map((item,j) => React.createElement('div', {key:j, style:{fontSize:12,color:'#334155',marginBottom:4}}, item))
-          )
-        )
-      )
-    ),
-
-    // Handling pushback
-    React.createElement('div', {style:{background:'white',borderRadius:12,padding:'16px 20px',marginBottom:16,border:'1px solid #e2e8f0'}},
-      React.createElement('div', {style:{fontSize:13,fontWeight:900,color:'#1e3a5f',marginBottom:4,textTransform:'uppercase',letterSpacing:'0.05em'}}, '🥊 Handling Pushback'),
-      React.createElement('div', {style:{fontSize:12,color:'#64748b',marginBottom:12}}, 'Tap each objection to see how to respond.'),
-      objections.map((obj,i) =>
-        React.createElement('details', {key:i, style:{marginBottom:8,borderRadius:8,overflow:'hidden',border:'1px solid #e2e8f0'}},
-          React.createElement('summary', {style:{padding:'10px 14px',fontWeight:700,fontSize:13,color:'#dc2626',cursor:'pointer',background:'#fff5f5',listStyle:'none',display:'flex',justifyContent:'space-between',alignItems:'center'}},
-            obj.trigger,
-            React.createElement('span', {style:{fontSize:10,color:'#94a3b8',fontWeight:400}}, 'tap to expand')
-          ),
-          React.createElement('div', {style:{padding:'12px 14px',fontSize:13,color:'#334155',lineHeight:1.6,background:'#f8fafc'}}, obj.response)
-        )
-      )
-    ),
-
-    // After the call
-    React.createElement('div', {style:{background:'#fff7ed',borderRadius:12,padding:'16px 20px',marginBottom:16,border:'1px solid #fed7aa'}},
-      React.createElement('div', {style:{fontSize:13,fontWeight:900,color:'#9a3412',marginBottom:10,textTransform:'uppercase',letterSpacing:'0.05em'}}, '📝 After the Call'),
-      React.createElement('div', {style:{fontSize:12,color:'#7c2d12',marginBottom:10}}, 'Update the P2P chat thread AND reply to the denial email with all of the following:'),
-      [
-        'Reviewer name + credentials',
-        'Outcome: Approved / Denied / Pending / Escalated to appeal',
-        'Authorization number (if approved)',
-        'Any additional requirements the reviewer specified',
-        'Verbatim notes if reviewer stated what WOULD meet criteria (critical for appeals)',
-        'Appeal pathway details if denied',
-      ].map((item,i) =>
-        React.createElement('div', {key:i, style:{display:'flex',gap:8,marginBottom:6,alignItems:'flex-start'}},
-          React.createElement('div', {style:{color:'#ea580c',fontWeight:900,flexShrink:0}}, '→'),
-          React.createElement('div', {style:{fontSize:13,color:'#334155'}}, item)
-        )
-      )
-    ),
-
-    // Training phases
-    React.createElement('div', {style:{background:'white',borderRadius:12,padding:'16px 20px',marginBottom:4,border:'1px solid #e2e8f0'}},
-      React.createElement('div', {style:{fontSize:13,fontWeight:900,color:'#1e3a5f',marginBottom:12,textTransform:'uppercase',letterSpacing:'0.05em'}}, '🎓 Training Phases'),
-      phases.map(p =>
-        React.createElement('div', {key:p.id, style:{marginBottom:12,borderRadius:10,border:`2px solid ${p.color}22`,overflow:'hidden'}},
-          React.createElement('div', {
-            style:{background:p.color,color:'white',padding:'8px 14px',fontWeight:900,fontSize:13,cursor:'pointer'},
-            onClick:()=>setPhase(phase===p.id?null:p.id)
-          }, p.label + (phase===p.id?' ▲':' ▼')),
-          phase===p.id && React.createElement('div', {style:{padding:'12px 14px'}},
-            p.steps.map((s,i) =>
-              React.createElement('div', {key:i, style:{display:'flex',gap:8,marginBottom:6}},
-                React.createElement('div', {style:{color:p.color,fontWeight:900,flexShrink:0}}, `${i+1}.`),
-                React.createElement('div', {style:{fontSize:13,color:'#334155'}}, s)
-              )
-            )
-          )
-        )
-      )
-    )
-  );
-}
-
-function VeinGameTab() {
+function VeinAnatomyGame() {
   const [view, setView]           = React.useState('anterior');
   const [mode, setMode]           = React.useState('study');
   const [highlighted, setHL]      = React.useState(null);
@@ -2182,9 +2008,8 @@ const CLINICAL_TABS = [
   {id:'procedures', label:'🔬 Procedures'},
   {id:'complications', label:'⚠️ Complications'},
   {id:'glossary', label:'🔤 Glossary'},
-  {id:'p2p', label:'📞 Peer-to-Peer'},
-  {id:'veingame', label:'🧠 Vein Game'},
   {id:'p2p', label:'📞 P2P Calls'},
+  {id:'veingame', label:'🎮 Vein Games'},
 ];
 const ADMIN_TABS = [
   {id:'start',    label:'📋 Getting Started'},
@@ -2195,6 +2020,41 @@ const ADMIN_TABS = [
   {id:'marketing',label:'🎯 Marketing'},
   {id:'resources',label:'🔗 Resources'},
 ];
+
+function VeinGamesHub() {
+  const [game, setGame] = React.useState(null);
+  const games = [
+    { id:'anatomy', icon:'🫀', title:'Vein Anatomy', desc:'Label the superficial & deep veins of the lower extremity', color:'#059669', ready:true },
+    { id:'us_id',   icon:'🔊', title:'Ultrasound ID', desc:'Identify which vein is shown in the ultrasound image', color:'#2563eb', ready:false },
+    { id:'reflux',  icon:'🔄', title:'Reflux or No Reflux?', desc:'Look at the Doppler finding — is there reflux?', color:'#dc2626', ready:false },
+    { id:'normal',  icon:'🩺', title:'Normal vs. Pathologic', desc:'Classify findings: healthy, CVI, DVT, or other', color:'#7c3aed', ready:false },
+    { id:'cpt',     icon:'💻', title:'CPT Code Challenge', desc:'Match the clinical scenario to the correct CPT code', color:'#f59e0b', ready:false },
+  ];
+  if (game === 'anatomy') return React.createElement('div', null,
+    React.createElement('button', {onClick:()=>setGame(null), style:{marginBottom:16,background:'none',border:'none',cursor:'pointer',fontSize:13,color:'#2563eb',fontWeight:700}}, '← Back to Games'),
+    React.createElement(VeinAnatomyGame)
+  );
+  return React.createElement('div', {style:{padding:'0 4px'}},
+    React.createElement('div', {style:{background:'linear-gradient(135deg,#1e3a5f,#0ea5e9)',borderRadius:16,padding:'20px 24px',marginBottom:20,color:'white'}},
+      React.createElement('div', {style:{fontSize:22,fontWeight:900,marginBottom:4}}, '🎮 Vein Learning Games'),
+      React.createElement('div', {style:{fontSize:13,opacity:0.85}}, 'Interactive games to sharpen your vein anatomy and ultrasound skills')
+    ),
+    React.createElement('div', {style:{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:14}},
+      games.map(g => React.createElement('div', {
+        key:g.id,
+        onClick:()=>g.ready&&setGame(g.id),
+        style:{borderRadius:14,border:`2px solid ${g.ready?g.color+'44':'#e2e8f0'}`,padding:'18px 20px',cursor:g.ready?'pointer':'default',background:g.ready?'white':'#f8fafc',transition:'all 0.15s',position:'relative',overflow:'hidden'}
+      },
+        !g.ready && React.createElement('div', {style:{position:'absolute',top:10,right:10,background:'#f1f5f9',color:'#94a3b8',fontSize:10,fontWeight:800,padding:'2px 8px',borderRadius:20}}, 'COMING SOON'),
+        React.createElement('div', {style:{fontSize:28,marginBottom:8}}, g.icon),
+        React.createElement('div', {style:{fontSize:15,fontWeight:900,color:g.ready?'#1e293b':'#94a3b8',marginBottom:4}}, g.title),
+        React.createElement('div', {style:{fontSize:12,color:'#64748b',lineHeight:1.5}}, g.desc),
+        g.ready && React.createElement('div', {style:{marginTop:12,fontSize:12,fontWeight:800,color:g.color}}, 'Play →')
+      ))
+    )
+  );
+}
+
 
 function App() {
   // Read initial state from URL hash e.g. #clinical/p2p or #admin/faq
@@ -2315,8 +2175,7 @@ function App() {
         {mode === 'clinical' && clinicalTab === 'complications'  && <ComplicationsTab />}
         {mode === 'clinical' && clinicalTab === 'glossary'       && <GlossaryTab />}
         {mode === 'clinical' && clinicalTab === 'p2p'           && <P2PTab />}
-        {mode === 'clinical' && clinicalTab === 'veingame'      && <VeinGameTab />}
-        {mode === 'clinical' && clinicalTab === 'p2p'          && <P2PTab />}
+        {mode === 'clinical' && clinicalTab === 'veingame'      && <VeinGamesHub />}
         {mode === 'admin'    && adminTab === 'start'      && <StartTab />}
         {mode === 'admin'    && adminTab === 'systems'    && <SystemsTab />}
         {mode === 'admin'    && adminTab === 'faq'        && <FaqTab searchQ={globalSearch} />}
