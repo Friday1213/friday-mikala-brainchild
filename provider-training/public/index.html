@@ -2440,36 +2440,103 @@ function EHITGame() {
   const btnB = {border:'none',cursor:'pointer',fontWeight:800,fontSize:12,borderRadius:9,padding:'7px 14px'};
 
   // EHIT SVG diagram: shows GSV/CFV junction with thrombus visualization
-  function EhitDiagram({classId}) {
-    const thrombus = {
-      c1:{points:'M 120,145 Q 128,138 135,138 Q 140,138 140,143 Q 140,150 133,152 Q 126,153 120,150 Z', color:'#22c55e', label:'Thrombus at SFJ only'},
-      c2:{points:'M 120,130 Q 128,120 138,118 Q 148,116 150,124 Q 152,132 144,136 Q 136,140 126,140 Q 120,140 118,136 Z', color:'#eab308', label:'Into CFV <50%'},
-      c3:{points:'M 112,115 Q 120,102 138,98 Q 155,95 158,108 Q 161,120 150,126 Q 138,132 124,132 Q 112,132 110,124 Z', color:'#f97316', label:'Into CFV ≥50%'},
-      c4:{points:'M 108,95 Q 116,78 138,74 Q 162,71 166,88 Q 170,105 156,114 Q 140,122 120,120 Q 106,118 105,108 Z', color:'#dc2626', label:'Full CFV occlusion'},
+  // Single class diagram matching the reference image style
+  // Deep vein = horizontal channel; GSV thrombus enters diagonally from upper-left
+  function EhitDiagram({classId, compact}) {
+    const W = 280, H = compact ? 110 : 130;
+    const TOP = compact ? 28 : 35, BOT = compact ? 82 : 95; // CFV walls
+    const MID = (TOP + BOT) / 2;
+    const CHAN = BOT - TOP; // channel height
+    const JX = 118; // junction x
+
+    // GSV tube: diagonal parallelogram entering from upper-left
+    const gsvTop = 'M 0,' + (TOP - 18) + ' L ' + (JX + 2) + ',' + TOP;
+    const gsvBot = 'L ' + JX + ',' + BOT + ' L 0,' + (BOT - 2) + ' Z';
+    const gsvPath = gsvTop + ' ' + gsvBot;
+
+    // Thrombus shapes per class
+    const thrombusConfig = {
+      c1: { cx: JX + 5, cy: MID, rx: 16, ry: CHAN*0.28, color:'#555', label:'Tip at SFJ only' },
+      c2: { cx: JX + 26, cy: MID, rx: 28, ry: CHAN*0.34, color:'#444', label:'Into CFV <50%', show50:true },
+      c3: { cx: JX + 32, cy: MID, rx: 36, ry: CHAN*0.46, color:'#333', label:'Into CFV ≥50%', show50:true },
+      c4: { cx: JX + 44, cy: MID, rx: 42, ry: CHAN*0.52, color:'#222', label:'Full occlusion', show50:true },
     };
-    const t = classId ? thrombus[classId] : null;
-    return React.createElement('svg', {width:220,height:300,viewBox:'0 0 220 300',style:{borderRadius:12,background:'#f0f9ff',boxShadow:'0 2px 12px rgba(30,58,95,0.1)'}},
-      // CFV (vertical)
-      React.createElement('rect', {x:118,y:20,width:36,height:160,rx:18,fill:'#bfdbfe',stroke:'#3b82f6',strokeWidth:2}),
-      React.createElement('text', {x:136,y:15,textAnchor:'middle',fontSize:9,fontWeight:800,fill:'#1d4ed8'},'CFV'),
-      // GSV (angled coming in from lower left)
-      React.createElement('path', {d:'M 30,240 Q 60,220 80,195 Q 100,170 118,148', fill:'none',stroke:'#ef4444',strokeWidth:16,strokeLinecap:'round',opacity:0.7}),
-      React.createElement('path', {d:'M 30,240 Q 60,220 80,195 Q 100,170 118,148', fill:'none',stroke:'#fca5a5',strokeWidth:10,strokeLinecap:'round'}),
-      React.createElement('text', {x:38,y:262,fontSize:9,fontWeight:800,fill:'#dc2626'},'GSV'),
-      // SFJ dot
-      React.createElement('circle', {cx:118,cy:148,r:6,fill:'#7c3aed',stroke:'white',strokeWidth:1.5}),
-      React.createElement('text', {x:108,y:168,fontSize:8,fontWeight:700,fill:'#7c3aed'},'SFJ'),
-      // FV below CFV
-      React.createElement('rect', {x:118,y:180,width:36,height:100,rx:18,fill:'#dbeafe',stroke:'#93c5fd',strokeWidth:1.5,opacity:0.7}),
-      React.createElement('text', {x:136,y:296,textAnchor:'middle',fontSize:9,fontWeight:800,fill:'#1d4ed8',opacity:0.7},'FV'),
-      // Thrombus overlay
-      t && React.createElement('g', null,
-        React.createElement('path', {d:t.points,fill:t.color,opacity:0.85,stroke:'white',strokeWidth:1}),
-        React.createElement('text', {x:136,y:275,textAnchor:'middle',fontSize:9,fontWeight:800,fill:t.color},t.label)
+    const t = classId ? thrombusConfig[classId] : null;
+    const classColors = {c1:'#22c55e', c2:'#eab308', c3:'#f97316', c4:'#dc2626'};
+    const accentColor = classId ? classColors[classId] : '#64748b';
+
+    return React.createElement('svg', {width:W, height:H,
+      viewBox:`0 0 ${W} ${H}`,
+      style:{borderRadius:10, background:'white', display:'block',
+        border:`2px solid ${accentColor}44`,
+        boxShadow:'0 2px 10px rgba(0,0,0,0.08)'}},
+
+      // ── CFV walls (two horizontal lines = vessel channel) ──
+      React.createElement('line', {x1:JX, y1:TOP, x2:W, y2:TOP, stroke:'#374151', strokeWidth:2.5}),
+      React.createElement('line', {x1:JX, y1:BOT, x2:W, y2:BOT, stroke:'#374151', strokeWidth:2.5}),
+
+      // ── GSV tube (diagonal, hatched dark) ──
+      React.createElement('defs', null,
+        React.createElement('pattern', {id:'hatch', patternUnits:'userSpaceOnUse', width:6, height:6, patternTransform:'rotate(45)'},
+          React.createElement('line', {x1:0, y1:0, x2:0, y2:6, stroke:'#9ca3af', strokeWidth:2})
+        ),
+        React.createElement('clipPath', {id:'cfvClip'},
+          React.createElement('rect', {x:0, y:TOP, width:W, height:CHAN})
+        )
       ),
-      // Legend labels
-      React.createElement('text', {x:10,y:130,fontSize:8,fill:'#64748b'},'← Into'),
-      React.createElement('text', {x:10,y:140,fontSize:8,fill:'#64748b'},'deep system')
+      // GSV outline
+      React.createElement('path', {d:gsvPath, fill:'#e5e7eb', stroke:'#374151', strokeWidth:2}),
+      // GSV hatch
+      React.createElement('path', {d:gsvPath, fill:'url(#hatch)', opacity:0.5}),
+      // GSV label
+      React.createElement('text', {
+        x: (JX / 2) - 10,
+        y: MID - 6,
+        fontSize: compact ? 8 : 9,
+        fontWeight:700,
+        fill:'#374151',
+        transform:`rotate(-28, ${JX/2 - 10}, ${MID - 6})`
+      }, 'Thrombus'),
+
+      // ── 50% midline dotted (classes 2-4) ──
+      t && t.show50 && React.createElement('line', {
+        x1:JX, y1:MID, x2:W-10, y2:MID,
+        stroke:'#9ca3af', strokeWidth:1.5, strokeDasharray:'4,3'
+      }),
+      t && t.show50 && React.createElement('text', {x:W-8, y:MID+4, fontSize:8, fill:'#9ca3af', textAnchor:'end', fontWeight:700},'50%'),
+
+      // ── Thrombus oval (clipped to CFV channel) ──
+      t && React.createElement('ellipse', {
+        cx:t.cx, cy:t.cy, rx:t.rx, ry:t.ry,
+        fill:t.color, opacity:0.82,
+        clipPath:'url(#cfvClip)'
+      }),
+      t && React.createElement('ellipse', {
+        cx:t.cx, cy:t.cy, rx:t.rx, ry:t.ry,
+        fill:'url(#hatch)', opacity:0.35,
+        clipPath:'url(#cfvClip)'
+      }),
+
+      // ── CFV label ──
+      !compact && React.createElement('text', {x:W-6, y:TOP-5, fontSize:9, fontWeight:800, fill:'#1d4ed8', textAnchor:'end'},'CFV / Deep Vein'),
+    );
+  }
+
+  // 2×2 grid showing all 4 classes at once for study mode
+  function EhitAllClasses() {
+    const classColors = {c1:'#22c55e', c2:'#eab308', c3:'#f97316', c4:'#dc2626'};
+    const labels = {c1:'Class 1', c2:'Class 2', c3:'Class 3', c4:'Class 4'};
+    const sublabels = {c1:'Tip at SFJ only — no deep involvement', c2:'Into CFV, <50% occlusion', c3:'Into CFV, ≥50% occlusion', c4:'Complete CFV occlusion = DVT'};
+    return React.createElement('div', {style:{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}},
+      ['c1','c2','c3','c4'].map(id =>
+        React.createElement('div', {key:id, style:{borderRadius:10, overflow:'hidden', border:`2px solid ${classColors[id]}66`}},
+          React.createElement('div', {style:{background:classColors[id], color:'white', padding:'6px 12px', fontWeight:900, fontSize:13}}, labels[id]),
+          React.createElement('div', {style:{padding:'10px', background:'white'}},
+            React.createElement(EhitDiagram, {classId:id, compact:true}),
+            React.createElement('div', {style:{fontSize:11, color:'#374151', marginTop:6, fontWeight:600}}, sublabels[id])
+          )
+        )
+      )
     );
   }
 
@@ -2494,14 +2561,12 @@ function EHITGame() {
           'EHIT (Endovenous Heat-Induced Thrombosis) is thrombus extension from the treated superficial vein into the deep venous system following thermal ablation (RFA or laser). It is graded Class 1–4 based on how far the clot extends into the common femoral vein. Early detection via post-procedure duplex is essential.'
         )
       ),
-      React.createElement('div', {style:{display:'flex',gap:20,flexWrap:'wrap',justifyContent:'center',alignItems:'flex-start'}},
-        // Diagram
-        React.createElement('div', {style:{flexShrink:0}},
-          React.createElement(EhitDiagram, {classId:selected}),
-          React.createElement('div', {style:{textAlign:'center',marginTop:8,fontSize:11,color:'#64748b'}}, selected ? `Showing: ${CLASSES.find(c=>c.id===selected)?.label}` : 'Select a class to visualize')
-        ),
-        // Class cards
-        React.createElement('div', {style:{flex:1,minWidth:260,maxWidth:420,display:'flex',flexDirection:'column',gap:10}},
+      // All-class diagram grid
+      React.createElement('div', {style:{marginBottom:20}},
+        React.createElement(EhitAllClasses)
+      ),
+      // Class detail cards
+      React.createElement('div', {style:{display:'flex',flexDirection:'column',gap:10}},
           CLASSES.map(c=>React.createElement('div', {key:c.id,
             onClick:()=>setSelected(s=>s===c.id?null:c.id),
             style:{borderRadius:12,border:`2px solid ${selected===c.id?c.color:'#e2e8f0'}`,overflow:'hidden',cursor:'pointer',transition:'all 0.15s'}},
@@ -2527,7 +2592,6 @@ function EHITGame() {
               )
             )
           ))
-        )
       )
     ),
 
