@@ -1,0 +1,3120 @@
+{
+  "CA": {
+    "state": "California",
+    "payers": [
+      "MEDICARE - /  TRICARE -  / MEDI-CAL",
+      "CIGNA",
+      "BCBS ANTHEM",
+      "BS OF CA",
+      "HUMANA",
+      "BCBS HIGHMARK (PA)",
+      "MOLINA (Medi-Cal)",
+      "HEALTHNET",
+      "FIDELIS CARE",
+      "BCBS FEDERAL EMPLOYEE PLAN",
+      "AETNA",
+      "GEHA",
+      "UHC -    / UHC OXFORD",
+      "BCBS HIGHMARK",
+      "HEALTHNET PPO"
+    ],
+    "data": [
+      {
+        "proc": "GSV/Duplicate ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE - /  TRICARE -  / MEDI-CAL",
+            "value": "3.0"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS ANTHEM",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BS OF CA",
+            "value": "3.0"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "MOLINA (Medi-Cal)",
+            "value": "5.0"
+          },
+          {
+            "payer": "HEALTHNET",
+            "value": "3.0"
+          },
+          {
+            "payer": "FIDELIS CARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS FEDERAL EMPLOYEE PLAN",
+            "value": "\u2014"
+          },
+          {
+            "payer": "AETNA",
+            "value": "4.5"
+          },
+          {
+            "payer": "GEHA",
+            "value": "3.0"
+          },
+          {
+            "payer": "UHC -    / UHC OXFORD",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS HIGHMARK",
+            "value": "5.0"
+          },
+          {
+            "payer": "HEALTHNET PPO",
+            "value": "3.0"
+          }
+        ]
+      },
+      {
+        "proc": "SSV ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE - /  TRICARE -  / MEDI-CAL",
+            "value": "3.0"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS ANTHEM",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BS OF CA",
+            "value": "3.0"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "MOLINA (Medi-Cal)",
+            "value": "3.0"
+          },
+          {
+            "payer": "HEALTHNET",
+            "value": "3.0"
+          },
+          {
+            "payer": "FIDELIS CARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS FEDERAL EMPLOYEE PLAN",
+            "value": "\u2014"
+          },
+          {
+            "payer": "AETNA",
+            "value": "4.5"
+          },
+          {
+            "payer": "GEHA",
+            "value": "3.0"
+          },
+          {
+            "payer": "UHC -    / UHC OXFORD",
+            "value": "3 (need 3 measurements; junction, prox calf, distal calf)"
+          },
+          {
+            "payer": "BCBS HIGHMARK",
+            "value": "5.0"
+          },
+          {
+            "payer": "HEALTHNET PPO",
+            "value": "3.0"
+          }
+        ]
+      },
+      {
+        "proc": "VARITHENA",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE - /  TRICARE -  / MEDI-CAL",
+            "value": "3 (not humana; varithena not covered with humana only)"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS ANTHEM",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BS OF CA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "5.0"
+          },
+          {
+            "payer": "MOLINA (Medi-Cal)",
+            "value": "5.0"
+          },
+          {
+            "payer": "HEALTHNET",
+            "value": "\u2265  3 mm GSV/SSV/ASV Perforator \u2265 3.5mm"
+          },
+          {
+            "payer": "FIDELIS CARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS FEDERAL EMPLOYEE PLAN",
+            "value": "\u2014"
+          },
+          {
+            "payer": "AETNA",
+            "value": "2.5"
+          },
+          {
+            "payer": "GEHA",
+            "value": "3.0"
+          },
+          {
+            "payer": "UHC -    / UHC OXFORD",
+            "value": "3 (need 2 measurements whether accessory or GSV)"
+          },
+          {
+            "payer": "BCBS HIGHMARK",
+            "value": "5.0"
+          },
+          {
+            "payer": "HEALTHNET PPO",
+            "value": "3.0"
+          }
+        ]
+      },
+      {
+        "proc": "SCLEROTHERAPY",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE - /  TRICARE -  / MEDI-CAL",
+            "value": "3.0"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS ANTHEM",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BS OF CA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "5.0"
+          },
+          {
+            "payer": "MOLINA (Medi-Cal)",
+            "value": "5.0"
+          },
+          {
+            "payer": "HEALTHNET",
+            "value": "\u2265  3 mm GSV/SSV/ASV Perforator \u2265 3.5mm"
+          },
+          {
+            "payer": "FIDELIS CARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS FEDERAL EMPLOYEE PLAN",
+            "value": "\u2014"
+          },
+          {
+            "payer": "AETNA",
+            "value": "2.5"
+          },
+          {
+            "payer": "GEHA",
+            "value": "3.0"
+          },
+          {
+            "payer": "UHC -    / UHC OXFORD",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS HIGHMARK",
+            "value": "5.0"
+          },
+          {
+            "payer": "HEALTHNET PPO",
+            "value": "3.0"
+          }
+        ]
+      },
+      {
+        "proc": "AA GSV ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE - /  TRICARE -  / MEDI-CAL",
+            "value": "3.0"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS ANTHEM",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BS OF CA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "MOLINA (Medi-Cal)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HEALTHNET",
+            "value": "\u2014"
+          },
+          {
+            "payer": "FIDELIS CARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS FEDERAL EMPLOYEE PLAN",
+            "value": "\u2014"
+          },
+          {
+            "payer": "AETNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "GEHA",
+            "value": "3.0"
+          },
+          {
+            "payer": "UHC -    / UHC OXFORD",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS HIGHMARK",
+            "value": "5.0"
+          },
+          {
+            "payer": "HEALTHNET PPO",
+            "value": "3.0"
+          }
+        ]
+      },
+      {
+        "proc": "PERFORATORS ABLATION",
+        "metric": "reflux_ms",
+        "label": "REFLUX \u2265 (ms)",
+        "values": [
+          {
+            "payer": "MEDICARE - /  TRICARE -  / MEDI-CAL",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "\u2265 500 ms"
+          },
+          {
+            "payer": "BCBS ANTHEM",
+            "value": "\u2265 500 ms"
+          },
+          {
+            "payer": "BS OF CA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "500.0"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "MOLINA (Medi-Cal)",
+            "value": "500.0"
+          },
+          {
+            "payer": "HEALTHNET",
+            "value": "\u2014"
+          },
+          {
+            "payer": "FIDELIS CARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS FEDERAL EMPLOYEE PLAN",
+            "value": "\u2014"
+          },
+          {
+            "payer": "AETNA",
+            "value": "500.0"
+          },
+          {
+            "payer": "GEHA",
+            "value": "500.0"
+          },
+          {
+            "payer": "UHC -    / UHC OXFORD",
+            "value": "350.0"
+          },
+          {
+            "payer": "BCBS HIGHMARK",
+            "value": "350.0"
+          },
+          {
+            "payer": "HEALTHNET PPO",
+            "value": "500.0"
+          }
+        ]
+      },
+      {
+        "proc": "PERFORATORS ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE - /  TRICARE -  / MEDI-CAL",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "\u2265 3.5 mm"
+          },
+          {
+            "payer": "BCBS ANTHEM",
+            "value": "\u2265 3.5 mm"
+          },
+          {
+            "payer": "BS OF CA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "3.5"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "MOLINA (Medi-Cal)",
+            "value": "3.5"
+          },
+          {
+            "payer": "HEALTHNET",
+            "value": "\u2014"
+          },
+          {
+            "payer": "FIDELIS CARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS FEDERAL EMPLOYEE PLAN",
+            "value": "\u2014"
+          },
+          {
+            "payer": "AETNA",
+            "value": "3.5"
+          },
+          {
+            "payer": "GEHA",
+            "value": "3.5"
+          },
+          {
+            "payer": "UHC -    / UHC OXFORD",
+            "value": "3.5"
+          },
+          {
+            "payer": "BCBS HIGHMARK",
+            "value": "3.5"
+          },
+          {
+            "payer": "HEALTHNET PPO",
+            "value": "3.5"
+          }
+        ]
+      }
+    ]
+  },
+  "CT": {
+    "state": "Connecticut",
+    "payers": [
+      "MEDICARE",
+      "CIGNA",
+      "BCBS",
+      "AETNA",
+      "AETNA",
+      "UHC - / (including the empire plan)"
+    ],
+    "data": [
+      {
+        "proc": "GSV/Duplicate ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "AETNA",
+            "value": "4.5"
+          },
+          {
+            "payer": "AETNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "UHC - / (including the empire plan)",
+            "value": "3 (need 3 reflux measurements; junction, prox thigh, distal thigh or knee)"
+          }
+        ]
+      },
+      {
+        "proc": "SSV ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "AETNA",
+            "value": "4.5"
+          },
+          {
+            "payer": "AETNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "UHC - / (including the empire plan)",
+            "value": "3 (need 3 measurements; junction, prox calf, distal calf)"
+          }
+        ]
+      },
+      {
+        "proc": "VARITHENA",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS",
+            "value": "3.0"
+          },
+          {
+            "payer": "AETNA",
+            "value": "2.5"
+          },
+          {
+            "payer": "AETNA",
+            "value": "2.5"
+          },
+          {
+            "payer": "UHC - / (including the empire plan)",
+            "value": "3 (need 2 measurements whether accessory or GSV)"
+          }
+        ]
+      },
+      {
+        "proc": "SCLEROTHERAPY",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "4.0"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS",
+            "value": "3.0"
+          },
+          {
+            "payer": "AETNA",
+            "value": "2.5"
+          },
+          {
+            "payer": "AETNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "UHC - / (including the empire plan)",
+            "value": "3.0"
+          }
+        ]
+      },
+      {
+        "proc": "AA GSV ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "AETNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "AETNA",
+            "value": "4.5"
+          },
+          {
+            "payer": "UHC - / (including the empire plan)",
+            "value": "\u2014"
+          }
+        ]
+      },
+      {
+        "proc": "PERFORATORS ABLATION",
+        "metric": "reflux_ms",
+        "label": "REFLUX \u2265 (ms)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "500 ms"
+          },
+          {
+            "payer": "BCBS",
+            "value": "500 ms"
+          },
+          {
+            "payer": "AETNA",
+            "value": "500.0"
+          },
+          {
+            "payer": "AETNA",
+            "value": "500.0"
+          },
+          {
+            "payer": "UHC - / (including the empire plan)",
+            "value": "350.0"
+          }
+        ]
+      },
+      {
+        "proc": "PERFORATORS ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "3.5 mm"
+          },
+          {
+            "payer": "BCBS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "AETNA",
+            "value": "3.5"
+          },
+          {
+            "payer": "AETNA",
+            "value": "3.5"
+          },
+          {
+            "payer": "UHC - / (including the empire plan)",
+            "value": "\u2014"
+          }
+        ]
+      }
+    ]
+  },
+  "MDDCVA": {
+    "state": "Maryland/DC/Virginia",
+    "payers": [
+      "MEDICARE",
+      "CIGNA",
+      "ALL BCBS",
+      "BCBS HIGHMARK (PA)",
+      "AETNA",
+      "GEHA",
+      "JOHNS HOPKINS",
+      "UHC - / UHC OXFORD",
+      "INDEPENDENCE BLUE CROSS - (PV) POLICY"
+    ],
+    "data": [
+      {
+        "proc": "GSV/Duplicate ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "ALL BCBS",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "AETNA",
+            "value": "4.5"
+          },
+          {
+            "payer": "GEHA",
+            "value": "3.0"
+          },
+          {
+            "payer": "JOHNS HOPKINS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "UHC - / UHC OXFORD",
+            "value": "3.0"
+          },
+          {
+            "payer": "INDEPENDENCE BLUE CROSS - (PV) POLICY",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "proc": "SSV ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "ALL BCBS",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "AETNA",
+            "value": "4.5"
+          },
+          {
+            "payer": "GEHA",
+            "value": "3.0"
+          },
+          {
+            "payer": "JOHNS HOPKINS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "UHC - / UHC OXFORD",
+            "value": "3.0"
+          },
+          {
+            "payer": "INDEPENDENCE BLUE CROSS - (PV) POLICY",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "proc": "VARITHENA",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "3.0"
+          },
+          {
+            "payer": "ALL BCBS",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "5.0"
+          },
+          {
+            "payer": "AETNA",
+            "value": "2.5"
+          },
+          {
+            "payer": "GEHA",
+            "value": "3.0"
+          },
+          {
+            "payer": "JOHNS HOPKINS",
+            "value": "NOT COVERED"
+          },
+          {
+            "payer": "UHC - / UHC OXFORD",
+            "value": "3.0"
+          },
+          {
+            "payer": "INDEPENDENCE BLUE CROSS - (PV) POLICY",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "proc": "SCLEROTHERAPY",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "3.0"
+          },
+          {
+            "payer": "ALL BCBS",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "5.0"
+          },
+          {
+            "payer": "AETNA",
+            "value": "2.5"
+          },
+          {
+            "payer": "GEHA",
+            "value": "3.0"
+          },
+          {
+            "payer": "JOHNS HOPKINS",
+            "value": "3.0"
+          },
+          {
+            "payer": "UHC - / UHC OXFORD",
+            "value": "3.0"
+          },
+          {
+            "payer": "INDEPENDENCE BLUE CROSS - (PV) POLICY",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "proc": "AA GSV ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "ALL BCBS",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "AETNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "GEHA",
+            "value": "3.0"
+          },
+          {
+            "payer": "JOHNS HOPKINS",
+            "value": "4.5"
+          },
+          {
+            "payer": "UHC - / UHC OXFORD",
+            "value": "3.0"
+          },
+          {
+            "payer": "INDEPENDENCE BLUE CROSS - (PV) POLICY",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "proc": "PERFORATORS ABLATION",
+        "metric": "reflux_ms",
+        "label": "REFLUX \u2265 (ms)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "\u2265 500 ms"
+          },
+          {
+            "payer": "ALL BCBS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "AETNA",
+            "value": "500.0"
+          },
+          {
+            "payer": "GEHA",
+            "value": "500.0"
+          },
+          {
+            "payer": "JOHNS HOPKINS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "UHC - / UHC OXFORD",
+            "value": "350.0"
+          },
+          {
+            "payer": "INDEPENDENCE BLUE CROSS - (PV) POLICY",
+            "value": "-"
+          }
+        ]
+      },
+      {
+        "proc": "PERFORATORS ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "\u2265 3.5 mm"
+          },
+          {
+            "payer": "ALL BCBS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "AETNA",
+            "value": "3.5"
+          },
+          {
+            "payer": "GEHA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "JOHNS HOPKINS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "UHC - / UHC OXFORD",
+            "value": "3.5"
+          },
+          {
+            "payer": "INDEPENDENCE BLUE CROSS - (PV) POLICY",
+            "value": "-"
+          }
+        ]
+      }
+    ]
+  },
+  "NJ": {
+    "state": "New Jersey",
+    "payers": [
+      "MEDICARE",
+      "CIGNA",
+      "HORIZON BCBS -          ALL BCBS",
+      "BCBS HIGHMARK (PA)",
+      "EMBLEM",
+      "1199.0",
+      "AETNA",
+      "HUMANA",
+      "AETNA",
+      "GEHA",
+      "MAGNACARE/OSCAR",
+      "GHI",
+      "UHC - / UHC COMMUNITY PLAN NJ -  / OXFORD / (including the empire plan)"
+    ],
+    "data": [
+      {
+        "proc": "GSV/Duplicate ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HORIZON BCBS -          ALL BCBS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "EMBLEM",
+            "value": "\u2014"
+          },
+          {
+            "payer": "1199.0",
+            "value": "3.0"
+          },
+          {
+            "payer": "AETNA",
+            "value": "4.5"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "3.0"
+          },
+          {
+            "payer": "AETNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "GEHA",
+            "value": "3.0"
+          },
+          {
+            "payer": "MAGNACARE/OSCAR",
+            "value": "4.5"
+          },
+          {
+            "payer": "GHI",
+            "value": "3 (need 3 reflux measurements; junction, prox thigh, distal thigh or knee)"
+          },
+          {
+            "payer": "UHC - / UHC COMMUNITY PLAN NJ -  / OXFORD / (including the empire plan)",
+            "value": "3 (need 3 reflux measurements; junction, prox thigh, distal thigh or knee)"
+          }
+        ]
+      },
+      {
+        "proc": "SSV ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HORIZON BCBS -          ALL BCBS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "EMBLEM",
+            "value": "\u2014"
+          },
+          {
+            "payer": "1199.0",
+            "value": "3.0"
+          },
+          {
+            "payer": "AETNA",
+            "value": "4.5"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "3.0"
+          },
+          {
+            "payer": "AETNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "GEHA",
+            "value": "3.0"
+          },
+          {
+            "payer": "MAGNACARE/OSCAR",
+            "value": "4.5"
+          },
+          {
+            "payer": "GHI",
+            "value": "3 (need 3 measurements; junction, prox calf, distal calf)"
+          },
+          {
+            "payer": "UHC - / UHC COMMUNITY PLAN NJ -  / OXFORD / (including the empire plan)",
+            "value": "3 (need 3 measurements; junction, prox calf, distal calf)"
+          }
+        ]
+      },
+      {
+        "proc": "VARITHENA",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "3.0"
+          },
+          {
+            "payer": "HORIZON BCBS -          ALL BCBS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "5.0"
+          },
+          {
+            "payer": "EMBLEM",
+            "value": "4.0"
+          },
+          {
+            "payer": "1199.0",
+            "value": "4.0"
+          },
+          {
+            "payer": "AETNA",
+            "value": "2.5"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "NOT COVERED"
+          },
+          {
+            "payer": "AETNA",
+            "value": "2.5"
+          },
+          {
+            "payer": "GEHA",
+            "value": "3.0"
+          },
+          {
+            "payer": "MAGNACARE/OSCAR",
+            "value": ">3.5"
+          },
+          {
+            "payer": "GHI",
+            "value": "3 (need 2 measurements whether accessory or GSV)"
+          },
+          {
+            "payer": "UHC - / UHC COMMUNITY PLAN NJ -  / OXFORD / (including the empire plan)",
+            "value": "3 (need 2 measurements whether accessory or GSV)"
+          }
+        ]
+      },
+      {
+        "proc": "SCLEROTHERAPY",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "3.0"
+          },
+          {
+            "payer": "HORIZON BCBS -          ALL BCBS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "5.0"
+          },
+          {
+            "payer": "EMBLEM",
+            "value": "4.0"
+          },
+          {
+            "payer": "1199.0",
+            "value": "4.0"
+          },
+          {
+            "payer": "AETNA",
+            "value": "2.5"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "3.0"
+          },
+          {
+            "payer": "AETNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "GEHA",
+            "value": "3.0"
+          },
+          {
+            "payer": "MAGNACARE/OSCAR",
+            "value": ">3.5"
+          },
+          {
+            "payer": "GHI",
+            "value": "\u2014"
+          },
+          {
+            "payer": "UHC - / UHC COMMUNITY PLAN NJ -  / OXFORD / (including the empire plan)",
+            "value": "3.0"
+          }
+        ]
+      },
+      {
+        "proc": "AA GSV ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HORIZON BCBS -          ALL BCBS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "EMBLEM",
+            "value": "\u2014"
+          },
+          {
+            "payer": "1199.0",
+            "value": "4.0"
+          },
+          {
+            "payer": "AETNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "AETNA",
+            "value": "4.5"
+          },
+          {
+            "payer": "GEHA",
+            "value": "3.0"
+          },
+          {
+            "payer": "MAGNACARE/OSCAR",
+            "value": "3.0"
+          },
+          {
+            "payer": "GHI",
+            "value": "\u2014"
+          },
+          {
+            "payer": "UHC - / UHC COMMUNITY PLAN NJ -  / OXFORD / (including the empire plan)",
+            "value": "\u2014"
+          }
+        ]
+      },
+      {
+        "proc": "PERFORATORS ABLATION",
+        "metric": "reflux_ms",
+        "label": "REFLUX \u2265 (ms)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "500 ms"
+          },
+          {
+            "payer": "HORIZON BCBS -          ALL BCBS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "EMBLEM",
+            "value": "\u2014"
+          },
+          {
+            "payer": "1199.0",
+            "value": "\u2014"
+          },
+          {
+            "payer": "AETNA",
+            "value": "500.0"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "500.0"
+          },
+          {
+            "payer": "AETNA",
+            "value": "500.0"
+          },
+          {
+            "payer": "GEHA",
+            "value": "500.0"
+          },
+          {
+            "payer": "MAGNACARE/OSCAR",
+            "value": "500.0"
+          },
+          {
+            "payer": "GHI",
+            "value": "\u2014"
+          },
+          {
+            "payer": "UHC - / UHC COMMUNITY PLAN NJ -  / OXFORD / (including the empire plan)",
+            "value": "350.0"
+          }
+        ]
+      },
+      {
+        "proc": "PERFORATORS ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "3.5 mm"
+          },
+          {
+            "payer": "HORIZON BCBS -          ALL BCBS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "EMBLEM",
+            "value": "\u2014"
+          },
+          {
+            "payer": "1199.0",
+            "value": "\u2014"
+          },
+          {
+            "payer": "AETNA",
+            "value": "3.5"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "3.5"
+          },
+          {
+            "payer": "AETNA",
+            "value": "3.5"
+          },
+          {
+            "payer": "GEHA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "MAGNACARE/OSCAR",
+            "value": "3.5"
+          },
+          {
+            "payer": "GHI",
+            "value": "\u2014"
+          },
+          {
+            "payer": "UHC - / UHC COMMUNITY PLAN NJ -  / OXFORD / (including the empire plan)",
+            "value": "\u2014"
+          }
+        ]
+      }
+    ]
+  },
+  "NY": {
+    "state": "New York",
+    "payers": [
+      "CIGNA",
+      "BCBS ILLINOIS -BCBS OKLAHOMA",
+      "BCBS Empire",
+      "BCBS HIGHMARK (PA)",
+      "GHI/EMBLEM HEALTH",
+      "1199.0",
+      "MEDICARE - HEALTH FIRST - FIDELIS - HEALTHNET",
+      "HUMANA",
+      "AETNA",
+      "GEHA",
+      "GEHA",
+      "MAGNACARE/OSCAR",
+      "BCBS HIGHMARK",
+      "UHC - / UHC COMMUNITY PLAN - / OXFORD - UHC COMMUNITY PLAN - NJ - The Empire Plan",
+      "METROPLUS",
+      "BCBS Anthem",
+      "Blue Shield of California",
+      "Molina",
+      "BCBS Horizon",
+      "BCBS Premera",
+      "Medicare Mac-Noridian",
+      "Medicare NGS",
+      "Medicare Mac-Novitas",
+      "Medicare Mac-FCS",
+      "Johns Hopkins",
+      "Independence Blue Cross (PA)",
+      "BCBS Highmark (PA)",
+      "BCBS Massachusetts",
+      "Health New England (MA)",
+      "Regence PPO",
+      "Wellcare (PPO)",
+      "BCBS Texas",
+      "BCBS Texas",
+      "CHANGES 2024"
+    ],
+    "data": [
+      {
+        "proc": "GSV/Duplicate ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "CIGNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS ILLINOIS -BCBS OKLAHOMA",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS Empire",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "GHI/EMBLEM HEALTH",
+            "value": "\u2014"
+          },
+          {
+            "payer": "1199.0",
+            "value": "3.0"
+          },
+          {
+            "payer": "MEDICARE - HEALTH FIRST - FIDELIS - HEALTHNET",
+            "value": "3.0"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "3.0"
+          },
+          {
+            "payer": "AETNA",
+            "value": "4.5"
+          },
+          {
+            "payer": "GEHA",
+            "value": "3.0"
+          },
+          {
+            "payer": "GEHA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "MAGNACARE/OSCAR",
+            "value": "4.5"
+          },
+          {
+            "payer": "BCBS HIGHMARK",
+            "value": "5.0"
+          },
+          {
+            "payer": "UHC - / UHC COMMUNITY PLAN - / OXFORD - UHC COMMUNITY PLAN - NJ - The Empire Plan",
+            "value": "3 (need 3 reflux measurements; junction, prox thigh, distal thigh or knee)"
+          },
+          {
+            "payer": "METROPLUS",
+            "value": "4.0"
+          },
+          {
+            "payer": "BCBS Anthem",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Blue Shield of California",
+            "value": "3.0"
+          },
+          {
+            "payer": "Molina",
+            "value": "5.0"
+          },
+          {
+            "payer": "BCBS Horizon",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS Premera",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Medicare Mac-Noridian",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Medicare NGS",
+            "value": "<12"
+          },
+          {
+            "payer": "Medicare Mac-Novitas",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Medicare Mac-FCS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Johns Hopkins",
+            "value": "4.5"
+          },
+          {
+            "payer": "Independence Blue Cross (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS Highmark (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS Massachusetts",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Health New England (MA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Regence PPO",
+            "value": "5.5"
+          },
+          {
+            "payer": "Wellcare (PPO)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS Texas",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS Texas",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CHANGES 2024",
+            "value": "\u2014"
+          }
+        ]
+      },
+      {
+        "proc": "SSV ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "CIGNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS ILLINOIS -BCBS OKLAHOMA",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS Empire",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "GHI/EMBLEM HEALTH",
+            "value": "\u2014"
+          },
+          {
+            "payer": "1199.0",
+            "value": "3.0"
+          },
+          {
+            "payer": "MEDICARE - HEALTH FIRST - FIDELIS - HEALTHNET",
+            "value": "3.0"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "3.0"
+          },
+          {
+            "payer": "AETNA",
+            "value": "4.5"
+          },
+          {
+            "payer": "GEHA",
+            "value": "3.0"
+          },
+          {
+            "payer": "GEHA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "MAGNACARE/OSCAR",
+            "value": "4.5"
+          },
+          {
+            "payer": "BCBS HIGHMARK",
+            "value": "5.0"
+          },
+          {
+            "payer": "UHC - / UHC COMMUNITY PLAN - / OXFORD - UHC COMMUNITY PLAN - NJ - The Empire Plan",
+            "value": "3 (need 3 measurements; junction, prox calf, distal calf)"
+          },
+          {
+            "payer": "METROPLUS",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS Anthem",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Blue Shield of California",
+            "value": "3.0"
+          },
+          {
+            "payer": "Molina",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS Horizon",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS Premera",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Medicare Mac-Noridian",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Medicare NGS",
+            "value": "<12"
+          },
+          {
+            "payer": "Medicare Mac-Novitas",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Medicare Mac-FCS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Johns Hopkins",
+            "value": "4.5"
+          },
+          {
+            "payer": "Independence Blue Cross (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS Highmark (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS Massachusetts",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Health New England (MA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Regence PPO",
+            "value": "4.0"
+          },
+          {
+            "payer": "Wellcare (PPO)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS Texas",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS Texas",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CHANGES 2024",
+            "value": "\u2014"
+          }
+        ]
+      },
+      {
+        "proc": "VARITHENA",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "CIGNA",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS ILLINOIS -BCBS OKLAHOMA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS Empire",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "5.0"
+          },
+          {
+            "payer": "GHI/EMBLEM HEALTH",
+            "value": "4.0"
+          },
+          {
+            "payer": "1199.0",
+            "value": "4.0"
+          },
+          {
+            "payer": "MEDICARE - HEALTH FIRST - FIDELIS - HEALTHNET",
+            "value": "\u2265 3 mm GSV/SSV/ASV - Perforator \u2265 3.5mm"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "NOT COVERED"
+          },
+          {
+            "payer": "AETNA",
+            "value": "2.5"
+          },
+          {
+            "payer": "GEHA",
+            "value": "3.0"
+          },
+          {
+            "payer": "GEHA",
+            "value": "3.0"
+          },
+          {
+            "payer": "MAGNACARE/OSCAR",
+            "value": "3.5"
+          },
+          {
+            "payer": "BCBS HIGHMARK",
+            "value": "5.0"
+          },
+          {
+            "payer": "UHC - / UHC COMMUNITY PLAN - / OXFORD - UHC COMMUNITY PLAN - NJ - The Empire Plan",
+            "value": "3 (need 2 measurements whether accessory or GSV)"
+          },
+          {
+            "payer": "METROPLUS",
+            "value": "2.5"
+          },
+          {
+            "payer": "BCBS Anthem",
+            "value": "3.0"
+          },
+          {
+            "payer": "Blue Shield of California",
+            "value": "3.0"
+          },
+          {
+            "payer": "Molina",
+            "value": "5.0"
+          },
+          {
+            "payer": "BCBS Horizon",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS Premera",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Medicare Mac-Noridian",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Medicare NGS",
+            "value": "<12"
+          },
+          {
+            "payer": "Medicare Mac-Novitas",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Medicare Mac-FCS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Johns Hopkins",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Independence Blue Cross (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS Highmark (PA)",
+            "value": "5.0"
+          },
+          {
+            "payer": "BCBS Massachusetts",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Health New England (MA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Regence PPO",
+            "value": "4.0"
+          },
+          {
+            "payer": "Wellcare (PPO)",
+            "value": "3.5"
+          },
+          {
+            "payer": "BCBS Texas",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS Texas",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CHANGES 2024",
+            "value": "\u2014"
+          }
+        ]
+      },
+      {
+        "proc": "SCLEROTHERAPY",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "CIGNA",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS ILLINOIS -BCBS OKLAHOMA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS Empire",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "5.0"
+          },
+          {
+            "payer": "GHI/EMBLEM HEALTH",
+            "value": "4.0"
+          },
+          {
+            "payer": "1199.0",
+            "value": "4.0"
+          },
+          {
+            "payer": "MEDICARE - HEALTH FIRST - FIDELIS - HEALTHNET",
+            "value": "\u2265 3 mm GSV/SSV/ASV - Perforator \u2265 3.5mm"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "3.0"
+          },
+          {
+            "payer": "AETNA",
+            "value": "2.5"
+          },
+          {
+            "payer": "GEHA",
+            "value": "3.0"
+          },
+          {
+            "payer": "GEHA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "MAGNACARE/OSCAR",
+            "value": "3.5"
+          },
+          {
+            "payer": "BCBS HIGHMARK",
+            "value": "5.0"
+          },
+          {
+            "payer": "UHC - / UHC COMMUNITY PLAN - / OXFORD - UHC COMMUNITY PLAN - NJ - The Empire Plan",
+            "value": "3.0"
+          },
+          {
+            "payer": "METROPLUS",
+            "value": "2.5"
+          },
+          {
+            "payer": "BCBS Anthem",
+            "value": "3.0"
+          },
+          {
+            "payer": "Blue Shield of California",
+            "value": "3.0"
+          },
+          {
+            "payer": "Molina",
+            "value": "5.0"
+          },
+          {
+            "payer": "BCBS Horizon",
+            "value": "-"
+          },
+          {
+            "payer": "BCBS Premera",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Medicare Mac-Noridian",
+            "value": "-"
+          },
+          {
+            "payer": "Medicare NGS",
+            "value": "<12"
+          },
+          {
+            "payer": "Medicare Mac-Novitas",
+            "value": "-"
+          },
+          {
+            "payer": "Medicare Mac-FCS",
+            "value": "-"
+          },
+          {
+            "payer": "Johns Hopkins",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Independence Blue Cross (PA)",
+            "value": "-"
+          },
+          {
+            "payer": "BCBS Highmark (PA)",
+            "value": "5.0"
+          },
+          {
+            "payer": "BCBS Massachusetts",
+            "value": "4 mm tributaries"
+          },
+          {
+            "payer": "Health New England (MA)",
+            "value": "-"
+          },
+          {
+            "payer": "Regence PPO",
+            "value": "4.0"
+          },
+          {
+            "payer": "Wellcare (PPO)",
+            "value": "3.5"
+          },
+          {
+            "payer": "BCBS Texas",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS Texas",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CHANGES 2024",
+            "value": "\u2014"
+          }
+        ]
+      },
+      {
+        "proc": "AA GSV ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "CIGNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS ILLINOIS -BCBS OKLAHOMA",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS Empire",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "GHI/EMBLEM HEALTH",
+            "value": "\u2014"
+          },
+          {
+            "payer": "1199.0",
+            "value": "\u2014"
+          },
+          {
+            "payer": "MEDICARE - HEALTH FIRST - FIDELIS - HEALTHNET",
+            "value": "3.0"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "AETNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "GEHA",
+            "value": "4.5"
+          },
+          {
+            "payer": "GEHA",
+            "value": "3.0"
+          },
+          {
+            "payer": "MAGNACARE/OSCAR",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS HIGHMARK",
+            "value": "\u2014"
+          },
+          {
+            "payer": "UHC - / UHC COMMUNITY PLAN - / OXFORD - UHC COMMUNITY PLAN - NJ - The Empire Plan",
+            "value": "\u2014"
+          },
+          {
+            "payer": "METROPLUS",
+            "value": "2.5"
+          },
+          {
+            "payer": "BCBS Anthem",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Blue Shield of California",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Molina",
+            "value": "5.0"
+          },
+          {
+            "payer": "BCBS Horizon",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS Premera",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Medicare Mac-Noridian",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Medicare NGS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Medicare Mac-Novitas",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Medicare Mac-FCS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Johns Hopkins",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Independence Blue Cross (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS Highmark (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS Massachusetts",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Health New England (MA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Regence PPO",
+            "value": "Not covered"
+          },
+          {
+            "payer": "Wellcare (PPO)",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS Texas",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS Texas",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CHANGES 2024",
+            "value": "\u2014"
+          }
+        ]
+      },
+      {
+        "proc": "PERFORATORS ABLATION",
+        "metric": "reflux_ms",
+        "label": "REFLUX \u2265 (ms)",
+        "values": [
+          {
+            "payer": "CIGNA",
+            "value": "500 ms"
+          },
+          {
+            "payer": "BCBS ILLINOIS -BCBS OKLAHOMA",
+            "value": "500.0"
+          },
+          {
+            "payer": "BCBS Empire",
+            "value": "500 ms"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "GHI/EMBLEM HEALTH",
+            "value": "\u2014"
+          },
+          {
+            "payer": "1199.0",
+            "value": "\u2014"
+          },
+          {
+            "payer": "MEDICARE - HEALTH FIRST - FIDELIS - HEALTHNET",
+            "value": "500.0"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "500.0"
+          },
+          {
+            "payer": "AETNA",
+            "value": "500.0"
+          },
+          {
+            "payer": "GEHA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "GEHA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "MAGNACARE/OSCAR",
+            "value": "500.0"
+          },
+          {
+            "payer": "BCBS HIGHMARK",
+            "value": "\u2014"
+          },
+          {
+            "payer": "UHC - / UHC COMMUNITY PLAN - / OXFORD - UHC COMMUNITY PLAN - NJ - The Empire Plan",
+            "value": "350.0"
+          },
+          {
+            "payer": "METROPLUS",
+            "value": "500.0"
+          },
+          {
+            "payer": "BCBS Anthem",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Blue Shield of California",
+            "value": "Present"
+          },
+          {
+            "payer": "Molina",
+            "value": "500.0"
+          },
+          {
+            "payer": "BCBS Horizon",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS Premera",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Medicare Mac-Noridian",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Medicare NGS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Medicare Mac-Novitas",
+            "value": "500.0"
+          },
+          {
+            "payer": "Medicare Mac-FCS",
+            "value": "500.0"
+          },
+          {
+            "payer": "Johns Hopkins",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Independence Blue Cross (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS Highmark (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS Massachusetts",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Health New England (MA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Regence PPO",
+            "value": "500.0"
+          },
+          {
+            "payer": "Wellcare (PPO)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS Texas",
+            "value": ">500"
+          },
+          {
+            "payer": "BCBS Texas",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CHANGES 2024",
+            "value": "\u2014"
+          }
+        ]
+      },
+      {
+        "proc": "PERFORATORS ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "CIGNA",
+            "value": "\u2265 3.5 mm"
+          },
+          {
+            "payer": "BCBS ILLINOIS -BCBS OKLAHOMA",
+            "value": "3mm"
+          },
+          {
+            "payer": "BCBS Empire",
+            "value": "\u2265 3.5 mm"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "GHI/EMBLEM HEALTH",
+            "value": "\u2014"
+          },
+          {
+            "payer": "1199.0",
+            "value": "\u2014"
+          },
+          {
+            "payer": "MEDICARE - HEALTH FIRST - FIDELIS - HEALTHNET",
+            "value": "3.5"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "3.5"
+          },
+          {
+            "payer": "AETNA",
+            "value": "3.5"
+          },
+          {
+            "payer": "GEHA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "GEHA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "MAGNACARE/OSCAR",
+            "value": "3.5"
+          },
+          {
+            "payer": "BCBS HIGHMARK",
+            "value": "\u2014"
+          },
+          {
+            "payer": "UHC - / UHC COMMUNITY PLAN - / OXFORD - UHC COMMUNITY PLAN - NJ - The Empire Plan",
+            "value": "\u2014"
+          },
+          {
+            "payer": "METROPLUS",
+            "value": "3.5"
+          },
+          {
+            "payer": "BCBS Anthem",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Blue Shield of California",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Molina",
+            "value": "3.5"
+          },
+          {
+            "payer": "BCBS Horizon",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS Premera",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Medicare Mac-Noridian",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Medicare NGS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Medicare Mac-Novitas",
+            "value": "3.5"
+          },
+          {
+            "payer": "Medicare Mac-FCS",
+            "value": "3.5"
+          },
+          {
+            "payer": "Johns Hopkins",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Independence Blue Cross (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS Highmark (PA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS Massachusetts",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Health New England (MA)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "Regence PPO",
+            "value": "4.0"
+          },
+          {
+            "payer": "Wellcare (PPO)",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS Texas",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS Texas",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CHANGES 2024",
+            "value": "\u2014"
+          }
+        ]
+      }
+    ]
+  },
+  "TX": {
+    "state": "Texas",
+    "payers": [
+      "MEDICARE",
+      "CIGNA",
+      "BCBS",
+      "AETNA",
+      "AETNA",
+      "UHC - / (including the empire plan)"
+    ],
+    "data": [
+      {
+        "proc": "GSV/Duplicate ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS",
+            "value": "3.0"
+          },
+          {
+            "payer": "AETNA",
+            "value": "4.5"
+          },
+          {
+            "payer": "AETNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "UHC - / (including the empire plan)",
+            "value": "3 (need 3 reflux measurements; junction, prox thigh, distal thigh or knee)"
+          }
+        ]
+      },
+      {
+        "proc": "SSV ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS",
+            "value": "3.0"
+          },
+          {
+            "payer": "AETNA",
+            "value": "4.5"
+          },
+          {
+            "payer": "AETNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "UHC - / (including the empire plan)",
+            "value": "3 (need 3 measurements; junction, prox calf, distal calf)"
+          }
+        ]
+      },
+      {
+        "proc": "VARITHENA",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "3.5"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS",
+            "value": "3.0"
+          },
+          {
+            "payer": "AETNA",
+            "value": "2.5"
+          },
+          {
+            "payer": "AETNA",
+            "value": "2.5"
+          },
+          {
+            "payer": "UHC - / (including the empire plan)",
+            "value": "3 (need 2 measurements whether accessory or GSV)"
+          }
+        ]
+      },
+      {
+        "proc": "SCLEROTHERAPY",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "3.5"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS",
+            "value": "3.0"
+          },
+          {
+            "payer": "AETNA",
+            "value": "2.5"
+          },
+          {
+            "payer": "AETNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "UHC - / (including the empire plan)",
+            "value": "3.0"
+          }
+        ]
+      },
+      {
+        "proc": "AA GSV ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS",
+            "value": "3.0"
+          },
+          {
+            "payer": "AETNA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "AETNA",
+            "value": "4.5"
+          },
+          {
+            "payer": "UHC - / (including the empire plan)",
+            "value": "\u2014"
+          }
+        ]
+      },
+      {
+        "proc": "PERFORATORS ABLATION",
+        "metric": "reflux_ms",
+        "label": "REFLUX \u2265 (ms)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "500 ms"
+          },
+          {
+            "payer": "BCBS",
+            "value": "500 ms"
+          },
+          {
+            "payer": "AETNA",
+            "value": "500.0"
+          },
+          {
+            "payer": "AETNA",
+            "value": "500.0"
+          },
+          {
+            "payer": "UHC - / (including the empire plan)",
+            "value": "350.0"
+          }
+        ]
+      },
+      {
+        "proc": "PERFORATORS ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "MEDICARE",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CIGNA",
+            "value": "3.5 mm"
+          },
+          {
+            "payer": "BCBS",
+            "value": "3.0"
+          },
+          {
+            "payer": "AETNA",
+            "value": "3.5"
+          },
+          {
+            "payer": "AETNA",
+            "value": "3.5"
+          },
+          {
+            "payer": "UHC - / (including the empire plan)",
+            "value": "\u2014"
+          }
+        ]
+      }
+    ]
+  },
+  "RAREOTHER": {
+    "state": "Other/Rare Plans",
+    "payers": [
+      "INDEPENDENCE BLUE CROSS - (PV) POLICY",
+      "BCBS HIGHMARK (PA)",
+      "BCBS MASSACHUSETTS",
+      "BCBS PREMERA (WA, AK)",
+      "BCBS ILLINOIS",
+      "BCBS OKLAHOMA",
+      "CHAMPVA",
+      "HUMANA",
+      "HEALTH NEW ENGLAND",
+      "HEALTH NEW ENGLAND",
+      "HEALTH NEW ENGLAND"
+    ],
+    "data": [
+      {
+        "proc": "GSV/Duplicate ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "INDEPENDENCE BLUE CROSS - (PV) POLICY",
+            "value": "not specify"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "not specify"
+          },
+          {
+            "payer": "BCBS MASSACHUSETTS",
+            "value": "not specify"
+          },
+          {
+            "payer": "BCBS PREMERA (WA, AK)",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS ILLINOIS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS OKLAHOMA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CHAMPVA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HEALTH NEW ENGLAND",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HEALTH NEW ENGLAND",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HEALTH NEW ENGLAND",
+            "value": "\u2014"
+          }
+        ]
+      },
+      {
+        "proc": "SSV ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "INDEPENDENCE BLUE CROSS - (PV) POLICY",
+            "value": "not specify"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "not specify"
+          },
+          {
+            "payer": "BCBS MASSACHUSETTS",
+            "value": "not specify"
+          },
+          {
+            "payer": "BCBS PREMERA (WA, AK)",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS ILLINOIS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS OKLAHOMA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CHAMPVA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HEALTH NEW ENGLAND",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HEALTH NEW ENGLAND",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HEALTH NEW ENGLAND",
+            "value": "\u2014"
+          }
+        ]
+      },
+      {
+        "proc": "VARITHENA",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "INDEPENDENCE BLUE CROSS - (PV) POLICY",
+            "value": "not specify"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "5.0"
+          },
+          {
+            "payer": "BCBS MASSACHUSETTS",
+            "value": "not specify"
+          },
+          {
+            "payer": "BCBS PREMERA (WA, AK)",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS ILLINOIS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS OKLAHOMA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CHAMPVA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HEALTH NEW ENGLAND",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HEALTH NEW ENGLAND",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HEALTH NEW ENGLAND",
+            "value": "\u2014"
+          }
+        ]
+      },
+      {
+        "proc": "SCLEROTHERAPY",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "INDEPENDENCE BLUE CROSS - (PV) POLICY",
+            "value": "not specify"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "5.0"
+          },
+          {
+            "payer": "BCBS MASSACHUSETTS",
+            "value": "4 mm for tributaries"
+          },
+          {
+            "payer": "BCBS PREMERA (WA, AK)",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS ILLINOIS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS OKLAHOMA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CHAMPVA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HEALTH NEW ENGLAND",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HEALTH NEW ENGLAND",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HEALTH NEW ENGLAND",
+            "value": "\u2014"
+          }
+        ]
+      },
+      {
+        "proc": "AA GSV ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "INDEPENDENCE BLUE CROSS - (PV) POLICY",
+            "value": "not specify"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "not specify"
+          },
+          {
+            "payer": "BCBS MASSACHUSETTS",
+            "value": "not specify"
+          },
+          {
+            "payer": "BCBS PREMERA (WA, AK)",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS ILLINOIS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS OKLAHOMA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CHAMPVA",
+            "value": "not specify"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "3.0"
+          },
+          {
+            "payer": "HEALTH NEW ENGLAND",
+            "value": "4.5"
+          },
+          {
+            "payer": "HEALTH NEW ENGLAND",
+            "value": "5.0"
+          },
+          {
+            "payer": "HEALTH NEW ENGLAND",
+            "value": "5.0"
+          }
+        ]
+      },
+      {
+        "proc": "PERFORATORS ABLATION",
+        "metric": "reflux_ms",
+        "label": "REFLUX \u2265 (ms)",
+        "values": [
+          {
+            "payer": "INDEPENDENCE BLUE CROSS - (PV) POLICY",
+            "value": "not specify"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "not specify"
+          },
+          {
+            "payer": "BCBS MASSACHUSETTS",
+            "value": "not specify"
+          },
+          {
+            "payer": "BCBS PREMERA (WA, AK)",
+            "value": ">500 ms"
+          },
+          {
+            "payer": "BCBS ILLINOIS",
+            "value": "\u2014"
+          },
+          {
+            "payer": "BCBS OKLAHOMA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CHAMPVA",
+            "value": "not specify"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "Present"
+          },
+          {
+            "payer": "HEALTH NEW ENGLAND",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HEALTH NEW ENGLAND",
+            "value": "350.0"
+          },
+          {
+            "payer": "HEALTH NEW ENGLAND",
+            "value": "350.0"
+          }
+        ]
+      },
+      {
+        "proc": "PERFORATORS ABLATION",
+        "metric": "size_mm",
+        "label": "SIZE \u2265 (mm)",
+        "values": [
+          {
+            "payer": "INDEPENDENCE BLUE CROSS - (PV) POLICY",
+            "value": "not specify"
+          },
+          {
+            "payer": "BCBS HIGHMARK (PA)",
+            "value": "not specify"
+          },
+          {
+            "payer": "BCBS MASSACHUSETTS",
+            "value": "not specify"
+          },
+          {
+            "payer": "BCBS PREMERA (WA, AK)",
+            "value": "3.5"
+          },
+          {
+            "payer": "BCBS ILLINOIS",
+            "value": "3.0"
+          },
+          {
+            "payer": "BCBS OKLAHOMA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "CHAMPVA",
+            "value": "not specify"
+          },
+          {
+            "payer": "HUMANA",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HEALTH NEW ENGLAND",
+            "value": "\u2014"
+          },
+          {
+            "payer": "HEALTH NEW ENGLAND",
+            "value": "3.5"
+          },
+          {
+            "payer": "HEALTH NEW ENGLAND",
+            "value": "3.5"
+          }
+        ]
+      }
+    ]
+  }
+}

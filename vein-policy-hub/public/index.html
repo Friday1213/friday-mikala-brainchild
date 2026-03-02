@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Vein Policy Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Lora:ital,wght@0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#f0f4ff;color:#1e293b;min-height:100vh}
+
+.navbar{background:linear-gradient(135deg,#1e3a8a,#1d4ed8);padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(30,58,138,0.3)}
+.navbar h1{font-size:20px;font-weight:900;color:white;letter-spacing:-0.5px}
+.navbar h1 span{color:#93c5fd}
+.navbar-sub{font-size:12px;color:#93c5fd;margin-top:2px;font-weight:600}
+.region-tabs{background:#1e3a8a;border-bottom:none;padding:0 20px;display:flex;gap:2px;align-items:flex-end;overflow-x:auto;scrollbar-width:none}
+.region-tabs::-webkit-scrollbar{display:none}
+.region-tab{padding:8px 18px 10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;border:none;cursor:pointer;border-radius:10px 10px 0 0;transition:all 0.15s;white-space:nowrap;color:rgba(255,255,255,0.65);background:rgba(255,255,255,0.08);margin-top:6px}
+.region-tab:hover{background:rgba(255,255,255,0.18);color:white}
+.region-tab.active{background:#f0f4ff;color:#1e3a8a;margin-top:4px;padding-bottom:12px}
+
+.container{max-width:1200px;margin:0 auto;padding:28px 24px}
+
+.search-hero{background:white;border-radius:16px;padding:28px;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.search-hero h2{font-size:22px;font-weight:900;color:#1e3a8a;margin-bottom:6px}
+.search-hero p{font-size:13px;color:#64748b;margin-bottom:20px}
+.search-box{display:flex;gap:10px;flex-wrap:wrap}
+.search-main{flex:2;min-width:200px;padding:12px 16px;border:2px solid #e2e8f0;border-radius:10px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:600;transition:border-color 0.15s}
+.search-main:focus{outline:none;border-color:#3b82f6}
+.search-main::placeholder{font-weight:400;color:#94a3b8}
+select.filter{padding:11px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:#475569;background:white;cursor:pointer}
+select.filter:focus{outline:none;border-color:#3b82f6}
+.btn{padding:10px 20px;border-radius:10px;border:none;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;cursor:pointer;transition:all 0.15s}
+.btn-primary{background:linear-gradient(135deg,#1d4ed8,#2563eb);color:white}
+.btn-primary:hover{opacity:0.9;transform:translateY(-1px)}
+.btn-outline{background:white;border:2px solid #e2e8f0;color:#475569}
+.btn-outline:hover{border-color:#3b82f6;color:#1d4ed8}
+.btn-sm{padding:6px 12px;font-size:12px;border-radius:7px}
+.btn-green{background:linear-gradient(135deg,#059669,#10b981);color:white}
+.btn-red{background:transparent;border:none;color:#ef4444;cursor:pointer;font-size:18px;padding:4px}
+
+.stats-row{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.stat-card{background:white;border-radius:12px;padding:16px 20px;flex:1;min-width:140px;box-shadow:0 1px 6px rgba(0,0,0,0.06);border-left:4px solid #3b82f6}
+.stat-card.green{border-left-color:#10b981}
+.stat-card.purple{border-left-color:#8b5cf6}
+.stat-card.orange{border-left-color:#f59e0b}
+.stat-num{font-size:28px;font-weight:900;color:#1e3a8a}
+.stat-label{font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px}
+
+.results-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.results-count{font-size:13px;font-weight:700;color:#64748b}
+
+.payer-card{background:white;border-radius:14px;margin-bottom:12px;box-shadow:0 1px 8px rgba(0,0,0,0.06);overflow:hidden;transition:box-shadow 0.2s}
+.payer-card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.1)}
+.payer-header{padding:18px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.payer-header:hover{background:#f8fafc}
+.payer-left{flex:1}
+.payer-name{font-size:17px;font-weight:800;color:#1e3a8a}
+.payer-meta{font-size:12px;color:#64748b;margin-top:3px;display:flex;gap:10px;flex-wrap:wrap}
+.payer-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
+.badge-type-commercial{background:#dbeafe;color:#1d4ed8}
+.badge-type-medicare{background:#dcfce7;color:#15803d}
+.badge-type-medicaid{background:#fef9c3;color:#854d0e}
+.badge-type-government{background:#ede9fe;color:#6d28d9}
+.badge-preauth{background:#fee2e2;color:#dc2626}
+.badge-weeks{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}
+.badge-reflux{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
+.badge-ceap{background:#faf5ff;color:#7e22ce;border:1px solid #e9d5ff}
+
+.payer-detail{padding:0 20px 20px;border-top:1px solid #f1f5f9}
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:16px}
+.detail-section{background:#f8fafc;border-radius:10px;padding:14px}
+.detail-section.highlight{background:#fff7ed;border:1px solid #fed7aa}
+.detail-section.alert{background:#fff1f2;border:1px solid #fecdd3}
+.detail-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.detail-value{font-size:13px;color:#334155;line-height:1.6}
+.detail-value strong{color:#1e3a8a}
+
+.code-list{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.code-chip{background:#e0e7ff;color:#3730a3;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700;font-family:monospace}
+.code-chip.icd{background:#dcfce7;color:#14532d}
+
+.source-link{display:inline-flex;align-items:center;gap:5px;color:#3b82f6;font-size:12px;font-weight:700;text-decoration:none;margin-top:10px}
+.source-link:hover{text-decoration:underline}
+
+.card-actions{display:flex;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid #f1f5f9}
+
+/* Modal */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:white;border-radius:16px;padding:28px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+.modal h3{font-size:18px;font-weight:800;color:#1e3a8a;margin-bottom:20px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.form-group{margin-bottom:12px}
+.form-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:#64748b;display:block;margin-bottom:5px}
+.form-input{width:100%;padding:9px 12px;border:2px solid #e2e8f0;border-radius:8px;font-family:'Nunito',sans-serif;font-size:13px;color:#1e293b;transition:border-color 0.15s}
+.form-input:focus{outline:none;border-color:#3b82f6}
+textarea.form-input{resize:vertical;min-height:80px}
+.checkbox-row{display:flex;align-items:center;gap:8px;padding:10px 12px;background:#fff1f2;border:1px solid #fecdd3;border-radius:8px;margin-bottom:12px;cursor:pointer}
+.checkbox-row label{font-size:13px;color:#dc2626;font-weight:700;cursor:pointer}
+.form-actions{display:flex;gap:8px;margin-top:20px}
+.section-divider{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;margin:16px 0 8px;padding-bottom:4px;border-bottom:2px solid #f1f5f9}
+
+/* AI paste */
+.ai-box{background:linear-gradient(135deg,#eff6ff,#f0fdf4);border:2px dashed #93c5fd;border-radius:12px;padding:20px;margin-bottom:24px}
+.ai-box h3{font-size:15px;font-weight:800;color:#1d4ed8;margin-bottom:6px}
+.ai-box p{font-size:12px;color:#64748b;margin-bottom:12px}
+
+.empty{text-align:center;padding:60px 20px;color:#94a3b8}
+.empty-icon{font-size:48px;margin-bottom:12px}
+.empty h3{font-size:18px;color:#64748b;font-weight:700}
+
+.last-verified{font-size:11px;color:#94a3b8;font-style:italic;margin-top:6px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+const api = (url, opts) => fetch(url, { headers:{'Content-Type':'application/json'}, ...opts }).then(r=>r.json());
+
+const PLAN_TYPES = ['Commercial','Medicare','Medicare Advantage','Medicaid','Government','Other'];
+
+function TypeBadge({ type }) {
+  const cls = {
+    'Commercial':'badge-type-commercial','Medicare':'badge-type-medicare',
+    'Medicare Advantage':'badge-type-medicare','Medicaid':'badge-type-medicaid','Government':'badge-type-government'
+  }[type] || 'badge-type-commercial';
+  return <span className={`badge ${cls}`}>{type}</span>;
+}
+
+function CodeList({ codes, type }) {
+  if (!codes) return null;
+  return <div className="code-list">{codes.split(',').map(c=>c.trim()).filter(Boolean).map(c=>(
+    <span key={c} className={`code-chip ${type==='icd'?'icd':''}`}>{c}</span>
+  ))}</div>;
+}
+
+const NA = <span style={{color:'#94a3b8',fontStyle:'italic',fontWeight:400}}>Not mentioned in policy</span>;
+
+function PayerCard({ p, onEdit, onDelete, defaultOpen }) {
+  const [open, setOpen] = useState(defaultOpen || false);
+  return (
+    <div className="payer-card">
+      <div className="payer-header" onClick={()=>setOpen(o=>!o)}>
+        <div className="payer-left">
+          <div className="payer-name">{p.name}</div>
+          <div className="payer-meta">
+            {p.state && <span>📍 {p.state}</span>}
+            {p.last_verified && <span>✓ Verified {p.last_verified}</span>}
+          </div>
+          <div className="payer-badges">
+            {p.notes && p.notes.includes('NEEDS REVIEW') && <span className="badge" style={{background:'#fef3c7',color:'#92400e',border:'1px solid #fcd34d'}}>🔍 Needs Review</span>}
+            {p.plan_type && <TypeBadge type={p.plan_type} />}
+            {p.preauth_required === 1 && <span className="badge badge-preauth">⚠️ Prior Auth Required</span>}
+            {p.conservative_weeks != null ? <span className="badge badge-weeks">🗓 {p.conservative_weeks === 0 ? 'No conservative req.' : `${p.conservative_weeks} wk conservative`}</span> : <span className="badge" style={{background:'#f1f5f9',color:'#94a3b8'}}>🗓 Conservative: not mentioned</span>}
+            {p.reflux_duration_sec ? <span className="badge badge-reflux">📊 Reflux >{p.reflux_duration_sec}s</span> : <span className="badge" style={{background:'#f1f5f9',color:'#94a3b8'}}>📊 Reflux: not mentioned</span>}
+            {p.ceap_required && <span className="badge badge-ceap">CEAP {p.ceap_required}</span>}
+          </div>
+        </div>
+        <span style={{color:'#94a3b8',fontSize:12,marginLeft:16}}>{open?'▲':'▼'}</span>
+      </div>
+
+      {open && (
+        <div className="payer-detail">
+
+          {/* Tech Summary — prominent at top */}
+          <div style={{background:'#1e3a8a',borderRadius:10,padding:'14px 18px',marginBottom:16}}>
+            <div style={{fontSize:11,fontWeight:800,color:'#93c5fd',textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:6}}>👩‍⚕️ Tech Summary</div>
+            {p.tech_summary
+              ? <div style={{color:'white',fontSize:14,lineHeight:1.6,whiteSpace:'pre-wrap'}}>{p.tech_summary}</div>
+              : <div style={{color:'rgba(255,255,255,0.4)',fontSize:13,fontStyle:'italic'}}>No tech summary yet — click Edit to add one.</div>
+            }
+          </div>
+
+          <div className="detail-grid">
+
+            <div className="detail-section highlight" style={{gridColumn:'1/-1'}}>
+              <div className="detail-label">🗓 Conservative Treatment Requirement</div>
+              <div className="detail-value">{p.conservative_notes || NA}</div>
+              {p.conservative_weeks == null && <div style={{fontSize:11,color:'#f59e0b',marginTop:4}}>⚠️ Conservative trial duration not mentioned in policy — do not assume it applies</div>}
+            </div>
+
+            <div className="detail-section">
+              <div className="detail-label">📡 Ultrasound Requirements</div>
+              <div className="detail-value">{p.ultrasound_notes || NA}</div>
+            </div>
+
+            <div className="detail-section">
+              <div className="detail-label">📋 Documentation Required</div>
+              <div className="detail-value">{p.documentation || NA}</div>
+            </div>
+
+            <div className="detail-section">
+              <div className="detail-label">📊 Reflux Threshold</div>
+              <div className="detail-value">{p.reflux_duration_sec ? `≥ ${p.reflux_duration_sec}s (${p.reflux_duration_sec * 1000}ms)` : NA}</div>
+            </div>
+
+            <div className="detail-section">
+              <div className="detail-label">📏 Vessel Diameter</div>
+              <div className="detail-value">{p.vessel_diameter_mm ? `≥ ${p.vessel_diameter_mm}mm` : NA}</div>
+            </div>
+
+            <div className="detail-section">
+              <div className="detail-label">🔬 CEAP Required</div>
+              <div className="detail-value">{p.ceap_required || NA}</div>
+            </div>
+
+            {p.preauth_notes && (
+              <div className="detail-section">
+                <div className="detail-label">⚠️ Prior Auth Notes</div>
+                <div className="detail-value">{p.preauth_notes}</div>
+              </div>
+            )}
+
+            {p.gotchas && (
+              <div className="detail-section alert" style={{gridColumn:'1/-1'}}>
+                <div className="detail-label">🚨 Gotchas / Watch Out For</div>
+                <div className="detail-value">{p.gotchas}</div>
+              </div>
+            )}
+
+            {p.cpt_codes && (
+              <div className="detail-section">
+                <div className="detail-label">CPT Codes Covered</div>
+                <CodeList codes={p.cpt_codes} type="cpt" />
+              </div>
+            )}
+
+            {p.icd10_codes && (
+              <div className="detail-section">
+                <div className="detail-label">ICD-10 Codes</div>
+                <CodeList codes={p.icd10_codes} type="icd" />
+              </div>
+            )}
+
+            {p.notes && (
+              <div className="detail-section" style={{gridColumn:'1/-1'}}>
+                <div className="detail-label">📝 Additional Notes</div>
+                <div className="detail-value">{p.notes}</div>
+              </div>
+            )}
+
+          </div>
+
+          {/* Source URL with note */}
+          <div style={{marginTop:12,padding:'10px 14px',background:'#f8fafc',borderRadius:8,fontSize:12}}>
+            <div style={{fontWeight:800,color:'#475569',marginBottom:4}}>🔗 Policy Source</div>
+            {p.source_url
+              ? <a href={p.source_url} target="_blank" rel="noreferrer" className="source-link" style={{display:'inline'}}>View Source Policy ↗</a>
+              : <span style={{color:'#94a3b8',fontStyle:'italic'}}>No source URL on file</span>
+            }
+            {p.source_url_note && <div style={{color:'#64748b',marginTop:4}}>ℹ️ {p.source_url_note}</div>}
+            {p.last_verified && <div className="last-verified" style={{marginTop:4}}>Last verified: {p.last_verified}</div>}
+          </div>
+
+          <div className="card-actions">
+            <button className="btn btn-outline btn-sm" onClick={()=>onEdit(p)}>✏️ Edit</button>
+            <button className="btn-red" onClick={()=>onDelete(p.id)}>🗑</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PayerModal({ payer, onSave, onClose }) {
+  const blank = {name:'',state:'',plan_type:'Commercial',conservative_weeks:'',conservative_notes:'',reflux_duration_sec:'0.5',vessel_diameter_mm:'',ultrasound_notes:'',ceap_required:'C2 or higher',documentation:'',cpt_codes:'36475, 36476, 36478, 36479, 36482, 36483',icd10_codes:'I83.009, I83.019, I83.209',preauth_required:1,preauth_notes:'',gotchas:'',source_url:'',last_verified:new Date().toISOString().split('T')[0],notes:''};
+  const [form, setForm] = useState(payer ? {...payer} : blank);
+  const set = (k,v) => setForm(f=>({...f,[k]:v}));
+
+  return (
+    <div className="overlay" onClick={onClose}>
+      <div className="modal" onClick={e=>e.stopPropagation()}>
+        <h3>{payer ? `Edit: ${payer.name}` : '+ Add Insurance Policy'}</h3>
+
+        <div className="section-divider">Basic Info</div>
+        <div className="form-grid">
+          <div className="form-group"><label className="form-label">Payer Name *</label><input className="form-input" value={form.name} onChange={e=>set('name',e.target.value)} placeholder="e.g. Blue Cross Blue Shield" /></div>
+          <div className="form-group"><label className="form-label">State / Region</label><input className="form-input" value={form.state||''} onChange={e=>set('state',e.target.value)} placeholder="e.g. Illinois, National" /></div>
+        </div>
+        <div className="form-group">
+          <label className="form-label">Plan Type</label>
+          <select className="form-input" value={form.plan_type||''} onChange={e=>set('plan_type',e.target.value)}>
+            {PLAN_TYPES.map(t=><option key={t}>{t}</option>)}
+          </select>
+        </div>
+
+        <div className="section-divider">Conservative Treatment</div>
+        <div className="form-grid">
+          <div className="form-group"><label className="form-label">Weeks Required</label><input type="number" className="form-input" value={form.conservative_weeks||''} onChange={e=>set('conservative_weeks',+e.target.value)} placeholder="12" /></div>
+          <div className="form-group"><label className="form-label">CEAP Required</label><input className="form-input" value={form.ceap_required||''} onChange={e=>set('ceap_required',e.target.value)} placeholder="C2 or higher" /></div>
+        </div>
+        <div className="form-group"><label className="form-label">Conservative Treatment Notes</label><textarea className="form-input" rows={3} value={form.conservative_notes||''} onChange={e=>set('conservative_notes',e.target.value)} placeholder="Compression stocking requirements, visit frequency, compliance documentation..." /></div>
+
+        <div className="section-divider">Ultrasound Requirements</div>
+        <div className="form-grid">
+          <div className="form-group"><label className="form-label">Reflux Duration (seconds)</label><input type="number" step="0.1" className="form-input" value={form.reflux_duration_sec||''} onChange={e=>set('reflux_duration_sec',+e.target.value)} placeholder="0.5" /></div>
+          <div className="form-group"><label className="form-label">Vessel Diameter (mm)</label><input type="number" step="0.5" className="form-input" value={form.vessel_diameter_mm||''} onChange={e=>set('vessel_diameter_mm',+e.target.value)} placeholder="e.g. 4.5" /></div>
+        </div>
+        <div className="form-group"><label className="form-label">Ultrasound Notes</label><textarea className="form-input" rows={3} value={form.ultrasound_notes||''} onChange={e=>set('ultrasound_notes',e.target.value)} placeholder="Specific requirements, accreditation needed, report language..." /></div>
+
+        <div className="section-divider">Documentation & Coding</div>
+        <div className="form-group"><label className="form-label">Documentation Required</label><textarea className="form-input" rows={3} value={form.documentation||''} onChange={e=>set('documentation',e.target.value)} placeholder="List all required documentation..." /></div>
+        <div className="form-group"><label className="form-label">CPT Codes Covered</label><input className="form-input" value={form.cpt_codes||''} onChange={e=>set('cpt_codes',e.target.value)} placeholder="36475, 36476, 36478, 36479..." /></div>
+        <div className="form-group"><label className="form-label">ICD-10 Codes</label><input className="form-input" value={form.icd10_codes||''} onChange={e=>set('icd10_codes',e.target.value)} placeholder="I83.009, I83.019..." /></div>
+
+        <div className="section-divider">Prior Auth</div>
+        <div className="checkbox-row" onClick={()=>set('preauth_required',form.preauth_required?0:1)}>
+          <input type="checkbox" checked={!!form.preauth_required} readOnly style={{width:16,height:16,accentColor:'#dc2626'}} />
+          <label>⚠️ Prior Authorization Required</label>
+        </div>
+        {form.preauth_required ? <div className="form-group"><label className="form-label">Prior Auth Notes</label><textarea className="form-input" rows={2} value={form.preauth_notes||''} onChange={e=>set('preauth_notes',e.target.value)} placeholder="Portal name, turnaround time, submission tips..." /></div> : null}
+
+        <div className="section-divider">Tech Summary</div>
+        <div className="form-group">
+          <label className="form-label">👩‍⚕️ Tech Summary <span style={{fontWeight:400,color:'#64748b'}}>(shown prominently at top of card — write for techs, not policy verbatim)</span></label>
+          <textarea className="form-input" rows={4} value={form.tech_summary||''} onChange={e=>set('tech_summary',e.target.value)} placeholder="e.g. 3-month conservative req. with stockings. Need junction reflux + GSV ≥4.5mm. Prior auth via AIM. Document compliance at every visit or they'll deny. No Varithena coverage." />
+        </div>
+
+        <div className="section-divider">Gotchas & Notes</div>
+        <div className="form-group"><label className="form-label">🚨 Gotchas / Watch Out For</label><textarea className="form-input" rows={3} value={form.gotchas||''} onChange={e=>set('gotchas',e.target.value)} placeholder="Common denial reasons, tricky requirements, things that get people..." /></div>
+        <div className="form-group"><label className="form-label">Additional Notes</label><textarea className="form-input" rows={2} value={form.notes||''} onChange={e=>set('notes',e.target.value)} /></div>
+
+        <div className="section-divider">Source</div>
+        <div className="form-grid">
+          <div className="form-group"><label className="form-label">Source URL</label><input className="form-input" value={form.source_url||''} onChange={e=>set('source_url',e.target.value)} placeholder="https://..." /></div>
+          <div className="form-group"><label className="form-label">Last Verified Date</label><input type="date" className="form-input" value={form.last_verified||''} onChange={e=>set('last_verified',e.target.value)} /></div>
+        </div>
+        <div className="form-group">
+          <label className="form-label">Source Note <span style={{fontWeight:400,color:'#64748b'}}>(e.g. "BCBS uses Carelon policy" or "This URL requires provider login")</span></label>
+          <input className="form-input" value={form.source_url_note||''} onChange={e=>set('source_url_note',e.target.value)} placeholder="e.g. BCBS uses Carelon/AIM for prior auth decisions — policy URL may differ from auth criteria" />
+        </div>
+
+        <div className="form-actions">
+          <button className="btn btn-primary" onClick={()=>form.name&&onSave(form)}>Save Policy</button>
+          <button className="btn btn-outline" onClick={onClose}>Cancel</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CheatSheet() {
+  const [data, setData] = useState({});
+  const [activeState, setActiveState] = useState('NY');
+
+  useEffect(() => {
+    api('/api/cheatsheet').then(d => { setData(d); });
+  }, []);
+
+  const stateKeys = Object.keys(data);
+  const stateLabels = { CA:'California', CT:'Connecticut', MDDCVA:'MD/DC/VA', NJ:'New Jersey', NY:'New York', TX:'Texas', RAREOTHER:'Other Plans' };
+
+  const sheet = data[activeState];
+  if (!sheet) return <div style={{padding:40,textAlign:'center',color:'#94a3b8'}}>Loading cheat sheet...</div>;
+
+  const procs = sheet.data || [];
+  const payers = sheet.payers || [];
+
+  const PH = {fontFamily:'inherit',fontSize:11,padding:'4px 6px',background:'white',border:'1px solid #e2e8f0',borderRadius:6,color:'#1e3a8a',fontWeight:700,whiteSpace:'nowrap'};
+  const cellStyle = (val) => ({
+    fontSize:11, padding:'5px 8px', textAlign:'center', borderBottom:'1px solid #f1f5f9',
+    color: val==='—'?'#cbd5e1':val&&val.includes('NOT COVERED')?'#ef4444':'#1e3a8a',
+    fontWeight: val==='—'?400:600, background: val==='—'?'#fafafa':'white',
+    minWidth:80, maxWidth:140
+  });
+
+  return (
+    <div>
+      <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:20}}>
+        {stateKeys.map(k => (
+          <button key={k} onClick={()=>setActiveState(k)} style={{
+            padding:'7px 14px', borderRadius:20, border:'none', cursor:'pointer', fontSize:13, fontWeight:700,
+            background: activeState===k ? '#1e3a8a' : '#e2e8f0',
+            color: activeState===k ? 'white' : '#475569'
+          }}>{stateLabels[k]||k}</button>
+        ))}
+      </div>
+
+      <div style={{background:'white',borderRadius:16,padding:20,boxShadow:'0 2px 12px rgba(0,0,0,0.06)',marginBottom:16}}>
+        <h3 style={{fontSize:16,fontWeight:900,color:'#1e3a8a',marginBottom:4}}>📐 Doppler Ultrasound Quick Reference — {stateLabels[activeState]||activeState}</h3>
+        <p style={{fontSize:12,color:'#64748b',marginBottom:16}}>All reflux thresholds ≥ 500ms unless noted. Measurements taken at junction + proximal segment. Last updated Jan 2026.</p>
+
+        <div style={{overflowX:'auto'}}>
+          <table style={{borderCollapse:'collapse',width:'100%',fontSize:12}}>
+            <thead>
+              <tr style={{background:'#f8fafc'}}>
+                <th style={{...PH,textAlign:'left',position:'sticky',left:0,background:'#f8fafc',minWidth:160,zIndex:2}}>Procedure</th>
+                {payers.map((p,i) => <th key={i} style={{...PH,background:'#f8fafc',textAlign:'center'}}>{p}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {procs.map((row, ri) => (
+                <tr key={ri} style={{background: ri%2===0?'white':'#fafafa'}}>
+                  <td style={{fontSize:12,padding:'6px 10px',fontWeight:800,color:'#374151',position:'sticky',left:0,background:ri%2===0?'white':'#fafafa',borderBottom:'1px solid #f1f5f9',zIndex:1}}>
+                    {row.proc}
+                    <div style={{fontSize:10,color:'#94a3b8',fontWeight:400}}>{row.metric==='size_mm'?'Size ≥ (mm)':'Reflux ≥ (ms)'}</div>
+                  </td>
+                  {payers.map((p,ci) => {
+                    const match = (row.values||[]).find(v=>v.payer===p);
+                    const val = match ? match.value : '—';
+                    return <td key={ci} style={cellStyle(val)} title={val==='—'?'Not specified':val}>{val.length>20?val.slice(0,18)+'…':val}</td>;
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div style={{fontSize:11,color:'#94a3b8',marginTop:12}}>— = not specified in policy &nbsp;|&nbsp; Source: VIP Medical Group Doppler Insurance Cheat Sheet</div>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [payers, setPayers] = useState([]);
+  const [stats, setStats] = useState({});
+  const [q, setQ] = useState('');
+  const [stateFilter, setStateFilter] = useState('');
+  const [typeFilter, setTypeFilter] = useState('');
+  const [modal, setModal] = useState(null);
+  const [showAdd, setShowAdd] = useState(false);
+  const [aiText, setAiText] = useState('');
+  const [showAI, setShowAI] = useState(false);
+  const [activeTab, setActiveTab] = useState('policies');
+  const [regionFilter, setRegionFilter] = useState('All');
+  const searchRef = useRef();
+
+  const REGIONS = [
+    { label: '🌐 All', value: 'All' },
+    { label: '🇺🇸 National', value: 'National' },
+    { label: '🗽 New York', value: 'New York' },
+    { label: '🌿 New Jersey', value: 'New Jersey' },
+    { label: '🌴 California', value: 'California' },
+    { label: '⭐ Texas', value: 'Texas' },
+    { label: '🦀 Maryland/DC', value: 'Maryland' },
+    { label: '🍂 Connecticut', value: 'Connecticut' },
+    { label: '📦 Other', value: 'Various' },
+  ];
+
+  const load = async () => {
+    const params = new URLSearchParams();
+    if (q) params.set('q', q);
+    const effectiveState = stateFilter || (regionFilter !== 'All' ? regionFilter : '');
+    if (effectiveState) params.set('state', effectiveState);
+    if (typeFilter) params.set('plan_type', typeFilter);
+    const [p, s] = await Promise.all([api(`/api/payers?${params}`), api('/api/stats')]);
+    setPayers(p); setStats(s);
+  };
+
+  useEffect(() => { load(); }, [q, stateFilter, typeFilter, regionFilter]);
+
+  const savePayer = async (data) => {
+    if (modal?.id) await api(`/api/payers/${modal.id}`, {method:'PUT', body:JSON.stringify(data)});
+    else await api('/api/payers', {method:'POST', body:JSON.stringify(data)});
+    setModal(null); setShowAdd(false); load();
+  };
+
+  const deletePayer = async (id) => {
+    if (!confirm('Delete this policy?')) return;
+    await api(`/api/payers/${id}`, {method:'DELETE'});
+    load();
+  };
+
+  const states = [...new Set(payers.map(p=>p.state).filter(Boolean).sort())];
+
+  return (
+    <div>
+      <nav className="navbar">
+        <div>
+          <h1>🫀 Vein <span>Policy Hub</span></h1>
+          <div className="navbar-sub">Insurance requirements for vein disease treatment</div>
+        </div>
+        <div style={{display:'flex',gap:8,alignItems:'center'}}>
+          <button onClick={()=>setActiveTab('policies')} style={{padding:'6px 14px',borderRadius:20,border:'none',cursor:'pointer',fontSize:13,fontWeight:700,background:activeTab==='policies'?'white':'rgba(255,255,255,0.15)',color:activeTab==='policies'?'#1e3a8a':'white'}}>📋 Policies</button>
+          <button onClick={()=>setActiveTab('cheatsheet')} style={{padding:'6px 14px',borderRadius:20,border:'none',cursor:'pointer',fontSize:13,fontWeight:700,background:activeTab==='cheatsheet'?'white':'rgba(255,255,255,0.15)',color:activeTab==='cheatsheet'?'#1e3a8a':'white'}}>📐 Cheat Sheet</button>
+          {activeTab==='policies' && <button className="btn btn-primary btn-sm" onClick={()=>{setModal(null);setShowAdd(true);}}>+ Add Policy</button>}
+        </div>
+      </nav>
+
+      {activeTab==='policies' && (
+        <div className="region-tabs">
+          {REGIONS.map(r => (
+            <button key={r.value} className={`region-tab${regionFilter===r.value?' active':''}`}
+              onClick={()=>{setRegionFilter(r.value);setStateFilter('');}}>{r.label}</button>
+          ))}
+        </div>
+      )}
+
+      <div className="container">
+
+        {activeTab==='cheatsheet' && <CheatSheet />}
+        {activeTab==='policies' && <div>
+
+        {/* Stats */}
+        <div className="stats-row">
+          <div className="stat-card"><div className="stat-num">{stats.total||0}</div><div className="stat-label">Total Payers</div></div>
+          {(stats.byType||[]).map(t=>(
+            <div key={t.plan_type} className={`stat-card ${t.plan_type==='Medicare'||t.plan_type==='Medicare Advantage'?'green':t.plan_type==='Medicaid'?'orange':'purple'}`}>
+              <div className="stat-num">{t.c}</div>
+              <div className="stat-label">{t.plan_type}</div>
+            </div>
+          ))}
+          {stats.avgWeeks && <div className="stat-card green"><div className="stat-num">{Math.round(stats.avgWeeks)}wk</div><div className="stat-label">Avg Conservative</div></div>}
+        </div>
+
+        {/* Search */}
+        <div className="search-hero">
+          <h2>Search Insurance Policies</h2>
+          <p>Search by payer name, state, or any requirement keyword. Click a result to expand full details.</p>
+          <div className="search-box">
+            <input ref={searchRef} className="search-main" placeholder="Search payer name, state, keyword..." value={q} onChange={e=>setQ(e.target.value)} />
+            <select className="filter" value={typeFilter} onChange={e=>setTypeFilter(e.target.value)}>
+              <option value="">All Plan Types</option>
+              {PLAN_TYPES.map(t=><option key={t}>{t}</option>)}
+            </select>
+            <select className="filter" value={stateFilter} onChange={e=>setStateFilter(e.target.value)}>
+              <option value="">All States</option>
+              {states.map(s=><option key={s}>{s}</option>)}
+            </select>
+            {(q||stateFilter||typeFilter) && <button className="btn btn-outline" onClick={()=>{setQ('');setStateFilter('');setTypeFilter('');}}>Clear</button>}
+          </div>
+        </div>
+
+        {/* AI Paste */}
+        <div className="ai-box">
+          <h3>🤖 Paste & Parse Policy Text</h3>
+          <p>Paste raw text from an insurance website or PDF and extract requirements automatically</p>
+          {!showAI ? <button className="btn btn-outline btn-sm" onClick={()=>setShowAI(true)}>Open Policy Parser</button> : (
+            <div>
+              <textarea className="form-input" rows={6} value={aiText} onChange={e=>setAiText(e.target.value)} placeholder="Paste insurance policy text here..." style={{marginBottom:10,background:'white'}} />
+              <div style={{display:'flex',gap:8}}>
+                <button className="btn btn-primary btn-sm" onClick={()=>{if(aiText.trim()){setShowAdd(true);setShowAI(false);}}}>Parse → Open Form</button>
+                <button className="btn btn-outline btn-sm" onClick={()=>{setShowAI(false);setAiText('');}}>Cancel</button>
+              </div>
+              <div style={{fontSize:11,color:'#94a3b8',marginTop:6}}>AI parsing will pre-fill the form with extracted requirements</div>
+            </div>
+          )}
+        </div>
+
+        {/* Results */}
+        <div className="results-header">
+          <div className="results-count">📋 {payers.length} polic{payers.length!==1?'ies':'y'}{q||stateFilter||typeFilter?' matching filters':''}</div>
+        </div>
+
+        {payers.length === 0 && (
+          <div className="empty"><div className="empty-icon">🔍</div><h3>No policies found</h3><p>Try a different search or add a new policy</p></div>
+        )}
+
+        {payers.map(p => (
+          <PayerCard key={p.id} p={p} onEdit={p=>{setModal(p);setShowAdd(true);}} onDelete={deletePayer} defaultOpen={payers.length===1} />
+        ))}
+        </div>}
+
+      </div>
+
+      {showAdd && <PayerModal payer={modal} onSave={savePayer} onClose={()=>{setShowAdd(false);setModal(null);}} />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
