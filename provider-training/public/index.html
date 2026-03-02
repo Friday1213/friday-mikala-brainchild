@@ -195,6 +195,7 @@ function HomeTab({ setMode, setAdminTab, setClinicalTab }) {
     { icon:'⚠️', label:'Complications', mode:'clinical', sub:'complications' },
     { icon:'🔤', label:'Glossary', mode:'clinical', sub:'glossary' },
     { icon:'📞', label:'P2P Calls', mode:'clinical', sub:'p2p' },
+    { icon:'🏅', label:'RPhS Cert Prep', mode:'clinical', sub:'rphs' },
   { icon:'📞', label:'Peer-to-Peer Calls', mode:'clinical', sub:'p2p' },
     { icon:'❓', label:'FAQs', mode:'admin', sub:'faq' },
     { icon:'📞', label:'Contacts', mode:'admin', sub:'contacts' },
@@ -1471,6 +1472,226 @@ function ResourcesTab() {
   );
 }
 
+// ── RPhS CERT TAB ─────────────────────────────────────────────────────────────
+function RPhSTab() {
+  const [section, setSection] = React.useState('overview');
+
+  const SECTIONS = [
+    { id:'overview',  label:'📋 Overview' },
+    { id:'eligibility', label:'✅ Eligibility' },
+    { id:'content',   label:'📚 Exam Content' },
+    { id:'topics',    label:'🧠 Study Topics' },
+    { id:'tips',      label:'💡 Exam Tips' },
+  ];
+
+  const TASK_MATRIX = [
+    { section:'A. Maintain Information, Facility & Safety', pct:9, color:'#6366f1', tasks:['Collect patient identifiers','Utilize universal precautions & sterile techniques','Implement facility emergency protocols','Inspect electromechanical equipment / preventative maintenance','Optimize workspace ergonomics','Facilitate continuous quality improvement','Secure and archive patient information'] },
+    { section:'B. Patient Diagnosis', pct:27, color:'#dc2626', tasks:['Triage patient status','Obtain comprehensive patient history (including social history)','Perform physical assessment','Collect clinical signs and symptoms','Apply CEAP classification','Correlate with other imaging modalities (CT, MR, plethysmography)','Document and communicate findings'] },
+    { section:'C. Perform Venous Ultrasound Examination', pct:37, color:'#2563eb', tasks:['Select appropriate transducer and settings','Perform B-mode (grayscale) imaging','Apply color Doppler and spectral Doppler','Evaluate venous compressibility','Assess augmentation and spontaneity of flow','Document reflux with proper timing (≥500ms threshold)','Scan GSV, SSV, CFV, FV, popliteal, tibial, peroneal veins','Identify normal variants and anomalies','Evaluate perforator veins','Assess post-treatment segments'] },
+    { section:'D. Identify Venous Pathology', pct:18, color:'#059669', tasks:['Identify acute vs chronic DVT','Recognize EHIT (endovenous heat-induced thrombosis)','Identify superficial thrombophlebitis','Recognize venous reflux and insufficiency','Identify venous obstruction','Assess varicose veins and tributaries','Recognize lymphedema findings','Identify post-thrombotic syndrome changes'] },
+    { section:'E. Patient and Facility Management', pct:9, color:'#f59e0b', tasks:['Educate patient on procedure and findings','Coordinate care with clinical team','Follow infection control protocols','Maintain equipment and supplies','Participate in quality assurance processes','Document exam and report findings accurately'] },
+  ];
+
+  const STUDY_TOPICS = [
+    { topic:'Venous Anatomy', color:'#2563eb', items:[
+      'GSV: origin at medial malleolus → SFJ at common femoral vein','SSV: lateral ankle → SPJ (variable, 0–15cm above popliteal crease)','CFV, femoral vein, popliteal, tibial, peroneal veins','Accessory GSV (AGSV), Giacomini vein','Perforator veins: Hunterian, Dodd, Boyd, Cockett','Deep vs superficial compartments separated by deep fascia','Normal variant: duplicated GSV or SSV',
+    ]},
+    { topic:'Ultrasound Physics & Instrumentation', color:'#7c3aed', items:[
+      'Sound wave behavior: reflection, refraction, attenuation','Transducer frequency: higher freq = better resolution, less penetration (5–12 MHz for superficial veins)','B-mode (grayscale): tissue echogenicity','Color Doppler: direction of flow (BART convention)','Spectral Doppler: waveform analysis, reflux timing','Gain, depth, focus settings','Artifacts: shadowing, enhancement, aliasing','Compression technique for DVT evaluation',
+    ]},
+    { topic:'Reflux & Insufficiency', color:'#dc2626', items:[
+      'Reflux definition: retrograde flow ≥500ms (venous) after augmentation','Augmentation: manual calf compression then release','Valsalva for CFV/SFJ assessment','Reverse Trendelenburg position for standing reflux studies','Junctional incompetence: SFJ vs SPJ vs perforator','Document: duration, peak velocity, diameter of reflux segment','CEAP classification: C0–C6',
+    ]},
+    { topic:'DVT Recognition', color:'#ef4444', items:[
+      'Acute DVT: hypoechoic (dark), vein does not compress, distended lumen','Chronic DVT: echogenic (bright), may partially compress, irregular walls, collaterals','Non-compressibility = hallmark of DVT','Absence of color fill on Doppler','Proximal vs distal: popliteal and above = proximal','Calf DVT: tibial, peroneal, gastrocnemius, soleal sinuses','DVT mimics: Baker\'s cyst, hematoma, lymph node, popliteal aneurysm',
+    ]},
+    { topic:'EHIT Classification', color:'#f97316', items:[
+      'Class 1: thrombus at SFJ, does not enter deep system','Class 2: thrombus in CFV, <50% occlusion','Class 3: thrombus in CFV, ≥50% occlusion','Class 4: complete CFV occlusion (= DVT, treat accordingly)','Detected on post-procedure duplex (day 1–7)','Class 1: surveillance; Class 2+: anticoagulation','Risk factors: larger ablated segment, proximity to SFJ',
+    ]},
+    { topic:'CEAP Classification', color:'#059669', items:[
+      'C0: no visible or palpable signs','C1: telangiectasias or reticular veins','C2: varicose veins (≥3mm)','C3: edema','C4a: pigmentation or eczema','C4b: lipodermatosclerosis or atrophie blanche','C4c: corona phlebectatica','C5: healed venous ulcer','C6: active venous ulcer','C6r: recurrent active venous ulcer','S = symptomatic, A = asymptomatic',
+    ]},
+    { topic:'Treatment Modalities', color:'#0891b2', items:[
+      'RFA (Radiofrequency Ablation): thermal energy, 120°C target temperature','EVLA (Endovenous Laser Ablation): laser energy, wavelength 810–1470nm','Varithena (polidocanol foam): microfoam sclerotherapy for GSV/SSV/tributaries','Liquid sclerotherapy: STS or polidocanol for small veins/telangiectasias','Ambulatory phlebectomy: stab incision removal of varicosities','Conservative: compression stockings (20–30mmHg), elevation, exercise','Tumescent anesthesia: lidocaine + epinephrine + bicarb + saline perivenous',
+    ]},
+    { topic:'Complications', color:'#7c2d12', items:[
+      'EHIT: post-ablation thrombus extension (see EHIT section)','Skin burns / nerve damage from thermal ablation','DVT / PE: rare but serious post-procedure complication','Hematoma / bruising: common, self-limiting','Infection: rare, monitor for signs at treatment sites','Pigmentation: common with sclerotherapy, usually resolves','Telangiectatic matting: new vessel formation post-sclerotherapy','Anaphylaxis: rare with sclerosants — have emergency protocols ready',
+    ]},
+    { topic:'Regulatory & Safety', color:'#475569', items:[
+      'OSHA: bloodborne pathogen standards, PPE requirements','HIPAA: patient privacy, minimum necessary rule','Informed consent: document before every procedure','Universal precautions: gloves, mask, eyewear for all procedures','Sterile technique: during catheter placement for ablation','BLS certification: required for all sonographers','Equipment maintenance: log cleaning, probe disinfection (high-level for intracavitary)','ICAVL accreditation: vascular lab quality standard',
+    ]},
+  ];
+
+  const PATHWAYS = [
+    { id:'RPhS567', label:'RPhS567 — PA / NP', highlight:true, req:['Valid PA or NP license','6 months FT diagnostic ultrasound experience in venous disease'], docs:['Copy of PA/NP License','Employment Verification Letter from supervising physician or lab director'], note:'⭐ This is the pathway for VIP APPs.' },
+    { id:'RPhS1',   label:'RPhS1 — RVS/RVT Holders', highlight:false, req:['Active RVS or RVT credential','6 months FT venous ultrasound experience','36 CEUs in venous disease/ultrasound/vascular anatomy in last 4 years'], docs:['Employment Verification Letter','Active credential verification','CME documentation'] },
+    { id:'RPhS2',   label:'RPhS2 — Associate Degree', highlight:false, req:['Associate degree (62 semester hours) in health/science/nursing/engineering','1 year FT venous ultrasound experience','36 CEUs in last 4 years'], docs:['Transcripts','Employment Verification Letter','CME documentation'] },
+    { id:'RPhS3',   label:'RPhS3 — Baccalaureate Degree', highlight:false, req:['Bachelor\'s degree in health/science/nursing/engineering','6 months FT venous ultrasound experience','36 CEUs in last 4 years'], docs:['Transcripts','Employment Verification Letter','CME documentation'] },
+    { id:'RPhS5',   label:'RPhS5 — Physician (with credential)', highlight:false, req:['Valid medical license','ABVLM certification OR active RVS/RVT/RPVI','150 venous studies in last 2 years (performed or supervised)'], docs:['Medical license','Active credential verification','Notarized letter with study count'] },
+    { id:'RPhS6',   label:'RPhS6 — Physician (experience only)', highlight:false, req:['Valid medical license','200 venous studies in last 2 years (performed or supervised)'], docs:['Medical license','Notarized letter with study count'] },
+  ];
+
+  const card = (children, extra={}) => React.createElement('div', {style:{background:'white',borderRadius:12,border:'1px solid #e2e8f0',padding:'16px 20px',marginBottom:14,...extra}}, children);
+  const tag = (text, color) => React.createElement('span', {style:{background:color+'18',color:color,borderRadius:6,padding:'2px 8px',fontSize:11,fontWeight:800}}, text);
+
+  return React.createElement('div', {style:{padding:'0 4px'}},
+    // Header
+    React.createElement('div', {style:{background:'linear-gradient(135deg,#1e3a5f,#7c3aed)',borderRadius:16,padding:'20px 24px',marginBottom:20,color:'white'}},
+      React.createElement('div', {style:{display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:8}},
+        React.createElement('div', null,
+          React.createElement('div', {style:{fontSize:22,fontWeight:900,marginBottom:4}}, '🏅 RPhS Certification Prep'),
+          React.createElement('div', {style:{fontSize:13,opacity:0.85}}, 'Registered Phlebology Sonographer — CCI Exam Study Guide')
+        ),
+        React.createElement('a', {href:'https://cci-online.org/credentials/registered-phlebology-sonographer/',target:'_blank',
+          style:{background:'rgba(255,255,255,0.15)',color:'white',borderRadius:8,padding:'8px 14px',fontSize:12,fontWeight:800,textDecoration:'none',whiteSpace:'nowrap'}},
+          '🔗 CCI Official Site →')
+      )
+    ),
+
+    // Sub-nav
+    React.createElement('div', {style:{display:'flex',gap:6,flexWrap:'wrap',marginBottom:18}},
+      SECTIONS.map(s=>React.createElement('button', {key:s.id, onClick:()=>setSection(s.id),
+        style:{padding:'7px 14px',borderRadius:20,border:'none',cursor:'pointer',fontWeight:700,fontSize:12,
+          background:section===s.id?'#7c3aed':'#f1f5f9',color:section===s.id?'white':'#64748b'}}, s.label))
+    ),
+
+    // OVERVIEW
+    section==='overview' && React.createElement('div', null,
+      card(React.createElement('div', null,
+        React.createElement('div', {style:{fontSize:14,fontWeight:900,color:'#1e3a5f',marginBottom:12}}, 'About the RPhS Exam'),
+        React.createElement('div', {style:{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(160px,1fr))',gap:10,marginBottom:14}},
+          [['🕐','3 Hours','Testing Time'],['📝','170 Questions','Computer-Based'],['💰','$365 USD','Exam Fee'],['🏢','Pearson VUE','Testing Centers'],['📅','Year-Round','Availability'],['🔄','5 Years','Renewal Cycle']].map(([icon,val,lbl])=>
+            React.createElement('div', {key:lbl, style:{background:'#f8fafc',borderRadius:10,padding:'12px',textAlign:'center',border:'1px solid #e2e8f0'}},
+              React.createElement('div', {style:{fontSize:20,marginBottom:4}},icon),
+              React.createElement('div', {style:{fontWeight:900,fontSize:14,color:'#1e293b'}}),
+              React.createElement('div', {style:{fontWeight:900,fontSize:14,color:'#1e293b'}},val),
+              React.createElement('div', {style:{fontSize:11,color:'#64748b'}},lbl)
+            )
+          )
+        ),
+        React.createElement('div', {style:{background:'#f0fdf4',borderRadius:10,padding:'12px 16px',border:'1px solid #bbf7d0',marginBottom:10}},
+          React.createElement('div', {style:{fontSize:13,fontWeight:900,color:'#065f46',marginBottom:6}}, '⭐ For VIP APPs (PA/NP) — RPhS567 Pathway'),
+          React.createElement('div', {style:{fontSize:13,color:'#374151',lineHeight:1.6}},
+            'If you hold an active PA or NP license AND have 6+ months of venous ultrasound experience, you qualify under the RPhS567 pathway — no additional degree or CEUs required beyond your license. This is the most streamlined path for VIP APPs.'
+          )
+        ),
+        React.createElement('div', {style:{fontSize:13,color:'#374151',lineHeight:1.6}},
+          'The RPhS (Registered Phlebology Sonographer) is a nationally recognized credential from CCI (Cardiovascular Credentialing International) demonstrating expertise in venous ultrasound. The exam is based on a Job Task Analysis updated every 5 years to reflect current practice standards.'
+        )
+      )),
+      card(React.createElement('div', null,
+        React.createElement('div', {style:{fontSize:13,fontWeight:900,color:'#1e3a5f',marginBottom:10}}, '📅 Application Timeline'),
+        [
+          ['Create CCI account','cci-online.org → "Create an Account"'],
+          ['Submit application','Upload documents, pay $365 fee'],
+          ['Processing time','15–20 business days minimum'],
+          ['Receive ATT (Authorization to Test)','Schedule at Pearson VUE center'],
+          ['Take exam','170 questions, 3 hours'],
+          ['Receive results','Pass/fail same day; score report mailed'],
+        ].map(([step,detail],i)=>React.createElement('div', {key:i, style:{display:'flex',gap:10,marginBottom:10,alignItems:'flex-start'}},
+          React.createElement('div', {style:{background:'#7c3aed',color:'white',borderRadius:'50%',width:22,height:22,display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:900,flexShrink:0}},i+1),
+          React.createElement('div', null,
+            React.createElement('div', {style:{fontSize:13,fontWeight:700,color:'#1e293b'}},step),
+            React.createElement('div', {style:{fontSize:12,color:'#64748b'}},detail)
+          )
+        ))
+      ))
+    ),
+
+    // ELIGIBILITY
+    section==='eligibility' && React.createElement('div', null,
+      React.createElement('div', {style:{background:'#eff6ff',borderRadius:12,padding:'14px 18px',marginBottom:14,border:'1px solid #bfdbfe'}},
+        React.createElement('div', {style:{fontSize:13,color:'#1e40af',fontWeight:700}},
+          '💡 All pathways require a high school diploma. Choose the one that best fits your credentials. For VIP APPs, RPhS567 is the right pathway.'
+        )
+      ),
+      PATHWAYS.map(p=>React.createElement('div', {key:p.id,
+        style:{borderRadius:12,border:`2px solid ${p.highlight?'#7c3aed':'#e2e8f0'}`,marginBottom:12,overflow:'hidden'}},
+        React.createElement('div', {style:{background:p.highlight?'#7c3aed':'#f8fafc',padding:'10px 16px',display:'flex',alignItems:'center',gap:10}},
+          p.highlight && React.createElement('span', {style:{background:'white',color:'#7c3aed',borderRadius:6,padding:'2px 8px',fontSize:10,fontWeight:900}}, '⭐ FOR APPs'),
+          React.createElement('div', {style:{fontWeight:900,fontSize:13,color:p.highlight?'white':'#1e293b'}},p.label)
+        ),
+        React.createElement('div', {style:{padding:'12px 16px',background:'white'}},
+          p.note && React.createElement('div', {style:{background:'#f3e8ff',borderRadius:8,padding:'8px 12px',marginBottom:10,fontSize:12,color:'#6b21a8',fontWeight:700}},p.note),
+          React.createElement('div', {style:{fontSize:11,fontWeight:900,color:'#94a3b8',textTransform:'uppercase',marginBottom:6}},'Requirements'),
+          p.req.map((r,i)=>React.createElement('div', {key:i, style:{fontSize:13,color:'#374151',marginBottom:4}}, '• '+r)),
+          React.createElement('div', {style:{fontSize:11,fontWeight:900,color:'#94a3b8',textTransform:'uppercase',marginBottom:6,marginTop:10}},'Required Documents'),
+          p.docs.map((d,i)=>React.createElement('div', {key:i, style:{fontSize:13,color:'#374151',marginBottom:4}}, '📄 '+d))
+        )
+      ))
+    ),
+
+    // EXAM CONTENT
+    section==='content' && React.createElement('div', null,
+      React.createElement('div', {style:{background:'#f8fafc',borderRadius:12,padding:'14px 18px',marginBottom:14,border:'1px solid #e2e8f0'}},
+        React.createElement('div', {style:{fontSize:13,color:'#475569',lineHeight:1.6}},'The exam matrix below shows how questions are distributed across 5 duty areas. Section C (Performing Ultrasound) carries the most weight at 37% — focus here first.')
+      ),
+      TASK_MATRIX.map(t=>React.createElement('div', {key:t.section, style:{borderRadius:12,border:`2px solid ${t.color}22`,marginBottom:12,overflow:'hidden'}},
+        React.createElement('div', {style:{background:t.color,padding:'10px 16px',display:'flex',justifyContent:'space-between',alignItems:'center'}},
+          React.createElement('div', {style:{fontWeight:900,fontSize:13,color:'white'}},t.section),
+          React.createElement('div', {style:{background:'rgba(255,255,255,0.25)',color:'white',borderRadius:20,padding:'3px 12px',fontSize:13,fontWeight:900}},t.pct+'%')
+        ),
+        // Progress bar
+        React.createElement('div', {style:{height:4,background:'#f1f5f9'}},
+          React.createElement('div', {style:{height:'100%',width:t.pct+'%',background:t.color,transition:'width 0.5s'}})
+        ),
+        React.createElement('div', {style:{padding:'12px 16px',background:'white'}},
+          t.tasks.map((task,i)=>React.createElement('div', {key:i, style:{fontSize:12,color:'#374151',marginBottom:5,display:'flex',gap:6}},
+            React.createElement('span', {style:{color:t.color,fontWeight:900,flexShrink:0}},'→'),
+            task
+          ))
+        )
+      ))
+    ),
+
+    // STUDY TOPICS
+    section==='topics' && React.createElement('div', null,
+      React.createElement('div', {style:{background:'#fff7ed',borderRadius:12,padding:'14px 18px',marginBottom:14,border:'1px solid #fed7aa'}},
+        React.createElement('div', {style:{fontSize:13,color:'#9a3412',fontWeight:700}},'💡 Study tip: The games in the 🎮 Vein Games tab cover Vein Anatomy, DVT, and EHIT — use them alongside these notes!')
+      ),
+      STUDY_TOPICS.map(t=>React.createElement('details', {key:t.topic, style:{marginBottom:10,borderRadius:12,border:`2px solid ${t.color}33`,overflow:'hidden'}},
+        React.createElement('summary', {style:{background:t.color,color:'white',padding:'11px 16px',fontWeight:900,fontSize:13,cursor:'pointer',listStyle:'none',display:'flex',justifyContent:'space-between',alignItems:'center'}},
+          t.topic,
+          React.createElement('span', {style:{fontSize:11,opacity:0.8}}, '▼ tap to expand')
+        ),
+        React.createElement('div', {style:{padding:'12px 16px',background:'white'}},
+          t.items.map((item,i)=>React.createElement('div', {key:i, style:{fontSize:12,color:'#374151',marginBottom:6,display:'flex',gap:6,lineHeight:1.5}},
+            React.createElement('span', {style:{color:t.color,fontWeight:900,flexShrink:0}},'•'),
+            item
+          ))
+        )
+      ))
+    ),
+
+    // EXAM TIPS
+    section==='tips' && React.createElement('div', null,
+      [
+        { title:'🎯 Know your exam weight distribution', color:'#2563eb', tips:[
+          'Section C (Perform Venous Ultrasound) = 37% of exam — prioritize this','Section B (Patient Diagnosis) = 27% — second priority','Sections A and E (facility/safety/management) = 9% each — don\'t ignore them','Section D (Identify Pathology) = 18% — know acute vs chronic DVT cold',
+        ]},
+        { title:'🧪 High-yield topics to master', color:'#dc2626', tips:[
+          'Reflux criteria: ≥500ms is the threshold — know it, remember it','CEAP classification C0–C6 and what each looks like clinically','Acute vs chronic DVT on ultrasound: compressibility, echogenicity, collaterals','EHIT Class 1–4 and management per class','Transducer selection: 5–12 MHz linear probe for venous studies','Color Doppler: BART (Blue Away, Red Toward) convention','Augmentation technique: correct calf squeeze → release to elicit reflux',
+        ]},
+        { title:'📝 Application tips (RPhS567)', color:'#7c3aed', tips:[
+          'Get your employment verification letter early — allow 1–2 weeks for processing','Letter must come from a supervising physician or credentialed lab director','Application processing = 15–20 business days minimum — plan accordingly','$365 fee includes $100 non-refundable admin fee — applies even if denied',
+        ]},
+        { title:'🖥️ Test day strategy', color:'#059669', tips:[
+          '170 questions in 3 hours = about 63 seconds per question — pace yourself','Flag and skip difficult questions; return at the end','Computer-based at Pearson VUE — arrive 30 min early with valid ID','No study materials allowed in testing center','Results typically available same day at the testing center',
+        ]},
+        { title:'🔗 Official study resources', color:'#f59e0b', tips:[
+          'CCI Exam Content Outline: free download at cci-online.org','CCI Practice Exam: available for purchase on their site','Edelman Vascular Technology textbook: comprehensive reference','ARDMS / SPI exam prep materials overlap significantly with RPhS content','SVU (Society for Vascular Ultrasound) webinars and online courses',
+        ]},
+      ].map(s=>card(React.createElement('div', null,
+        React.createElement('div', {style:{fontSize:14,fontWeight:900,color:s.color,marginBottom:10}},s.title),
+        s.tips.map((t,i)=>React.createElement('div', {key:i, style:{fontSize:13,color:'#374151',marginBottom:8,display:'flex',gap:8,lineHeight:1.5}},
+          React.createElement('span', {style:{color:s.color,fontWeight:900,flexShrink:0}},'→'),
+          t
+        ))
+      ), {borderLeft:`4px solid ${s.color}`}))
+    )
+  );
+}
+
 // ── VEIN GAME ─────────────────────────────────────────────────────────────────
 function P2PTab() {
   const [step, setStep] = React.useState(null);
@@ -2009,6 +2230,7 @@ const CLINICAL_TABS = [
   {id:'complications', label:'⚠️ Complications'},
   {id:'glossary', label:'🔤 Glossary'},
   {id:'p2p', label:'📞 P2P Calls'},
+  {id:'rphs', label:'🏅 RPhS Cert'},
   {id:'veingame', label:'🎮 Vein Games'},
 ];
 const ADMIN_TABS = [
@@ -2496,6 +2718,7 @@ function App() {
         {mode === 'clinical' && clinicalTab === 'complications'  && <ComplicationsTab />}
         {mode === 'clinical' && clinicalTab === 'glossary'       && <GlossaryTab />}
         {mode === 'clinical' && clinicalTab === 'p2p'           && <P2PTab />}
+        {mode === 'clinical' && clinicalTab === 'rphs'          && <RPhSTab />}
         {mode === 'clinical' && clinicalTab === 'veingame'      && <VeinGamesHub />}
         {mode === 'admin'    && adminTab === 'start'      && <StartTab />}
         {mode === 'admin'    && adminTab === 'systems'    && <SystemsTab />}
