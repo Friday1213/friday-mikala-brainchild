@@ -443,6 +443,144 @@ function SystemsTab() {
 }
 
 // ── CLINICAL TAB ────────────────────────────────────────────────────────────
+function TreatmentSequenceGame() {
+  const STEPS = [
+    'Initial',
+    'Review + Rescan (conservative)',
+    '6-week call with RN',
+    'L GSV RFA',
+    'R GSV RFA + L GSV post-scan',
+    'L SSV RFA + R GSV post-scan',
+    'R GSV Varithena + L SSV post-scan',
+    'L GSV Varithena + R GSV Varithena post-scan',
+    'L GSV Varithena post-scan (+/- cosmetics)',
+    '1 mo — full scan of all treated veins, PHOTOS',
+    '3 mo — full scan, PHOTOS',
+    '6 mo — scan PRN, PHOTOS (graduate if doing great)',
+    '9 mo — scan PRN, PHOTOS',
+    '12 mo — scan PRN, PHOTOS',
+  ];
+
+  const [mode, setMode] = React.useState('idle'); // idle | playing | done
+  const [items, setItems] = React.useState([]);
+  const [dragging, setDragging] = React.useState(null);
+  const [dragOver, setDragOver] = React.useState(null);
+  const [checked, setChecked] = React.useState(null); // array of booleans
+  const [score, setScore] = React.useState(0);
+
+  function shuffle(arr) {
+    const a = [...arr]; for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a;
+  }
+
+  function startGame() {
+    setItems(shuffle(STEPS.map((s,i)=>({id:i,text:s}))));
+    setChecked(null); setScore(0); setMode('playing');
+  }
+
+  function handleDragStart(idx) { setDragging(idx); }
+  function handleDragOver(e, idx) { e.preventDefault(); setDragOver(idx); }
+  function handleDrop(e, idx) {
+    e.preventDefault();
+    if (dragging === null || dragging === idx) { setDragging(null); setDragOver(null); return; }
+    const next = [...items];
+    const [moved] = next.splice(dragging, 1);
+    next.splice(idx, 0, moved);
+    setItems(next);
+    setDragging(null); setDragOver(null);
+  }
+
+  function checkAnswer() {
+    const results = items.map((item, i) => item.id === i);
+    const correct = results.filter(Boolean).length;
+    setChecked(results);
+    setScore(correct);
+    setMode('done');
+  }
+
+  const allCorrect = score === STEPS.length;
+
+  return React.createElement('div', {style:{marginTop:20,borderRadius:14,border:'2px solid #e9d5ff',overflow:'hidden'}},
+    // Header
+    React.createElement('div', {style:{background:'linear-gradient(135deg,#2d1b69,#AC4ABD)',padding:'14px 20px',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:8}},
+      React.createElement('div', null,
+        React.createElement('div', {style:{fontWeight:900,fontSize:15,color:'white',fontFamily:'Poppins,sans-serif'}}, '🎮 Sequence Game — Put It In Order'),
+        React.createElement('div', {style:{fontSize:12,color:'rgba(255,255,255,0.8)',marginTop:2}}, 'Drag the steps into the correct treatment order')
+      ),
+      mode === 'idle' && React.createElement('button', {onClick:startGame,
+        style:{background:'white',color:'#2d1b69',border:'none',borderRadius:8,padding:'8px 18px',fontWeight:900,fontSize:13,cursor:'pointer'}}, '▶ Start Game'),
+      mode !== 'idle' && React.createElement('button', {onClick:startGame,
+        style:{background:'rgba(255,255,255,0.2)',color:'white',border:'none',borderRadius:8,padding:'8px 18px',fontWeight:800,fontSize:12,cursor:'pointer'}}, '🔄 Restart')
+    ),
+
+    // Idle state
+    mode === 'idle' && React.createElement('div', {style:{padding:'24px',textAlign:'center',color:'#64748b',fontSize:13,background:'#faf5ff'}},
+      'Steps will be shuffled — drag them back into the correct order, then hit Check!'
+    ),
+
+    // Playing
+    mode === 'playing' && React.createElement('div', {style:{padding:'14px',background:'#faf5ff'}},
+      React.createElement('div', {style:{fontSize:12,color:'#7c3aed',fontWeight:700,marginBottom:10,textAlign:'center'}},
+        '☝️ Drag to reorder — then tap Check Answer when ready'
+      ),
+      items.map((item, idx) =>
+        React.createElement('div', {
+          key:item.id,
+          draggable:true,
+          onDragStart:()=>handleDragStart(idx),
+          onDragOver:(e)=>handleDragOver(e,idx),
+          onDrop:(e)=>handleDrop(e,idx),
+          onDragEnd:()=>{setDragging(null);setDragOver(null);},
+          style:{
+            display:'flex', alignItems:'center', gap:10,
+            padding:'9px 12px', marginBottom:6, borderRadius:10,
+            background: dragOver===idx ? '#ede9fe' : 'white',
+            border: `2px solid ${dragOver===idx?'#AC4ABD':'#e2e8f0'}`,
+            cursor:'grab', transition:'all 0.1s',
+            opacity: dragging===idx ? 0.4 : 1,
+            boxShadow: dragging===idx ? '0 4px 12px rgba(172,74,189,0.2)' : '0 1px 3px rgba(0,0,0,0.05)',
+          }
+        },
+          React.createElement('div', {style:{color:'#94a3b8',fontSize:14,flexShrink:0}}, '⠿'),
+          React.createElement('div', {style:{background:'#e9d5ff',color:'#6b21a8',width:22,height:22,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,fontWeight:900,flexShrink:0}}, idx+1),
+          React.createElement('div', {style:{fontSize:13,color:'#1e293b',flex:1}}, item.text)
+        )
+      ),
+      React.createElement('button', {onClick:checkAnswer,
+        style:{width:'100%',marginTop:10,padding:'12px',background:'#2d1b69',color:'white',border:'none',borderRadius:10,fontWeight:900,fontSize:14,cursor:'pointer'}},
+        '✅ Check Answer'
+      )
+    ),
+
+    // Done
+    mode === 'done' && React.createElement('div', {style:{padding:'14px',background:'#faf5ff'}},
+      React.createElement('div', {style:{textAlign:'center',padding:'16px',marginBottom:14,background:allCorrect?'#f0fdf4':'#faf5ff',borderRadius:12,border:`2px solid ${allCorrect?'#22c55e':'#e9d5ff'}`}},
+        React.createElement('div', {style:{fontSize:36,marginBottom:6}}, allCorrect?'🏆':score>=10?'🎉':score>=7?'💪':'📚'),
+        React.createElement('div', {style:{fontSize:20,fontWeight:900,color:'#1e293b',fontFamily:'Poppins,sans-serif'}}, score+' / '+STEPS.length+' correct'),
+        React.createElement('div', {style:{fontSize:13,color:'#64748b',marginTop:4}},
+          allCorrect ? 'Perfect! You know the sequence cold. 🌟' :
+          score>=10 ? 'Almost there — review the highlighted steps' :
+          'Check the red steps and try again!'
+        )
+      ),
+      items.map((item, idx) =>
+        React.createElement('div', {key:item.id,
+          style:{display:'flex',alignItems:'center',gap:10,padding:'9px 12px',marginBottom:6,borderRadius:10,
+            background: checked[idx]?'#f0fdf4':'#fff1f2',
+            border:`2px solid ${checked[idx]?'#22c55e':'#fca5a5'}`}},
+          React.createElement('div', {style:{width:22,height:22,borderRadius:'50%',background:checked[idx]?'#22c55e':'#ef4444',
+            color:'white',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:900,flexShrink:0}},
+            checked[idx]?'✓':idx+1
+          ),
+          React.createElement('div', {style:{flex:1,fontSize:13,color:'#1e293b'}}, item.text),
+          !checked[idx] && React.createElement('div', {style:{fontSize:11,color:'#ef4444',fontWeight:700,flexShrink:0}},
+            `→ should be #${item.id+1}`
+          )
+        )
+      )
+    )
+  );
+}
+
 function ClinicalTab() {
   const [open, setOpen] = useState({consult:true, veintalk:false, review:false, conservative:false, followup:false, scheduling:false, lymph:false});
   const T = ({id,title,children}) => (
@@ -741,6 +879,7 @@ function TreatmentTab() {
         ))}
       </div>
     </div>
+    <TreatmentSequenceGame />
   );
 }
 
