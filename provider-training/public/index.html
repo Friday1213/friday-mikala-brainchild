@@ -2561,6 +2561,218 @@ function EHITGame() {
   );
 }
 
+// ── CPT CODE CHALLENGE ───────────────────────────────────────────────────────
+function CPTGame() {
+  const [gameMode, setGameMode] = React.useState('study');
+  const [quizIdx, setQuizIdx] = React.useState(0);
+  const [choice, setChoice] = React.useState(null);
+  const [score, setScore] = React.useState({c:0,t:0});
+  const [studyFilter, setStudyFilter] = React.useState('all');
+
+  const CODES = [
+    { code:'36475', category:'Thermal Ablation', color:'#dc2626',
+      name:'RFA — First Vein, Leg',
+      desc:'Endovenous ablation of incompetent vein, extremity, inclusive of all imaging guidance and monitoring, percutaneous, radiofrequency; FIRST vein treated, per leg.',
+      use:'Proximal GSV, SSV, or accessory vein RFA — first vein treated on that leg.',
+      vip:'Primary RFA code. Used for GSV (proximal) and SSV ablation. Always per leg — bill once per leg for the first vein.' },
+    { code:'36476', category:'Thermal Ablation', color:'#dc2626',
+      name:'RFA — Additional Vein(s), Same Leg',
+      desc:'Endovenous radiofrequency ablation; second and subsequent vein(s) treated, per leg.',
+      use:'Each additional vein ablated on the same leg in the same session (e.g., GSV + AGSV on same leg).',
+      vip:'Add-on to 36475. If you do GSV + accessory GSV on the same leg = 36475 + 36476.' },
+    { code:'36478', category:'Thermal Ablation', color:'#ef4444',
+      name:'EVLA — First Vein, Leg',
+      desc:'Endovenous ablation, laser; FIRST vein treated, per leg.',
+      use:'Endovenous laser ablation (EVLA/EVLT) — first vein per leg.',
+      vip:'Less commonly used at VIP. Same logic as 36475 but for laser energy instead of radiofrequency.' },
+    { code:'36479', category:'Thermal Ablation', color:'#ef4444',
+      name:'EVLA — Additional Vein(s), Same Leg',
+      desc:'Endovenous laser ablation; second and subsequent vein(s), per leg.',
+      use:'Additional veins treated with laser on the same leg.',
+      vip:'Add-on to 36478. Same concept as 36476 but for laser.' },
+    { code:'36482', category:'VenaSeal', color:'#8b5cf6',
+      name:'VenaSeal — First Vein, Leg',
+      desc:'Endovenous ablation of incompetent vein, extremity, inclusive of all imaging guidance, percutaneous, mechanochemical; FIRST vein treated, per leg.',
+      use:'VenaSeal (cyanoacrylate glue closure) — first vein per leg.',
+      vip:'Used for VenaSeal cases. No tumescent needed. No compression post-procedure. Same per-leg billing logic.' },
+    { code:'36483', category:'VenaSeal', color:'#8b5cf6',
+      name:'VenaSeal — Additional Vein(s), Same Leg',
+      desc:'Mechanochemical endovenous ablation; second and subsequent vein(s), per leg.',
+      use:'Additional veins treated with VenaSeal on same leg.',
+      vip:'Add-on to 36482.' },
+    { code:'36465', category:'Varithena / Foam', color:'#7c3aed',
+      name:'Foam Sclerotherapy — Single Truncal Vein',
+      desc:'Injection of non-compounded foam sclerosant, with ultrasound guidance, inclusive of all imaging guidance and monitoring, single incompetent extremity truncal vein (e.g., GSV, SSV, or accessory saphenous vein).',
+      use:'Varithena or UGFS into ONE truncal vein (GSV, SSV, or accessory) per session.',
+      vip:'Most common Varithena code. One vein = 36465. Use for distal GSV, SSV, or standalone accessory vein treatment.' },
+    { code:'36466', category:'Varithena / Foam', color:'#7c3aed',
+      name:'Foam Sclerotherapy — Multiple Truncal Veins, Same Leg',
+      desc:'Injection of non-compounded foam sclerosant; multiple incompetent extremity truncal veins, same leg.',
+      use:'Varithena/UGFS into TWO OR MORE truncal veins on the same leg in one session.',
+      vip:'If you treat GSV + SSV with Varithena on the same leg same day = 36466. One code covers all veins that session.' },
+    { code:'36470', category:'Sclerotherapy', color:'#059669',
+      name:'Sclerotherapy — Single Vein',
+      desc:'Injection of sclerosant; single incompetent vein (other than telangiectasia).',
+      use:'Liquid sclerotherapy into a single varicose/reticular vein. Not for truncal veins or telangiectasias.',
+      vip:'Used for liquid sclerotherapy of varicose/reticular veins. NOT for truncal veins (use 36465/66) or spider veins (cosmetic codes).' },
+    { code:'36471', category:'Sclerotherapy', color:'#059669',
+      name:'Sclerotherapy — Multiple Veins, Same Leg',
+      desc:'Injection of sclerosant; multiple incompetent veins, same leg.',
+      use:'Liquid sclerotherapy into multiple varicose/reticular veins, same leg, same session.',
+      vip:'One code for the whole leg session when treating multiple veins with liquid sclerotherapy.' },
+    { code:'37765', category:'Phlebectomy', color:'#0369a1',
+      name:'Phlebectomy — 10–20 Stab Incisions',
+      desc:'Stab phlebectomy of varicose veins, one extremity; 10–20 stab incisions.',
+      use:'Ambulatory phlebectomy session with 10–20 incisions on one extremity.',
+      vip:'Used for bulky varicose vein removal. Treat saphenous source first. Useful when veins too bulky for sclerotherapy.' },
+    { code:'37766', category:'Phlebectomy', color:'#0369a1',
+      name:'Phlebectomy — More Than 20 Stab Incisions',
+      desc:'Stab phlebectomy of varicose veins, one extremity; more than 20 stab incisions.',
+      use:'Ambulatory phlebectomy with more than 20 incisions on one extremity.',
+      vip:'For more extensive phlebectomy sessions. Same extremity, more extensive disease.' },
+    { code:'93971', category:'Ultrasound', color:'#0891b2',
+      name:'Duplex Ultrasound — Unilateral Extremity Veins',
+      desc:'Duplex scan of extremity veins including responses to compression and other maneuvers; unilateral.',
+      use:'Venous duplex scan of ONE leg — includes compressibility testing, Doppler, and reflux assessment.',
+      vip:'Standard code for single-leg venous duplex. Used for initial diagnostic scans and post-procedure surveillance.' },
+    { code:'93970', category:'Ultrasound', color:'#0891b2',
+      name:'Duplex Ultrasound — Bilateral Extremity Veins',
+      desc:'Duplex scan of extremity veins including responses to compression and other maneuvers; bilateral.',
+      use:'Venous duplex scan of BOTH legs in the same session.',
+      vip:'Use when scanning both legs. More efficient than billing 93971 x2 — bilateral code preferred.' },
+    { code:'36475+36476', category:'Thermal Ablation', color:'#dc2626',
+      name:'RFA — GSV + Accessory, Same Leg',
+      desc:'Combination: first vein (36475) + additional vein (36476) on same leg.',
+      use:'When two veins are ablated with RFA on the same leg in one session.',
+      vip:'Example: right GSV ablation + right AGSV ablation = 36475 + 36476 on same claim line.' },
+  ];
+
+  const QUESTIONS = [
+    { scenario:'A patient undergoes RFA of the LEFT great saphenous vein. No other veins are treated on that leg today.', answer:'36475', options:['36475','36476','36478','36482'], exp:'36475 = RFA, first vein per leg. Only one vein was treated — no add-on code needed.' },
+    { scenario:'During the same session, after ablating the LEFT GSV (36475), you also ablate the LEFT accessory great saphenous vein with RFA.', answer:'36476', options:['36475','36476','36479','36483'], exp:'36476 = RFA, additional vein same leg. The first vein is 36475; each additional vein on that leg adds 36476.' },
+    { scenario:'A patient receives Varithena injection into the RIGHT great saphenous vein only. Ultrasound guidance is used.', answer:'36465', options:['36465','36466','36470','36471'], exp:'36465 = foam sclerotherapy, single truncal vein. Only one truncal vein was treated this session.' },
+    { scenario:'In one session, Varithena is injected into both the LEFT GSV and LEFT SSV.', answer:'36466', options:['36465','36466','36470','36471'], exp:'36466 = foam sclerotherapy, multiple truncal veins, same leg. Two truncal veins treated on the same leg = 36466 (not two 36465s).' },
+    { scenario:'A patient has liquid sclerotherapy of multiple reticular varicose veins on the right leg. No truncal veins are involved.', answer:'36471', options:['36465','36470','36471','36475'], exp:'36471 = sclerotherapy, multiple veins, same leg. Reticular/varicose veins (not truncal) use 36470/36471, not the foam codes (36465/36466).' },
+    { scenario:'A diagnostic venous duplex ultrasound is performed on both legs to evaluate for reflux.', answer:'93970', options:['93970','93971','36475','76937'], exp:'93970 = bilateral extremity venous duplex. Use 93970 when scanning both legs in the same session — not 93971 x2.' },
+    { scenario:'Post-procedure surveillance duplex is performed on the RIGHT leg only, 3 days after RFA.', answer:'93971', options:['93970','93971','93975','76937'], exp:'93971 = unilateral extremity venous duplex. Single leg post-procedure scan = 93971.' },
+    { scenario:'A patient undergoes VenaSeal closure of the LEFT great saphenous vein. No other veins are treated.', answer:'36482', options:['36475','36478','36482','36465'], exp:'36482 = VenaSeal (mechanochemical ablation), first vein per leg. No tumescent or compression required post-procedure.' },
+    { scenario:'You perform ambulatory phlebectomy on the right leg with 15 stab incisions to remove bulky varicosities.', answer:'37765', options:['37765','37766','36471','36470'], exp:'37765 = phlebectomy, 10–20 stab incisions, one extremity. 15 incisions falls in the 10–20 range.' },
+    { scenario:'A patient needs laser ablation (EVLA) of the RIGHT SSV. This is the first and only vein treated today.', answer:'36478', options:['36475','36476','36478','36479'], exp:'36478 = endovenous laser ablation, first vein per leg. Same logic as 36475 but for laser energy.' },
+    { scenario:'During RFA, the catheter cannot be advanced due to vein tortuosity and the procedure is aborted. What should happen with billing?', answer:'36475', options:['Do not bill — procedure was not completed','36475','36476','93971'], exp:'You still bill for an aborted procedure — supplies and time were used. Document the reason in the note clearly. Bill 36475 for the attempted ablation.' },
+    { scenario:'A patient has Varithena injected into the RIGHT GSV, RIGHT SSV, AND RIGHT accessory saphenous vein in one session.', answer:'36466', options:['36465 x3','36465 + 36466','36466','36475'], exp:'36466 covers multiple truncal veins on the same leg — regardless of how many (2, 3, or more). Do not bill 36465 multiple times.' },
+  ];
+
+  const categories = ['all', ...new Set(CODES.map(c=>c.category))];
+  const filteredCodes = studyFilter==='all' ? CODES : CODES.filter(c=>c.category===studyFilter);
+  const q = QUESTIONS[quizIdx % QUESTIONS.length];
+  const done = quizIdx >= QUESTIONS.length;
+
+  function handleAnswer(opt) {
+    if (choice !== null) return;
+    setChoice(opt);
+    setScore(s=>({c:s.c+(opt===q.answer?1:0), t:s.t+1}));
+    setTimeout(()=>{ setChoice(null); setQuizIdx(i=>i+1); }, 2000);
+  }
+
+  function restart() { setQuizIdx(0); setScore({c:0,t:0}); setChoice(null); }
+
+  const btnB = {border:'none',cursor:'pointer',fontWeight:800,fontSize:12,borderRadius:9,padding:'7px 14px'};
+
+  return React.createElement('div', {style:{maxWidth:960,margin:'0 auto'}},
+    // Header
+    React.createElement('div', {style:{background:'linear-gradient(135deg,#92400e,#f59e0b)',borderRadius:16,padding:'20px 24px',marginBottom:20,color:'white'}},
+      React.createElement('div', {style:{fontSize:22,fontWeight:900,marginBottom:4}}, '💻 CPT Code Challenge'),
+      React.createElement('div', {style:{fontSize:13,opacity:0.85}}, 'Match the clinical scenario to the correct billing code')
+    ),
+
+    // Mode toggle
+    React.createElement('div', {style:{display:'flex',gap:8,justifyContent:'center',marginBottom:18}},
+      [['study','📚 Study Codes'],['quiz','🎮 Quiz Me']].map(([m,lbl])=>
+        React.createElement('button', {key:m, onClick:()=>{setGameMode(m);restart();},
+          style:{...btnB, background:gameMode===m?'#f59e0b':'#f1f5f9', color:gameMode===m?'white':'#64748b', fontSize:13}}, lbl)
+      ),
+      gameMode==='quiz' && !done && React.createElement('div', {style:{background:'#f59e0b',color:'white',borderRadius:20,padding:'7px 16px',fontWeight:800,fontSize:13}}, `⭐ ${score.c}/${score.t}`)
+    ),
+
+    // STUDY MODE
+    gameMode==='study' && React.createElement('div', null,
+      // Category filter
+      React.createElement('div', {style:{display:'flex',gap:6,flexWrap:'wrap',marginBottom:14}},
+        categories.map(cat=>React.createElement('button', {key:cat, onClick:()=>setStudyFilter(cat),
+          style:{padding:'5px 12px',borderRadius:20,border:'none',cursor:'pointer',fontWeight:700,fontSize:11,
+            background:studyFilter===cat?'#f59e0b':'#f1f5f9', color:studyFilter===cat?'white':'#64748b'}},
+          cat==='all'?'All Codes':cat))
+      ),
+      React.createElement('div', {style:{display:'flex',flexDirection:'column',gap:10}},
+        filteredCodes.map(c=>React.createElement('details', {key:c.code,
+          style:{borderRadius:12,border:`2px solid ${c.color}33`,overflow:'hidden'}},
+          React.createElement('summary', {style:{background:c.color,color:'white',padding:'11px 16px',cursor:'pointer',listStyle:'none',display:'flex',alignItems:'center',gap:12}},
+            React.createElement('div', {style:{background:'rgba(255,255,255,0.25)',borderRadius:8,padding:'3px 10px',fontWeight:900,fontSize:15,minWidth:52,textAlign:'center'}}, c.code),
+            React.createElement('div', null,
+              React.createElement('div', {style:{fontWeight:900,fontSize:13}}, c.name),
+              React.createElement('div', {style:{fontSize:11,opacity:0.85,marginTop:1}}, c.category)
+            ),
+            React.createElement('span', {style:{marginLeft:'auto',fontSize:11,opacity:0.7}}, '▼')
+          ),
+          React.createElement('div', {style:{padding:'14px 16px',background:'white',display:'flex',flexDirection:'column',gap:10}},
+            React.createElement('div', null,
+              React.createElement('div', {style:{fontSize:11,fontWeight:900,color:'#94a3b8',textTransform:'uppercase',marginBottom:4}}, 'Official Description'),
+              React.createElement('div', {style:{fontSize:13,color:'#374151',lineHeight:1.6,fontStyle:'italic'}}, c.desc)
+            ),
+            React.createElement('div', null,
+              React.createElement('div', {style:{fontSize:11,fontWeight:900,color:'#94a3b8',textTransform:'uppercase',marginBottom:4}}, 'When to Use'),
+              React.createElement('div', {style:{fontSize:13,color:'#374151',lineHeight:1.6}}, c.use)
+            ),
+            React.createElement('div', {style:{background:'#fffbeb',borderRadius:8,padding:'10px 12px',borderLeft:`3px solid ${c.color}`}},
+              React.createElement('div', {style:{fontSize:11,fontWeight:900,color:'#92400e',marginBottom:4}}, '⭐ VIP CLINICAL NOTE'),
+              React.createElement('div', {style:{fontSize:12,color:'#374151',lineHeight:1.6}}, c.vip)
+            )
+          )
+        ))
+      )
+    ),
+
+    // QUIZ MODE
+    gameMode==='quiz' && done && React.createElement('div', {style:{textAlign:'center',padding:'40px 24px',background:'#fffbeb',borderRadius:16,border:'2px solid #f59e0b'}},
+      React.createElement('div', {style:{fontSize:52,marginBottom:8}}, score.c===QUESTIONS.length?'🏆':score.c>=QUESTIONS.length*.8?'🎉':score.c>=QUESTIONS.length*.6?'💪':'📚'),
+      React.createElement('h3', {style:{color:'#92400e',fontWeight:900,margin:'0 0 8px'}}, 'Quiz Complete!'),
+      React.createElement('div', {style:{fontSize:36,fontWeight:900,color:'#1e293b',marginBottom:8}}, `${score.c}/${QUESTIONS.length}`),
+      React.createElement('div', {style:{fontSize:14,color:'#64748b',marginBottom:20}},
+        score.c===QUESTIONS.length?'Perfect! You know your CPT codes! 🌟':score.c>=QUESTIONS.length*.8?'Great work — nearly there!':score.c>=QUESTIONS.length*.6?'Good effort — review the study cards!':'Head back to study mode and review the codes 📚'
+      ),
+      React.createElement('button', {onClick:restart, style:{padding:'10px 28px',borderRadius:10,border:'none',background:'#f59e0b',color:'white',fontWeight:900,cursor:'pointer',fontSize:14}}, '🔄 Try Again')
+    ),
+
+    gameMode==='quiz' && !done && React.createElement('div', {style:{maxWidth:540,margin:'0 auto'}},
+      React.createElement('div', {style:{background:'#fffbeb',borderRadius:14,padding:'18px',marginBottom:16,border:'2px solid #fcd34d'}},
+        React.createElement('div', {style:{fontSize:12,color:'#92400e',fontWeight:800,marginBottom:8}}, `Scenario ${quizIdx+1} of ${QUESTIONS.length}`),
+        React.createElement('div', {style:{fontSize:14,fontWeight:700,color:'#1e293b',lineHeight:1.7}}, q.scenario),
+        React.createElement('div', {style:{marginTop:10,fontSize:12,color:'#92400e',fontWeight:700}}, '👉 What CPT code applies?')
+      ),
+      React.createElement('div', {style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:14}},
+        q.options.map(opt=>{
+          let bg='white', border='#e2e8f0', col='#1e293b', extra={};
+          if (choice!==null) {
+            if (opt===q.answer) { bg='#dcfce7'; border='#22c55e'; col='#166534'; extra={fontWeight:900}; }
+            else if (opt===choice && opt!==q.answer) { bg='#fee2e2'; border='#ef4444'; col='#991b1b'; }
+            else { col='#94a3b8'; }
+          }
+          return React.createElement('button', {key:opt, onClick:()=>handleAnswer(opt),
+            style:{padding:'16px 12px',borderRadius:12,border:`2px solid ${border}`,background:bg,color:col,
+              fontWeight:700,fontSize:18,cursor:choice!==null?'default':'pointer',
+              textAlign:'center',transition:'all 0.15s',...extra}}, opt);
+        })
+      ),
+      choice!==null && React.createElement('div', {style:{background:choice===q.answer?'#f0fdf4':'#fff1f2',borderRadius:10,padding:'14px 16px',
+        border:`1px solid ${choice===q.answer?'#bbf7d0':'#fecaca'}`}},
+        React.createElement('div', {style:{fontSize:13,fontWeight:900,color:choice===q.answer?'#166534':'#991b1b',marginBottom:6}},
+          choice===q.answer ? '✅ Correct!' : `❌ The answer is ${q.answer}`),
+        React.createElement('div', {style:{fontSize:13,color:'#374151',lineHeight:1.6}}, q.exp)
+      )
+    )
+  );
+}
+
 // ── GAMES HUB ────────────────────────────────────────────────────────────────
 function VeinGamesHub() {
   const [game, setGame] = React.useState(null);
@@ -2570,7 +2782,7 @@ function VeinGamesHub() {
     { id:'ehit',    icon:'🔥', title:'EHIT Identification', desc:'Classify EHIT grades and learn post-ablation management', color:'#f97316', ready:true },
     { id:'us_id',   icon:'🔊', title:'Ultrasound ID', desc:'Identify which vein is shown in the ultrasound image', color:'#2563eb', ready:false },
     { id:'reflux',  icon:'🔄', title:'Reflux or No Reflux?', desc:'Look at the Doppler finding — is there reflux?', color:'#7c3aed', ready:false },
-    { id:'cpt',     icon:'💻', title:'CPT Code Challenge', desc:'Match the clinical scenario to the correct CPT code', color:'#f59e0b', ready:false },
+    { id:'cpt',     icon:'💻', title:'CPT Code Challenge', desc:'Match the clinical scenario to the correct CPT code', color:'#f59e0b', ready:true },
   ];
 
   const backBtn = React.createElement('button', {onClick:()=>setGame(null), style:{marginBottom:16,background:'none',border:'none',cursor:'pointer',fontSize:13,color:'#2563eb',fontWeight:700}}, '← Back to Games');
@@ -2578,6 +2790,7 @@ function VeinGamesHub() {
   if (game==='anatomy') return React.createElement('div', null, backBtn, React.createElement(VeinAnatomyGame));
   if (game==='dvt')     return React.createElement('div', null, backBtn, React.createElement(DVTGame));
   if (game==='ehit')    return React.createElement('div', null, backBtn, React.createElement(EHITGame));
+  if (game==='cpt')     return React.createElement('div', null, backBtn, React.createElement(CPTGame));
 
   return React.createElement('div', {style:{padding:'0 4px'}},
     React.createElement('div', {style:{background:'linear-gradient(135deg,#1e3a5f,#0ea5e9)',borderRadius:16,padding:'20px 24px',marginBottom:20,color:'white'}},
