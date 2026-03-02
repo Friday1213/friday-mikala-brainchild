@@ -2337,6 +2337,26 @@ function VeinAnatomyGame() {
 }
 
 
+const CLINICAL_TABS = [
+  {id:'clinical', label:'🩺 Clinical Guide'},
+  {id:'treatment', label:'💉 Treatments'},
+  {id:'procedures', label:'🔬 Procedures'},
+  {id:'complications', label:'⚠️ Complications'},
+  {id:'glossary', label:'🔤 Glossary'},
+  {id:'p2p', label:'📞 P2P Calls'},
+  {id:'rphs', label:'🏅 RPhS Cert'},
+  {id:'veingame', label:'🎮 Vein Games'},
+];
+const ADMIN_TABS = [
+  {id:'start',    label:'📋 Getting Started'},
+  {id:'systems',  label:'🛠️ Tools & Systems'},
+  {id:'faq',      label:'❓ FAQs'},
+  {id:'contacts', label:'📞 Contacts'},
+  {id:'protocols',label:'🚨 Protocols'},
+  {id:'marketing',label:'🎯 Marketing'},
+  {id:'resources',label:'🔗 Resources'},
+];
+
 // ── DVT GAME ─────────────────────────────────────────────────────────────────
 function DVTGame() {
   const [gameMode, setGameMode] = React.useState('study');
