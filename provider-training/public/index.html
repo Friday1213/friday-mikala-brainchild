@@ -2761,7 +2761,7 @@ function CPTGame() {
     gameMode==='quiz' && !done && React.createElement('div', {style:{maxWidth:540,margin:'0 auto'}},
       React.createElement('div', {style:{background:'#fffbeb',borderRadius:14,padding:'18px',marginBottom:16,border:'2px solid #fcd34d'}},
         React.createElement('div', {style:{fontSize:12,color:'#92400e',fontWeight:800,marginBottom:8}}, `Scenario ${quizIdx+1} of ${QUESTIONS.length}`),
-        React.createElement('div', {style:{fontSize:14,fontWeight:700,color:'#1e293b',lineHeight:1.7}}, q.scenario),
+        React.createElement('div', {style:{fontSize:14,fontWeight:700,color:'#1e293b',lineHeight:1.7}}, q.label),
         React.createElement('div', {style:{marginTop:10,fontSize:12,color:'#92400e',fontWeight:700}}, '👉 What CPT code applies?')
       ),
       React.createElement('div', {style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:14}},
@@ -2991,7 +2991,7 @@ function AcuteChronicGame() {
       // Question
       React.createElement('div', {style:{background:'#f0f9ff',borderRadius:14,padding:'18px',marginBottom:16,border:'2px solid #bae6fd'}},
         React.createElement('div', {style:{fontSize:12,color:'#0369a1',fontWeight:800,marginBottom:8}}, `Scenario ${quizIdx+1} of ${SCENARIOS.length}`),
-        React.createElement('div', {style:{fontSize:14,fontWeight:700,color:'#1e293b',lineHeight:1.7}}, q.scenario),
+        React.createElement('div', {style:{fontSize:14,fontWeight:700,color:'#1e293b',lineHeight:1.7}}, q.label),
         React.createElement('div', {style:{marginTop:10,fontSize:12,color:'#0369a1',fontWeight:700}}, '👉 Acute or Chronic DVT?')
       ),
       // Answer buttons
