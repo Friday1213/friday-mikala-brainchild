@@ -1706,7 +1706,6 @@ function RPhSTab() {
           [['🕐','3 Hours','Testing Time'],['📝','170 Questions','Computer-Based'],['💰','$365 USD','Exam Fee'],['🏢','Pearson VUE','Testing Centers'],['📅','Year-Round','Availability'],['🔄','5 Years','Renewal Cycle']].map(([icon,val,lbl])=>
             React.createElement('div', {key:lbl, style:{background:'#f8fafc',borderRadius:10,padding:'12px',textAlign:'center',border:'1px solid #e2e8f0'}},
               React.createElement('div', {style:{fontSize:20,marginBottom:4}},icon),
-              React.createElement('div', {style:{fontWeight:900,fontSize:14,color:'#1e293b'}}),
               React.createElement('div', {style:{fontWeight:900,fontSize:14,color:'#1e293b'}},val),
               React.createElement('div', {style:{fontSize:11,color:'#64748b'}},lbl)
             )
@@ -2263,7 +2262,6 @@ function VeinAnatomyGame() {
                   style:{display:'flex',gap:8,alignItems:'flex-start',padding:'7px 10px',borderRadius:8,marginBottom:4,cursor:'pointer',background:'white',border:'1px solid #f1f5f9'}},
                   React.createElement('div', {style:{width:10,height:10,borderRadius:'50%',background:v.color,flexShrink:0,marginTop:2}}),
                   React.createElement('div', null,
-                    React.createElement('div', {style:{fontSize:12,fontWeight:800,color:'#1e293b'}}),
                     React.createElement('div', {style:{fontSize:12,fontWeight:800,color:'#1e293b'}},v.name),
                     React.createElement('div', {style:{fontSize:11,color:'#64748b'}},v.location)
                   )
@@ -2275,7 +2273,6 @@ function VeinAnatomyGame() {
             React.createElement('button', {onClick:()=>setHL(null), style:{background:'none',border:'none',cursor:'pointer',fontSize:12,color:'#6C3CB5',fontWeight:700,marginBottom:10}},'← All veins'),
             React.createElement('div', {style:{borderRadius:14,border:`2px solid ${hlVein.color}`,overflow:'hidden'}},
               React.createElement('div', {style:{background:hlVein.color,color:'white',padding:'12px 16px'}},
-                React.createElement('div', {style:{fontSize:16,fontWeight:900}}),
                 React.createElement('div', {style:{fontSize:16,fontWeight:900}},hlVein.name),
                 React.createElement('div', {style:{fontSize:11,opacity:0.85,marginTop:2}},hlVein.location)
               ),
@@ -2320,7 +2317,6 @@ function VeinAnatomyGame() {
           )
         : React.createElement('div', null,
             React.createElement('div', {style:{background:'#f3e8ff',borderRadius:14,padding:'16px',marginBottom:14,border:'2px solid #e9d5ff'}},
-              React.createElement('div', {style:{fontSize:12,color:'#6C3CB5',fontWeight:800,marginBottom:6}}),
               React.createElement('div', {style:{fontSize:12,color:'#6C3CB5',fontWeight:800,marginBottom:6}},`Question ${quizIdx+1} of ${QUIZ.length}`),
               React.createElement('div', {style:{fontSize:14,fontWeight:700,color:'#1e293b',lineHeight:1.6}},q.q)
             ),
