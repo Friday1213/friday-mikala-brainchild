@@ -194,6 +194,7 @@ function HomeTab({ setMode, setAdminTab, setClinicalTab }) {
     { icon:'🔬', label:'Procedures', mode:'clinical', sub:'procedures' },
     { icon:'⚠️', label:'Complications', mode:'clinical', sub:'complications' },
     { icon:'🔤', label:'Glossary', mode:'clinical', sub:'glossary' },
+  { icon:'📞', label:'Peer-to-Peer Calls', mode:'clinical', sub:'p2p' },
     { icon:'❓', label:'FAQs', mode:'admin', sub:'faq' },
     { icon:'📞', label:'Contacts', mode:'admin', sub:'contacts' },
     { icon:'🚨', label:'Protocols', mode:'admin', sub:'protocols' },
@@ -1470,6 +1471,225 @@ function ResourcesTab() {
 }
 
 // ── VEIN GAME ─────────────────────────────────────────────────────────────────
+function P2PTab() {
+  const [step, setStep] = React.useState(null);
+  const [scenarioIdx, setScenarioIdx] = React.useState(null);
+
+  const steps = [
+    {
+      id: 'overview', icon: '📋', title: 'What is a Peer-to-Peer?',
+      color: '#1d4ed8',
+      content: [
+        { heading: 'Definition', body: 'A peer-to-peer (P2P) is a live phone call between you (the treating provider) and the insurance company\'s medical reviewer — typically a physician or nurse — to discuss a denied or pending prior authorization.' },
+        { heading: 'Purpose', body: 'To advocate for your patient\'s medical necessity directly. The reviewer has decision-making authority. A well-conducted P2P can overturn a denial in a single call.' },
+        { heading: 'Who Requests It?', body: 'The PA/auth team will notify you when a P2P is available or recommended. You will receive the patient name, case number, and callback number. You initiate the call — do not wait for insurance to call you.' },
+        { heading: 'Time Sensitivity', body: 'Most insurers allow 2–5 business days to request a P2P after a denial. Act fast. Ask your PA team immediately when you receive a denial notice.' },
+        { heading: 'APPs Can Do P2Ps', body: 'Yes — Physician Assistants and Nurse Practitioners can conduct P2Ps. You do not need a physician on the call unless the insurer specifically requires it (rare). Know your credentials and be confident.' },
+      ]
+    },
+    {
+      id: 'prep', icon: '📂', title: 'Before the Call: Preparation',
+      color: '#065f46',
+      content: [
+        { heading: 'Pull the Chart', body: 'Open Nextech before you dial. Have the patient\'s chart, ultrasound results, and procedure plan in front of you. Know the diagnosis inside and out.' },
+        { heading: 'Know the Denial Reason', body: 'Ask your PA team for the exact denial reason. Common reasons: insufficient conservative therapy documentation, reflux thresholds not met, missing junctional reflux, procedure not medically necessary. Each requires a different argument.' },
+        { heading: 'Check the Payer Policy', body: 'Open the Vein Policy Hub and pull up this insurer\'s criteria. Know exactly what they require — CEAP class, reflux duration, conservative therapy duration, diameter thresholds. You\'ll reference these on the call.' },
+        { heading: 'Have Your Numbers Ready', body: 'GSV/SSV diameter (mm), reflux duration (ms), CEAP class, conservative therapy start date and duration, symptoms documented, any prior treatments. Reviewers will ask for specifics — don\'t approximate.' },
+        { heading: 'Prepare Your Opening Line', body: 'Have a clear 2–3 sentence summary ready: who you are, what you\'re requesting, and the core clinical rationale. Example: "I\'m [Name], PA at VIP Medical Group. I\'m calling to discuss the prior auth denial for [Patient] — we\'re requesting RFA of the right GSV, which has a reflux time of 900ms and diameter of 6mm, with documented 12 weeks of failed compression therapy."' },
+        { heading: 'Note the Case Number', body: 'Always have the authorization/case number ready. Reviewers will ask for it immediately. Get it from your PA team before calling.' },
+      ]
+    },
+    {
+      id: 'call', icon: '📞', title: 'During the Call',
+      color: '#92400e',
+      content: [
+        { heading: 'Opening the Call', body: 'State your name, credentials, NPI, and practice name. Give the patient name, DOB, and case/auth number. Say: "I\'m calling to discuss the denial for [procedure] and to provide additional clinical information supporting medical necessity."' },
+        { heading: 'Let Them Talk First', body: 'Ask the reviewer to summarize the reason for denial. This tells you exactly what gap you need to address. Don\'t launch into your full argument until you know their objection.' },
+        { heading: 'Present Clinical Evidence', body: 'Walk through: symptoms (using the patient\'s own words if possible), ultrasound findings (diameter + reflux time), CEAP class, conservative therapy history, functional impact on daily activities. Be specific and cite dates.' },
+        { heading: 'Reference the Policy', body: 'If you\'ve checked the Vein Policy Hub, you can say: "Per your clinical policy, [X] is a coverage criterion — our documentation shows [Y]." Reviewers respect providers who know the policy.' },
+        { heading: 'Stay Calm and Clinical', body: 'Never argue emotionally. If challenged, respond with data. If you don\'t know something, say "I\'ll need to pull that — can you hold one moment?" Don\'t guess.' },
+        { heading: 'Ask for the Decision', body: 'At the end, ask directly: "Based on what I\'ve shared, are you able to approve this authorization today?" If yes — get a reference number. If not — ask what additional information would support approval.' },
+        { heading: 'Document Everything', body: 'Write in the Nextech Note section immediately after: date/time of call, reviewer name, what was discussed, outcome, and any reference/confirmation number. This protects you and the patient.' },
+      ]
+    },
+    {
+      id: 'scenarios', icon: '🎭', title: 'Common Scenarios & Scripts',
+      color: '#6d28d9',
+      content: [] // handled separately
+    },
+    {
+      id: 'tips', icon: '💡', title: 'Tips & Watch-Outs',
+      color: '#b45309',
+      content: [
+        { heading: 'Don\'t Accept "No" Without Pushing Back', body: 'A denial is not final until you\'ve done the P2P. Many denials flip on the call. If the reviewer upholds denial, escalate to a formal appeal — the PA team can help.' },
+        { heading: 'Junctional Reflux is a Common Sticking Point', body: 'Some payers (UHC, Oxford, BCBS IL) require documented junctional reflux. If your US report doesn\'t explicitly mention it, that\'s often the denial reason. Know which payers require it.' },
+        { heading: 'Conservative Therapy Documentation', body: 'The #1 denial reason. Stocking compliance must be documented at EVERY visit. One missed note can tank an auth. If conservative therapy wasn\'t documented well, acknowledge it and offer to supplement with a letter of medical necessity.' },
+        { heading: 'Reflux Time Must Be Explicit', body: 'Some MACs (CGS, Noridian) require the reflux duration to appear verbatim in the US report. "Reflux present" is not enough. If your report is vague, loop in the sonographer before the call.' },
+        { heading: 'Know When to Escalate to MD', body: 'If the reviewer specifically requests an MD-to-MD peer-to-peer, flag it to your supervising physician immediately. This is rare but happens with some complex cases or specific payers.' },
+        { heading: 'Varithena-Specific Tip', body: 'Varithena often gets additional scrutiny. Know the specific Varithena criteria for the payer (not just the general ablation criteria). Some payers require prior failed RFA before approving Varithena.' },
+        { heading: 'Log Your Wins', body: 'When a P2P flips a denial, note it. Patterns help identify which payers are worth fighting and which criteria arguments work best. Share wins with the PA team.' },
+      ]
+    },
+  ];
+
+  const scenarios = [
+    {
+      title: '🚫 "Not medically necessary — conservative therapy not met"',
+      opener: 'I understand the concern. I\'d like to walk you through the conservative therapy documentation.',
+      points: [
+        'Patient was prescribed 20-30 mmHg compression stockings on [date] — that\'s [X] weeks ago.',
+        'Compliance was documented at each visit: [dates].',
+        'Despite adherence, patient continues to report [specific symptoms] that interfere with [specific ADLs].',
+        'Per your policy, [X weeks] of documented conservative therapy is required — we meet that threshold.',
+      ],
+      close: 'Given the documented compliance and ongoing symptoms, do you have what you need to approve this today?'
+    },
+    {
+      title: '📏 "Reflux time insufficient / not documented"',
+      opener: 'I have the ultrasound report in front of me — let me give you the exact findings.',
+      points: [
+        'US performed on [date] by [credentialed sonographer].',
+        'GSV diameter: [X] mm. Reflux duration: [X] ms — this exceeds your [500ms] threshold.',
+        'Junctional reflux was [documented / present at SFJ].',
+        'The report was interpreted by [reading physician] and is available for fax if needed.',
+      ],
+      close: 'The ultrasound findings meet your coverage criteria. Are you able to approve the authorization based on this?'
+    },
+    {
+      title: '❓ "We need more clinical information"',
+      opener: 'Absolutely — I\'m happy to provide that now. What specific information would be most helpful?',
+      points: [
+        'Listen carefully to what they ask for — address each item specifically.',
+        'Offer to fax records, US report, clinical notes, or photos immediately.',
+        'Ask: "If I provide [X] today, will that be sufficient for approval?"',
+        'Get their fax number and the case number to reference on the cover sheet.',
+      ],
+      close: 'I\'ll have that to you within [timeframe]. Can you hold the case open for [X] business days while we get that submitted?'
+    },
+    {
+      title: '🔄 "This procedure requires step therapy / prior treatment"',
+      opener: 'Let me address that — this patient has undergone prior treatment. Here\'s what was done:',
+      points: [
+        'Describe prior procedures with dates (e.g., "RFA of left GSV performed on [date]").',
+        'Explain why the current request is for a different vein / location / recurrence.',
+        'Reference the policy: "Your policy requires prior saphenous treatment before Varithena — that was completed on [date]."',
+        'If no prior treatment exists: pivot to exceptions (ulceration, hemorrhage, recurrent phlebitis — these often bypass step therapy).',
+      ],
+      close: 'The step therapy requirement has been met. Does this address the clinical question?'
+    },
+  ];
+
+  const stepColors = { overview:'#1d4ed8', prep:'#065f46', call:'#92400e', scenarios:'#6d28d9', tips:'#b45309' };
+
+  return (
+    React.createElement('div', {style:{padding:'0 0 40px'}},
+      React.createElement('div', {style:{background:'linear-gradient(135deg,#1e3a5f,#1d4ed8)',borderRadius:16,padding:'24px 28px',marginBottom:24,color:'white'}},
+        React.createElement('div', {style:{fontSize:28,marginBottom:6}}, '📞'),
+        React.createElement('div', {style:{fontSize:20,fontWeight:900,fontFamily:'Nunito'}}, 'Peer-to-Peer Call Training'),
+        React.createElement('div', {style:{fontSize:13,opacity:0.85,marginTop:4}}, 'Learn how to prepare, conduct, and document a successful peer-to-peer insurance review call.')
+      ),
+
+      /* Step selector */
+      React.createElement('div', {style:{display:'flex',gap:8,flexWrap:'wrap',marginBottom:24}},
+        steps.map(s =>
+          React.createElement('button', {
+            key: s.id,
+            onClick: () => { setStep(step === s.id ? null : s.id); setScenarioIdx(null); },
+            style: {
+              background: step === s.id ? s.color : 'white',
+              color: step === s.id ? 'white' : s.color,
+              border: `2px solid ${s.color}`,
+              borderRadius: 10, padding: '8px 14px',
+              fontFamily: 'Nunito', fontWeight: 800, fontSize: 13,
+              cursor: 'pointer', transition: 'all 0.15s'
+            }
+          }, `${s.icon} ${s.title}`)
+        )
+      ),
+
+      /* Content */
+      step && step !== 'scenarios' && (() => {
+        const s = steps.find(x => x.id === step);
+        return React.createElement('div', {style:{background:'white',borderRadius:14,border:`2px solid ${s.color}22`,overflow:'hidden'}},
+          React.createElement('div', {style:{background:s.color,padding:'14px 20px',color:'white',fontFamily:'Nunito',fontWeight:900,fontSize:16}},
+            `${s.icon} ${s.title}`
+          ),
+          React.createElement('div', {style:{padding:'20px 24px'}},
+            s.content.map((c,i) =>
+              React.createElement('div', {key:i, style:{marginBottom:18}},
+                React.createElement('div', {style:{fontWeight:800,fontSize:13,color:s.color,marginBottom:4,fontFamily:'Nunito'}}, c.heading),
+                React.createElement('div', {style:{fontSize:13,color:'#374151',lineHeight:1.6}}, c.body)
+              )
+            )
+          )
+        );
+      })(),
+
+      /* Scenarios */
+      step === 'scenarios' && React.createElement('div', null,
+        React.createElement('div', {style:{fontFamily:'Nunito',fontWeight:900,fontSize:15,color:'#6d28d9',marginBottom:14}},
+          '🎭 Select a scenario to see a suggested script:'
+        ),
+        React.createElement('div', {style:{display:'flex',flexDirection:'column',gap:10}},
+          scenarios.map((sc, i) =>
+            React.createElement('div', {key:i, style:{background:'white',borderRadius:12,border:`2px solid ${scenarioIdx===i?'#6d28d9':'#e2e8f0'}`,overflow:'hidden'}},
+              React.createElement('button', {
+                onClick: () => setScenarioIdx(scenarioIdx === i ? null : i),
+                style: {
+                  width:'100%', textAlign:'left', padding:'14px 18px',
+                  background: scenarioIdx===i ? '#6d28d9' : 'white',
+                  color: scenarioIdx===i ? 'white' : '#1e293b',
+                  border:'none', cursor:'pointer',
+                  fontFamily:'Nunito', fontWeight:800, fontSize:13
+                }
+              }, sc.title),
+              scenarioIdx === i && React.createElement('div', {style:{padding:'16px 20px'}},
+                React.createElement('div', {style:{marginBottom:12}},
+                  React.createElement('div', {style:{fontSize:11,fontWeight:900,color:'#6d28d9',textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:4}}, '💬 Opening'),
+                  React.createElement('div', {style:{background:'#f5f3ff',borderLeft:'3px solid #6d28d9',padding:'10px 14px',borderRadius:'0 8px 8px 0',fontSize:13,color:'#374151',lineHeight:1.6,fontStyle:'italic'}},
+                    `"${sc.opener}"`
+                  )
+                ),
+                React.createElement('div', {style:{marginBottom:12}},
+                  React.createElement('div', {style:{fontSize:11,fontWeight:900,color:'#6d28d9',textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:6}}, '📋 Key Points to Cover'),
+                  sc.points.map((p,j) =>
+                    React.createElement('div', {key:j, style:{display:'flex',gap:8,marginBottom:6,fontSize:13,color:'#374151',lineHeight:1.5}},
+                      React.createElement('span', {style:{color:'#6d28d9',fontWeight:900,marginTop:1}}, '•'),
+                      React.createElement('span', null, p)
+                    )
+                  )
+                ),
+                React.createElement('div', null,
+                  React.createElement('div', {style:{fontSize:11,fontWeight:900,color:'#6d28d9',textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:4}}, '✅ Closing Ask'),
+                  React.createElement('div', {style:{background:'#f0fdf4',borderLeft:'3px solid #16a34a',padding:'10px 14px',borderRadius:'0 8px 8px 0',fontSize:13,color:'#374151',lineHeight:1.6,fontStyle:'italic'}},
+                    `"${sc.close}"`
+                  )
+                )
+              )
+            )
+          )
+        )
+      ),
+
+      /* Quick ref footer */
+      !step && React.createElement('div', {style:{background:'#f8fafc',borderRadius:12,padding:'18px 20px',border:'1px solid #e2e8f0'}},
+        React.createElement('div', {style:{fontFamily:'Nunito',fontWeight:900,fontSize:13,color:'#64748b',marginBottom:12,textTransform:'uppercase',letterSpacing:'0.06em'}}, '📌 Quick Reference — P2P Checklist'),
+        [
+          '✅ Pull the chart and US report before dialing',
+          '✅ Know the denial reason (ask your PA team)',
+          '✅ Check the Vein Policy Hub for this payer\'s exact criteria',
+          '✅ Have: patient DOB, case/auth number, GSV/SSV diameter + reflux ms, conservative therapy dates',
+          '✅ Let the reviewer state the denial reason first — then respond',
+          '✅ Ask for a decision before ending the call',
+          '✅ Document in Nextech immediately: date, reviewer name, outcome, reference number',
+        ].map((item, i) =>
+          React.createElement('div', {key:i, style:{fontSize:13,color:'#374151',marginBottom:6,lineHeight:1.5}}, item)
+        )
+      )
+    )
+  );
+}
+
 function VeinGameTab() {
   const [view, setView]           = React.useState('anterior');
   const [mode, setMode]           = React.useState('study');
@@ -1786,6 +2006,7 @@ const CLINICAL_TABS = [
   {id:'procedures', label:'🔬 Procedures'},
   {id:'complications', label:'⚠️ Complications'},
   {id:'glossary', label:'🔤 Glossary'},
+  {id:'p2p', label:'📞 Peer-to-Peer'},
   {id:'veingame', label:'🧠 Vein Game'},
 ];
 const ADMIN_TABS = [
@@ -1903,6 +2124,7 @@ function App() {
         {mode === 'clinical' && clinicalTab === 'procedures'     && <ProceduresTab />}
         {mode === 'clinical' && clinicalTab === 'complications'  && <ComplicationsTab />}
         {mode === 'clinical' && clinicalTab === 'glossary'       && <GlossaryTab />}
+        {mode === 'clinical' && clinicalTab === 'p2p'           && <P2PTab />}
         {mode === 'clinical' && clinicalTab === 'veingame'      && <VeinGameTab />}
         {mode === 'admin'    && adminTab === 'start'      && <StartTab />}
         {mode === 'admin'    && adminTab === 'systems'    && <SystemsTab />}
