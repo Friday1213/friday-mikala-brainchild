@@ -2314,7 +2314,6 @@ function VeinAnatomyGame() {
         ? React.createElement('div', {style:{textAlign:'center',padding:'40px',background:'#f3e8ff',borderRadius:16,border:'2px solid #e9d5ff'}},
             React.createElement('div', {style:{fontSize:48,marginBottom:8}}, score.c===QUIZ.length?'🏆':score.c>=QUIZ.length*.75?'🎉':'📚'),
             React.createElement('h3', {style:{color:'#6C3CB5',fontWeight:900,margin:'0 0 8px'}},'Quiz Complete!'),
-            React.createElement('div', {style:{fontSize:32,fontWeight:900,color:'#1e293b',marginBottom:16}}), 
             React.createElement('div', {style:{fontSize:32,fontWeight:900,color:'#1e293b',marginBottom:16}},`${score.c}/${QUIZ.length}`),
             React.createElement('button', {onClick:()=>{setQI(0);setScore({c:0,t:0});setChoice(null);},
               style:{padding:'10px 28px',borderRadius:10,border:'none',background:'#6C3CB5',color:'white',fontWeight:900,cursor:'pointer',fontSize:14}},'🔄 Try Again')
@@ -3230,7 +3229,7 @@ function RefluxGame() {
     tab==='quiz' && done && React.createElement('div', {style:{textAlign:'center',padding:'40px',background:'#faf5ff',borderRadius:16,border:'2px solid #e9d5ff'}},
       React.createElement('div', {style:{fontSize:48,marginBottom:8}}, score.c===QUESTIONS.length?'🏆':'📚'),
       React.createElement('h3', {style:{color:'#7c3aed',fontWeight:900,margin:'0 0 8px'}},'Quiz Complete!'),
-      React.createElement('div', {style:{fontSize:32,fontWeight:900,color:'#1e293b',marginBottom:16}}),`${score.c}/${QUESTIONS.length}`,
+      React.createElement('div', {style:{fontSize:32,fontWeight:900,color:'#1e293b',marginBottom:16}},`${score.c}/${QUESTIONS.length}`),
       React.createElement('button', {onClick:restart, style:{padding:'10px 28px',borderRadius:10,border:'none',background:'#7c3aed',color:'white',fontWeight:900,cursor:'pointer',fontSize:14,display:'block',margin:'16px auto 0'}},'🔄 Try Again')
     ),
 
