@@ -2021,30 +2021,351 @@ const ADMIN_TABS = [
   {id:'resources',label:'🔗 Resources'},
 ];
 
+// ── DVT GAME ─────────────────────────────────────────────────────────────────
+function DVTGame() {
+  const [gameMode, setGameMode] = React.useState('study');
+  const [selected, setSelected] = React.useState(null);
+  const [quizIdx, setQuizIdx] = React.useState(0);
+  const [choice, setChoice] = React.useState(null);
+  const [score, setScore] = React.useState({c:0,t:0});
+
+  const DVT_ZONES = [
+    { id:'ivc', label:'IVC / Iliac', y:60, x:130, r:14, color:'#dc2626',
+      classification:'Proximal — Central',
+      treatment:'Therapeutic anticoagulation x 3–6 months. Refer to vascular surgery — may require catheter-directed thrombolysis or thrombectomy. High PE risk.',
+      duration:'3–6 months minimum; indefinite if unprovoked or recurrent.',
+      pe_risk:'Very High', ac:'DOAC or LMWH → warfarin', intervention:'Consult vascular surgery' },
+    { id:'cfv', label:'Common Femoral', y:130, x:130, r:12, color:'#ef4444',
+      classification:'Proximal DVT',
+      treatment:'Therapeutic anticoagulation. Typically managed outpatient unless bilateral, massive, or phlegmasia. DOACs are first-line.',
+      duration:'3 months if provoked; 3–6+ months if unprovoked.',
+      pe_risk:'High', ac:'DOAC (rivaroxaban or apixaban preferred)', intervention:'Usually none; consult if phlegmasia' },
+    { id:'fv', label:'Femoral Vein', y:220, x:128, r:11, color:'#f97316',
+      classification:'Proximal DVT',
+      treatment:'Same as CFV — treat as proximal DVT. Full anticoagulation required. Outpatient if stable.',
+      duration:'3 months minimum.',
+      pe_risk:'High', ac:'DOAC first-line', intervention:'Rarely needed' },
+    { id:'pop', label:'Popliteal', y:310, x:128, r:11, color:'#f97316',
+      classification:'Proximal DVT',
+      treatment:'Full therapeutic anticoagulation — popliteal DVT carries same proximal risk as femoral. Do not treat as distal.',
+      duration:'3 months minimum.',
+      pe_risk:'Moderate-High', ac:'DOAC first-line', intervention:'Rarely needed' },
+    { id:'tib', label:'Tibial / Peroneal', y:430, x:125, r:10, color:'#eab308',
+      classification:'Distal (Calf) DVT',
+      treatment:'Controversial. Isolated distal DVT in low-risk patients: consider serial US surveillance at 1–2 weeks vs. anticoagulation. High-risk patients (active cancer, prior DVT, inpatient): anticoagulate.',
+      duration:'If anticoagulated: 3 months. If surveillance: repeat US in 1–2 weeks.',
+      pe_risk:'Low (unless propagates proximally)', ac:'DOAC if treating; observe if low-risk', intervention:'None typically' },
+    { id:'gastro', label:'Gastrocnemius / Soleal', y:390, x:110, r:9, color:'#84cc16',
+      classification:'Isolated Muscular DVT',
+      treatment:'Often managed conservatively. Repeat duplex in 1 week to assess for propagation. Anticoagulate if symptomatic, high-risk, or propagating.',
+      duration:'If treated: 3 months. Surveillance if low-risk.',
+      pe_risk:'Low', ac:'Observation vs. DOAC based on risk', intervention:'None' },
+  ];
+
+  const QUIZ_Q = [
+    { q:'A patient has a new femoral vein DVT, no cancer, first event, no risk factors. What is the preferred anticoagulant?', opts:['Warfarin (target INR 2-3)','DOAC (rivaroxaban or apixaban)','LMWH only','No anticoagulation — observe'], ans:1, exp:'DOACs are first-line for most DVTs. Rivaroxaban and apixaban are approved for DVT treatment without initial parenteral therapy.' },
+    { q:'An isolated gastrocnemius vein DVT is found on duplex in a low-risk outpatient. What is the most appropriate next step?', opts:['Start anticoagulation immediately','Repeat duplex ultrasound in 1–2 weeks','Refer to vascular surgery','Order CT pulmonary angiography'], ans:1, exp:'Isolated muscular DVTs are often managed with serial surveillance. Anticoagulate if propagating, symptomatic, or patient is high-risk.' },
+    { q:'What is the minimum treatment duration for a PROVOKED proximal DVT (e.g., post-surgery)?', opts:['6 weeks','3 months','6 months','Indefinite'], ans:1, exp:'Provoked DVT = 3 months. Unprovoked or recurrent = 3–6+ months. Indefinite for active cancer or recurrent unprovoked.' },
+    { q:'A patient has an IVC thrombus with significant leg swelling and early phlegmasia. What is the most appropriate escalation?', opts:['Start warfarin and follow up in 1 month','DOAC and repeat scan in 1 week','Refer to vascular surgery for possible catheter-directed thrombolysis','Compression stockings and elevation only'], ans:2, exp:'Central/IVC DVT with phlegmasia or massive clot burden warrants urgent vascular surgery referral for possible CDT or thrombectomy.' },
+    { q:'Which of the following DVT locations is considered PROXIMAL?', opts:['Gastrocnemius','Soleal sinus','Posterior tibial','Popliteal'], ans:3, exp:'Proximal DVT includes popliteal and above (popliteal, femoral, CFV, iliac, IVC). Distal = tibial/peroneal/muscular veins.' },
+    { q:'A patient had a DVT 2 years ago and now presents with a new unprovoked DVT. Recommended duration of anticoagulation?', opts:['3 months','6 months','12 months','Indefinite'], ans:3, exp:'Recurrent unprovoked DVT = indefinite anticoagulation, provided bleeding risk is acceptable. Discuss risk-benefit with patient.' },
+  ];
+
+  const zone = selected ? DVT_ZONES.find(z=>z.id===selected) : null;
+  const q = QUIZ_Q[quizIdx % QUIZ_Q.length];
+
+  const LEG = 'M 72,0 C 62,32 59,72 61,112 C 63,165 68,222 72,268 C 75,293 77,314 79,338 C 83,378 87,418 91,456 C 94,486 96,512 98,542 C 99,556 100,570 98,588 L 100,592 L 160,592 L 162,588 C 160,570 161,556 162,542 C 164,512 166,486 169,456 C 173,418 177,378 181,338 C 183,314 185,293 188,268 C 192,222 197,165 199,112 C 201,72 198,32 188,0 Z';
+
+  function nextQ(correct) {
+    setScore(s=>({c:s.c+(correct?1:0), t:s.t+1}));
+    setTimeout(()=>{ setChoice(null); setQuizIdx(i=>i+1); }, 1400);
+  }
+
+  const btnB = {border:'none',cursor:'pointer',fontWeight:800,fontSize:12,borderRadius:9,padding:'7px 14px'};
+
+  return React.createElement('div', {style:{maxWidth:960,margin:'0 auto'}},
+    React.createElement('div', {style:{textAlign:'center',marginBottom:18}},
+      React.createElement('h2', {style:{fontSize:22,fontWeight:900,color:'#1e3a5f',margin:'0 0 4px'}}, '🩸 DVT Identification & Treatment'),
+      React.createElement('p', {style:{color:'#64748b',fontSize:13,margin:0}}, 'Learn DVT classification, risk stratification, and treatment by location')
+    ),
+    React.createElement('div', {style:{display:'flex',gap:8,justifyContent:'center',marginBottom:16}},
+      [['study','📚 Study'],['quiz','🎮 Quiz']].map(([m,lbl])=>
+        React.createElement('button', {key:m, onClick:()=>{setGameMode(m);setSelected(null);setChoice(null);setQuizIdx(0);setScore({c:0,t:0});},
+          style:{...btnB, background:gameMode===m?'#dc2626':'#f1f5f9', color:gameMode===m?'white':'#64748b'}}, lbl)
+      ),
+      gameMode==='quiz' && React.createElement('div', {style:{background:'#dc2626',color:'white',borderRadius:20,padding:'7px 16px',fontWeight:800,fontSize:13}}, `⭐ ${score.c}/${score.t}`)
+    ),
+
+    gameMode==='study' && React.createElement('div', {style:{display:'flex',gap:20,flexWrap:'wrap',justifyContent:'center',alignItems:'flex-start'}},
+      // SVG leg
+      React.createElement('svg', {width:220,height:600,viewBox:'0 0 260 600',style:{borderRadius:16,background:'linear-gradient(180deg,#fff1f2,#f8fafc)',boxShadow:'0 4px 20px rgba(220,38,38,0.1)',flexShrink:0}},
+        React.createElement('path', {d:LEG, fill:'#fde8d8', stroke:'#e8b89a', strokeWidth:1.5, opacity:0.8}),
+        React.createElement('ellipse', {cx:130,cy:295,rx:28,ry:18,fill:'#f5d0ba',stroke:'#e8b89a',strokeWidth:1,opacity:0.6}),
+        React.createElement('text', {x:130,y:14,textAnchor:'middle',fontSize:9,fontWeight:800,fill:'#94a3b8'},'ANTERIOR VIEW'),
+        DVT_ZONES.map(z=>React.createElement('g', {key:z.id, style:{cursor:'pointer'}, onClick:()=>setSelected(s=>s===z.id?null:z.id)},
+          React.createElement('circle', {cx:z.x,cy:z.y,r:z.r+6,fill:z.color,opacity:selected===z.id?0.25:0}),
+          React.createElement('circle', {cx:z.x,cy:z.y,r:z.r,fill:z.color,opacity:selected===z.id?1:0.7,stroke:selected===z.id?'#1e293b':'none',strokeWidth:2}),
+          React.createElement('text', {x:z.x+z.r+5,y:z.y+4,fontSize:9,fontWeight:700,fill:'#374151'}, z.label)
+        ))
+      ),
+      // Info panel
+      React.createElement('div', {style:{flex:1,minWidth:260,maxWidth:400}},
+        !zone && React.createElement('div', null,
+          React.createElement('p', {style:{fontSize:13,color:'#64748b',marginBottom:16}}, '👆 Tap a DVT location on the diagram to learn classification, PE risk, and treatment.'),
+          React.createElement('div', {style:{display:'flex',flexDirection:'column',gap:8}},
+            DVT_ZONES.map(z=>React.createElement('div', {key:z.id,onClick:()=>setSelected(z.id),style:{padding:'10px 14px',borderRadius:10,border:`2px solid ${z.color}44`,background:'white',cursor:'pointer',display:'flex',alignItems:'center',gap:10}},
+              React.createElement('div', {style:{width:14,height:14,borderRadius:'50%',background:z.color,flexShrink:0}}),
+              React.createElement('div', null,
+                React.createElement('div', {style:{fontSize:13,fontWeight:800,color:'#1e293b'}},'DVT: '+z.label),
+                React.createElement('div', {style:{fontSize:11,color:'#64748b'}},z.classification)
+              )
+            ))
+          )
+        ),
+        zone && React.createElement('div', null,
+          React.createElement('button', {onClick:()=>setSelected(null),style:{background:'none',border:'none',cursor:'pointer',fontSize:12,color:'#2563eb',fontWeight:700,marginBottom:10}}, '← All locations'),
+          React.createElement('div', {style:{borderRadius:14,border:`2px solid ${zone.color}`,overflow:'hidden'}},
+            React.createElement('div', {style:{background:zone.color,color:'white',padding:'12px 16px'}},
+              React.createElement('div', {style:{fontSize:16,fontWeight:900}},'DVT: '+zone.label),
+              React.createElement('div', {style:{fontSize:12,opacity:0.9,marginTop:2}},zone.classification)
+            ),
+            React.createElement('div', {style:{padding:'14px 16px',display:'flex',flexDirection:'column',gap:12}},
+              [
+                ['⚠️ PE Risk', zone.pe_risk],
+                ['💊 Anticoagulation', zone.ac],
+                ['⏱ Duration', zone.duration],
+                ['🏥 Intervention', zone.intervention],
+              ].map(([lbl,val])=>React.createElement('div', {key:lbl},
+                React.createElement('div', {style:{fontSize:11,fontWeight:900,color:'#94a3b8',textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:2}},lbl),
+                React.createElement('div', {style:{fontSize:13,color:'#1e293b',fontWeight:600}},val)
+              )),
+              React.createElement('div', {style:{background:'#f8fafc',borderRadius:8,padding:'10px 12px',borderLeft:`3px solid ${zone.color}`}},
+                React.createElement('div', {style:{fontSize:11,fontWeight:900,color:'#94a3b8',marginBottom:4}},'CLINICAL NOTE'),
+                React.createElement('div', {style:{fontSize:12,color:'#374151',lineHeight:1.6}},zone.treatment)
+              )
+            )
+          )
+        )
+      )
+    ),
+
+    gameMode==='quiz' && React.createElement('div', {style:{maxWidth:520,margin:'0 auto'}},
+      React.createElement('div', {style:{background:'#fff1f2',borderRadius:14,padding:'16px',marginBottom:14,textAlign:'center',border:'1px solid #fecaca'}},
+        React.createElement('div', {style:{fontSize:12,color:'#dc2626',fontWeight:800,marginBottom:6}},`Question ${(quizIdx%QUIZ_Q.length)+1} of ${QUIZ_Q.length}`),
+        React.createElement('div', {style:{fontSize:14,fontWeight:700,color:'#1e293b',lineHeight:1.6}},q.q)
+      ),
+      React.createElement('div', {style:{display:'flex',flexDirection:'column',gap:8,marginBottom:14}},
+        q.opts.map((opt,i)=>{
+          let bg='#f8fafc',border='#e2e8f0',col='#1e293b';
+          if(choice!==null){ if(i===q.ans){bg='#dcfce7';border='#22c55e';col='#166534';} else if(i===choice&&i!==q.ans){bg='#fee2e2';border='#ef4444';col='#991b1b';} else{col='#94a3b8';} }
+          return React.createElement('button', {key:i, onClick:()=>{ if(choice!==null)return; setChoice(i); nextQ(i===q.ans); },
+            style:{padding:'12px 16px',borderRadius:10,border:`2px solid ${border}`,background:bg,color:col,fontWeight:700,fontSize:13,cursor:choice!==null?'default':'pointer',textAlign:'left'}}, opt);
+        })
+      ),
+      choice!==null && React.createElement('div', {style:{background:'#f0fdf4',borderRadius:10,padding:'12px 16px',border:'1px solid #bbf7d0'}},
+        React.createElement('div', {style:{fontSize:12,fontWeight:900,color:'#166534',marginBottom:4}}, choice===q.ans?'✅ Correct!':'❌ Incorrect — here\'s why:'),
+        React.createElement('div', {style:{fontSize:12,color:'#374151',lineHeight:1.6}},q.exp)
+      )
+    )
+  );
+}
+
+// ── EHIT GAME ────────────────────────────────────────────────────────────────
+function EHITGame() {
+  const [gameMode, setGameMode] = React.useState('study');
+  const [selected, setSelected] = React.useState(null);
+  const [quizState, setQuizState] = React.useState(null);
+  const [choice, setChoice] = React.useState(null);
+  const [score, setScore] = React.useState({c:0,t:0});
+
+  const CLASSES = [
+    { id:'c1', label:'Class 1', color:'#22c55e', short:'Thrombus at SFJ, not extending into CFV',
+      desc:'Thrombus extends to within 5 cm of the SFJ but does NOT enter the deep system. Remains within the GSV at the junction.',
+      treatment:'Conservative management. Repeat duplex in 1–2 weeks to confirm no progression. No anticoagulation required routinely.',
+      ac:'Not typically required', followup:'Repeat duplex in 1–2 weeks', risk:'Low' },
+    { id:'c2', label:'Class 2', color:'#eab308', short:'Thrombus enters CFV but <50% lumen occlusion',
+      desc:'Thrombus protrudes into the CFV lumen, occluding less than 50% of the vessel. Considered the threshold for intervention.',
+      treatment:'Anticoagulation recommended — most practitioners initiate therapeutic dosing. DOAC or fondaparinux commonly used. Repeat duplex in 5–7 days.',
+      ac:'Therapeutic anticoagulation (DOAC or fondaparinux)', followup:'Repeat duplex in 5–7 days', risk:'Moderate' },
+    { id:'c3', label:'Class 3', color:'#f97316', short:'Thrombus enters CFV ≥50% lumen occlusion',
+      desc:'Thrombus significantly occludes the CFV (≥50%). High risk of propagation and PE. Requires prompt anticoagulation.',
+      treatment:'Therapeutic anticoagulation required. Monitor closely. Repeat duplex in 3–5 days. May require vascular surgery consultation if progressing.',
+      ac:'Therapeutic anticoagulation — urgent', followup:'Repeat duplex in 3–5 days', risk:'High' },
+    { id:'c4', label:'Class 4', color:'#dc2626', short:'Complete CFV occlusion (full DVT)',
+      desc:'Complete occlusion of the CFV. This IS a DVT. Treat exactly as you would a proximal DVT — full therapeutic anticoagulation and standard DVT management protocol.',
+      treatment:'Treat as proximal DVT. Full therapeutic anticoagulation for minimum 3 months. Follow DVT management guidelines. Consult if phlegmasia or massive clot burden.',
+      ac:'Full therapeutic anticoagulation (DVT protocol)', followup:'Repeat duplex in 1 week; follow DVT protocol', risk:'Very High — treat as proximal DVT' },
+  ];
+
+  const QUIZ_Q = [
+    { q:'Post-RFA duplex shows thrombus protruding 2 cm into the CFV, occluding 30% of the lumen. What EHIT class is this?', opts:['Class 1','Class 2','Class 3','Class 4'], ans:1, exp:'Class 2 = thrombus enters CFV with <50% occlusion. This is the threshold where anticoagulation is typically initiated.' },
+    { q:'EHIT Class 1 is found on the post-procedure duplex. What is the recommended management?', opts:['Therapeutic anticoagulation immediately','Repeat duplex in 1–2 weeks; no AC required routinely','Refer to vascular surgery','Low-molecular-weight heparin x 3 months'], ans:1, exp:'Class 1 does not enter the deep system. Conservative surveillance with repeat duplex in 1–2 weeks is standard. No anticoagulation is routinely required.' },
+    { q:'EHIT Class 4 is identified. How should this be managed?', opts:['Observation and repeat scan in 2 weeks','Prophylactic-dose anticoagulation only','Full therapeutic anticoagulation per DVT protocol','Compression stockings and elevation'], ans:2, exp:'Class 4 = complete CFV occlusion = DVT. Treat exactly as a proximal DVT with full therapeutic anticoagulation for minimum 3 months.' },
+    { q:'Which EHIT class marks the threshold where most clinicians initiate anticoagulation?', opts:['Class 1','Class 2','Class 3','Class 4'], ans:1, exp:'Class 2 (thrombus in CFV <50%) is the commonly cited threshold for starting anticoagulation, though practices vary slightly by institution.' },
+    { q:'How soon after a procedure is EHIT most commonly detected?', opts:['Same day','1–3 days post-procedure','2–4 weeks post-procedure','Only at the 3-month follow-up'], ans:1, exp:'EHIT most commonly presents on the post-procedure duplex scan, performed ideally 1–7 days after the procedure. This is why early post-op scanning is critical.' },
+    { q:'A patient has EHIT Class 3 found on day-2 duplex. Anticoagulation is started. What is the next step?', opts:['Discharge and follow up in 3 months','Repeat duplex in 3–5 days to assess progression','Immediate surgical thrombectomy','Stop anticoagulation after 6 weeks'], ans:1, exp:'Class 3 requires close monitoring — repeat duplex in 3–5 days to confirm stability or detect progression to Class 4.' },
+  ];
+
+  // SVG: SFJ area illustration
+  const q = quizState ? QUIZ_Q[quizState.idx % QUIZ_Q.length] : null;
+
+  function startQuiz() { setGameMode('quiz'); setQuizState({idx:0}); setChoice(null); setScore({c:0,t:0}); }
+  function nextQ(correct) {
+    setScore(s=>({c:s.c+(correct?1:0),t:s.t+1}));
+    setTimeout(()=>{ setChoice(null); setQuizState(s=>({idx:s.idx+1})); }, 1400);
+  }
+
+  const btnB = {border:'none',cursor:'pointer',fontWeight:800,fontSize:12,borderRadius:9,padding:'7px 14px'};
+
+  // EHIT SVG diagram: shows GSV/CFV junction with thrombus visualization
+  function EhitDiagram({classId}) {
+    const thrombus = {
+      c1:{points:'M 120,145 Q 128,138 135,138 Q 140,138 140,143 Q 140,150 133,152 Q 126,153 120,150 Z', color:'#22c55e', label:'Thrombus at SFJ only'},
+      c2:{points:'M 120,130 Q 128,120 138,118 Q 148,116 150,124 Q 152,132 144,136 Q 136,140 126,140 Q 120,140 118,136 Z', color:'#eab308', label:'Into CFV <50%'},
+      c3:{points:'M 112,115 Q 120,102 138,98 Q 155,95 158,108 Q 161,120 150,126 Q 138,132 124,132 Q 112,132 110,124 Z', color:'#f97316', label:'Into CFV ≥50%'},
+      c4:{points:'M 108,95 Q 116,78 138,74 Q 162,71 166,88 Q 170,105 156,114 Q 140,122 120,120 Q 106,118 105,108 Z', color:'#dc2626', label:'Full CFV occlusion'},
+    };
+    const t = classId ? thrombus[classId] : null;
+    return React.createElement('svg', {width:220,height:300,viewBox:'0 0 220 300',style:{borderRadius:12,background:'#f0f9ff',boxShadow:'0 2px 12px rgba(30,58,95,0.1)'}},
+      // CFV (vertical)
+      React.createElement('rect', {x:118,y:20,width:36,height:160,rx:18,fill:'#bfdbfe',stroke:'#3b82f6',strokeWidth:2}),
+      React.createElement('text', {x:136,y:15,textAnchor:'middle',fontSize:9,fontWeight:800,fill:'#1d4ed8'},'CFV'),
+      // GSV (angled coming in from lower left)
+      React.createElement('path', {d:'M 30,240 Q 60,220 80,195 Q 100,170 118,148', fill:'none',stroke:'#ef4444',strokeWidth:16,strokeLinecap:'round',opacity:0.7}),
+      React.createElement('path', {d:'M 30,240 Q 60,220 80,195 Q 100,170 118,148', fill:'none',stroke:'#fca5a5',strokeWidth:10,strokeLinecap:'round'}),
+      React.createElement('text', {x:38,y:262,fontSize:9,fontWeight:800,fill:'#dc2626'},'GSV'),
+      // SFJ dot
+      React.createElement('circle', {cx:118,cy:148,r:6,fill:'#7c3aed',stroke:'white',strokeWidth:1.5}),
+      React.createElement('text', {x:108,y:168,fontSize:8,fontWeight:700,fill:'#7c3aed'},'SFJ'),
+      // FV below CFV
+      React.createElement('rect', {x:118,y:180,width:36,height:100,rx:18,fill:'#dbeafe',stroke:'#93c5fd',strokeWidth:1.5,opacity:0.7}),
+      React.createElement('text', {x:136,y:296,textAnchor:'middle',fontSize:9,fontWeight:800,fill:'#1d4ed8',opacity:0.7},'FV'),
+      // Thrombus overlay
+      t && React.createElement('g', null,
+        React.createElement('path', {d:t.points,fill:t.color,opacity:0.85,stroke:'white',strokeWidth:1}),
+        React.createElement('text', {x:136,y:275,textAnchor:'middle',fontSize:9,fontWeight:800,fill:t.color},t.label)
+      ),
+      // Legend labels
+      React.createElement('text', {x:10,y:130,fontSize:8,fill:'#64748b'},'← Into'),
+      React.createElement('text', {x:10,y:140,fontSize:8,fill:'#64748b'},'deep system')
+    );
+  }
+
+  return React.createElement('div', {style:{maxWidth:960,margin:'0 auto'}},
+    React.createElement('div', {style:{textAlign:'center',marginBottom:18}},
+      React.createElement('h2', {style:{fontSize:22,fontWeight:900,color:'#1e3a5f',margin:'0 0 4px'}}, '🔥 EHIT Identification & Treatment'),
+      React.createElement('p', {style:{color:'#64748b',fontSize:13,margin:0}}, 'Endovenous Heat-Induced Thrombosis — classification, recognition, and management')
+    ),
+    React.createElement('div', {style:{display:'flex',gap:8,justifyContent:'center',marginBottom:16}},
+      [['study','📚 Study'],['quiz','🎮 Quiz']].map(([m,lbl])=>
+        React.createElement('button', {key:m, onClick:()=>{ if(m==='quiz'){startQuiz();}else{setGameMode('study');setSelected(null);} },
+          style:{...btnB, background:gameMode===m?'#dc2626':'#f1f5f9', color:gameMode===m?'white':'#64748b'}}, lbl)
+      ),
+      gameMode==='quiz' && React.createElement('div', {style:{background:'#dc2626',color:'white',borderRadius:20,padding:'7px 16px',fontWeight:800,fontSize:13}}, `⭐ ${score.c}/${score.t}`)
+    ),
+
+    gameMode==='study' && React.createElement('div', null,
+      // Intro card
+      React.createElement('div', {style:{background:'#fff7ed',borderRadius:12,padding:'14px 18px',marginBottom:16,border:'1px solid #fed7aa'}},
+        React.createElement('div', {style:{fontSize:13,fontWeight:900,color:'#9a3412',marginBottom:6}},'What is EHIT?'),
+        React.createElement('div', {style:{fontSize:13,color:'#374151',lineHeight:1.6}},
+          'EHIT (Endovenous Heat-Induced Thrombosis) is thrombus extension from the treated superficial vein into the deep venous system following thermal ablation (RFA or laser). It is graded Class 1–4 based on how far the clot extends into the common femoral vein. Early detection via post-procedure duplex is essential.'
+        )
+      ),
+      React.createElement('div', {style:{display:'flex',gap:20,flexWrap:'wrap',justifyContent:'center',alignItems:'flex-start'}},
+        // Diagram
+        React.createElement('div', {style:{flexShrink:0}},
+          React.createElement(EhitDiagram, {classId:selected}),
+          React.createElement('div', {style:{textAlign:'center',marginTop:8,fontSize:11,color:'#64748b'}}, selected ? `Showing: ${CLASSES.find(c=>c.id===selected)?.label}` : 'Select a class to visualize')
+        ),
+        // Class cards
+        React.createElement('div', {style:{flex:1,minWidth:260,maxWidth:420,display:'flex',flexDirection:'column',gap:10}},
+          CLASSES.map(c=>React.createElement('div', {key:c.id,
+            onClick:()=>setSelected(s=>s===c.id?null:c.id),
+            style:{borderRadius:12,border:`2px solid ${selected===c.id?c.color:'#e2e8f0'}`,overflow:'hidden',cursor:'pointer',transition:'all 0.15s'}},
+            React.createElement('div', {style:{background:selected===c.id?c.color:'#f8fafc',padding:'10px 14px',display:'flex',alignItems:'center',gap:10}},
+              React.createElement('div', {style:{width:14,height:14,borderRadius:'50%',background:c.color,flexShrink:0,border:'2px solid white'}}),
+              React.createElement('div', {style:{flex:1}},
+                React.createElement('span', {style:{fontWeight:900,fontSize:13,color:selected===c.id?'white':'#1e293b'}}, c.label+' — '),
+                React.createElement('span', {style:{fontSize:12,color:selected===c.id?'rgba(255,255,255,0.9)':'#64748b'}}, c.short)
+              )
+            ),
+            selected===c.id && React.createElement('div', {style:{padding:'12px 14px',background:'white',display:'flex',flexDirection:'column',gap:10}},
+              [
+                ['⚠️ Risk Level', c.risk],
+                ['💊 Anticoagulation', c.ac],
+                ['📅 Follow-up', c.followup],
+              ].map(([lbl,val])=>React.createElement('div', {key:lbl},
+                React.createElement('div', {style:{fontSize:10,fontWeight:900,color:'#94a3b8',textTransform:'uppercase',marginBottom:2}},lbl),
+                React.createElement('div', {style:{fontSize:12,color:'#1e293b',fontWeight:600}},val)
+              )),
+              React.createElement('div', {style:{background:'#f8fafc',borderRadius:8,padding:'10px 12px',borderLeft:`3px solid ${c.color}`}},
+                React.createElement('div', {style:{fontSize:10,fontWeight:900,color:'#94a3b8',marginBottom:4}},'MANAGEMENT'),
+                React.createElement('div', {style:{fontSize:12,color:'#374151',lineHeight:1.6}},c.treatment)
+              )
+            )
+          ))
+        )
+      )
+    ),
+
+    gameMode==='quiz' && quizState && React.createElement('div', {style:{maxWidth:520,margin:'0 auto'}},
+      quizState.idx >= QUIZ_Q.length
+        ? React.createElement('div', {style:{textAlign:'center',padding:'32px',background:'#fff1f2',borderRadius:16,border:'1px solid #fecaca'}},
+            React.createElement('div', {style:{fontSize:48,marginBottom:8}}, score.c===score.t?'🏆':score.c>=QUIZ_Q.length*.8?'🎉':'📚'),
+            React.createElement('h3', {style:{color:'#dc2626',fontWeight:900,margin:'0 0 8px'}}, 'Quiz Complete!'),
+            React.createElement('div', {style:{fontSize:32,fontWeight:900,color:'#1e293b',marginBottom:8}}, `${score.c}/${score.t}`),
+            React.createElement('button', {onClick:startQuiz, style:{padding:'10px 24px',borderRadius:10,border:'none',background:'#dc2626',color:'white',fontWeight:800,cursor:'pointer',fontSize:14}}, '🔄 Try Again')
+          )
+        : React.createElement('div', null,
+            React.createElement('div', {style:{background:'#fff1f2',borderRadius:14,padding:'16px',marginBottom:14,textAlign:'center',border:'1px solid #fecaca'}},
+              React.createElement('div', {style:{fontSize:12,color:'#dc2626',fontWeight:800,marginBottom:6}}, `Question ${quizState.idx+1} of ${QUIZ_Q.length}`),
+              React.createElement('div', {style:{fontSize:14,fontWeight:700,color:'#1e293b',lineHeight:1.6}}, QUIZ_Q[quizState.idx].q)
+            ),
+            React.createElement('div', {style:{display:'flex',flexDirection:'column',gap:8,marginBottom:14}},
+              QUIZ_Q[quizState.idx].opts.map((opt,i)=>{
+                let bg='#f8fafc',border='#e2e8f0',col='#1e293b';
+                if(choice!==null){ if(i===QUIZ_Q[quizState.idx].ans){bg='#dcfce7';border='#22c55e';col='#166534';} else if(i===choice&&i!==QUIZ_Q[quizState.idx].ans){bg='#fee2e2';border='#ef4444';col='#991b1b';} else{col='#94a3b8';} }
+                return React.createElement('button', {key:i, onClick:()=>{ if(choice!==null)return; setChoice(i); nextQ(i===QUIZ_Q[quizState.idx].ans); },
+                  style:{padding:'12px 16px',borderRadius:10,border:`2px solid ${border}`,background:bg,color:col,fontWeight:700,fontSize:13,cursor:choice!==null?'default':'pointer',textAlign:'left'}}, opt);
+              })
+            ),
+            choice!==null && React.createElement('div', {style:{background:'#f0fdf4',borderRadius:10,padding:'12px 16px',border:'1px solid #bbf7d0'}},
+              React.createElement('div', {style:{fontSize:12,fontWeight:900,color:'#166534',marginBottom:4}}, choice===QUIZ_Q[quizState.idx].ans?'✅ Correct!':'❌ Here\'s why:'),
+              React.createElement('div', {style:{fontSize:12,color:'#374151',lineHeight:1.6}}, QUIZ_Q[quizState.idx].exp)
+            )
+          )
+    )
+  );
+}
+
+// ── GAMES HUB ────────────────────────────────────────────────────────────────
 function VeinGamesHub() {
   const [game, setGame] = React.useState(null);
   const games = [
     { id:'anatomy', icon:'🫀', title:'Vein Anatomy', desc:'Label the superficial & deep veins of the lower extremity', color:'#059669', ready:true },
+    { id:'dvt',     icon:'🩸', title:'DVT Treatment', desc:'Learn DVT classification, PE risk, and treatment by location', color:'#dc2626', ready:true },
+    { id:'ehit',    icon:'🔥', title:'EHIT Identification', desc:'Classify EHIT grades and learn post-ablation management', color:'#f97316', ready:true },
     { id:'us_id',   icon:'🔊', title:'Ultrasound ID', desc:'Identify which vein is shown in the ultrasound image', color:'#2563eb', ready:false },
-    { id:'reflux',  icon:'🔄', title:'Reflux or No Reflux?', desc:'Look at the Doppler finding — is there reflux?', color:'#dc2626', ready:false },
-    { id:'normal',  icon:'🩺', title:'Normal vs. Pathologic', desc:'Classify findings: healthy, CVI, DVT, or other', color:'#7c3aed', ready:false },
+    { id:'reflux',  icon:'🔄', title:'Reflux or No Reflux?', desc:'Look at the Doppler finding — is there reflux?', color:'#7c3aed', ready:false },
     { id:'cpt',     icon:'💻', title:'CPT Code Challenge', desc:'Match the clinical scenario to the correct CPT code', color:'#f59e0b', ready:false },
   ];
-  if (game === 'anatomy') return React.createElement('div', null,
-    React.createElement('button', {onClick:()=>setGame(null), style:{marginBottom:16,background:'none',border:'none',cursor:'pointer',fontSize:13,color:'#2563eb',fontWeight:700}}, '← Back to Games'),
-    React.createElement(VeinAnatomyGame)
-  );
+
+  const backBtn = React.createElement('button', {onClick:()=>setGame(null), style:{marginBottom:16,background:'none',border:'none',cursor:'pointer',fontSize:13,color:'#2563eb',fontWeight:700}}, '← Back to Games');
+
+  if (game==='anatomy') return React.createElement('div', null, backBtn, React.createElement(VeinAnatomyGame));
+  if (game==='dvt')     return React.createElement('div', null, backBtn, React.createElement(DVTGame));
+  if (game==='ehit')    return React.createElement('div', null, backBtn, React.createElement(EHITGame));
+
   return React.createElement('div', {style:{padding:'0 4px'}},
     React.createElement('div', {style:{background:'linear-gradient(135deg,#1e3a5f,#0ea5e9)',borderRadius:16,padding:'20px 24px',marginBottom:20,color:'white'}},
       React.createElement('div', {style:{fontSize:22,fontWeight:900,marginBottom:4}}, '🎮 Vein Learning Games'),
       React.createElement('div', {style:{fontSize:13,opacity:0.85}}, 'Interactive games to sharpen your vein anatomy and ultrasound skills')
     ),
-    React.createElement('div', {style:{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:14}},
-      games.map(g => React.createElement('div', {
-        key:g.id,
+    React.createElement('div', {style:{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(260px,1fr))',gap:14}},
+      games.map(g=>React.createElement('div', {key:g.id,
         onClick:()=>g.ready&&setGame(g.id),
-        style:{borderRadius:14,border:`2px solid ${g.ready?g.color+'44':'#e2e8f0'}`,padding:'18px 20px',cursor:g.ready?'pointer':'default',background:g.ready?'white':'#f8fafc',transition:'all 0.15s',position:'relative',overflow:'hidden'}
-      },
+        style:{borderRadius:14,border:`2px solid ${g.ready?g.color+'44':'#e2e8f0'}`,padding:'18px 20px',cursor:g.ready?'pointer':'default',background:g.ready?'white':'#f8fafc',transition:'all 0.15s',position:'relative',overflow:'hidden'}},
         !g.ready && React.createElement('div', {style:{position:'absolute',top:10,right:10,background:'#f1f5f9',color:'#94a3b8',fontSize:10,fontWeight:800,padding:'2px 8px',borderRadius:20}}, 'COMING SOON'),
         React.createElement('div', {style:{fontSize:28,marginBottom:8}}, g.icon),
         React.createElement('div', {style:{fontSize:15,fontWeight:900,color:g.ready?'#1e293b':'#94a3b8',marginBottom:4}}, g.title),
