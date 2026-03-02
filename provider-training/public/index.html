@@ -2197,10 +2197,23 @@ const ADMIN_TABS = [
 ];
 
 function App() {
-  const [mode, setMode] = useState('home');      // 'home' | 'clinical' | 'admin'
-  const [clinicalTab, setClinicalTab] = useState('clinical');
-  const [adminTab, setAdminTab] = useState('start');
+  // Read initial state from URL hash e.g. #clinical/p2p or #admin/faq
+  const parseHash = () => {
+    const h = window.location.hash.replace('#','').split('/');
+    return { mode: h[0]||'home', sub: h[1]||null };
+  };
+  const initHash = parseHash();
+  const [mode, setMode] = useState(initHash.mode);
+  const [clinicalTab, setClinicalTab] = useState(initHash.mode==='clinical' && initHash.sub ? initHash.sub : 'clinical');
+  const [adminTab, setAdminTab] = useState(initHash.mode==='admin' && initHash.sub ? initHash.sub : 'start');
   const [globalSearch, setGlobalSearch] = useState('');
+
+  // Keep hash in sync with state
+  React.useEffect(() => {
+    if (mode === 'home') { window.location.hash = ''; return; }
+    const sub = mode === 'clinical' ? clinicalTab : adminTab;
+    window.location.hash = `${mode}/${sub}`;
+  }, [mode, clinicalTab, adminTab]);
 
   const goMode = (m) => {
     setMode(m);
