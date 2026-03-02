@@ -3,10 +3,14 @@
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>VIP Provider Training Hub</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Nunito',sans-serif;background:#f1f5f9;color:#1e293b;min-height:100vh}
+h1,h2,h3,h4,.poppins{font-family:'Poppins',sans-serif!important}
+.navbar-logo,.navbar-logo span{font-family:'Poppins',sans-serif!important}
+/* Poppins on all bold large text — tab headers, game titles, section heads */
+[style*="fontWeight:900"],[style*="font-weight:900"],[style*="font-weight: 900"]{font-family:'Poppins',sans-serif}
 .navbar{background:linear-gradient(135deg,#1e3a5f,#1d4ed8);padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(30,58,95,0.35)}
 .navbar-brand{display:flex;flex-direction:column}
 .navbar-logo{font-size:20px;font-weight:900;color:white;letter-spacing:-0.3px}
@@ -1539,7 +1543,7 @@ function RPhSTab() {
     React.createElement('div', {style:{background:'linear-gradient(135deg,#1e3a5f,#7c3aed)',borderRadius:16,padding:'20px 24px',marginBottom:20,color:'white'}},
       React.createElement('div', {style:{display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:8}},
         React.createElement('div', null,
-          React.createElement('div', {style:{fontSize:22,fontWeight:900,marginBottom:4}}, '🏅 RPhS Certification Prep'),
+          React.createElement('div', {style:{fontSize:22,fontWeight:900,marginBottom:4,fontFamily:'Poppins,sans-serif'}}, '🏅 RPhS Certification Prep'),
           React.createElement('div', {style:{fontSize:13,opacity:0.85}}, 'Registered Phlebology Sonographer — CCI Exam Study Guide')
         ),
         React.createElement('a', {href:'https://cci-online.org/credentials/registered-phlebology-sonographer/',target:'_blank',
@@ -2307,7 +2311,7 @@ function DVTGame() {
 
   return React.createElement('div', {style:{maxWidth:960,margin:'0 auto'}},
     React.createElement('div', {style:{textAlign:'center',marginBottom:18}},
-      React.createElement('h2', {style:{fontSize:22,fontWeight:900,color:'#1e3a5f',margin:'0 0 4px'}}, '🩸 DVT Identification & Treatment'),
+      React.createElement('h2', {style:{fontSize:22,fontWeight:900,color:'#1e3a5f',margin:'0 0 4px',fontFamily:'Poppins,sans-serif'}}, '🩸 DVT Identification & Treatment'),
       React.createElement('p', {style:{color:'#64748b',fontSize:13,margin:0}}, 'Learn DVT classification, risk stratification, and treatment by location')
     ),
     React.createElement('div', {style:{display:'flex',gap:8,justifyContent:'center',marginBottom:16}},
@@ -2564,7 +2568,7 @@ function EHITGame() {
 
   return React.createElement('div', {style:{maxWidth:960,margin:'0 auto'}},
     React.createElement('div', {style:{textAlign:'center',marginBottom:18}},
-      React.createElement('h2', {style:{fontSize:22,fontWeight:900,color:'#1e3a5f',margin:'0 0 4px'}}, '🔥 EHIT Identification & Treatment'),
+      React.createElement('h2', {style:{fontSize:22,fontWeight:900,color:'#1e3a5f',margin:'0 0 4px',fontFamily:'Poppins,sans-serif'}}, '🔥 EHIT Identification & Treatment'),
       React.createElement('p', {style:{color:'#64748b',fontSize:13,margin:0}}, 'Endovenous Heat-Induced Thrombosis — classification, recognition, and management')
     ),
     React.createElement('div', {style:{display:'flex',gap:8,justifyContent:'center',marginBottom:16}},
@@ -2767,7 +2771,7 @@ function CPTGame() {
   return React.createElement('div', {style:{maxWidth:960,margin:'0 auto'}},
     // Header
     React.createElement('div', {style:{background:'linear-gradient(135deg,#92400e,#f59e0b)',borderRadius:16,padding:'20px 24px',marginBottom:20,color:'white'}},
-      React.createElement('div', {style:{fontSize:22,fontWeight:900,marginBottom:4}}, '💻 CPT Code Challenge'),
+      React.createElement('div', {style:{fontSize:22,fontWeight:900,marginBottom:4,fontFamily:'Poppins,sans-serif'}}, '💻 CPT Code Challenge'),
       React.createElement('div', {style:{fontSize:13,opacity:0.85}}, 'Match the clinical scenario to the correct billing code')
     ),
 
@@ -2968,7 +2972,7 @@ function AcuteChronicGame() {
     // Header
     React.createElement('div', {style:{background:'linear-gradient(135deg,#1e3a5f,#0369a1)',borderRadius:16,padding:'20px 24px',marginBottom:20,color:'white',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:10}},
       React.createElement('div', null,
-        React.createElement('div', {style:{fontSize:22,fontWeight:900,marginBottom:4}}, '🔬 Acute vs Chronic DVT'),
+        React.createElement('div', {style:{fontSize:22,fontWeight:900,marginBottom:4,fontFamily:'Poppins,sans-serif'}}, '🔬 Acute vs Chronic DVT'),
         React.createElement('div', {style:{fontSize:13,opacity:0.85}}, 'Identify DVT age from ultrasound findings and clinical scenarios')
       ),
       React.createElement('button', {onClick:()=>setShowCard(s=>!s),
@@ -3117,7 +3121,7 @@ function VeinGamesHub() {
 
   return React.createElement('div', {style:{padding:'0 4px'}},
     React.createElement('div', {style:{background:'linear-gradient(135deg,#1e3a5f,#0ea5e9)',borderRadius:16,padding:'20px 24px',marginBottom:20,color:'white'}},
-      React.createElement('div', {style:{fontSize:22,fontWeight:900,marginBottom:4}}, '🎮 Vein Learning Games'),
+      React.createElement('div', {style:{fontSize:22,fontWeight:900,marginBottom:4,fontFamily:'Poppins,sans-serif'}}, '🎮 Vein Learning Games'),
       React.createElement('div', {style:{fontSize:13,opacity:0.85}}, 'Interactive games to sharpen your vein anatomy and ultrasound skills')
     ),
     React.createElement('div', {style:{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(260px,1fr))',gap:14}},
