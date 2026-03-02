@@ -2160,6 +2160,12 @@ function VeinAnatomyGame() {
     {src:'/anatomy/f4.jpg', cap:'Fig 4. Deep vein scanning technique. CFV medial to CFA at inguinal level. CFV bifurcates into DFV and FV. Compress every 3–4 cm.'},
     {src:'/anatomy/f5.jpg', cap:'Fig 5. Anterior tibial vein above interosseous membrane (between tibia T and fibula F). Requires anterior approach with leg extended.'},
     {src:'/anatomy/f2.jpg', cap:'Fig 2. Normal vein US: veins fully collapse with compression (vs artery). Valve leaflets visible on B-mode.'},
+    // PMC5220199 — Reflux article
+    {src:'/anatomy/reflux-f1.jpg', cap:'[PMC5220199] Fig 1. GSV anatomy with tributaries near SFJ (external pudendal, inferior epigastric, external circumflex iliac). SSV variants — SPJ termination in ~2/3 of patients; remainder drain into GSV or perforator.'},
+    {src:'/anatomy/reflux-f6.jpg', cap:'[PMC5220199] Fig 6. Right SFJ — color Doppler showing REFLUX. Blue signal = retrograde flow after augmentation. Dilated SFJ diameter 1.80 cm. This is a positive reflux study at the saphenofemoral junction.'},
+    {src:'/anatomy/reflux-f5.jpg', cap:'[PMC5220199] Fig 5. Right SFJ — color Doppler at three levels showing junctional incompetence and GSV reflux tracking distally into the thigh.'},
+    {src:'/anatomy/reflux-f3.jpg', cap:'[PMC5220199] Fig 3. Left GSV at groin — B-mode 4-panel with color Doppler. Demonstrates US assessment technique for GSV at the SFJ level.'},
+    {src:'/anatomy/reflux-f4.jpg', cap:'[PMC5220199] Fig 4. Compression study of distal GSV — normal complete compressibility (arrows). Used for DVT evaluation. Compare: incompressible vein = DVT.'},
   ];
 
   return React.createElement('div', {style:{maxWidth:960,margin:'0 auto'}},
@@ -2283,7 +2289,7 @@ function VeinAnatomyGame() {
     // ── ARTICLE FIGURES ──
     tab==='figures' && React.createElement('div', null,
       React.createElement('div', {style:{background:'#f3e8ff',borderRadius:10,padding:'12px 16px',marginBottom:14,border:'1px solid #e9d5ff',fontSize:12,color:'#6C3CB5',fontWeight:700}},
-        '📖 All figures from: Ultrasonography of the lower extremity veins: anatomy and basic approach. PMC5381851. Open access.'
+        '📖 Figures from two open-access PMC articles. PMC5381851: Anatomy & basic US approach. PMC5220199: Venous reflux & duplex imaging.'
       ),
       React.createElement('div', {style:{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:14}},
         FIGS.map((fig,i)=>React.createElement('div', {key:i, style:{borderRadius:12,overflow:'hidden',border:'1px solid #e9d5ff',background:'white'}},
@@ -3104,6 +3110,137 @@ function AcuteChronicGame() {
   );
 }
 
+// ── REFLUX OR NO REFLUX GAME ─────────────────────────────────────────────────
+function RefluxGame() {
+  const [tab, setTab] = React.useState('study');
+  const [quizIdx, setQuizIdx] = React.useState(0);
+  const [choice, setChoice] = React.useState(null);
+  const [score, setScore] = React.useState({c:0,t:0});
+  const [expanded, setExpanded] = React.useState(null);
+
+  const SOURCE = 'Source: Lower extremity venous reflux, PMC5220199 (open access)';
+
+  const STUDY_CONTENT = [
+    { id:'physiology', title:'⚙️ Why Reflux Happens', color:'#6C3CB5',
+      body:'Normal venous valves prevent retrograde flow. When valves become incompetent — from chronic hemodynamic stress, DVT-related damage, or genetic connective tissue changes — blood falls backward during valve closure. During calf muscle contraction, deep vein pressure rises to ~140 mmHg. Competent valves then prevent this pressure from transmitting to superficial veins. When valves fail, the full hydrostatic column (up to 90 mmHg at the ankle) exerts force on distal veins, causing dilation, symptoms, and over time, CVI.' },
+    { id:'definition', title:'⏱ Defining Pathologic Reflux', color:'#dc2626',
+      body:'Physiologic reflux lasts 200–300 ms in veins with competent valves after calf muscle relaxation. PATHOLOGIC reflux is defined as retrograde flow ≥500 ms after augmentation (manual calf compression + release) or Valsalva (for SFJ/CFV). Some labs use 1000 ms for deep veins. The 500 ms threshold is the standard for superficial veins (GSV, SSV) in clinical practice.' },
+    { id:'technique', title:'🔊 Ultrasound Technique', color:'#1078B9',
+      body:'Assess with patient STANDING (or reverse Trendelenburg if standing not possible). Supine position underestimates or misses reflux completely. Use pulsed-wave Doppler — color Doppler underestimates reflux degree. Augmentation: compress calf manually → release → watch for retrograde flow. Valsalva: for SFJ and CFV assessment. Reflux on Doppler appears as flow in the reverse direction (below baseline) for ≥500 ms. Color Doppler: blue signal (retrograde) after augmentation = reflux.' },
+    { id:'locations', title:'📍 Sites to Assess', color:'#059669',
+      body:'SFJ (saphenofemoral junction) — most common source of GSV reflux. SPJ (saphenopopliteal junction) — SSV reflux source; variable location, always confirm. GSV throughout thigh and calf — trace entire length. SSV from calf to SPJ. Accessory GSV (AAGSV/PAGSV) — can reflux independently. Perforators — bidirectional flow is physiologically normal; only treat outward flow >500 ms if >3.5mm diameter and symptomatic. Deep veins (CFV, FV, PV) — assess for post-thrombotic reflux.' },
+    { id:'findings', title:'📋 Reporting Reflux', color:'#f59e0b',
+      body:'For each refluxing segment report: vein name, duration of reflux (ms), diameter at point of reflux (mm), and any junctional incompetence. GSV normal diameter <4mm — dilated GSV suggests hemodynamic significance. Document: which junction is incompetent (SFJ? SPJ?), whether reflux is isolated or continuous into tributaries, and perforator involvement. This mapping directly drives treatment selection (RFA vs Varithena vs sclerotherapy).' },
+  ];
+
+  // Quiz with real images from PMC5220199
+  const QUESTIONS = [
+    { image:'/anatomy/reflux-f6.jpg', answer:'reflux',
+      label:'Right SFJ — color Doppler after augmentation. The blue flow signal is seen at the junction.',
+      exp:'Blue flow on color Doppler after calf compression-release at the SFJ indicates retrograde (refluxing) flow. Blue = away from transducer = downward flow = REFLUX at the SFJ. This patient has saphenofemoral junction incompetence.' },
+    { image:'/anatomy/reflux-f4.jpg', answer:'no_reflux',
+      label:'Left distal GSV — B-mode compression study. Normal compression.',
+      exp:'This shows normal vein compressibility — the vein collapses completely with transducer pressure. This is NOT a reflux finding; it is a normal compression study used to rule out DVT. A patent, compressible vein is normal.' },
+    { image:'/anatomy/reflux-f5.jpg', answer:'reflux',
+      label:'Right SFJ — longitudinal color Doppler. Color signal present in the GSV at junction.',
+      exp:'Color flow in the GSV distal to the SFJ after augmentation indicates reflux flowing from the deep system into the GSV. The color Doppler signal confirms junctional incompetence at the SFJ.' },
+    { image:'/anatomy/reflux-f3.jpg', answer:'no_reflux',
+      label:'Left GSV at groin — B-mode 4-panel study. Pre-augmentation baseline.',
+      exp:'This B-mode study shows the GSV anatomy at the groin without active augmentation. No retrograde flow waveform is demonstrated in this image. Reflux assessment requires active augmentation (calf squeeze + release) and Doppler evaluation — B-mode alone cannot diagnose reflux.' },
+  ];
+
+  const q = QUESTIONS[quizIdx % QUESTIONS.length];
+  const done = quizIdx >= QUESTIONS.length;
+
+  function handleAnswer(ans) {
+    if (choice) return;
+    setChoice(ans);
+    setScore(s=>({c:s.c+(ans===q.answer?1:0),t:s.t+1}));
+    setTimeout(()=>{setChoice(null);setQuizIdx(i=>i+1);}, 2000);
+  }
+  function restart() { setQuizIdx(0); setScore({c:0,t:0}); setChoice(null); }
+  const btnS = {border:'none',cursor:'pointer',fontWeight:800,fontSize:12,borderRadius:9,padding:'7px 14px'};
+
+  return React.createElement('div', {style:{maxWidth:960,margin:'0 auto'}},
+    // Header
+    React.createElement('div', {style:{background:'linear-gradient(135deg,#2d1b69,#7c3aed)',borderRadius:16,padding:'20px 24px',marginBottom:20,color:'white'}},
+      React.createElement('div', {style:{fontSize:22,fontWeight:900,marginBottom:4}}, '🔄 Reflux or No Reflux?'),
+      React.createElement('div', {style:{fontSize:12,opacity:0.8}}, SOURCE)
+    ),
+
+    // Mode toggle
+    React.createElement('div', {style:{display:'flex',gap:8,justifyContent:'center',marginBottom:18}},
+      [['study','📚 Study'],['quiz','🎮 Quiz']].map(([m,lbl])=>
+        React.createElement('button', {key:m, onClick:()=>{setTab(m);restart();},
+          style:{...btnS, background:tab===m?'#7c3aed':'#f1f5f9', color:tab===m?'white':'#64748b', fontSize:13}}, lbl)
+      ),
+      tab==='quiz' && !done && React.createElement('div', {style:{background:'#7c3aed',color:'white',borderRadius:20,padding:'7px 16px',fontWeight:800,fontSize:13}},`⭐ ${score.c}/${score.t}`)
+    ),
+
+    // STUDY
+    tab==='study' && React.createElement('div', null,
+      // Key rule callout
+      React.createElement('div', {style:{background:'#faf5ff',borderRadius:12,padding:'14px 18px',marginBottom:14,border:'2px solid #e9d5ff'}},
+        React.createElement('div', {style:{fontSize:14,fontWeight:900,color:'#6C3CB5',marginBottom:6}},'⏱ The Key Number: 500 ms'),
+        React.createElement('div', {style:{fontSize:13,color:'#374151',lineHeight:1.6}},'Retrograde flow lasting ≥500 ms after augmentation = pathologic reflux. Physiologic valve closure reflux lasts only 200–300 ms. Always use pulsed-wave Doppler for precise timing — color Doppler underestimates reflux degree. Assess STANDING whenever possible.')
+      ),
+      // Expandable sections
+      STUDY_CONTENT.map(s=>React.createElement('details', {key:s.id, open:expanded===s.id,
+        onToggle:e=>setExpanded(e.target.open?s.id:null),
+        style:{marginBottom:8,borderRadius:12,overflow:'hidden',border:`2px solid ${s.color}33`}},
+        React.createElement('summary', {style:{background:s.color,color:'white',padding:'11px 16px',fontWeight:900,fontSize:13,cursor:'pointer',listStyle:'none',display:'flex',justifyContent:'space-between'}},
+          s.title, React.createElement('span',{style:{fontSize:11,opacity:0.8}},'▼ tap')
+        ),
+        React.createElement('div', {style:{padding:'14px 16px',background:'white',fontSize:13,color:'#374151',lineHeight:1.7}},s.body)
+      )),
+      // Real images study panel
+      React.createElement('div', {style:{marginTop:16}},
+        React.createElement('div', {style:{fontSize:13,fontWeight:900,color:'#6C3CB5',marginBottom:10}}, '📸 Doppler Images from PMC5220199'),
+        React.createElement('div', {style:{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(260px,1fr))',gap:12}},
+          [
+            {src:'/anatomy/reflux-f1.jpg', cap:'Fig 1. GSV and SSV anatomy with tributaries and common SSV variants (SFJ/SPJ).'},
+            {src:'/anatomy/reflux-f6.jpg', cap:'Fig 6. Right SFJ — blue color Doppler signal = retrograde reflux after augmentation. Dilated SFJ (1.80 cm). This is a POSITIVE reflux study.'},
+            {src:'/anatomy/reflux-f5.jpg', cap:'Fig 5. Right SFJ — color Doppler showing GSV junctional incompetence at three levels.'},
+            {src:'/anatomy/reflux-f3.jpg', cap:'Fig 3. Left GSV at groin — B-mode 4-panel with color Doppler showing flow assessment technique.'},
+            {src:'/anatomy/reflux-f4.jpg', cap:'Fig 4. Compression study of distal GSV — normal compressibility (arrows). Used for DVT evaluation.'},
+          ].map((fig,i)=>React.createElement('div', {key:i,style:{borderRadius:10,overflow:'hidden',border:'1px solid #e9d5ff',background:'white'}},
+            React.createElement('img', {src:fig.src,alt:fig.cap,style:{width:'100%',display:'block'}}),
+            React.createElement('div', {style:{padding:'8px 10px',fontSize:11,color:'#374151',lineHeight:1.5}},fig.cap)
+          ))
+        )
+      )
+    ),
+
+    // QUIZ
+    tab==='quiz' && done && React.createElement('div', {style:{textAlign:'center',padding:'40px',background:'#faf5ff',borderRadius:16,border:'2px solid #e9d5ff'}},
+      React.createElement('div', {style:{fontSize:48,marginBottom:8}}, score.c===QUESTIONS.length?'🏆':'📚'),
+      React.createElement('h3', {style:{color:'#7c3aed',fontWeight:900,margin:'0 0 8px'}},'Quiz Complete!'),
+      React.createElement('div', {style:{fontSize:32,fontWeight:900,color:'#1e293b',marginBottom:16}}),`${score.c}/${QUESTIONS.length}`,
+      React.createElement('button', {onClick:restart, style:{padding:'10px 28px',borderRadius:10,border:'none',background:'#7c3aed',color:'white',fontWeight:900,cursor:'pointer',fontSize:14,display:'block',margin:'16px auto 0'}},'🔄 Try Again')
+    ),
+
+    tab==='quiz' && !done && React.createElement('div', {style:{maxWidth:540,margin:'0 auto'}},
+      React.createElement('div', {style:{background:'#faf5ff',borderRadius:12,padding:'12px 16px',marginBottom:12,border:'1px solid #e9d5ff'}},
+        React.createElement('div', {style:{fontSize:11,fontWeight:900,color:'#7c3aed',marginBottom:4}},`Image ${quizIdx+1} of ${QUESTIONS.length}`),
+        React.createElement('div', {style:{fontSize:13,color:'#374151',marginBottom:8,lineHeight:1.5}},q.label)
+      ),
+      React.createElement('img', {src:q.image, alt:'Ultrasound image', style:{width:'100%',borderRadius:10,marginBottom:12,border:'2px solid #e9d5ff',display:'block'}}),
+      React.createElement('div', {style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:12}},
+        [['reflux','🔄 Reflux','#dc2626','#fff1f2','#fecaca'],['no_reflux','✅ No Reflux','#059669','#f0fdf4','#bbf7d0']].map(([val,lbl,col,bg,border])=>{
+          let bkg=bg, bdr=border, textCol=col;
+          if(choice){if(val===q.answer){bkg='#dcfce7';bdr='#22c55e';textCol='#166534';}else if(val===choice){bkg='#fee2e2';bdr='#ef4444';textCol='#991b1b';}else{bkg='#f8fafc';textCol='#94a3b8';}}
+          return React.createElement('button', {key:val, onClick:()=>handleAnswer(val),
+            style:{padding:'18px',borderRadius:12,border:`2px solid ${bdr}`,background:bkg,color:textCol,fontWeight:900,fontSize:15,cursor:choice?'default':'pointer'}}, lbl);
+        })
+      ),
+      choice && React.createElement('div', {style:{background:choice===q.answer?'#f0fdf4':'#fff1f2',borderRadius:10,padding:'12px 16px',border:`1px solid ${choice===q.answer?'#bbf7d0':'#fecaca'}`}},
+        React.createElement('div', {style:{fontSize:12,fontWeight:900,color:choice===q.answer?'#166534':'#991b1b',marginBottom:4}},choice===q.answer?'✅ Correct!':'❌ Not quite — here\'s why:'),
+        React.createElement('div', {style:{fontSize:12,color:'#374151',lineHeight:1.6}},q.exp)
+      )
+    )
+  );
+}
+
 // ── GAMES HUB ────────────────────────────────────────────────────────────────
 function VeinGamesHub() {
   const [game, setGame] = React.useState(null);
@@ -3113,7 +3250,7 @@ function VeinGamesHub() {
     { id:'ehit',    icon:'🔥', title:'EHIT Identification', desc:'Classify EHIT grades and learn post-ablation management', color:'#f97316', ready:true },
     { id:'acutechronic', icon:'🔬', title:'Acute vs Chronic DVT', desc:'Identify DVT age from ultrasound findings and clinical scenarios', color:'#0369a1', ready:true },
     { id:'us_id',   icon:'🔊', title:'Ultrasound ID', desc:'Identify which vein is shown in the ultrasound image', color:'#1078B9', ready:false },
-    { id:'reflux',  icon:'🔄', title:'Reflux or No Reflux?', desc:'Look at the Doppler finding — is there reflux?', color:'#7c3aed', ready:false },
+    { id:'reflux',  icon:'🔄', title:'Reflux or No Reflux?', desc:'Real Doppler images — identify venous reflux from PMC5220199', color:'#7c3aed', ready:true },
     { id:'cpt',     icon:'💻', title:'CPT Code Challenge', desc:'Match the clinical scenario to the correct CPT code', color:'#f59e0b', ready:true },
   ];
 
@@ -3124,6 +3261,7 @@ function VeinGamesHub() {
   if (game==='ehit')    return React.createElement('div', null, backBtn, React.createElement(EHITGame));
   if (game==='cpt')          return React.createElement('div', null, backBtn, React.createElement(CPTGame));
   if (game==='acutechronic') return React.createElement('div', null, backBtn, React.createElement(AcuteChronicGame));
+  if (game==='reflux')      return React.createElement('div', null, backBtn, React.createElement(RefluxGame));
 
   return React.createElement('div', {style:{padding:'0 4px'}},
     React.createElement('div', {style:{background:'linear-gradient(135deg,#2d1b69,#AC4ABD)',borderRadius:16,padding:'20px 24px',marginBottom:20,color:'white'}},
