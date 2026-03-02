@@ -2447,103 +2447,95 @@ function EHITGame() {
   // Single class diagram matching the reference image style
   // Deep vein = horizontal channel; GSV thrombus enters diagonally from upper-left
   function EhitDiagram({classId, compact}) {
-    const W = 260, H = compact ? 130 : 160;
-    // CFV: horizontal rounded tube
-    const cfvX = 90, cfvY = compact ? 55 : 68;
-    const cfvRx = W - cfvX - 10, cfvRy = compact ? 28 : 34;
-    const cfvCX = cfvX + cfvRx; // right edge center
-    const MID = cfvY;
-
-    // GSV tube entering diagonally from upper-left — as a rounded rectangle rotated
-    // GSV tip meets CFV at (cfvX, cfvY)
-    const gsvW = compact ? 22 : 26, gsvLen = compact ? 72 : 88;
-    const angle = -32; // degrees
+    // Clean anatomical diagram — horizontal CFV channel with diagonal GSV torpedo thrombus
+    // Style: clinical illustration, not cartoonish, not purely abstract
+    const W = 280, H = compact ? 120 : 145;
+    const TOP = compact ? 32 : 40;   // CFV top wall y
+    const BOT = compact ? 88 : 105;  // CFV bottom wall y
+    const MID = (TOP + BOT) / 2;
+    const CHAN = BOT - TOP;           // channel height
+    const JX = 100;                  // junction x (where GSV meets CFV)
+    const WALL = 5;                  // vessel wall thickness
 
     const classColors = {c1:'#22c55e', c2:'#eab308', c3:'#f97316', c4:'#dc2626'};
     const accentColor = classId ? classColors[classId] : '#64748b';
+    const uid = classId || 'base';
 
-    // Thrombus: oval growing rightward inside CFV lumen, clipped to CFV
-    // c1: just a small nub at the opening; c4: nearly fills the lumen
-    const thrombW = {c1:18, c2:cfvRx*0.45, c3:cfvRx*0.72, c4:cfvRx*0.95};
-    const thrombH = {c1:cfvRy*0.42, c2:cfvRy*0.72, c3:cfvRy*0.90, c4:cfvRy*0.97};
-    const tw = classId ? thrombW[classId] : 0;
-    const th = classId ? thrombH[classId] : 0;
-    // Thrombus positioned at left edge of CFV lumen
-    const tCX = cfvX + tw;
-    const tCY = cfvY;
+    // Thrombus torpedo path — a pill shape entering diagonally from upper-left
+    // grows rightward into CFV per class
+    // cx = rightmost extent of thrombus inside CFV
+    const extents = {c1: JX+14, c2: JX+65, c3: JX+105, c4: JX+148};
+    const heights = {c1: CHAN*0.32, c2: CHAN*0.50, c3: CHAN*0.72, c4: CHAN*0.95};
+    const ext = classId ? extents[classId] : 0;
+    const ht  = classId ? heights[classId] : 0;
+
+    // Torpedo: rounded pill, angled slightly, origin at SFJ
+    // We draw it as a path: starts from upper-left (the GSV), extends right into CFV
+    function torpedoPath(rightX, halfH) {
+      const lx = JX - 40, ly = MID - halfH * 0.3; // left tip (from GSV direction)
+      const rx = rightX;
+      return `M ${lx},${MID - halfH*0.5}
+              Q ${lx-8},${MID} ${lx},${MID+halfH*0.5}
+              Q ${JX+10},${MID+halfH*0.55} ${rx},${MID+halfH*0.45}
+              Q ${rx+10},${MID} ${rx},${MID-halfH*0.45}
+              Q ${JX+10},${MID-halfH*0.55} ${lx},${MID-halfH*0.5} Z`;
+    }
 
     const show50 = classId && classId !== 'c1';
-    const uid = classId || 'none';
 
     return React.createElement('svg', {width:W, height:H, viewBox:`0 0 ${W} ${H}`,
-      style:{borderRadius:12, background:'#f8fafc', display:'block',
-        border:`2px solid ${accentColor}55`,
-        boxShadow:'0 3px 12px rgba(0,0,0,0.10)'}},
+      style:{borderRadius:10, background:'white', display:'block',
+        border:`1.5px solid ${accentColor}66`,
+        boxShadow:'0 2px 8px rgba(0,0,0,0.08)'}},
 
       React.createElement('defs', null,
-        // Clip to CFV lumen
-        React.createElement('clipPath', {id:'cfv-clip-'+uid},
-          React.createElement('ellipse', {cx:cfvX+cfvRx, cy:cfvY, rx:cfvRx, ry:cfvRy-3})
+        React.createElement('clipPath', {id:'chan-'+uid},
+          React.createElement('rect', {x:JX, y:TOP+WALL, width:W-JX, height:CHAN-WALL*2})
         ),
-        // Gradient for CFV vessel wall depth
-        React.createElement('radialGradient', {id:'cfv-grad-'+uid, cx:'50%', cy:'40%', r:'60%'},
-          React.createElement('stop', {offset:'0%', stopColor:'#ede9fe'}),
-          React.createElement('stop', {offset:'100%', stopColor:'#93c5fd'})
-        ),
-        // Gradient for GSV
-        React.createElement('linearGradient', {id:'gsv-grad-'+uid, x1:'0%', y1:'0%', x2:'100%', y2:'100%'},
-          React.createElement('stop', {offset:'0%', stopColor:'#fca5a5'}),
-          React.createElement('stop', {offset:'100%', stopColor:'#ef4444'})
-        ),
-        // Thrombus gradient
-        React.createElement('radialGradient', {id:'thromb-grad-'+uid, cx:'40%', cy:'40%', r:'60%'},
-          React.createElement('stop', {offset:'0%', stopColor:'#6b7280'}),
-          React.createElement('stop', {offset:'100%', stopColor:'#1f2937'})
+        React.createElement('linearGradient', {id:'tgrad-'+uid, x1:'0%', y1:'0%', x2:'100%', y2:'0%'},
+          React.createElement('stop', {offset:'0%', stopColor:'#9ca3af'}),
+          React.createElement('stop', {offset:'100%', stopColor:'#374151'})
         )
       ),
 
-      // ── CFV vessel (horizontal ellipse tube) ──
-      // Outer wall shadow
-      React.createElement('ellipse', {cx:cfvX+cfvRx, cy:cfvY+2, rx:cfvRx+3, ry:cfvRy+3, fill:'#94a3b8', opacity:0.25}),
-      // Outer wall
-      React.createElement('ellipse', {cx:cfvX+cfvRx, cy:cfvY, rx:cfvRx+3, ry:cfvRy+3, fill:'#475569'}),
-      // Inner lumen
-      React.createElement('ellipse', {cx:cfvX+cfvRx, cy:cfvY, rx:cfvRx, ry:cfvRy, fill:`url(#cfv-grad-${uid})`}),
+      // ── CFV channel — two solid wall lines with subtle fill between ──
+      // Channel fill (light)
+      React.createElement('rect', {x:JX, y:TOP+WALL, width:W-JX-2, height:CHAN-WALL*2, fill:'#f1f5f9'}),
+      // Top wall (thick line)
+      React.createElement('rect', {x:JX, y:TOP, width:W-JX, height:WALL, fill:'#334155', rx:1}),
+      // Bottom wall
+      React.createElement('rect', {x:JX, y:BOT-WALL, width:W-JX, height:WALL, fill:'#334155', rx:1}),
 
-      // ── 50% midline (classes 2-4) ──
-      show50 && React.createElement('line', {
-        x1:cfvX+4, y1:cfvY, x2:W-8, y2:cfvY,
-        stroke:'#64748b', strokeWidth:1.2, strokeDasharray:'5,3', opacity:0.7
-      }),
-      show50 && React.createElement('text', {x:W-6, y:cfvY-3, fontSize:8, fill:'#64748b', textAnchor:'end', fontWeight:700},'50%'),
+      // ── 50% midline ──
+      show50 && React.createElement('line', {x1:JX+4,y1:MID,x2:W-12,y2:MID,stroke:'#94a3b8',strokeWidth:1.5,strokeDasharray:'5,4'}),
+      show50 && React.createElement('text', {x:W-4,y:MID+4,fontSize:8,fill:'#94a3b8',textAnchor:'end',fontWeight:700},'50%'),
 
-      // ── Thrombus inside CFV ──
-      classId && React.createElement('ellipse', {
-        cx:tCX, cy:tCY, rx:tw, ry:th,
-        fill:`url(#thromb-grad-${uid})`, opacity:0.88,
-        clipPath:`url(#cfv-clip-${uid})`
+      // ── Thrombus torpedo (clipped to CFV channel) ──
+      classId && React.createElement('path', {
+        d:torpedoPath(ext, ht),
+        fill:`url(#tgrad-${uid})`,
+        opacity:0.9,
+        clipPath:`url(#chan-${uid})`
       }),
 
-      // ── GSV tube (diagonal, colored) ──
-      React.createElement('g', {transform:`rotate(${angle} ${cfvX} ${cfvY})`},
-        // GSV outer wall
-        React.createElement('rect', {x:cfvX-gsvLen, y:cfvY-gsvW/2-2, width:gsvLen, height:gsvW+4, rx:gsvW/2+2, fill:'#9f1239', opacity:0.5}),
-        // GSV inner
-        React.createElement('rect', {x:cfvX-gsvLen, y:cfvY-gsvW/2, width:gsvLen, height:gsvW, rx:gsvW/2, fill:`url(#gsv-grad-${uid})`}),
-        // GSV label
-        React.createElement('text', {x:cfvX-gsvLen/2, y:cfvY+3, textAnchor:'middle', fontSize:compact?8:9, fontWeight:800, fill:'white', opacity:0.9}, 'GSV')
-      ),
+      // ── GSV entering from upper-left (diagonal tube behind thrombus) ──
+      React.createElement('line', {x1:10,y1:TOP-12,x2:JX,y2:MID-CHAN*0.3,stroke:'#94a3b8',strokeWidth:CHAN*0.38,strokeLinecap:'round',opacity:0.2}),
+      React.createElement('line', {x1:14,y1:TOP-10,x2:JX,y2:MID-CHAN*0.28,stroke:'#cbd5e1',strokeWidth:CHAN*0.26,strokeLinecap:'round',opacity:0.6}),
+      // GSV label
+      React.createElement('text', {x:18,y:TOP-18,fontSize:compact?8:9,fontWeight:700,fill:'#475569'},'GSV / Treated Vein'),
 
-      // Junction dot
-      React.createElement('circle', {cx:cfvX, cy:cfvY, r:compact?5:6, fill:'#7c3aed', stroke:'white', strokeWidth:2}),
+      // ── CFV label ──
+      React.createElement('text', {x:W-4,y:TOP-3,fontSize:8,fontWeight:700,fill:'#475569',textAnchor:'end'},'CFV'),
+      React.createElement('text', {x:W-4,y:BOT+12,fontSize:8,fontWeight:700,fill:'#475569',textAnchor:'end'},'(Deep Vein)'),
 
-      // Labels
-      React.createElement('text', {x:cfvX+cfvRx*1.3, y:cfvY-cfvRy-6, textAnchor:'middle', fontSize:compact?8:9, fontWeight:800, fill:'#1078B9'},'CFV'),
-      React.createElement('text', {x:cfvX-2, y:cfvY+cfvRy+12, textAnchor:'middle', fontSize:7, fontWeight:700, fill:'#7c3aed'},'SFJ'),
+      // ── SFJ marker ──
+      React.createElement('circle', {cx:JX,cy:MID,r:4,fill:accentColor,stroke:'white',strokeWidth:1.5}),
+      React.createElement('text', {x:JX-2,y:BOT+12,fontSize:7,fontWeight:700,fill:accentColor,textAnchor:'middle'},'SFJ'),
 
-      // Class label bottom
-      classId && React.createElement('text', {x:W/2, y:H-6, textAnchor:'middle', fontSize:compact?8:9, fontWeight:900, fill:accentColor},
-        {c1:'Class 1 — tip at SFJ only', c2:'Class 2 — <50% CFV', c3:'Class 3 — ≥50% CFV', c4:'Class 4 — full occlusion'}[classId]
+      // ── Class badge ──
+      classId && React.createElement('rect', {x:4,y:4,width:compact?76:88,height:16,rx:4,fill:accentColor,opacity:0.12}),
+      classId && React.createElement('text', {x:8,y:15,fontSize:9,fontWeight:900,fill:accentColor},
+        {c1:'Class 1 — at SFJ only', c2:'Class 2 — <50% CFV', c3:'Class 3 — ≥50% CFV', c4:'Class 4 — full occlusion'}[classId]
       ),
     );
   }
