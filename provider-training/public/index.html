@@ -2446,101 +2446,34 @@ function EHITGame() {
   // EHIT SVG diagram: shows GSV/CFV junction with thrombus visualization
   // Single class diagram matching the reference image style
   // Deep vein = horizontal channel; GSV thrombus enters diagonally from upper-left
-  function EhitDiagram({classId, compact}) {
-    // Clean anatomical diagram — horizontal CFV channel with diagonal GSV torpedo thrombus
-    // Style: clinical illustration, not cartoonish, not purely abstract
-    const W = 280, H = compact ? 120 : 145;
-    const TOP = compact ? 32 : 40;   // CFV top wall y
-    const BOT = compact ? 88 : 105;  // CFV bottom wall y
-    const MID = (TOP + BOT) / 2;
-    const CHAN = BOT - TOP;           // channel height
-    const JX = 100;                  // junction x (where GSV meets CFV)
-    const WALL = 5;                  // vessel wall thickness
-
-    const classColors = {c1:'#22c55e', c2:'#eab308', c3:'#f97316', c4:'#dc2626'};
-    const accentColor = classId ? classColors[classId] : '#64748b';
-    const uid = classId || 'base';
-
-    // Thrombus torpedo path — a pill shape entering diagonally from upper-left
-    // grows rightward into CFV per class
-    // cx = rightmost extent of thrombus inside CFV
-    const extents = {c1: JX+14, c2: JX+65, c3: JX+105, c4: JX+148};
-    const heights = {c1: CHAN*0.32, c2: CHAN*0.50, c3: CHAN*0.72, c4: CHAN*0.95};
-    const ext = classId ? extents[classId] : 0;
-    const ht  = classId ? heights[classId] : 0;
-
-    // Torpedo: rounded pill, angled slightly, origin at SFJ
-    // We draw it as a path: starts from upper-left (the GSV), extends right into CFV
-    function torpedoPath(rightX, halfH) {
-      const lx = JX - 40, ly = MID - halfH * 0.3; // left tip (from GSV direction)
-      const rx = rightX;
-      return `M ${lx},${MID - halfH*0.5}
-              Q ${lx-8},${MID} ${lx},${MID+halfH*0.5}
-              Q ${JX+10},${MID+halfH*0.55} ${rx},${MID+halfH*0.45}
-              Q ${rx+10},${MID} ${rx},${MID-halfH*0.45}
-              Q ${JX+10},${MID-halfH*0.55} ${lx},${MID-halfH*0.5} Z`;
-    }
-
-    const show50 = classId && classId !== 'c1';
-
-    return React.createElement('svg', {width:W, height:H, viewBox:`0 0 ${W} ${H}`,
-      style:{borderRadius:10, background:'white', display:'block',
-        border:`1.5px solid ${accentColor}66`,
-        boxShadow:'0 2px 8px rgba(0,0,0,0.08)'}},
-
-      React.createElement('defs', null,
-        React.createElement('clipPath', {id:'chan-'+uid},
-          React.createElement('rect', {x:JX, y:TOP+WALL, width:W-JX, height:CHAN-WALL*2})
-        ),
-        React.createElement('linearGradient', {id:'tgrad-'+uid, x1:'0%', y1:'0%', x2:'100%', y2:'0%'},
-          React.createElement('stop', {offset:'0%', stopColor:'#9ca3af'}),
-          React.createElement('stop', {offset:'100%', stopColor:'#374151'})
-        )
+  function EhitDiagram({classId}) {
+    const thrombus = {
+      c1:{points:'M 120,145 Q 128,138 135,138 Q 140,138 140,143 Q 140,150 133,152 Q 126,153 120,150 Z', color:'#22c55e', label:'Thrombus at SFJ only'},
+      c2:{points:'M 120,130 Q 128,120 138,118 Q 148,116 150,124 Q 152,132 144,136 Q 136,140 126,140 Q 120,140 118,136 Z', color:'#eab308', label:'Into CFV <50%'},
+      c3:{points:'M 112,115 Q 120,102 138,98 Q 155,95 158,108 Q 161,120 150,126 Q 138,132 124,132 Q 112,132 110,124 Z', color:'#f97316', label:'Into CFV ≥50%'},
+      c4:{points:'M 108,95 Q 116,78 138,74 Q 162,71 166,88 Q 170,105 156,114 Q 140,122 120,120 Q 106,118 105,108 Z', color:'#dc2626', label:'Full CFV occlusion'},
+    };
+    const t = classId ? thrombus[classId] : null;
+    return React.createElement('svg', {width:220,height:300,viewBox:'0 0 220 300',style:{borderRadius:12,background:'#f0f9ff',boxShadow:'0 2px 12px rgba(30,58,95,0.1)'}},
+      React.createElement('rect', {x:118,y:20,width:36,height:160,rx:18,fill:'#bfdbfe',stroke:'#3b82f6',strokeWidth:2}),
+      React.createElement('text', {x:136,y:15,textAnchor:'middle',fontSize:9,fontWeight:800,fill:'#1d4ed8'},'CFV'),
+      React.createElement('path', {d:'M 30,240 Q 60,220 80,195 Q 100,170 118,148', fill:'none',stroke:'#ef4444',strokeWidth:16,strokeLinecap:'round',opacity:0.7}),
+      React.createElement('path', {d:'M 30,240 Q 60,220 80,195 Q 100,170 118,148', fill:'none',stroke:'#fca5a5',strokeWidth:10,strokeLinecap:'round'}),
+      React.createElement('text', {x:38,y:262,fontSize:9,fontWeight:800,fill:'#dc2626'},'GSV'),
+      React.createElement('circle', {cx:118,cy:148,r:6,fill:'#7c3aed',stroke:'white',strokeWidth:1.5}),
+      React.createElement('text', {x:108,y:168,fontSize:8,fontWeight:700,fill:'#7c3aed'},'SFJ'),
+      React.createElement('rect', {x:118,y:180,width:36,height:100,rx:18,fill:'#dbeafe',stroke:'#93c5fd',strokeWidth:1.5,opacity:0.7}),
+      React.createElement('text', {x:136,y:296,textAnchor:'middle',fontSize:9,fontWeight:800,fill:'#1d4ed8',opacity:0.7},'FV'),
+      t && React.createElement('g', null,
+        React.createElement('path', {d:t.points,fill:t.color,opacity:0.85,stroke:'white',strokeWidth:1}),
+        React.createElement('text', {x:136,y:275,textAnchor:'middle',fontSize:9,fontWeight:800,fill:t.color},t.label)
       ),
-
-      // ── CFV channel — two solid wall lines with subtle fill between ──
-      // Channel fill (light)
-      React.createElement('rect', {x:JX, y:TOP+WALL, width:W-JX-2, height:CHAN-WALL*2, fill:'#f1f5f9'}),
-      // Top wall (thick line)
-      React.createElement('rect', {x:JX, y:TOP, width:W-JX, height:WALL, fill:'#334155', rx:1}),
-      // Bottom wall
-      React.createElement('rect', {x:JX, y:BOT-WALL, width:W-JX, height:WALL, fill:'#334155', rx:1}),
-
-      // ── 50% midline ──
-      show50 && React.createElement('line', {x1:JX+4,y1:MID,x2:W-12,y2:MID,stroke:'#94a3b8',strokeWidth:1.5,strokeDasharray:'5,4'}),
-      show50 && React.createElement('text', {x:W-4,y:MID+4,fontSize:8,fill:'#94a3b8',textAnchor:'end',fontWeight:700},'50%'),
-
-      // ── Thrombus torpedo (clipped to CFV channel) ──
-      classId && React.createElement('path', {
-        d:torpedoPath(ext, ht),
-        fill:`url(#tgrad-${uid})`,
-        opacity:0.9,
-        clipPath:`url(#chan-${uid})`
-      }),
-
-      // ── GSV entering from upper-left (diagonal tube behind thrombus) ──
-      React.createElement('line', {x1:10,y1:TOP-12,x2:JX,y2:MID-CHAN*0.3,stroke:'#94a3b8',strokeWidth:CHAN*0.38,strokeLinecap:'round',opacity:0.2}),
-      React.createElement('line', {x1:14,y1:TOP-10,x2:JX,y2:MID-CHAN*0.28,stroke:'#cbd5e1',strokeWidth:CHAN*0.26,strokeLinecap:'round',opacity:0.6}),
-      // GSV label
-      React.createElement('text', {x:18,y:TOP-18,fontSize:compact?8:9,fontWeight:700,fill:'#475569'},'GSV / Treated Vein'),
-
-      // ── CFV label ──
-      React.createElement('text', {x:W-4,y:TOP-3,fontSize:8,fontWeight:700,fill:'#475569',textAnchor:'end'},'CFV'),
-      React.createElement('text', {x:W-4,y:BOT+12,fontSize:8,fontWeight:700,fill:'#475569',textAnchor:'end'},'(Deep Vein)'),
-
-      // ── SFJ marker ──
-      React.createElement('circle', {cx:JX,cy:MID,r:4,fill:accentColor,stroke:'white',strokeWidth:1.5}),
-      React.createElement('text', {x:JX-2,y:BOT+12,fontSize:7,fontWeight:700,fill:accentColor,textAnchor:'middle'},'SFJ'),
-
-      // ── Class badge ──
-      classId && React.createElement('rect', {x:4,y:4,width:compact?76:88,height:16,rx:4,fill:accentColor,opacity:0.12}),
-      classId && React.createElement('text', {x:8,y:15,fontSize:9,fontWeight:900,fill:accentColor},
-        {c1:'Class 1 — at SFJ only', c2:'Class 2 — <50% CFV', c3:'Class 3 — ≥50% CFV', c4:'Class 4 — full occlusion'}[classId]
-      ),
+      React.createElement('text', {x:10,y:130,fontSize:8,fill:'#64748b'},'← Into'),
+      React.createElement('text', {x:10,y:140,fontSize:8,fill:'#64748b'},'deep system')
     );
   }
 
-  // 2×2 grid showing all 4 classes at once for study mode
+    // 2×2 grid showing all 4 classes at once for study mode
   function EhitAllClasses() {
     const classColors = {c1:'#22c55e', c2:'#eab308', c3:'#f97316', c4:'#dc2626'};
     const labels = {c1:'Class 1', c2:'Class 2', c3:'Class 3', c4:'Class 4'};
@@ -2550,7 +2483,7 @@ function EHITGame() {
         React.createElement('div', {key:id, style:{borderRadius:10, overflow:'hidden', border:`2px solid ${classColors[id]}66`}},
           React.createElement('div', {style:{background:classColors[id], color:'white', padding:'6px 12px', fontWeight:900, fontSize:13}}, labels[id]),
           React.createElement('div', {style:{padding:'10px', background:'white'}},
-            React.createElement(EhitDiagram, {classId:id, compact:true}),
+            React.createElement(EhitDiagram, {classId:id}),
             React.createElement('div', {style:{fontSize:11, color:'#374151', marginTop:6, fontWeight:600}}, sublabels[id])
           )
         )
