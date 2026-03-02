@@ -2057,334 +2057,276 @@ function P2PTab() {
 
 
 function VeinAnatomyGame() {
-  const [view, setView]           = React.useState('anterior');
-  const [mode, setMode]           = React.useState('study');
-  const [highlighted, setHL]      = React.useState(null);
-  const [quizState, setQS]        = React.useState(null);
-  const [score, setScore]         = React.useState({c:0,t:0});
-  const [feedback, setFeedback]   = React.useState(null); // 'correct'|'wrong'
+  const [tab, setTab] = React.useState('anatomy');
+  const [hl, setHL] = React.useState(null);
+  const [quizIdx, setQI] = React.useState(0);
+  const [choice, setChoice] = React.useState(null);
+  const [score, setScore] = React.useState({c:0,t:0});
+  const [quizMode, setQuizMode] = React.useState(false);
 
+  const SOURCE = 'Source: Ultrasonography of the lower extremity veins (PMC5381851)';
+
+  // ── Vein data enriched from article ──────────────────────────────────────
   const VEINS = {
-    anterior: [
-      { id:'sfj',      name:'Sapheno-Femoral Junction (SFJ)',   type:'s',
-        path:'M 103,50 L 103,50',  dot:{cx:103,cy:50},
-        desc:'Where the GSV drains into the common femoral vein at the groin crease. Key landmark — incompetence here drives most GSV reflux.' },
-      { id:'gsv',      name:'Great Saphenous Vein (GSV)',        type:'s',
-        path:'M 103,50 L 98,110 L 93,175 L 88,245 L 84,305 L 82,365 L 82,430 L 84,490 L 87,555',
-        desc:'Longest vein in the body. Runs medially from ankle to SFJ. Primary RFA target. Needs ≥3 mm diameter + ≥500 ms reflux time.' },
-      { id:'agsv',     name:'Accessory Saphenous Vein (AGSV)',   type:'s',
-        path:'M 88,245 Q 102,265 107,300 Q 108,330 100,355',
-        desc:'Runs parallel to GSV in the anterior thigh. Often the source of reflux even when the main GSV is competent. May require separate ablation.' },
-      { id:'cfv',      name:'Common Femoral Vein (CFV)',          type:'d',
-        path:'M 130,22 L 130,55 L 128,100',
-        dot:{cx:130,cy:22},
-        desc:'Receives the GSV at the SFJ. Transitions to the femoral vein distally. Always evaluate for DVT before any endovenous procedure.' },
-      { id:'fv',       name:'Femoral Vein',                       type:'d',
-        path:'M 128,100 L 126,170 L 124,240 L 122,290',
-        desc:'Continuation of CFV in the thigh. Main deep vein of the thigh — despite the old name "superficial femoral vein," this is a TRUE deep vein.' },
-      { id:'profunda', name:'Deep Femoral Vein (Profunda Femoris)', type:'d',
-        path:'M 128,100 Q 150,115 163,138 L 170,162',
-        desc:'Drains the thigh musculature. Branches off CFV/proximal femoral vein. Important collateral pathway when the femoral vein is obstructed.' },
-      { id:'pop',      name:'Popliteal Vein',                     type:'d',
-        path:'M 122,290 L 122,320 L 123,355 L 124,375',
-        desc:'Deep vein at the popliteal fossa (back of knee). Receives the SSV at the SPJ. Common site for DVT — scan carefully.' },
-      { id:'atib',     name:'Anterior Tibial Vein',               type:'d',
-        path:'M 124,375 Q 140,405 150,445 L 156,500 L 160,558',
-        desc:'Paired deep veins of the anterior compartment. Drain the dorsum of the foot and anterior leg muscles.' },
-      { id:'ptib',     name:'Posterior Tibial Vein',              type:'d',
-        path:'M 124,375 Q 107,415 101,462 L 98,518 L 96,558',
-        desc:'Paired deep veins of the posterior compartment. The largest calf deep veins. Primary route for isolated calf DVT.' },
-      { id:'peroneal', name:'Peroneal Vein',                      type:'d',
-        path:'M 124,375 Q 128,425 130,468 L 131,522 L 131,558',
-        desc:'Deep veins running in the lateral compartment between anterior and posterior tibial veins. Also commonly involved in calf DVT.' },
+    deep: [
+      { id:'eiv', name:'External Iliac Vein (EIV)', abbr:'EIV', color:'#2563eb',
+        location:'Above inguinal ligament; becomes CFV below it',
+        notes:'The inguinal ligament is the anatomic landmark dividing the external iliac vein from the common femoral vein. Not routinely scanned in standard DVT protocol but important in extensive proximal DVT.',
+        us:'Scan just above the inguinal ligament. Large, thin-walled, easily compressed.'},
+      { id:'cfv', name:'Common Femoral Vein (CFV)', abbr:'CFV', color:'#1d4ed8',
+        location:'Medial to common femoral artery at inguinal ligament level',
+        notes:'Formed by junction of femoral vein and deep femoral vein. Located medial to the common femoral artery. Key junction — EHIT and proximal DVT assessed here.',
+        us:'Transverse view at inguinal ligament. CFV is medial to the CFA (round, pulsatile artery). Apply compression — normal vein collapses completely.'},
+      { id:'fv', name:'Femoral Vein (FV)', abbr:'FV', color:'#3b82f6',
+        location:'Medial thigh; formerly (incorrectly) called "superficial femoral vein"',
+        notes:'The term "superficial femoral vein" is NO LONGER recommended — it is a deep vein. Lies lateral to artery distally, behind artery mid-thigh, medial artery proximally.',
+        us:'Trace distally from CFV bifurcation. Scan every 3–4 cm with compression. Adductor hiatus (distal FV) can be challenging due to depth.'},
+      { id:'dfv', name:'Deep Femoral Vein (DFV)', abbr:'DFV', color:'#6366f1',
+        location:'Inner thigh, alongside deep femoral artery',
+        notes:'Drains deep thigh muscles. Joins femoral vein to form CFV. Not always visualized fully but bifurcation point (CFV→FV+DFV) is a key landmark.',
+        us:'Visible at CFV bifurcation. Note "Y" split — DFV goes deep/lateral, FV continues down medial thigh.'},
+      { id:'pv', name:'Popliteal Vein (PV)', abbr:'PV', color:'#7c3aed',
+        location:'Posterior knee; superficial to popliteal artery at this level',
+        notes:'Formed by junction of anterior and posterior tibial veins. Superficial to the artery at the posterior knee (opposite of the thigh relationship). Duplicated popliteal vein is common — scan both lumens.',
+        us:'Patient: leg externally rotated or prone. Transducer at posterior knee. PV is superficial (anterior) to popliteal artery here. Compress at 3–4 cm intervals.'},
+      { id:'ptv', name:'Posterior Tibial Vein (PTV)', abbr:'PTV', color:'#0891b2',
+        location:'Posterior leg, along tibia; drains to popliteal vein',
+        notes:'Receives blood from medial and lateral plantar veins. Joins popliteal vein at posterior knee. Presented as PAIRED veins flanking the posterior tibial artery.',
+        us:'Posteromedial approach. Tibia cortex = bony landmark. Paired veins on both sides of artery. Trace upward from medial malleolus if difficult to find proximally.'},
+      { id:'perv', name:'Peroneal Vein (PeV)', abbr:'PeV', color:'#0284c7',
+        location:'Posteromedial fibula; paired veins flanking peroneal artery',
+        notes:'Runs along posteromedial aspect of fibula. Joins posterior tibial vein. Fibula cortex is the bony landmark for identification. Distal calf DVTs here are often missed.',
+        us:'Posteromedial approach. Fibula = bony landmark. Paired veins flanking peroneal artery. Differentiate from PTV by proximity to fibula vs tibia.'},
+      { id:'atv', name:'Anterior Tibial Vein (ATV)', abbr:'ATV', color:'#0369a1',
+        location:'Anterior compartment of leg, above interosseous membrane',
+        notes:'Upward continuation of dorsal pedal vein. Runs above the interosseous membrane between tibia and fibula. Joins PTV to form tibioperoneal trunk/popliteal vein.',
+        us:'Requires anterior approach with leg stretched/extended. Identify echogenic interosseous membrane between tibia and fibula — ATV and artery lie just above it.'},
     ],
-    posterior: [
-      { id:'spj',      name:'Sapheno-Popliteal Junction (SPJ)',   type:'s',
-        path:'M 130,308 L 130,308', dot:{cx:130,cy:308},
-        desc:'Where the SSV drains into the popliteal vein. Highly variable anatomy — the SPJ level ranges from mid-calf to above knee. Always confirm with duplex ultrasound.' },
-      { id:'ssv',      name:'Small Saphenous Vein (SSV)',          type:'s',
-        path:'M 164,558 L 163,495 L 160,430 L 157,375 L 151,335 L 144,315 L 130,308',
-        desc:'Posterior calf vein running from lateral ankle to SPJ. Target for RFA when posterior/lateral reflux is present. Must confirm anatomy — termination is variable.' },
-      { id:'giacomini', name:'Giacomini Vein',                    type:'s',
-        path:'M 130,308 Q 117,325 107,345 Q 97,362 90,352',
-        desc:'Thigh extension of the SSV connecting it to the GSV territory. Clinically important when SSV reflux extends proximally without a low SPJ.' },
-      { id:'pop_post', name:'Popliteal Vein (posterior view)',     type:'d',
-        path:'M 128,270 L 129,292 L 130,308 L 132,338 L 134,365',
-        desc:'Same vessel seen from behind. Receives the SSV at the SPJ. Key structure — always scan to confirm SPJ level before SSV ablation.' },
-      { id:'gastro',   name:'Gastrocnemius Veins',                 type:'d',
-        path:'M 130,365 Q 119,382 115,405 M 130,365 Q 141,384 145,408',
-        desc:'Paired muscular veins draining the gastrocnemius. Prone to isolated DVT (especially post-op or travel). Usually managed conservatively unless propagating.' },
-      { id:'soleal',   name:'Soleal Sinuses',                      type:'d',
-        path:'M 121,432 Q 119,458 120,483 L 121,512 M 139,432 Q 141,458 140,483 L 139,512',
-        desc:'Large venous sinusoids within the soleus muscle. High-risk DVT site due to slow flow. Often missed on US — require careful prone or reverse Trendelenburg scanning.' },
+    superficial: [
+      { id:'gsv', name:'Great Saphenous Vein (GSV)', abbr:'GSV', color:'#dc2626',
+        location:'Medial malleolus → medial leg/thigh → SFJ at common femoral vein',
+        notes:'Longest vein in the body. Begins at medial marginal vein of dorsum of foot. Ascends anteriorly to medial malleolus, then posteromedially to knee, then medially in thigh to SFJ. Terms "greater" or "long saphenous vein" no longer recommended.',
+        us:'Erect position best for reflux assessment. In thigh: look for "Egyptian eye" sign — GSV sits in saphenous compartment between two fascial layers. Must evaluate in standing for true reflux measurement.'},
+      { id:'ssv', name:'Small Saphenous Vein (SSV)', abbr:'SSV', color:'#b91c1c',
+        location:'Lateral malleolus → posterior calf → SPJ at popliteal vein',
+        notes:'Arises from dorsal pedal arch, ascends posterolaterally from behind lateral malleolus. Ends in popliteal vein at saphenopopliteal junction (SPJ). Many anatomic variations in SPJ location. May give rise to vein of Giacomini.',
+        us:'Posterior approach with knee slightly bent. SPJ location is variable (usually 0–5 cm above popliteal crease). Always verify SPJ level with US before treatment.'},
+      { id:'agsv', name:'Anterior Accessory GSV (AAGSV)', abbr:'AAGSV', color:'#ef4444',
+        location:'Parallel to GSV anteriorly in thigh',
+        notes:'A tributary parallel to the GSV is called an accessory GSV. Anterior accessory GSV runs parallel on the anterior side. Can be a source of reflux independent of GSV. Important to identify separately.',
+        us:'Scan anterior to GSV in thigh. Sits in its own fascial compartment. May be mistaken for GSV if main GSV is small or sclerosed.'},
+      { id:'pagsv', name:'Posterior Accessory GSV (PAGSV)', abbr:'PAGSV', color:'#f97316',
+        location:'Parallel to GSV posteriorly in thigh',
+        notes:'Parallel tributary on posterior side of GSV. Like AAGSV, may independently reflux.',
+        us:'Scan posterior to GSV in thigh. Distinguish from GSV by position relative to fascial compartment.'},
+      { id:'giacomini', name:'Vein of Giacomini', abbr:'Giacomini', color:'#a855f7',
+        location:'Posterior thigh; connects SSV to GSV',
+        notes:'Cranial extension of SSV before it penetrates the muscular fascia. Runs upward through the posterior thigh to join the GSV. Can transmit reflux from SSV to GSV territory. Clinically significant if refluxing.',
+        us:'Scan posterior thigh between SSV and GSV. Typically runs deep to posterior thigh skin. May be the source of thigh varicosities fed by SSV reflux.'},
     ],
   };
 
-  const LEG_ANTERIOR = 'M 72,0 C 62,32 59,72 61,112 C 63,165 68,222 72,268 C 75,293 77,314 79,338 C 83,378 87,418 91,456 C 94,486 96,512 98,542 C 99,556 100,570 98,588 L 100,592 L 160,592 L 162,588 C 160,570 161,556 162,542 C 164,512 166,486 169,456 C 173,418 177,378 181,338 C 183,314 185,293 188,268 C 192,222 197,165 199,112 C 201,72 198,32 188,0 Z';
-  const LEG_POSTERIOR = LEG_ANTERIOR;
+  const QUIZ = [
+    {q:'Which vein landmark divides the external iliac vein from the common femoral vein?', opts:['Adductor hiatus','Inguinal ligament','Popliteal crease','Interosseous membrane'], ans:1, exp:'The inguinal ligament is the anatomic landmark. Below it = CFV; above = EIV.'},
+    {q:'The term "superficial femoral vein" is:', opts:['Correct — it runs superficially in the thigh','Acceptable only for the distal segment','No longer recommended — it is a deep vein','Used for the accessory GSV only'], ans:2, exp:'The term is NO LONGER recommended. The femoral vein (formerly "superficial femoral vein") is a DEEP vein. Using "superficial" creates dangerous confusion — DVT there can be undertreated.'},
+    {q:'At the posterior knee, the popliteal vein is located ___ to the popliteal artery:', opts:['Deep (posterior)','Superficial (anterior)','Medial','Lateral'], ans:1, exp:'At the posterior knee the vein is SUPERFICIAL (anterior) to the artery — opposite of the thigh. This relationship flips back in the lower knee.'},
+    {q:'The GSV is best evaluated for reflux with the patient in which position?', opts:['Supine','Trendelenburg (head down)','Erect (standing)','Prone'], ans:2, exp:'Erect position is essential for reflux assessment. Supine can underestimate or completely miss reflux. Reverse Trendelenburg also acceptable.'},
+    {q:'Which vein is the upward continuation of the dorsal pedal vein?', opts:['Posterior tibial vein','Peroneal vein','Anterior tibial vein','GSV'], ans:2, exp:'The anterior tibial vein is the upward continuation of the dorsal pedal vein. It runs above the interosseous membrane in the anterior compartment.'},
+    {q:'The vein of Giacomini connects:', opts:['GSV to the femoral vein','SSV to the GSV via posterior thigh','Deep femoral vein to GSV','Peroneal vein to SSV'], ans:1, exp:'The vein of Giacomini is a cranial extension of the SSV that travels up the posterior thigh to join the GSV. Clinically important as a source of thigh varicosities.'},
+    {q:'In the calf, the posterior tibial and peroneal veins are typically found as:', opts:['Single vessels','Paired vessels flanking the artery','Vessels lying deep to the tibia','A single trunk with the anterior tibial vein'], ans:1, exp:'Calf deep veins are PAIRED — two veins on either side of the corresponding artery. This is a key US feature distinguishing them from superficial veins.'},
+    {q:'The "Egyptian eye" sign on ultrasound refers to:', opts:['DVT with hyperechoic walls','GSV sitting in the saphenous compartment between fascial layers','The compressed CFV next to the CFA','Valve leaflets visible in the popliteal vein'], ans:1, exp:'The "Egyptian eye" sign describes the GSV in cross-section sitting within the saphenous compartment — surrounded by two echogenic fascial layers, giving the appearance of an eye.'},
+  ];
 
-  const legPath = view === 'anterior' ? LEG_ANTERIOR : LEG_POSTERIOR;
-  const veins   = VEINS[view];
+  const q = QUIZ[quizIdx % QUIZ.length];
+  const allVeins = [...VEINS.deep, ...VEINS.superficial];
+  const hlVein = hl ? allVeins.find(v=>v.id===hl) : null;
 
-  /* ── Quiz helpers ── */
-  function startQuiz() {
-    setMode('quiz'); setScore({c:0,t:0}); pickQ(veins,[]);
+  function nextQ(correct) {
+    setScore(s=>({c:s.c+(correct?1:0),t:s.t+1}));
+    setTimeout(()=>{setChoice(null); setQI(i=>i+1);}, 1600);
   }
-  function pickQ(vlist, used) {
-    const avail = vlist.filter(v=>!used.includes(v.id));
-    if (!avail.length) { setQS({done:true}); setHL(null); return; }
-    const tgt  = avail[Math.floor(Math.random()*avail.length)];
-    const pool = vlist.filter(v=>v.id!==tgt.id).sort(()=>Math.random()-.5).slice(0,3);
-    const opts = [...pool,tgt].sort(()=>Math.random()-.5);
-    setQS({tgt,opts,used:[...used,tgt.id]}); setFeedback(null); setHL(tgt.id);
-  }
-  function handleAnswer(id) {
-    if (feedback) return;
-    const ok = id===quizState.tgt.id;
-    setFeedback(ok?'correct':'wrong');
-    setScore(s=>({c:s.c+(ok?1:0),t:s.t+1}));
-  }
-  function switchView(v) { setView(v); setMode('study'); setHL(null); setQS(null); setFeedback(null); }
 
-  /* ── SVG colours ── */
-  const SC='#ef4444', DC='#3b82f6'; // superficial coral, deep blue
-  function vColor(v,hl) { return v.type==='s'?(hl?'#dc2626':SC):(hl?'#1078B9':DC); }
+  const btnS = {border:'none',cursor:'pointer',fontWeight:800,fontSize:12,borderRadius:9,padding:'7px 14px'};
+  const tabActive = {background:'#6C3CB5',color:'white'};
+  const tabInactive = {background:'#f1f5f9',color:'#64748b'};
 
-  /* ── Styles ── */
-  const btnBase = {border:'none',cursor:'pointer',fontWeight:800,fontSize:12,borderRadius:9,padding:'8px 16px',transition:'all 0.15s'};
+  // Fig captions from article
+  const FIGS = [
+    {src:'/anatomy/f1.jpg', cap:'Fig 1. CT venography showing deep, superficial and perforating veins of the thigh. Deep vein (femoral vein, arrows), superficial vein (GSV, open arrows), perforating vein (arrowheads).'},
+    {src:'/anatomy/f3.jpg', cap:'Fig 3. Schematic of lower extremity deep veins. Landmarks: inguinal ligament (EIV→CFV), adductor hiatus (FV→PV).'},
+    {src:'/anatomy/f6.jpg', cap:'Fig 6A. GSV tributaries: accessory GSV runs parallel; circumflex veins run obliquely. Fig 6B. SSV and vein of Giacomini connecting SSV to GSV via posterior thigh.'},
+    {src:'/anatomy/f7.jpg', cap:'Fig 7. GSV ultrasound examination. Note "Egyptian eye" sign — GSV sits in saphenous compartment between two fascial layers. Evaluate standing for reflux.'},
+    {src:'/anatomy/f8.jpg', cap:'Fig 8. SSV ultrasound examination. Posterior approach. SPJ location is variable — always confirm with US.'},
+    {src:'/anatomy/f4.jpg', cap:'Fig 4. Deep vein scanning technique. CFV medial to CFA at inguinal level. CFV bifurcates into DFV and FV. Compress every 3–4 cm.'},
+    {src:'/anatomy/f5.jpg', cap:'Fig 5. Anterior tibial vein above interosseous membrane (between tibia T and fibula F). Requires anterior approach with leg extended.'},
+    {src:'/anatomy/f2.jpg', cap:'Fig 2. Normal vein US: veins fully collapse with compression (vs artery). Valve leaflets visible on B-mode.'},
+  ];
 
-  return (
-    <div style={{maxWidth:960,margin:'0 auto',padding:'0 16px 48px'}}>
-      {/* Header */}
-      <div style={{textAlign:'center',margin:'0 0 20px'}}>
-        <h2 style={{fontSize:24,fontWeight:900,color:'#2d1b69',margin:'0 0 4px'}}>🧠 Vein Anatomy Game</h2>
-        <p style={{color:'#64748b',fontSize:13,margin:0}}>Learn the superficial &amp; deep veins of the lower extremity — study or quiz yourself</p>
-      </div>
+  return React.createElement('div', {style:{maxWidth:960,margin:'0 auto'}},
+    React.createElement('div', {style:{background:'linear-gradient(135deg,#2d1b69,#6C3CB5)',borderRadius:16,padding:'20px 24px',marginBottom:20,color:'white',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:8}},
+      React.createElement('div', null,
+        React.createElement('div', {style:{fontSize:22,fontWeight:900,marginBottom:4}}, '🫀 Vein Anatomy & Ultrasound'),
+        React.createElement('div', {style:{fontSize:12,opacity:0.8}}, SOURCE)
+      )
+    ),
 
-      {/* Control bar */}
-      <div style={{display:'flex',gap:10,justifyContent:'center',flexWrap:'wrap',marginBottom:18}}>
-        {/* View toggle */}
-        <div style={{background:'#f1f5f9',borderRadius:12,padding:4,display:'flex',gap:4}}>
-          {[['anterior','👁 Anterior/Medial'],['posterior','🔄 Posterior']].map(([v,lbl])=>(
-            <button key={v} style={{...btnBase,
-              background:view===v?'white':'transparent',
-              color:view===v?'#2d1b69':'#64748b',
-              boxShadow:view===v?'0 1px 4px rgba(0,0,0,0.12)':'none'}}
-              onClick={()=>switchView(v)}>{lbl}</button>
-          ))}
-        </div>
-        {/* Mode toggle */}
-        <div style={{background:'#f1f5f9',borderRadius:12,padding:4,display:'flex',gap:4}}>
-          <button style={{...btnBase,background:mode==='study'?'white':'transparent',
-            color:mode==='study'?'#AC4ABD':'#64748b',
-            boxShadow:mode==='study'?'0 1px 4px rgba(0,0,0,0.12)':'none'}}
-            onClick={()=>{setMode('study');setHL(null);setQS(null);}}>📚 Study</button>
-          <button style={{...btnBase,background:mode==='quiz'?'white':'transparent',
-            color:mode==='quiz'?'#7c3aed':'#64748b',
-            boxShadow:mode==='quiz'?'0 1px 4px rgba(0,0,0,0.12)':'none'}}
-            onClick={startQuiz}>🎮 Quiz</button>
-        </div>
-        {mode==='quiz' && (
-          <div style={{background:'#7c3aed',color:'white',borderRadius:20,padding:'8px 20px',fontWeight:800,fontSize:14,display:'flex',alignItems:'center'}}>
-            ⭐ {score.c}/{score.t}
-          </div>
-        )}
-      </div>
+    // Tab bar
+    React.createElement('div', {style:{display:'flex',gap:6,flexWrap:'wrap',marginBottom:18}},
+      [['anatomy','🫀 Anatomy Study'],['figures','📸 Article Figures'],['quiz','🎮 Quiz']].map(([id,lbl])=>
+        React.createElement('button', {key:id, onClick:()=>{setTab(id);setChoice(null);setQI(0);setScore({c:0,t:0});},
+          style:{...btnS, ...(tab===id?tabActive:tabInactive), fontSize:13}}, lbl)
+      ),
+      tab==='quiz' && React.createElement('div', {style:{background:'#6C3CB5',color:'white',borderRadius:20,padding:'7px 16px',fontWeight:800,fontSize:13}},`⭐ ${score.c}/${score.t}`)
+    ),
 
-      <div style={{display:'flex',gap:24,alignItems:'flex-start',flexWrap:'wrap',justifyContent:'center'}}>
+    // ── ANATOMY STUDY ──
+    tab==='anatomy' && React.createElement('div', null,
+      React.createElement('div', {style:{display:'flex',gap:8,flexWrap:'wrap',marginBottom:14}},
+        React.createElement('div', {style:{fontSize:13,fontWeight:700,color:'#475569',alignSelf:'center'}}, 'Filter:'),
+        React.createElement('button', {onClick:()=>setHL(null), style:{...btnS, background:!hl?'#6C3CB5':'#f1f5f9', color:!hl?'white':'#64748b'}}, 'All'),
+        React.createElement('div', {style:{width:1,background:'#e2e8f0',margin:'0 4px'}}),
+        React.createElement('span', {style:{fontSize:11,fontWeight:800,color:'#94a3b8',alignSelf:'center'}}, 'DEEP:'),
+        VEINS.deep.map(v=>React.createElement('button', {key:v.id, onClick:()=>setHL(h=>h===v.id?null:v.id),
+          style:{...btnS, padding:'5px 10px', background:hl===v.id?v.color:'#f1f5f9', color:hl===v.id?'white':'#374151', fontSize:11}}, v.abbr)),
+        React.createElement('span', {style:{fontSize:11,fontWeight:800,color:'#94a3b8',alignSelf:'center',marginLeft:4}}, 'SUPERFICIAL:'),
+        VEINS.superficial.map(v=>React.createElement('button', {key:v.id, onClick:()=>setHL(h=>h===v.id?null:v.id),
+          style:{...btnS, padding:'5px 10px', background:hl===v.id?v.color:'#f1f5f9', color:hl===v.id?'white':'#374151', fontSize:11}}, v.abbr)),
+      ),
 
-        {/* ── SVG Diagram ── */}
-        <div style={{flexShrink:0,position:'relative'}}>
-          <svg width={260} height={600} viewBox="0 0 260 600"
-            style={{borderRadius:16,background:'linear-gradient(180deg,#f0f9ff 0%,#f8fafc 100%)',
-              boxShadow:'0 4px 20px rgba(30,58,95,0.12)',display:'block'}}>
-            {/* Leg silhouette */}
-            <path d={legPath} fill='#fde8d8' stroke='#e8b89a' strokeWidth={1.5} opacity={0.8}/>
-            {/* Knee cap hint */}
-            <ellipse cx={130} cy={295} rx={28} ry={18} fill='#f5d0ba' stroke='#e8b89a' strokeWidth={1} opacity={0.6}/>
-
-            {/* Veins */}
-            {veins.map(v => {
-              const hl = highlighted===v.id;
-              const col = vColor(v,hl);
-              const op  = mode==='quiz' ? (hl?1:0.08) : (highlighted&&!hl?0.38:0.9);
-              const sw  = hl ? (v.type==='s'?4.5:4) : (v.type==='s'?2.5:2);
-              const dash= v.type==='d' ? '5,3' : 'none';
-              return (
-                <g key={v.id} opacity={op} style={{cursor:mode==='study'?'pointer':'default'}}
-                  onClick={()=>mode==='study'&&setHL(h=>h===v.id?null:v.id)}>
-                  {hl && <path d={v.path} fill='none' stroke={col} strokeWidth={sw+8} opacity={0.18}
-                    strokeLinecap='round' strokeLinejoin='round'/>}
-                  <path d={v.path} fill='none' stroke={col} strokeWidth={sw}
-                    strokeDasharray={dash} strokeLinecap='round' strokeLinejoin='round'/>
-                  {v.dot && <>
-                    <circle cx={v.dot.cx} cy={v.dot.cy} r={hl?8:5} fill={col} opacity={0.25}/>
-                    <circle cx={v.dot.cx} cy={v.dot.cy} r={hl?5:3.5} fill={col}/>
-                  </>}
-                </g>
+      React.createElement('div', {style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+        // SVG diagram
+        React.createElement('div', {style:{flexShrink:0, position:'relative'}},
+          React.createElement('svg', {width:200, height:580, viewBox:'0 0 200 580', style:{borderRadius:12,background:'linear-gradient(180deg,#fdf4ff,#f8fafc)',boxShadow:'0 4px 20px rgba(108,60,181,0.1)'}},
+            // Leg outline
+            React.createElement('path', {d:'M 72,0 C 62,32 59,72 61,112 C 63,165 68,222 72,268 C 75,293 77,314 79,338 C 83,378 87,418 91,456 C 94,486 96,512 98,542 C 99,556 100,570 98,588 L 100,592 L 160,592 L 162,588 C 160,570 161,556 162,542 C 164,512 166,486 169,456 C 173,418 177,378 181,338 C 183,314 185,293 188,268 C 192,222 197,165 199,112 C 201,72 198,32 188,0 Z', fill:'#fde8d8',stroke:'#e8b89a',strokeWidth:1.5,opacity:0.7}),
+            React.createElement('text', {x:130,y:14,textAnchor:'middle',fontSize:8,fill:'#94a3b8',fontWeight:700},'ANTERIOR'),
+            // Deep veins
+            ...VEINS.deep.map(v => {
+              const positions = {eiv:{cx:122,cy:38},cfv:{cx:122,cy:75},fv:{cx:120,cy:170},dfv:{cx:138,cy:105},pv:{cx:120,cy:310},ptv:{cx:112,cy:435},perv:{cx:128,cy:455},atv:{cx:140,cy:420}};
+              const pos = positions[v.id];
+              if (!pos) return null;
+              const active = hl===v.id || !hl;
+              return React.createElement('g', {key:v.id, onClick:()=>setHL(h=>h===v.id?null:v.id), style:{cursor:'pointer'}},
+                React.createElement('circle', {cx:pos.cx,cy:pos.cy,r:hl===v.id?12:8,fill:v.color,opacity:active?1:0.25,stroke:hl===v.id?'#1e293b':'none',strokeWidth:2}),
+                React.createElement('text', {x:pos.cx+(v.id==='dfv'||v.id==='atv'||v.id==='perv'?10:-10),y:pos.cy+4,fontSize:7,fontWeight:800,fill:active?v.color:'#cbd5e1',textAnchor:v.id==='dfv'||v.id==='atv'||v.id==='perv'?'start':'end'},v.abbr)
               );
-            })}
+            }),
+            // Superficial veins
+            ...VEINS.superficial.map(v => {
+              const positions = {gsv:{cx:80,cy:200},ssv:{cx:160,cy:400},agsv:{cx:90,cy:140},pagsv:{cx:90,cy:240},giacomini:{cx:145,cy:290}};
+              const pos = positions[v.id];
+              if (!pos) return null;
+              const active = hl===v.id || !hl;
+              return React.createElement('g', {key:v.id, onClick:()=>setHL(h=>h===v.id?null:v.id), style:{cursor:'pointer'}},
+                React.createElement('circle', {cx:pos.cx,cy:pos.cy,r:hl===v.id?12:8,fill:v.color,opacity:active?1:0.25,stroke:hl===v.id?'#1e293b':'none',strokeWidth:2}),
+                React.createElement('text', {x:pos.cx-10,y:pos.cy+4,fontSize:7,fontWeight:800,fill:active?v.color:'#cbd5e1',textAnchor:'end'},v.abbr)
+              );
+            }),
+            // Legend
+            React.createElement('rect', {x:4,y:530,width:90,height:44,rx:6,fill:'white',opacity:0.85}),
+            React.createElement('circle', {cx:12,cy:540,r:4,fill:'#2563eb'}),
+            React.createElement('text', {x:18,y:544,fontSize:7,fill:'#374151',fontWeight:700},'Deep vein'),
+            React.createElement('circle', {cx:12,cy:554,r:4,fill:'#dc2626'}),
+            React.createElement('text', {x:18,y:558,fontSize:7,fill:'#374151',fontWeight:700},'Superficial vein'),
+            React.createElement('text', {x:6,y:570,fontSize:7,fill:'#94a3b8'},'Tap any dot to explore')
+          )
+        ),
 
-            {/* Legend */}
-            <g transform="translate(6,546)">
-              <rect width={108} height={48} rx={8} fill='white' opacity={0.92}/>
-              <line x1={8} y1={14} x2={26} y2={14} stroke={SC} strokeWidth={2.5} strokeLinecap='round'/>
-              <text x={30} y={18} fontSize={9} fontWeight={700} fill='#334155'>Superficial</text>
-              <line x1={8} y1={30} x2={26} y2={30} stroke={DC} strokeWidth={2.5} strokeLinecap='round' strokeDasharray='4,2'/>
-              <text x={30} y={34} fontSize={9} fontWeight={700} fill='#334155'>Deep (dashed)</text>
-            </g>
+        // Info panel
+        React.createElement('div', {style:{flex:1,minWidth:240}},
+          !hlVein && React.createElement('div', null,
+            React.createElement('div', {style:{background:'#f3e8ff',borderRadius:12,padding:'14px 18px',marginBottom:14,border:'1px solid #e9d5ff'}},
+              React.createElement('div', {style:{fontSize:13,fontWeight:900,color:'#6C3CB5',marginBottom:6}}, '👆 Tap any vein to explore'),
+              React.createElement('div', {style:{fontSize:12,color:'#374151',lineHeight:1.6}},'The venous system of the lower extremity is classified into three groups: deep veins (beneath muscular fascia), superficial veins (above fascia), and perforating veins (connect the two). Understanding this anatomy is foundational for duplex scanning and clinical decision-making.')
+            ),
+            // Quick reference cards
+            [['Deep Veins', VEINS.deep, '#2563eb'], ['Superficial Veins', VEINS.superficial, '#dc2626']].map(([title, veins, color])=>
+              React.createElement('div', {key:title, style:{marginBottom:12}},
+                React.createElement('div', {style:{fontSize:11,fontWeight:900,color:'#94a3b8',textTransform:'uppercase',marginBottom:6}}), 
+                React.createElement('div', {style:{fontSize:12,fontWeight:900,color,marginBottom:8}},title),
+                veins.map(v=>React.createElement('div', {key:v.id, onClick:()=>setHL(v.id),
+                  style:{display:'flex',gap:8,alignItems:'flex-start',padding:'7px 10px',borderRadius:8,marginBottom:4,cursor:'pointer',background:'white',border:'1px solid #f1f5f9'}},
+                  React.createElement('div', {style:{width:10,height:10,borderRadius:'50%',background:v.color,flexShrink:0,marginTop:2}}),
+                  React.createElement('div', null,
+                    React.createElement('div', {style:{fontSize:12,fontWeight:800,color:'#1e293b'}}),
+                    React.createElement('div', {style:{fontSize:12,fontWeight:800,color:'#1e293b'}},v.name),
+                    React.createElement('div', {style:{fontSize:11,color:'#64748b'}},v.location)
+                  )
+                ))
+              )
+            )
+          ),
+          hlVein && React.createElement('div', null,
+            React.createElement('button', {onClick:()=>setHL(null), style:{background:'none',border:'none',cursor:'pointer',fontSize:12,color:'#6C3CB5',fontWeight:700,marginBottom:10}},'← All veins'),
+            React.createElement('div', {style:{borderRadius:14,border:`2px solid ${hlVein.color}`,overflow:'hidden'}},
+              React.createElement('div', {style:{background:hlVein.color,color:'white',padding:'12px 16px'}},
+                React.createElement('div', {style:{fontSize:16,fontWeight:900}}),
+                React.createElement('div', {style:{fontSize:16,fontWeight:900}},hlVein.name),
+                React.createElement('div', {style:{fontSize:11,opacity:0.85,marginTop:2}},hlVein.location)
+              ),
+              React.createElement('div', {style:{padding:'14px 16px',display:'flex',flexDirection:'column',gap:12,background:'white'}},
+                React.createElement('div', null,
+                  React.createElement('div', {style:{fontSize:10,fontWeight:900,color:'#94a3b8',textTransform:'uppercase',marginBottom:4}},'Clinical Notes'),
+                  React.createElement('div', {style:{fontSize:12,color:'#374151',lineHeight:1.6}},hlVein.notes)
+                ),
+                React.createElement('div', {style:{background:'#f3e8ff',borderRadius:8,padding:'10px 12px',borderLeft:`3px solid ${hlVein.color}`}},
+                  React.createElement('div', {style:{fontSize:10,fontWeight:900,color:'#6C3CB5',marginBottom:4}},'🔊 ULTRASOUND APPROACH'),
+                  React.createElement('div', {style:{fontSize:12,color:'#374151',lineHeight:1.6}},hlVein.us)
+                )
+              )
+            )
+          )
+        )
+      )
+    ),
 
-            {/* View label */}
-            <text x={130} y={14} textAnchor='middle' fontSize={9} fontWeight={800} fill='#94a3b8'>
-              {view==='anterior'?'ANTERIOR / MEDIAL VIEW':'POSTERIOR VIEW'}
-            </text>
-          </svg>
-        </div>
+    // ── ARTICLE FIGURES ──
+    tab==='figures' && React.createElement('div', null,
+      React.createElement('div', {style:{background:'#f3e8ff',borderRadius:10,padding:'12px 16px',marginBottom:14,border:'1px solid #e9d5ff',fontSize:12,color:'#6C3CB5',fontWeight:700}},
+        '📖 All figures from: Ultrasonography of the lower extremity veins: anatomy and basic approach. PMC5381851. Open access.'
+      ),
+      React.createElement('div', {style:{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:14}},
+        FIGS.map((fig,i)=>React.createElement('div', {key:i, style:{borderRadius:12,overflow:'hidden',border:'1px solid #e9d5ff',background:'white'}},
+          React.createElement('img', {src:fig.src, alt:fig.cap, style:{width:'100%',display:'block',borderBottom:'1px solid #f1f5f9'}}),
+          React.createElement('div', {style:{padding:'10px 12px',fontSize:11,color:'#374151',lineHeight:1.5}},fig.cap)
+        ))
+      )
+    ),
 
-        {/* ── Right Panel ── */}
-        <div style={{flex:1,minWidth:280,maxWidth:420}}>
-
-          {/* STUDY MODE */}
-          {mode==='study' && (
-            <div>
-              <div style={{marginBottom:12}}>
-                <h3 style={{fontSize:15,fontWeight:900,color:'#2d1b69',margin:'0 0 4px'}}>
-                  {view==='anterior'?'👁 Anterior / Medial View':'🔄 Posterior View'}
-                </h3>
-                <p style={{fontSize:12,color:'#64748b',margin:0}}>Click any vein in the list or diagram to highlight &amp; learn</p>
-              </div>
-              <div style={{display:'flex',gap:12,marginBottom:12}}>
-                <span style={{display:'flex',alignItems:'center',gap:5,fontSize:11,color:'#64748b'}}>
-                  <span style={{width:18,height:3,background:SC,display:'inline-block',borderRadius:2}}></span>Superficial
-                </span>
-                <span style={{display:'flex',alignItems:'center',gap:5,fontSize:11,color:'#64748b'}}>
-                  <span style={{width:18,height:3,display:'inline-block',borderRadius:2,
-                    background:`repeating-linear-gradient(90deg,${DC} 0,${DC} 4px,transparent 4px,transparent 7px)`}}></span>Deep
-                </span>
-              </div>
-              <div style={{display:'flex',flexDirection:'column',gap:6}}>
-                {veins.map(v=>{
-                  const hl=highlighted===v.id;
-                  const col=v.type==='s'?SC:DC;
-                  return (
-                    <div key={v.id} onClick={()=>setHL(h=>h===v.id?null:v.id)}
-                      style={{padding:'10px 14px',borderRadius:10,cursor:'pointer',
-                        background:hl?(v.type==='s'?'#fee2e2':'#ede9fe'):'#f8fafc',
-                        border:`1.5px solid ${hl?col:'#e2e8f0'}`,transition:'all 0.15s'}}>
-                      <div style={{display:'flex',alignItems:'center',gap:8}}>
-                        <span style={{width:10,height:10,borderRadius:'50%',flexShrink:0,background:col}}></span>
-                        <span style={{fontWeight:800,fontSize:13,color:'#2d1b69'}}>{v.name}</span>
-                      </div>
-                      {hl && <p style={{margin:'8px 0 0 18px',fontSize:12,color:'#475569',lineHeight:1.55}}>{v.desc}</p>}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* QUIZ MODE — active */}
-          {mode==='quiz' && quizState && !quizState.done && (
-            <div>
-              <div style={{background:'#f3e8ff',borderRadius:14,padding:'16px',marginBottom:14,textAlign:'center'}}>
-                <p style={{margin:'0 0 4px',fontSize:13,color:'#7c3aed',fontWeight:800}}>❓ Which vein is highlighted?</p>
-                <p style={{margin:0,fontSize:11,color:'#94a3b8'}}>
-                  Question {quizState.used.length} of {veins.length}
-                </p>
-              </div>
-              <div style={{display:'flex',flexDirection:'column',gap:8}}>
-                {quizState.opts.map(opt=>{
-                  let bg='#f8fafc',border='#e2e8f0',col='#2d1b69';
-                  if (feedback) {
-                    if (opt.id===quizState.tgt.id) {bg='#f3e8ff';border='#22c55e';col='#4c1d95';}
-                    else {bg='#f1f5f9';border='#cbd5e1';col='#94a3b8';}
-                  }
-                  return (
-                    <button key={opt.id} onClick={()=>handleAnswer(opt.id)}
-                      style={{padding:'12px 16px',borderRadius:10,border:`2px solid ${border}`,
-                        background:bg,color:col,fontWeight:700,fontSize:13,cursor:'pointer',
-                        textAlign:'left',transition:'all 0.15s'}}>
-                      {opt.name}
-                    </button>
-                  );
-                })}
-              </div>
-              {feedback && (
-                <div style={{marginTop:14,padding:'14px 16px',borderRadius:10,
-                  background:feedback==='correct'?'#f3e8ff':'#fee2e2',
-                  border:`1.5px solid ${feedback==='correct'?'#22c55e':'#ef4444'}`}}>
-                  <p style={{margin:'0 0 4px',fontWeight:800,fontSize:13,
-                    color:feedback==='correct'?'#4c1d95':'#991b1b'}}>
-                    {feedback==='correct'?'✅ Correct!':'❌ Incorrect — that was:'}
-                  </p>
-                  {feedback==='wrong' && <p style={{margin:'0 0 6px',fontWeight:700,fontSize:12,color:'#2d1b69'}}>{quizState.tgt.name}</p>}
-                  <p style={{margin:'0 0 12px',fontSize:12,color:'#475569',lineHeight:1.5}}>{quizState.tgt.desc}</p>
-                  <button onClick={()=>pickQ(veins,quizState.used)}
-                    style={{padding:'8px 22px',borderRadius:8,border:'none',
-                      background:'#7c3aed',color:'white',fontWeight:800,cursor:'pointer',fontSize:13}}>
-                    Next →
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* QUIZ MODE — done */}
-          {mode==='quiz' && quizState?.done && (
-            <div style={{textAlign:'center',padding:'32px 24px',background:'#f3e8ff',borderRadius:16}}>
-              <div style={{fontSize:52,marginBottom:8}}>
-                {score.c===score.t?'🏆':score.c>=score.t*.8?'🎉':score.c>=score.t*.6?'💪':'📚'}
-              </div>
-              <h3 style={{margin:'0 0 6px',color:'#7c3aed',fontWeight:900,fontSize:20}}>Quiz Complete!</h3>
-              <p style={{fontSize:32,fontWeight:900,color:'#2d1b69',margin:'0 0 4px'}}>
-                {score.c}/{score.t}
-              </p>
-              <p style={{color:'#64748b',fontSize:14,margin:'0 0 22px'}}>
-                {score.c===score.t?'Perfect score! You know your veins! 🌟':
-                 score.c>=score.t*.8?'Great work — almost there! 💪':
-                 score.c>=score.t*.6?'Good effort — keep studying! 📚':
-                 'Keep at it — these take time to learn! 💙'}
-              </p>
-              <div style={{display:'flex',gap:10,justifyContent:'center',flexWrap:'wrap'}}>
-                <button onClick={startQuiz}
-                  style={{padding:'10px 22px',borderRadius:10,border:'none',
-                    background:'#7c3aed',color:'white',fontWeight:800,cursor:'pointer',fontSize:14}}>
-                  🔄 Try Again
-                </button>
-                <button onClick={()=>{setMode('study');setQS(null);setHL(null);}}
-                  style={{padding:'10px 22px',borderRadius:10,border:'2px solid #7c3aed',
-                    background:'white',color:'#7c3aed',fontWeight:800,cursor:'pointer',fontSize:14}}>
-                  📚 Study Mode
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+    // ── QUIZ ──
+    tab==='quiz' && React.createElement('div', {style:{maxWidth:520,margin:'0 auto'}},
+      quizIdx >= QUIZ.length
+        ? React.createElement('div', {style:{textAlign:'center',padding:'40px',background:'#f3e8ff',borderRadius:16,border:'2px solid #e9d5ff'}},
+            React.createElement('div', {style:{fontSize:48,marginBottom:8}}, score.c===QUIZ.length?'🏆':score.c>=QUIZ.length*.75?'🎉':'📚'),
+            React.createElement('h3', {style:{color:'#6C3CB5',fontWeight:900,margin:'0 0 8px'}},'Quiz Complete!'),
+            React.createElement('div', {style:{fontSize:32,fontWeight:900,color:'#1e293b',marginBottom:16}}), 
+            React.createElement('div', {style:{fontSize:32,fontWeight:900,color:'#1e293b',marginBottom:16}},`${score.c}/${QUIZ.length}`),
+            React.createElement('button', {onClick:()=>{setQI(0);setScore({c:0,t:0});setChoice(null);},
+              style:{padding:'10px 28px',borderRadius:10,border:'none',background:'#6C3CB5',color:'white',fontWeight:900,cursor:'pointer',fontSize:14}},'🔄 Try Again')
+          )
+        : React.createElement('div', null,
+            React.createElement('div', {style:{background:'#f3e8ff',borderRadius:14,padding:'16px',marginBottom:14,border:'2px solid #e9d5ff'}},
+              React.createElement('div', {style:{fontSize:12,color:'#6C3CB5',fontWeight:800,marginBottom:6}}),
+              React.createElement('div', {style:{fontSize:12,color:'#6C3CB5',fontWeight:800,marginBottom:6}},`Question ${quizIdx+1} of ${QUIZ.length}`),
+              React.createElement('div', {style:{fontSize:14,fontWeight:700,color:'#1e293b',lineHeight:1.6}},q.q)
+            ),
+            React.createElement('div', {style:{display:'flex',flexDirection:'column',gap:8,marginBottom:14}},
+              q.opts.map((opt,i)=>{
+                let bg='#f8fafc',border='#e2e8f0',col='#1e293b';
+                if(choice!==null){if(i===q.ans){bg='#dcfce7';border='#22c55e';col='#166534';}else if(i===choice){bg='#fee2e2';border='#ef4444';col='#991b1b';}else{col='#94a3b8';}}
+                return React.createElement('button', {key:i,onClick:()=>{if(choice!==null)return;setChoice(i);nextQ(i===q.ans);},
+                  style:{padding:'12px 16px',borderRadius:10,border:`2px solid ${border}`,background:bg,color:col,fontWeight:700,fontSize:13,cursor:choice!==null?'default':'pointer',textAlign:'left'}},opt);
+              })
+            ),
+            choice!==null && React.createElement('div', {style:{background:choice===q.ans?'#f0fdf4':'#fff1f2',borderRadius:10,padding:'12px 16px',border:`1px solid ${choice===q.ans?'#bbf7d0':'#fecaca'}`}},
+              React.createElement('div', {style:{fontSize:12,fontWeight:900,color:choice===q.ans?'#166534':'#991b1b',marginBottom:4}},choice===q.ans?'✅ Correct!':'❌ Not quite:'),
+              React.createElement('div', {style:{fontSize:12,color:'#374151',lineHeight:1.6}},q.exp)
+            )
+          )
+    )
   );
 }
 
-// ── APP ───────────────────────────────────────────────────────────────────────
-const CLINICAL_TABS = [
-  {id:'clinical', label:'🩺 Clinical Guide'},
-  {id:'treatment', label:'💉 Treatments'},
-  {id:'procedures', label:'🔬 Procedures'},
-  {id:'complications', label:'⚠️ Complications'},
-  {id:'glossary', label:'🔤 Glossary'},
-  {id:'p2p', label:'📞 P2P Calls'},
-  {id:'rphs', label:'🏅 RPhS Cert'},
-  {id:'veingame', label:'🎮 Vein Games'},
-];
-const ADMIN_TABS = [
-  {id:'start',    label:'📋 Getting Started'},
-  {id:'systems',  label:'🛠️ Tools & Systems'},
-  {id:'faq',      label:'❓ FAQs'},
-  {id:'contacts', label:'📞 Contacts'},
-  {id:'protocols',label:'🚨 Protocols'},
-  {id:'marketing',label:'🎯 Marketing'},
-  {id:'resources',label:'🔗 Resources'},
-];
 
 // ── DVT GAME ─────────────────────────────────────────────────────────────────
 function DVTGame() {
