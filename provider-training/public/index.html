@@ -4315,33 +4315,25 @@ function App() {
         <div style={{background:'linear-gradient(135deg,#2d1b69,#6C3CB5)',padding:'32px 24px'}}>
           <div style={{maxWidth:1080,margin:'0 auto'}}>
             {/* MODULE BUTTONS */}
-            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:12,marginBottom:24}}>
-            <div onClick={()=>{ setMode('intro'); window.scrollTo(0,0); }}
-              style={{background:'linear-gradient(135deg,#E45487,#AC4ABD)',borderRadius:16,padding:'20px 24px',marginBottom:24,
-                cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:12,
-                boxShadow:'0 8px 32px rgba(228,84,135,0.4)',border:'2px solid rgba(255,255,255,0.2)'}}>
-              <div>
-                <div style={{fontSize:11,fontWeight:900,color:'rgba(255,255,255,0.8)',letterSpacing:2,marginBottom:4}}>NEW PROVIDER</div>
-                <div style={{fontSize:22,fontWeight:900,color:'white',marginBottom:4}}>🚀 Start Here — New Provider Onboarding</div>
-                <div style={{fontSize:13,color:'rgba(255,255,255,0.85)'}}>Structured onboarding module · ~90 minutes · Complete in one sitting</div>
-              </div>
-              <div style={{background:'white',color:'#E45487',borderRadius:12,padding:'12px 24px',fontWeight:900,fontSize:15,flexShrink:0}}>
-                Begin →
-              </div>
-            </div>
-            <div onClick={()=>{ setMode('selfguided'); window.scrollTo(0,0); }}
-              style={{background:'linear-gradient(135deg,#1078B9,#6C3CB5)',borderRadius:16,padding:'20px 24px',
-                cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:12,
-                boxShadow:'0 8px 32px rgba(16,120,185,0.35)',border:'2px solid rgba(255,255,255,0.2)'}}>
-              <div>
-                <div style={{fontSize:11,fontWeight:900,color:'rgba(255,255,255,0.8)',letterSpacing:2,marginBottom:4}}>ONGOING</div>
-                <div style={{fontSize:20,fontWeight:900,color:'white',marginBottom:4}}>📋 Self-Guided Training Checklist</div>
-                <div style={{fontSize:13,color:'rgba(255,255,255,0.85)'}}>Pre-Start · Week 1 · 30 Days · 60 Days · Work at your own pace</div>
-              </div>
-              <div style={{background:'white',color:'#1078B9',borderRadius:12,padding:'12px 24px',fontWeight:900,fontSize:15,flexShrink:0}}>
-                Open →
-              </div>
-            </div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:12,marginBottom:24,alignItems:'stretch'}}>
+              {[
+                {m:'intro',      bg:'linear-gradient(135deg,#E45487,#AC4ABD)', shadow:'rgba(228,84,135,0.4)',  tag:'NEW PROVIDER', title:'🚀 Start Here — New Provider Onboarding',  sub:'Structured onboarding module · ~90 minutes · Complete in one sitting',        btnColor:'#E45487', btn:'Begin →'},
+                {m:'selfguided', bg:'linear-gradient(135deg,#1078B9,#6C3CB5)', shadow:'rgba(16,120,185,0.35)', tag:'ONGOING',       title:'📋 Self-Guided Training Checklist',          sub:'Pre-Start · Week 1 · 30 Days · 60 Days · Work at your own pace',             btnColor:'#1078B9', btn:'Open →'},
+              ].map(c=>(
+                <div key={c.m} onClick={()=>{ setMode(c.m); window.scrollTo(0,0); }}
+                  style={{background:c.bg,borderRadius:16,padding:'20px 24px',cursor:'pointer',
+                    display:'flex',flexDirection:'column',justifyContent:'space-between',gap:16,
+                    boxShadow:`0 8px 32px ${c.shadow}`,border:'2px solid rgba(255,255,255,0.2)'}}>
+                  <div>
+                    <div style={{fontSize:11,fontWeight:900,color:'rgba(255,255,255,0.8)',letterSpacing:2,marginBottom:8}}>{c.tag}</div>
+                    <div style={{fontSize:20,fontWeight:900,color:'white',marginBottom:8,lineHeight:1.3}}>{c.title}</div>
+                    <div style={{fontSize:13,color:'rgba(255,255,255,0.85)',lineHeight:1.5}}>{c.sub}</div>
+                  </div>
+                  <div style={{background:'white',color:c.btnColor,borderRadius:12,padding:'12px 24px',fontWeight:900,fontSize:15,textAlign:'center'}}>
+                    {c.btn}
+                  </div>
+                </div>
+              ))}
             </div>
             <h1 style={{fontSize:26,fontWeight:900,color:'white',marginBottom:8}}>Welcome to VIP Medical Group 👋</h1>
             <p style={{fontSize:14,color:'rgba(255,255,255,0.85)',maxWidth:560,lineHeight:1.6,marginBottom:18}}>Your one-stop hub for everything you need — from pre-arrival checklists to clinical protocols to FAQs.</p>
