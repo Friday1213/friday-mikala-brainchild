@@ -3827,7 +3827,7 @@ function IntroModule({ onExit }) {
           <div style={{fontSize:18,fontWeight:900,color:'white'}}>🚀 New Provider Onboarding</div>
           <div style={{fontSize:11,color:'rgba(255,255,255,0.7)'}}>VIP Medical Group · Complete in one sitting · ~90 minutes</div>
         </div>
-        <button onClick={()=>onExit('home')} style={{background:'rgba(255,255,255,0.15)',border:'none',color:'white',borderRadius:8,padding:'6px 14px',fontSize:12,fontWeight:700,cursor:'pointer'}}>
+        <button onClick={()=>onExit('training')} style={{background:'rgba(255,255,255,0.15)',border:'none',color:'white',borderRadius:8,padding:'6px 14px',fontSize:12,fontWeight:700,cursor:'pointer'}}>
           ← Back to Hub
         </button>
       </div>
@@ -4101,7 +4101,7 @@ function SelfGuidedModule({ onExit }) {
             style={{background:'rgba(255,255,255,0.1)',border:'none',color:'rgba(255,255,255,0.7)',borderRadius:8,padding:'6px 12px',fontSize:11,cursor:'pointer'}}>
             Reset
           </button>
-          <button onClick={()=>onExit('home')}
+          <button onClick={()=>onExit('training')}
             style={{background:'rgba(255,255,255,0.15)',border:'none',color:'white',borderRadius:8,padding:'6px 14px',fontSize:12,fontWeight:700,cursor:'pointer'}}>
             ← Back to Hub
           </button>
@@ -4270,22 +4270,9 @@ function App() {
           </button>
         </div>
         <div className="mode-divider"/>
-        <div className="mode-toggle">
-          <button
-            className={`mode-btn${mode==='intro'?' active':''}`}
-            onClick={()=>goMode('intro')}
-            style={{background: mode==='intro' ? '#E45487' : undefined}}
-          >
-            🚀 Module 1
-          </button>
-          <button
-            className={`mode-btn${mode==='selfguided'?' active':''}`}
-            onClick={()=>goMode('selfguided')}
-            style={{background: mode==='selfguided' ? '#1078B9' : undefined}}
-          >
-            📋 Module 2
-          </button>
-        </div>
+        <button className={`mode-home${(mode==='training'||mode==='intro'||mode==='selfguided')?' active':''}`} onClick={()=>goMode('training')}>
+          🎓 Training Modules
+        </button>
       </div>
 
       {/* Sub-tab bar — only when not on home */}
@@ -4345,12 +4332,40 @@ function App() {
         </div>
       )}
 
-      {/* Intro Module — full page takeover */}
-      {mode === 'intro' && <IntroModule onExit={(m)=>{ setMode(m); window.scrollTo(0,0); }} />}
-      {mode === 'selfguided' && <SelfGuidedModule onExit={(m)=>{ setMode(m); window.scrollTo(0,0); }} />}
+      {/* Training modules */}
+      {mode === 'intro'       && <IntroModule      onExit={(m)=>{ setMode(m); window.scrollTo(0,0); }} />}
+      {mode === 'selfguided'  && <SelfGuidedModule onExit={(m)=>{ setMode(m); window.scrollTo(0,0); }} />}
+      {mode === 'training'    && (
+        <div style={{maxWidth:860,margin:'0 auto',padding:'32px 16px'}}>
+          <div style={{marginBottom:24}}>
+            <h2 style={{fontSize:22,fontWeight:900,color:'#2d1b69',marginBottom:6}}>🎓 Training Modules</h2>
+            <p style={{fontSize:14,color:'#64748b'}}>Complete Module 1 first, then work through Module 2 at your own pace.</p>
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:16,alignItems:'stretch'}}>
+            {[
+              {m:'intro',      bg:'linear-gradient(135deg,#E45487,#AC4ABD)', shadow:'rgba(228,84,135,0.4)',  tag:'MODULE 1 · ONE SITTING', title:'🚀 New Provider Onboarding',           sub:'Structured orientation module. Complete in one sitting before your start date. ~90 minutes.',             btnColor:'#E45487', btn:'Begin →'},
+              {m:'selfguided', bg:'linear-gradient(135deg,#1078B9,#6C3CB5)', shadow:'rgba(16,120,185,0.35)', tag:'MODULE 2 · SELF-GUIDED',  title:'📋 Training Checklist',                sub:'Phase-by-phase checklist: Pre-Start, Week 1, 30 Days, 60 Days. Work at your own pace.',                   btnColor:'#1078B9', btn:'Open →'},
+            ].map(c=>(
+              <div key={c.m} onClick={()=>{ setMode(c.m); window.scrollTo(0,0); }}
+                style={{background:c.bg,borderRadius:16,padding:'24px',cursor:'pointer',
+                  display:'flex',flexDirection:'column',justifyContent:'space-between',gap:16,
+                  boxShadow:`0 8px 32px ${c.shadow}`,border:'2px solid rgba(255,255,255,0.15)'}}>
+                <div>
+                  <div style={{fontSize:11,fontWeight:900,color:'rgba(255,255,255,0.75)',letterSpacing:2,marginBottom:10}}>{c.tag}</div>
+                  <div style={{fontSize:22,fontWeight:900,color:'white',marginBottom:10,lineHeight:1.3}}>{c.title}</div>
+                  <div style={{fontSize:13,color:'rgba(255,255,255,0.85)',lineHeight:1.6}}>{c.sub}</div>
+                </div>
+                <div style={{background:'white',color:c.btnColor,borderRadius:12,padding:'13px 24px',fontWeight:900,fontSize:15,textAlign:'center'}}>
+                  {c.btn}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Content */}
-      {mode !== 'intro' && mode !== 'selfguided' && <div className="container">
+      {mode !== 'intro' && mode !== 'selfguided' && mode !== 'training' && <div className="container">
         {mode === 'home'     && <HomeTab setMode={goMode} setAdminTab={setAdminTab} setClinicalTab={setClinicalTab} />}
         {mode === 'clinical' && clinicalTab === 'clinical'       && <ClinicalTab />}
         {mode === 'clinical' && clinicalTab === 'treatment'      && <TreatmentTab />}
