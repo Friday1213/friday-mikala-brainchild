@@ -3312,6 +3312,554 @@ function VeinGamesHub() {
 }
 
 
+// ── INTRO MODULE ─────────────────────────────────────────────────────────────
+function IntroModule({ onExit }) {
+  const [step, setStep] = React.useState(0);
+  const [checks, setChecks] = React.useState(() => {
+    try { return JSON.parse(localStorage.getItem('vip_intro_checks') || '{}'); }
+    catch { return {}; }
+  });
+  const [attestName, setAttestName] = React.useState('');
+  const [attested, setAttested] = React.useState(false);
+  const [submitted, setSubmitted] = React.useState(false);
+
+  const saveCheck = (key, val) => {
+    const next = {...checks, [key]: val};
+    setChecks(next);
+    localStorage.setItem('vip_intro_checks', JSON.stringify(next));
+  };
+
+  const STEPS = [
+    { id:'welcome',        icon:'🏥', title:'Welcome to VIP',           time:'~15 min' },
+    { id:'infrastructure', icon:'📚', title:'Training Resources',        time:'~15 min' },
+    { id:'prestart',       icon:'📋', title:'Pre-Start Checklist',       time:'~10 min' },
+    { id:'week1',          icon:'🎯', title:'First Week Benchmarks',     time:'~20 min' },
+    { id:'mastery',        icon:'🏆', title:'2-Month Mastery Goals',     time:'~10 min' },
+    { id:'attest',         icon:'✅', title:'Attestation',               time:'~5 min'  },
+  ];
+
+  const pct = Math.round((step / (STEPS.length - 1)) * 100);
+  const pur = '#AC4ABD', dpup = '#6C3CB5', blu = '#1078B9', pk = '#E45487', dk = '#2d1b69';
+
+  const SectionHeader = ({icon, title, time, color}) => (
+    <div style={{background:`linear-gradient(135deg,${dk},${color||pur})`,borderRadius:16,padding:'20px 24px',marginBottom:20,color:'white'}}>
+      <div style={{fontSize:28,marginBottom:6}}>{icon}</div>
+      <div style={{fontSize:22,fontWeight:900,marginBottom:4}}>{title}</div>
+      <div style={{fontSize:12,opacity:0.8,background:'rgba(255,255,255,0.15)',display:'inline-block',padding:'3px 12px',borderRadius:20}}>{time}</div>
+    </div>
+  );
+
+  const CheckItem = ({id, label, sub}) => (
+    <div onClick={()=>saveCheck(id, !checks[id])}
+      style={{display:'flex',gap:12,alignItems:'flex-start',padding:'12px 14px',borderRadius:10,marginBottom:6,
+        background:checks[id]?'#f3e8ff':'#f8fafc',border:`1px solid ${checks[id]?'#e9d5ff':'#e2e8f0'}`,cursor:'pointer'}}>
+      <div style={{width:22,height:22,borderRadius:6,border:`2px solid ${checks[id]?pur:'#cbd5e1'}`,background:checks[id]?pur:'white',
+        display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:1}}>
+        {checks[id] && <span style={{color:'white',fontSize:13,fontWeight:900}}>✓</span>}
+      </div>
+      <div>
+        <div style={{fontSize:13,fontWeight:700,color:checks[id]?dk:'#1e293b',textDecoration:checks[id]?'line-through':'none'}}>{label}</div>
+        {sub && <div style={{fontSize:11,color:'#64748b',marginTop:2,lineHeight:1.5}}>{sub}</div>}
+      </div>
+    </div>
+  );
+
+  const Callout = ({color, title, body}) => (
+    <div style={{background:`${color}15`,border:`2px solid ${color}40`,borderRadius:12,padding:'14px 16px',marginBottom:14}}>
+      <div style={{fontSize:13,fontWeight:900,color,marginBottom:6}}>{title}</div>
+      <div style={{fontSize:12,color:'#374151',lineHeight:1.7}}>{body}</div>
+    </div>
+  );
+
+  const Bench = ({done, label, sub}) => (
+    <div style={{display:'flex',gap:10,padding:'10px 0',borderBottom:'1px solid #f1f5f9',alignItems:'flex-start'}}>
+      <div style={{width:20,height:20,borderRadius:'50%',background:done?'#22c55e':dpup,display:'flex',alignItems:'center',
+        justifyContent:'center',fontSize:11,color:'white',fontWeight:900,flexShrink:0,marginTop:1}}>{done?'✓':'→'}</div>
+      <div>
+        <div style={{fontSize:13,fontWeight:700,color:'#1e293b'}}>{label}</div>
+        {sub && <div style={{fontSize:11,color:'#64748b',marginTop:2}}>{sub}</div>}
+      </div>
+    </div>
+  );
+
+  const ReflectQ = ({q}) => (
+    <div style={{background:'#faf5ff',borderRadius:10,padding:'12px 16px',marginBottom:10,borderLeft:`4px solid ${pur}`}}>
+      <div style={{fontSize:11,fontWeight:900,color:pur,marginBottom:4}}>💭 REFLECTION</div>
+      <div style={{fontSize:13,color:'#374151',fontStyle:'italic'}}>{q}</div>
+    </div>
+  );
+
+  // ─── SECTION CONTENT ────────────────────────────────────────────────────────
+
+  const renderStep = () => {
+    if (step === 0) return (
+      <div>
+        <SectionHeader icon="🏥" title="Welcome to VIP Medical Group" time="~15 min" color={pur} />
+
+        <div className="card">
+          <div className="card-title">Our Story</div>
+          <div style={{fontSize:13,color:'#374151',lineHeight:1.8,marginBottom:12}}>
+            <em style={{color:'#94a3b8'}}>[Practice history to be added by Carly — founding year, how it started, growth trajectory, states currently operating in.]</em>
+          </div>
+          <Callout color={pur} title="Our Mission"
+            body="To deliver exceptional vein care through clinical excellence, operational precision, and a relentless commitment to patient outcomes. We grow fast because we execute at a high level — and we expect the same from every provider on our team." />
+          <Callout color={blu} title="Where We Are Today"
+            body="VIP Medical Group operates across multiple states with continued expansion underway. [Number] locations. [Number] providers. Every office runs on the same clinical standards and workflow systems — consistency is our competitive advantage." />
+        </div>
+
+        <div className="card">
+          <div className="card-title">Culture Expectations</div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(220px,1fr))',gap:10,marginBottom:4}}>
+            {[
+              {icon:'⚡',title:'Speed',body:'We move fast. Respond to messages same day. Flag issues immediately. Do not let things sit.'},
+              {icon:'🎯',title:'Ownership',body:'Own your outcomes. If something is wrong, fix it or escalate it. Waiting for someone else to notice is not acceptable.'},
+              {icon:'💬',title:'Communication',body:'Clear, direct, professional. Use proper channels. Keep leadership informed. No surprises.'},
+              {icon:'📈',title:'Excellence',body:'Average performance is not the bar. We expect clinical mastery, workflow fluency, and a drive to keep improving.'},
+            ].map(c=>(
+              <div key={c.title} style={{background:'#faf5ff',borderRadius:12,padding:'14px',border:'1px solid #e9d5ff'}}>
+                <div style={{fontSize:20,marginBottom:6}}>{c.icon}</div>
+                <div style={{fontSize:13,fontWeight:900,color:dk,marginBottom:4}}>{c.title}</div>
+                <div style={{fontSize:12,color:'#374151',lineHeight:1.6}}>{c.body}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="card-title">Leadership & Org Structure</div>
+          {/* Org Chart */}
+          <div style={{overflowX:'auto',marginBottom:20}}>
+            <div style={{minWidth:600,padding:'8px 0'}}>
+              {/* CEO */}
+              <div style={{display:'flex',justifyContent:'center',marginBottom:0}}>
+                <div style={{background:`linear-gradient(135deg,${dk},${dpup})`,color:'white',borderRadius:12,padding:'10px 24px',textAlign:'center',fontWeight:900,fontSize:13,minWidth:180}}>
+                  <div style={{fontSize:10,opacity:0.8,marginBottom:2}}>CHIEF EXECUTIVE OFFICER</div>
+                  <div>[CEO Name]</div>
+                </div>
+              </div>
+              {/* connector */}
+              <div style={{display:'flex',justifyContent:'center'}}><div style={{width:2,height:20,background:'#e2e8f0'}}></div></div>
+              {/* horizontal bar */}
+              <div style={{display:'flex',justifyContent:'center'}}>
+                <div style={{width:'80%',height:2,background:'#e2e8f0'}}></div>
+              </div>
+              {/* L2 roles */}
+              <div style={{display:'flex',justifyContent:'space-around',gap:8,marginBottom:0}}>
+                {[
+                  {role:'COO',name:'[COO Name]',color:dpup},
+                  {role:'CMO',name:'[CMO Name]',color:blu},
+                  {role:'Chief Marketing Officer',name:'[CMO Name]',color:pk},
+                  {role:'Head of HR',name:'[HR Name]',color:'#059669'},
+                  {role:'Dir. Provider Services',name:'Carly Sarch, PA-C',color:pur},
+                ].map(n=>(
+                  <div key={n.role} style={{flex:1}}>
+                    <div style={{display:'flex',justifyContent:'center'}}><div style={{width:2,height:20,background:'#e2e8f0'}}></div></div>
+                    <div style={{background:n.color,color:'white',borderRadius:10,padding:'8px 10px',textAlign:'center',fontSize:11}}>
+                      <div style={{fontSize:9,opacity:0.85,marginBottom:2,fontWeight:800}}>{n.role.toUpperCase()}</div>
+                      <div style={{fontWeight:900,fontSize:12}}>{n.name}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {/* L3 */}
+              <div style={{display:'flex',justifyContent:'space-around',gap:8,marginTop:8}}>
+                <div style={{flex:1,textAlign:'center'}}>
+                  <div style={{fontSize:9,fontWeight:800,color:'#94a3b8',marginBottom:4}}>REPORTS TO COO</div>
+                  <div style={{background:'#f1f5f9',borderRadius:8,padding:'6px 8px',fontSize:11,color:'#475569',fontWeight:700}}>Regional Ops Directors</div>
+                </div>
+                <div style={{flex:1,textAlign:'center'}}>
+                  <div style={{fontSize:9,fontWeight:800,color:'#94a3b8',marginBottom:4}}>REPORTS TO CMO</div>
+                  <div style={{background:'#f1f5f9',borderRadius:8,padding:'6px 8px',fontSize:11,color:'#475569',fontWeight:700}}>Regional Medical Directors</div>
+                </div>
+                <div style={{flex:2}}></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Leadership Cards */}
+          {[
+            {role:'Chief Executive Officer (CEO)',name:'[CEO Name]',color:dk,
+              oversees:'Overall company strategy, growth, and business performance.',
+              when:'Major organizational changes, escalations that cannot be resolved at regional level.',
+              why:'Sets the vision and pace of the organization. Their priorities are your priorities.'},
+            {role:'Chief Operating Officer (COO)',name:'[COO Name]',color:dpup,
+              oversees:'Day-to-day operations across all locations. Regional Ops Directors report to COO.',
+              when:'Operational issues that cannot be resolved at the regional level.',
+              why:'Owns the systems that make the practice run. Operational questions flow through this chain.'},
+            {role:'Chief Medical Officer (CMO)',name:'[CMO Name]',color:blu,
+              oversees:'Clinical standards, protocols, and quality across all providers and locations.',
+              when:'Clinical questions that escalate beyond regional medical director.',
+              why:'Sets and maintains the clinical bar. Your clinical performance is ultimately accountable here.'},
+            {role:'Head of Human Resources',name:'[HR Name]',color:'#059669',
+              oversees:'Credentialing, employment, benefits, compliance, onboarding paperwork.',
+              when:'Credentialing updates, employment questions, benefits, HR issues.',
+              why:'Your employment relationship runs through HR. Keep them in the loop on license and credential changes.'},
+            {role:'Chief Marketing Officer',name:'[CMO Name]',color:pk,
+              oversees:'Patient acquisition, brand, marketing materials, digital presence.',
+              when:'Patient volume questions, marketing ideas, referral source development.',
+              why:'Patient pipeline affects your schedule. Understanding marketing helps you understand your workload.'},
+            {role:'Regional Operations Directors',name:'[Your Region — Name TBD]',color:'#f59e0b',
+              oversees:'Office operations, scheduling, staff management, revenue cycle within your region.',
+              when:'Daily operational issues — scheduling conflicts, supply needs, staff questions.',
+              why:'Your most frequent leadership contact. They keep your office running.'},
+            {role:'Regional Medical Directors',name:'[Your Region — Name TBD]',color:'#0ea5e9',
+              oversees:'Clinical oversight and quality within your regional group of providers.',
+              when:'Clinical questions, complex case guidance, peer review.',
+              why:'Your clinical escalation point in the field. Use them.'},
+            {role:'Director of Provider Services',name:'Carly Sarch, PA-C',color:pur,
+              oversees:'Provider onboarding, training, competency development, APP oversight across all locations.',
+              when:'Training questions, performance concerns, credentialing status, clinical workflow issues.',
+              why:'Your primary contact for all things training and provider development. When in doubt, start here.'},
+          ].map(l=>(
+            <div key={l.role} style={{borderRadius:12,border:`2px solid ${l.color}30`,marginBottom:10,overflow:'hidden'}}>
+              <div style={{background:l.color,padding:'10px 16px',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:4}}>
+                <div>
+                  <div style={{fontSize:10,color:'rgba(255,255,255,0.8)',fontWeight:800}}>{l.role.toUpperCase()}</div>
+                  <div style={{fontSize:14,fontWeight:900,color:'white'}}>{l.name}</div>
+                </div>
+              </div>
+              <div style={{padding:'12px 16px',background:'white',display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))',gap:10}}>
+                <div><div style={{fontSize:10,fontWeight:900,color:'#94a3b8',marginBottom:3}}>OVERSEES</div><div style={{fontSize:12,color:'#374151',lineHeight:1.5}}>{l.oversees}</div></div>
+                <div><div style={{fontSize:10,fontWeight:900,color:'#94a3b8',marginBottom:3}}>WHEN YOU'D INTERACT</div><div style={{fontSize:12,color:'#374151',lineHeight:1.5}}>{l.when}</div></div>
+                <div><div style={{fontSize:10,fontWeight:900,color:'#94a3b8',marginBottom:3}}>WHY IT MATTERS</div><div style={{fontSize:12,color:'#374151',lineHeight:1.5}}>{l.why}</div></div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <ReflectQ q="Based on what you've read about our culture — what is one thing you'll need to actively work on to meet VIP's standards?" />
+      </div>
+    );
+
+    if (step === 1) return (
+      <div>
+        <SectionHeader icon="📚" title="Training Resources & Where to Find Everything" time="~15 min" color={blu} />
+        <Callout color={dk} title="The Rule" body={"If you need something, there is a place for it. 'I didn't know where to find it' is not an acceptable answer. This section shows you exactly where everything lives."} />
+
+        <div className="card">
+          <div className="card-title">🗺️ Your Resource Map</div>
+          {[
+            {icon:'🏥',title:'Provider Training Hub',url:'https://new-provider-hub.onrender.com',color:pur,
+              what:'This platform. Clinical guide, treatment protocols, procedures, complications, glossary, P2P call training, RPhS cert prep, interactive vein games.',
+              when:'Daily reference during training. Anytime you need to look up a protocol, workflow, or clinical concept.'},
+            {icon:'📁',title:'Google Drive — Provider Folder',url:'[Google Drive Link — To Be Added]',color:blu,
+              what:'Clinical manual, systems manual, skillset checklist, procedure choreography guides, vein talk slides, onboarding documents.',
+              when:'Pre-start reading. First week reference. Procedure prep.'},
+            {icon:'📋',title:'Clinical Manual',url:'[Link — To Be Added]',color:'#059669',
+              what:'Complete clinical reference for venous disease: anatomy, pathophysiology, CEAP classification, treatment algorithms, post-procedure management.',
+              when:'Pre-start required reading. Reference during training.'},
+            {icon:'🛠️',title:'Systems Manual',url:'[Link — To Be Added]',color:'#f59e0b',
+              what:'EMR navigation, documentation standards, scheduling workflows, insurance basics, front desk protocols.',
+              when:'First week required reading. Reference for any systems question.'},
+            {icon:'✅',title:'Skillset Checklist',url:'[Link — To Be Added]',color:pk,
+              what:'Structured competency checklist tracking your progress across clinical skills, procedures, and workflows. Shared with your supervising provider.',
+              when:'Reviewed weekly during training. Used at 30/60/90 day check-ins.'},
+            {icon:'🎬',title:'Procedure Choreography Guides',url:'[Link — To Be Added]',color:'#7c3aed',
+              what:'Step-by-step guides for RFA, Varithena, sclerotherapy, and ultrasound-guided procedures. Includes room setup, supply list, patient positioning, and verbal scripts.',
+              when:'Required reading before your first procedure. Practice mentally before doing.'},
+            {icon:'🖥️',title:'NextGen EHR Training Videos',url:'https://nextgen-hub.onrender.com',color:'#0ea5e9',
+              what:'Video walkthroughs for the NextGen EMR system. Go-live is May 12, 2026. All providers must be proficient before go-live.',
+              when:'Start immediately. Watch all relevant videos in your first week.'},
+          ].map(r=>(
+            <div key={r.title} style={{borderRadius:12,border:`2px solid ${r.color}30`,marginBottom:10,overflow:'hidden'}}>
+              <div style={{background:r.color,padding:'10px 16px',display:'flex',justifyContent:'space-between',alignItems:'center',gap:8,flexWrap:'wrap'}}>
+                <div style={{display:'flex',gap:10,alignItems:'center'}}>
+                  <span style={{fontSize:20}}>{r.icon}</span>
+                  <div style={{fontSize:14,fontWeight:900,color:'white'}}>{r.title}</div>
+                </div>
+                {r.url.startsWith('http') && <a href={r.url} target="_blank" rel="noreferrer"
+                  style={{background:'rgba(255,255,255,0.2)',color:'white',borderRadius:8,padding:'4px 12px',fontSize:11,fontWeight:800,textDecoration:'none'}}>Open →</a>}
+              </div>
+              <div style={{padding:'12px 16px',background:'white',display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+                <div><div style={{fontSize:10,fontWeight:900,color:'#94a3b8',marginBottom:3}}>WHAT'S IN IT</div><div style={{fontSize:12,color:'#374151',lineHeight:1.5}}>{r.what}</div></div>
+                <div><div style={{fontSize:10,fontWeight:900,color:'#94a3b8',marginBottom:3}}>WHEN TO USE IT</div><div style={{fontSize:12,color:'#374151',lineHeight:1.5}}>{r.when}</div></div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <ReflectQ q="Walk through the resource map mentally. If you had a question about procedural technique right now, where would you go first? What if it was an EMR question?" />
+      </div>
+    );
+
+    if (step === 2) return (
+      <div>
+        <SectionHeader icon="📋" title="Pre-Start Date Expectations" time="~10 min" color='#059669' />
+        <Callout color='#dc2626' title="⚠️ This is Non-Negotiable"
+          body="Providers are expected to arrive on Day 1 prepared — not learning venous medicine from scratch. The first day is for applying knowledge, not acquiring it. Complete everything below before your start date." />
+
+        <div className="card">
+          <div className="card-title">Pre-Start Checklist <span style={{fontSize:11,fontWeight:700,color:'#94a3b8',marginLeft:8}}>tap to check off</span></div>
+          {[
+            {id:'ps1', label:'Read the Clinical Manual cover to cover',
+              sub:'Pay special attention to: venous anatomy, CEAP classification, reflux pathophysiology, treatment algorithms.'},
+            {id:'ps2', label:'Read the Systems Manual cover to cover',
+              sub:'Focus on: EMR navigation, documentation workflows, scheduling structure, insurance basics.'},
+            {id:'ps3', label:'Understand venous disease basics',
+              sub:'Know the difference between varicose veins, CVI, DVT, and superficial thrombophlebitis. Know the CEAP C0–C6 classification cold.'},
+            {id:'ps4', label:'Review RFA procedural choreography',
+              sub:'Know the room setup, patient positioning, required supplies, and step-by-step sequence before you observe your first case.'},
+            {id:'ps5', label:'Review Varithena procedural choreography',
+              sub:'Understand the mixing protocol, injection technique, compression requirements, and post-procedure instructions.'},
+            {id:'ps6', label:'Review initial visit and follow-up visit templates',
+              sub:'Understand what is documented at each visit type and why. Know the expected format before you sit down at a chart.'},
+            {id:'ps7', label:'Review GSV and SSV ultrasound anatomy',
+              sub:'Be able to identify the saphenofemoral junction (SFJ), saphenopopliteal junction (SPJ), and the course of both veins on a diagram.'},
+            {id:'ps8', label:'Understand basic VIP workflow expectations',
+              sub:'Know how a patient flows from consult → duplex scan → procedure → follow-up. Know who does what at each step.'},
+            {id:'ps9', label:'Watch all NextGen training videos',
+              sub:'Available at nextgen-hub.onrender.com. Go-live is May 12, 2026. EMR proficiency is required.'},
+            {id:'ps10', label:'Complete all HR onboarding paperwork',
+              sub:'All credentialing, employment, and compliance documents must be submitted before your start date. Contact HR if anything is outstanding.'},
+          ].map(item => <CheckItem key={item.id} {...item} />)}
+        </div>
+        <ReflectQ q="Be honest with yourself: which item on this list will require the most preparation time? Plan accordingly — don't leave it for the last day." />
+      </div>
+    );
+
+    if (step === 3) return (
+      <div>
+        <SectionHeader icon="🎯" title="First Week Performance Benchmarks" time="~20 min" color={pk} />
+        <Callout color={dk} title="What 'Training' Means at VIP"
+          body="Training at VIP is active and outcome-driven. You will be observed, coached, and evaluated from Day 1. The benchmarks below are not aspirational — they are expected. If you find yourself behind, communicate that immediately." />
+
+        <div className="card">
+          <div className="card-title">✅ End of Day 1 — Required Competencies</div>
+          {[
+            {label:'Perform an initial consult visit independently', sub:'History, physical exam, vein talk, documentation, and next steps — without being prompted.'},
+            {label:'Navigate the EMR efficiently', sub:'Chart a visit, pull up prior records, order duplex ultrasound, and schedule a follow-up without assistance.'},
+            {label:'Understand documentation workflow', sub:'Know what to document, where, and in what format at each visit type.'},
+            {label:'Recite RFA procedural choreography', sub:'Be able to walk through the RFA steps verbally — room setup through post-procedure — from memory.'},
+            {label:'Recite Varithena procedural choreography', sub:'Same standard as RFA. If you can\'t walk through it verbally, you are not ready to assist.'},
+          ].map((b,i) => <Bench key={i} label={b.label} sub={b.sub} />)}
+        </div>
+
+        <div className="card">
+          <div className="card-title">✅ End of Week 1 — Required Competencies</div>
+          {[
+            {label:'Perform review visits independently', sub:'Follow-up visits, post-procedure checks, and scan review appointments without prompting.'},
+            {label:'Scan basic GSV and SSV anatomy', sub:'Identify SFJ, SPJ, course of both veins, and basic reflux findings on duplex ultrasound.'},
+            {label:'Articulate the full patient journey', sub:'From initial consult through procedure sequence through follow-up graduation — know every step.'},
+            {label:'Demonstrate intake workflow mastery', sub:'Understand the MA and front desk workflows. Know what happens before you walk in the room.'},
+            {label:'Understand scheduling structure', sub:'Know how the schedule is built, what each appointment type means, and how to read your day.'},
+            {label:'Meet documentation standards consistently', sub:'Charts completed same day. Correct format. No outstanding notes by end of day.'},
+            {label:'Understand insurance workflow basics', sub:'Know the prior authorization process, what documentation is required, and who handles each step.'},
+          ].map((b,i) => <Bench key={i} label={b.label} sub={b.sub} />)}
+        </div>
+
+        <div className="card">
+          <div className="card-title">📝 Self-Assessment — Week 1</div>
+          <div style={{fontSize:12,color:'#64748b',marginBottom:12}}>Check off items as you achieve them during your first week.</div>
+          {[
+            {id:'w1_consult', label:'I can run an initial consult visit independently'},
+            {id:'w1_reviewvisit', label:'I can run a review visit independently'},
+            {id:'w1_emr', label:'I navigate the EMR confidently'},
+            {id:'w1_docs', label:'My charts are completed same-day, every day'},
+            {id:'w1_rfa', label:'I can walk through RFA choreography from memory'},
+            {id:'w1_varithena', label:'I can walk through Varithena choreography from memory'},
+            {id:'w1_scan', label:'I can identify GSV/SSV anatomy on duplex ultrasound'},
+            {id:'w1_journey', label:'I can describe the full VIP patient journey without prompting'},
+          ].map(item => <CheckItem key={item.id} {...item} />)}
+        </div>
+        <ReflectQ q="Which of the Day 1 benchmarks concerns you the most right now? What specific action will you take before your start date to address it?" />
+      </div>
+    );
+
+    if (step === 4) return (
+      <div>
+        <SectionHeader icon="🏆" title="2-Month Mastery Goals" time="~10 min" color={dpup} />
+        <Callout color={dpup} title="What Mastery Looks Like at VIP"
+          body="By approximately 8 weeks, you should no longer need workflow support for standard cases. You should be moving through clinic with confidence, handling documentation independently, and contributing to team performance — not drawing from it." />
+
+        <div className="card">
+          <div className="card-title">Clinical Mastery</div>
+          {[
+            {label:'Full command of venous disease fundamentals', sub:'CEAP, hemodynamics, reflux pathophysiology, DVT vs CVI, treatment algorithms — fluent and accurate.'},
+            {label:'Independent procedural competency', sub:'RFA, Varithena, sclerotherapy — able to perform or assist on all standard procedures without step-by-step guidance.'},
+            {label:'Comfortable interpreting duplex ultrasound findings', sub:'Identify reflux, incompetent junctions, DVT, EHIT, and post-treatment response independently.'},
+            {label:'Handling procedural complications confidently', sub:'Recognize DVT, EHIT, nerve injury, skin changes — and know the appropriate response for each.'},
+          ].map((b,i) => <Bench key={i} label={b.label} sub={b.sub} />)}
+        </div>
+
+        <div className="card">
+          <div className="card-title">Operational Mastery</div>
+          {[
+            {label:'VIP workflows are reflexive — not effortful', sub:'You do not need to think about the steps. You execute them automatically.'},
+            {label:'EMR documentation is consistent and complete', sub:'Same-day charting, correct format, no outstanding notes, audit-ready at all times.'},
+            {label:'Insurance workflow fluency', sub:'You understand prior auth, know what documentation is required, and catch problems before they become denials.'},
+            {label:'Scheduling structure is second nature', sub:'You understand how your day is built and can flag scheduling issues proactively.'},
+          ].map((b,i) => <Bench key={i} label={b.label} sub={b.sub} />)}
+        </div>
+
+        <div className="card">
+          <div className="card-title">Team & Communication Mastery</div>
+          {[
+            {label:'Effective communication with MAs and sonographers', sub:'Clear handoffs, appropriate clinical guidance, collaborative — not directive or passive.'},
+            {label:'Proactive communication with leadership', sub:'You surface issues early. You do not wait for someone to notice a problem.'},
+            {label:'Minimal supervision required for standard cases', sub:'Your supervising provider trusts your clinical judgment and workflow execution.'},
+            {label:'Known and trusted within your office team', sub:'MAs, front desk, and sonographers know you are reliable, prepared, and easy to work with.'},
+          ].map((b,i) => <Bench key={i} label={b.label} sub={b.sub} />)}
+        </div>
+
+        <div style={{background:`linear-gradient(135deg,${dk},${dpup})`,borderRadius:14,padding:'18px 20px',color:'white',marginBottom:16}}>
+          <div style={{fontSize:15,fontWeight:900,marginBottom:8}}>The Standard We Hold</div>
+          <div style={{fontSize:13,lineHeight:1.7,opacity:0.95}}>
+            The goal is not prolonged hand-holding. It is full integration. At 8 weeks, you should be an asset to your office — not a drain on its resources. 
+            If you are not meeting these benchmarks, communicate that proactively to Carly or your Regional Medical Director. 
+            We will work with you — but we need to know.
+          </div>
+        </div>
+        <ReflectQ q="Visualize yourself at 8 weeks. What does a great day at VIP look like for you? What does it feel like to move through clinic with full confidence?" />
+      </div>
+    );
+
+    if (step === 5) return (
+      <div>
+        <SectionHeader icon="✅" title="Attestation" time="~5 min" color='#059669' />
+
+        {!submitted ? (
+          <div>
+            <div className="card">
+              <div className="card-title">Before You Sign Off</div>
+              <div style={{fontSize:13,color:'#374151',lineHeight:1.7,marginBottom:16}}>
+                By completing this attestation, you confirm that you have reviewed and understood the content of this onboarding module, and that you accept the expectations outlined for your role at VIP Medical Group.
+              </div>
+              {[
+                'I understand VIP\'s culture expectations: speed, ownership, communication, and excellence.',
+                'I know the organizational structure and who to contact for what.',
+                'I know where all training resources are located and how to access them.',
+                'I understand my pre-start date requirements and will complete them before Day 1.',
+                'I understand what is expected of me by end of Day 1 and end of Week 1.',
+                'I understand what mastery looks like at 8 weeks and I am committed to reaching it.',
+                'I understand that training at VIP is active and outcome-driven — not passive.',
+                'I understand that if I am falling behind, I am responsible for communicating that proactively.',
+              ].map((item, i) => <CheckItem key={`att_${i}`} id={`att_${i}`} label={item} />)}
+            </div>
+
+            <div className="card">
+              <div className="card-title">Sign Your Attestation</div>
+              <div style={{marginBottom:14}}>
+                <div style={{fontSize:12,fontWeight:700,color:'#475569',marginBottom:6}}>Full Name</div>
+                <input
+                  value={attestName}
+                  onChange={e=>setAttestName(e.target.value)}
+                  placeholder="Type your full name"
+                  style={{width:'100%',padding:'10px 14px',borderRadius:10,border:'2px solid #e2e8f0',fontSize:14,fontFamily:'DM Sans',outline:'none'}}
+                />
+              </div>
+              <div onClick={()=>setAttested(a=>!a)}
+                style={{display:'flex',gap:12,alignItems:'center',padding:'12px 14px',borderRadius:10,marginBottom:16,
+                  background:attested?'#f0fdf4':'#f8fafc',border:`2px solid ${attested?'#22c55e':'#e2e8f0'}`,cursor:'pointer'}}>
+                <div style={{width:24,height:24,borderRadius:6,border:`2px solid ${attested?'#22c55e':'#cbd5e1'}`,background:attested?'#22c55e':'white',
+                  display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                  {attested && <span style={{color:'white',fontSize:14,fontWeight:900}}>✓</span>}
+                </div>
+                <div style={{fontSize:13,fontWeight:700,color:attested?'#166534':'#374151'}}>
+                  I have completed this module and I understand and accept the expectations outlined for my role at VIP Medical Group.
+                </div>
+              </div>
+              <button
+                onClick={()=>{
+                  if (!attestName.trim() || !attested) return;
+                  const ts = new Date().toLocaleString('en-US',{timeZone:'America/New_York'});
+                  localStorage.setItem('vip_intro_attested', JSON.stringify({name:attestName, timestamp:ts}));
+                  setSubmitted(true);
+                }}
+                disabled={!attestName.trim() || !attested}
+                style={{width:'100%',padding:'14px',borderRadius:12,border:'none',
+                  background:(!attestName.trim()||!attested)?'#e2e8f0':'linear-gradient(135deg,#059669,#10b981)',
+                  color:(!attestName.trim()||!attested)?'#94a3b8':'white',
+                  fontWeight:900,fontSize:15,cursor:(!attestName.trim()||!attested)?'default':'pointer',fontFamily:'Poppins'}}>
+                Submit Attestation →
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div style={{textAlign:'center',padding:'40px 24px'}}>
+            <div style={{fontSize:64,marginBottom:16}}>🏆</div>
+            <h2 style={{fontSize:24,fontWeight:900,color:dk,marginBottom:8}}>You're Ready to Start</h2>
+            <p style={{fontSize:14,color:'#475569',marginBottom:24,lineHeight:1.7,maxWidth:480,margin:'0 auto 24px'}}>
+              Attestation recorded. Welcome to VIP Medical Group — now go execute at the level you just committed to.
+            </p>
+            <div style={{background:'#f0fdf4',borderRadius:12,padding:'14px 20px',display:'inline-block',marginBottom:24,border:'2px solid #bbf7d0'}}>
+              <div style={{fontSize:11,fontWeight:900,color:'#166534',marginBottom:2}}>ATTESTED BY</div>
+              <div style={{fontSize:16,fontWeight:900,color:dk}}>{attestName}</div>
+              <div style={{fontSize:11,color:'#64748b',marginTop:2}}>{(()=>{try{return JSON.parse(localStorage.getItem('vip_intro_attested')||'{}').timestamp||''}catch{return ''}})()}</div>
+            </div>
+            <div style={{display:'flex',gap:10,justifyContent:'center',flexWrap:'wrap'}}>
+              <button onClick={()=>onExit('clinical')}
+                style={{padding:'12px 24px',borderRadius:10,border:'none',background:`linear-gradient(135deg,${pur},${dpup})`,color:'white',fontWeight:900,fontSize:14,cursor:'pointer'}}>
+                🩺 Go to Clinical Guide
+              </button>
+              <button onClick={()=>onExit('admin')}
+                style={{padding:'12px 24px',borderRadius:10,border:'none',background:`linear-gradient(135deg,${dpup},${blu})`,color:'white',fontWeight:900,fontSize:14,cursor:'pointer'}}>
+                ⚙️ Go to Systems
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+    return null;
+  };
+
+  return (
+    <div style={{minHeight:'100vh',background:'#f1f5f9'}}>
+      {/* Header */}
+      <div style={{background:`linear-gradient(135deg,${dk},${dpup})`,padding:'16px 24px',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:10}}>
+        <div>
+          <div style={{fontSize:18,fontWeight:900,color:'white'}}>🚀 New Provider Onboarding</div>
+          <div style={{fontSize:11,color:'rgba(255,255,255,0.7)'}}>VIP Medical Group · Complete in one sitting · ~90 minutes</div>
+        </div>
+        <button onClick={()=>onExit('home')} style={{background:'rgba(255,255,255,0.15)',border:'none',color:'white',borderRadius:8,padding:'6px 14px',fontSize:12,fontWeight:700,cursor:'pointer'}}>
+          ← Back to Hub
+        </button>
+      </div>
+
+      {/* Progress bar */}
+      <div style={{background:'white',padding:'14px 24px',borderBottom:'1px solid #e2e8f0'}}>
+        <div style={{display:'flex',gap:4,marginBottom:10,overflowX:'auto'}}>
+          {STEPS.map((s,i)=>(
+            <button key={s.id} onClick={()=>setStep(i)}
+              style={{flex:1,minWidth:80,padding:'6px 4px',borderRadius:8,border:'none',textAlign:'center',cursor:'pointer',
+                background:i===step?pur:i<step?`${pur}30`:'#f1f5f9',
+                color:i===step?'white':i<step?pur:'#94a3b8',
+                fontWeight:i===step?900:700,fontSize:10,transition:'all 0.15s'}}>
+              <div style={{fontSize:14,marginBottom:2}}>{s.icon}</div>
+              <div style={{lineHeight:1.2}}>{s.title}</div>
+              {i<step && <div style={{fontSize:9,marginTop:2}}>✓ done</div>}
+            </button>
+          ))}
+        </div>
+        <div style={{background:'#e2e8f0',borderRadius:999,height:6,overflow:'hidden'}}>
+          <div style={{background:`linear-gradient(90deg,${pur},${pk})`,height:'100%',borderRadius:999,width:`${pct}%`,transition:'width 0.3s'}}></div>
+        </div>
+        <div style={{fontSize:11,color:'#94a3b8',marginTop:4,textAlign:'right'}}>{pct}% complete · {STEPS[step].time}</div>
+      </div>
+
+      {/* Content */}
+      <div style={{maxWidth:900,margin:'0 auto',padding:'24px 16px'}}>
+        {renderStep()}
+
+        {/* Nav buttons */}
+        <div style={{display:'flex',justifyContent:'space-between',marginTop:20,gap:10}}>
+          <button onClick={()=>setStep(s=>Math.max(0,s-1))} disabled={step===0}
+            style={{padding:'12px 24px',borderRadius:10,border:'none',background:step===0?'#e2e8f0':'#f1f5f9',
+              color:step===0?'#94a3b8':'#374151',fontWeight:800,fontSize:13,cursor:step===0?'default':'pointer'}}>
+            ← Previous
+          </button>
+          {step < STEPS.length - 1 && (
+            <button onClick={()=>setStep(s=>s+1)}
+              style={{padding:'12px 28px',borderRadius:10,border:'none',background:`linear-gradient(135deg,${pur},${dpup})`,
+                color:'white',fontWeight:900,fontSize:13,cursor:'pointer'}}>
+              Next Section →
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── APP ───────────────────────────────────────────────────────────────────────
 function App() {
   // Read initial state from URL hash e.g. #clinical/p2p or #admin/faq
   const parseHash = () => {
@@ -3319,7 +3867,7 @@ function App() {
     return { mode: h[0]||'home', sub: h[1]||null };
   };
   const initHash = parseHash();
-  const [mode, setMode] = useState(initHash.mode);
+  const [mode, setMode] = useState(initHash.mode === 'intro' ? 'intro' : initHash.mode);
   const [clinicalTab, setClinicalTab] = useState(initHash.mode==='clinical' && initHash.sub ? initHash.sub : 'clinical');
   const [adminTab, setAdminTab] = useState(initHash.mode==='admin' && initHash.sub ? initHash.sub : 'start');
   const [globalSearch, setGlobalSearch] = useState('');
@@ -3412,6 +3960,20 @@ function App() {
       {mode === 'home' && (
         <div style={{background:'linear-gradient(135deg,#2d1b69,#6C3CB5)',padding:'32px 24px'}}>
           <div style={{maxWidth:1080,margin:'0 auto'}}>
+            {/* START HERE */}
+            <div onClick={()=>{ setMode('intro'); window.scrollTo(0,0); }}
+              style={{background:'linear-gradient(135deg,#E45487,#AC4ABD)',borderRadius:16,padding:'20px 24px',marginBottom:24,
+                cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:12,
+                boxShadow:'0 8px 32px rgba(228,84,135,0.4)',border:'2px solid rgba(255,255,255,0.2)'}}>
+              <div>
+                <div style={{fontSize:11,fontWeight:900,color:'rgba(255,255,255,0.8)',letterSpacing:2,marginBottom:4}}>NEW PROVIDER</div>
+                <div style={{fontSize:22,fontWeight:900,color:'white',marginBottom:4}}>🚀 Start Here — New Provider Onboarding</div>
+                <div style={{fontSize:13,color:'rgba(255,255,255,0.85)'}}>Structured onboarding module · ~90 minutes · Complete in one sitting</div>
+              </div>
+              <div style={{background:'white',color:'#E45487',borderRadius:12,padding:'12px 24px',fontWeight:900,fontSize:15,flexShrink:0}}>
+                Begin →
+              </div>
+            </div>
             <h1 style={{fontSize:26,fontWeight:900,color:'white',marginBottom:8}}>Welcome to VIP Medical Group 👋</h1>
             <p style={{fontSize:14,color:'rgba(255,255,255,0.85)',maxWidth:560,lineHeight:1.6,marginBottom:18}}>Your one-stop hub for everything you need — from pre-arrival checklists to clinical protocols to FAQs.</p>
             <div style={{display:'flex',gap:10,marginTop:8}}>
@@ -3422,8 +3984,11 @@ function App() {
         </div>
       )}
 
+      {/* Intro Module — full page takeover */}
+      {mode === 'intro' && <IntroModule onExit={(m)=>{ setMode(m); window.scrollTo(0,0); }} />}
+
       {/* Content */}
-      <div className="container">
+      {mode !== 'intro' && <div className="container">
         {mode === 'home'     && <HomeTab setMode={goMode} setAdminTab={setAdminTab} setClinicalTab={setClinicalTab} />}
         {mode === 'clinical' && clinicalTab === 'clinical'       && <ClinicalTab />}
         {mode === 'clinical' && clinicalTab === 'treatment'      && <TreatmentTab />}
@@ -3440,7 +4005,7 @@ function App() {
         {mode === 'admin'    && adminTab === 'protocols'  && <ProtocolsTab />}
         {mode === 'admin'    && adminTab === 'marketing'  && <MarketingTab />}
         {mode === 'admin'    && adminTab === 'resources'  && <ResourcesTab />}
-      </div>
+      </div>}
     </div>
   );
 }
