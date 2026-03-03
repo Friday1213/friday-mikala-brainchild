@@ -3434,7 +3434,7 @@ function IntroModule({ onExit }) {
               <div style={{display:'flex',justifyContent:'center',marginBottom:0}}>
                 <div style={{background:`linear-gradient(135deg,${dk},${dpup})`,color:'white',borderRadius:12,padding:'10px 24px',textAlign:'center',fontWeight:900,fontSize:13,minWidth:180}}>
                   <div style={{fontSize:10,opacity:0.8,marginBottom:2}}>CHIEF EXECUTIVE OFFICER</div>
-                  <div>[CEO Name]</div>
+                  <div>Dr. Michael Nguyen</div>
                 </div>
               </div>
               {/* connector */}
@@ -3446,10 +3446,10 @@ function IntroModule({ onExit }) {
               {/* L2 roles */}
               <div style={{display:'flex',justifyContent:'space-around',gap:8,marginBottom:0}}>
                 {[
-                  {role:'COO',name:'[COO Name]',color:dpup},
-                  {role:'CMO',name:'[CMO Name]',color:blu},
-                  {role:'Chief Marketing Officer',name:'[CMO Name]',color:pk},
-                  {role:'Head of HR',name:'[HR Name]',color:'#059669'},
+                  {role:'COO',name:'Shondra Pistone',color:dpup},
+                  {role:'CMO',name:'Dr. Caroline Novak',color:blu},
+                  {role:'Chief Marketing Officer',name:'Cat Novak',color:pk},
+                  {role:'Head of HR',name:'Sara Young',color:'#059669'},
                   {role:'Dir. Provider Services',name:'Carly Sarch, PA-C',color:pur},
                 ].map(n=>(
                   <div key={n.role} style={{flex:1}}>
@@ -3461,51 +3461,69 @@ function IntroModule({ onExit }) {
                   </div>
                 ))}
               </div>
-              {/* L3 */}
-              <div style={{display:'flex',justifyContent:'space-around',gap:8,marginTop:8}}>
-                <div style={{flex:1,textAlign:'center'}}>
-                  <div style={{fontSize:9,fontWeight:800,color:'#94a3b8',marginBottom:4}}>REPORTS TO COO</div>
-                  <div style={{background:'#f1f5f9',borderRadius:8,padding:'6px 8px',fontSize:11,color:'#475569',fontWeight:700}}>Regional Ops Directors</div>
+              {/* L3 — RODs and RMDs */}
+              <div style={{display:'flex',gap:12,marginTop:10,flexWrap:'wrap'}}>
+                <div style={{flex:1,minWidth:260}}>
+                  <div style={{fontSize:9,fontWeight:900,color:'#94a3b8',marginBottom:6,textAlign:'center',letterSpacing:1}}>REGIONAL OPS DIRECTORS → COO</div>
+                  {[
+                    {name:'Pam Sheamon',region:'NY Area'},
+                    {name:'Kelly Walsh',region:'NJ'},
+                    {name:'Katherine Geneo',region:'CT, MD, TX'},
+                    {name:'Tracey Jaksch',region:'CA'},
+                  ].map(r=>(
+                    <div key={r.name} style={{display:'flex',justifyContent:'space-between',background:'#fdf4ff',borderRadius:8,padding:'6px 10px',marginBottom:4,border:'1px solid #e9d5ff',fontSize:11}}>
+                      <span style={{fontWeight:800,color:'#6C3CB5'}}>{r.name}</span>
+                      <span style={{color:'#94a3b8',fontSize:10}}>{r.region}</span>
+                    </div>
+                  ))}
                 </div>
-                <div style={{flex:1,textAlign:'center'}}>
-                  <div style={{fontSize:9,fontWeight:800,color:'#94a3b8',marginBottom:4}}>REPORTS TO CMO</div>
-                  <div style={{background:'#f1f5f9',borderRadius:8,padding:'6px 8px',fontSize:11,color:'#475569',fontWeight:700}}>Regional Medical Directors</div>
+                <div style={{flex:1,minWidth:260}}>
+                  <div style={{fontSize:9,fontWeight:900,color:'#94a3b8',marginBottom:6,textAlign:'center',letterSpacing:1}}>REGIONAL MEDICAL DIRECTORS → CMO</div>
+                  {[
+                    {name:'Dr. Billy Shoenfeld',region:'CA'},
+                    {name:'Dr. Shane Volney',region:'Texas'},
+                    {name:'Dr. Kamran Saraf',region:'Maryland'},
+                  ].map(r=>(
+                    <div key={r.name} style={{display:'flex',justifyContent:'space-between',background:'#eff6ff',borderRadius:8,padding:'6px 10px',marginBottom:4,border:'1px solid #bfdbfe',fontSize:11}}>
+                      <span style={{fontWeight:800,color:'#1078B9'}}>{r.name}</span>
+                      <span style={{color:'#94a3b8',fontSize:10}}>{r.region}</span>
+                    </div>
+                  ))}
                 </div>
-                <div style={{flex:2}}></div>
               </div>
             </div>
           </div>
 
           {/* Leadership Cards */}
           {[
-            {role:'Chief Executive Officer (CEO)',name:'[CEO Name]',color:dk,
+            {role:'Chief Executive Officer (CEO)',name:'Dr. Michael Nguyen',color:dk,
               oversees:'Overall company strategy, growth, and business performance.',
               when:'Major organizational changes, escalations that cannot be resolved at regional level.',
               why:'Sets the vision and pace of the organization. Their priorities are your priorities.'},
-            {role:'Chief Operating Officer (COO)',name:'[COO Name]',color:dpup,
+            {role:'Chief Operating Officer (COO)',name:'Shondra Pistone',color:dpup,
               oversees:'Day-to-day operations across all locations. Regional Ops Directors report to COO.',
               when:'Operational issues that cannot be resolved at the regional level.',
               why:'Owns the systems that make the practice run. Operational questions flow through this chain.'},
-            {role:'Chief Medical Officer (CMO)',name:'[CMO Name]',color:blu,
+            {role:'Chief Medical Officer (CMO)',name:'Dr. Caroline Novak',color:blu,
               oversees:'Clinical standards, protocols, and quality across all providers and locations.',
               when:'Clinical questions that escalate beyond regional medical director.',
               why:'Sets and maintains the clinical bar. Your clinical performance is ultimately accountable here.'},
-            {role:'Head of Human Resources',name:'[HR Name]',color:'#059669',
+            {role:'Head of Human Resources',name:'Sara Young',color:'#059669',
               oversees:'Credentialing, employment, benefits, compliance, onboarding paperwork.',
               when:'Credentialing updates, employment questions, benefits, HR issues.',
               why:'Your employment relationship runs through HR. Keep them in the loop on license and credential changes.'},
-            {role:'Chief Marketing Officer',name:'[CMO Name]',color:pk,
+            {role:'Chief Marketing Officer',name:'Cat Novak',color:pk,
               oversees:'Patient acquisition, brand, marketing materials, digital presence.',
               when:'Patient volume questions, marketing ideas, referral source development.',
               why:'Patient pipeline affects your schedule. Understanding marketing helps you understand your workload.'},
-            {role:'Regional Operations Directors',name:'[Your Region — Name TBD]',color:'#f59e0b',
+            {role:'Regional Operations Directors',name:'Pam Sheamon (NY) · Kelly Walsh (NJ) · Katherine Geneo (CT/MD/TX) · Tracey Jaksch (CA)',color:'#f59e0b',
               oversees:'Office operations, scheduling, staff management, revenue cycle within your region.',
               when:'Daily operational issues — scheduling conflicts, supply needs, staff questions.',
-              why:'Your most frequent leadership contact. They keep your office running.'},
-            {role:'Regional Medical Directors',name:'[Your Region — Name TBD]',color:'#0ea5e9',
+              why:'Your most frequent leadership contact. They keep your office running. Know which ROD covers your region.'},
+            {role:'Regional Medical Directors',name:'Dr. Billy Shoenfeld (CA) · Dr. Shane Volney (TX) · Dr. Kamran Saraf (MD)',color:'#0ea5e9',
               oversees:'Clinical oversight and quality within your regional group of providers.',
               when:'Clinical questions, complex case guidance, peer review.',
-              why:'Your clinical escalation point in the field. Use them.'},
+              why:'Your clinical escalation point in the field. Use them early and often.'},
             {role:'Director of Provider Services',name:'Carly Sarch, PA-C',color:pur,
               oversees:'Provider onboarding, training, competency development, APP oversight across all locations.',
               when:'Training questions, performance concerns, credentialing status, clinical workflow issues.',
