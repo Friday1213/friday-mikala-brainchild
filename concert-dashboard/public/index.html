@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎸 Carly's 2026 Concerts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080810;
+      --surface: #10101e;
+      --surface2: #16162a;
+      --pink: #ff2d78;
+      --purple: #9b30ff;
+      --cyan: #00e5ff;
+      --teal: #00c9a7;
+      --green: #00ff88;
+      --orange: #ff6b00;
+      --text: #f0f0ff;
+      --muted: #6b6b99;
+      --border: #1e1e3a;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding-bottom: 60px;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      text-align: center;
+      padding: 48px 20px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(ellipse at 50% -20%, rgba(155,48,255,0.25) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .header h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.8rem, 8vw, 5.5rem);
+      letter-spacing: 3px;
+      background: linear-gradient(135deg, var(--pink) 0%, var(--purple) 50%, var(--cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+      filter: drop-shadow(0 0 30px rgba(155,48,255,0.5));
+    }
+    .header .subtitle {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 8px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      padding: 0 20px 32px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      text-align: center;
+      flex: 1 1 140px;
+      min-width: 120px;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+    }
+    .stat-card.blue::before   { background: linear-gradient(90deg, var(--cyan), var(--purple)); }
+    .stat-card.green::before  { background: linear-gradient(90deg, var(--teal), var(--green)); }
+    .stat-card.orange::before { background: linear-gradient(90deg, var(--orange), var(--pink)); }
+    .stat-card.purple::before { background: var(--purple); }
+    .stat-card.pink::before   { background: var(--pink); }
+    .stat-card.teal::before   { background: var(--teal); }
+
+    .stat-value {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .stat-card.blue .stat-value   { color: var(--cyan); }
+    .stat-card.green .stat-value  { color: var(--green); }
+    .stat-card.orange .stat-value { color: var(--orange); }
+    .stat-card.purple .stat-value { color: var(--purple); }
+    .stat-card.pink .stat-value   { color: var(--pink); }
+    .stat-card.teal .stat-value   { color: var(--teal); }
+
+    .stat-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+    }
+
+    /* ── FILTER TOGGLE ── */
+    .filter-bar {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 20px 36px;
+    }
+    .filter-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 10px 20px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover { border-color: var(--purple); color: var(--text); }
+    .filter-btn.active {
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 0 20px rgba(155,48,255,0.4);
+    }
+
+    /* ── MAIN CONTENT ── */
+    .main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* ── MONTH SECTION ── */
+    .month-section { margin-bottom: 48px; }
+    .month-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .month-header h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 3px;
+      white-space: nowrap;
+    }
+    .month-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--purple), var(--cyan), transparent);
+      box-shadow: 0 0 8px rgba(0,229,255,0.3);
+    }
+    .march .month-header h2    { color: var(--pink); }
+    .april .month-header h2    { color: var(--purple); }
+    .may .month-header h2      { color: var(--cyan); }
+    .june .month-header h2     { color: var(--teal); }
+    .july .month-header h2     { color: var(--pink); }
+    .august .month-header h2   { color: var(--purple); }
+    .september .month-header h2{ color: var(--cyan); }
+
+    /* ── GRID ── */
+    .concert-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 900px) { .concert-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 580px) { .concert-grid { grid-template-columns: 1fr; } }
+
+    /* ── CONCERT CARD ── */
+    .concert-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .concert-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(155,48,255,0.2);
+    }
+    .concert-card.past {
+      opacity: 0.45;
+      filter: grayscale(40%);
+    }
+    .concert-card.next-up {
+      border-color: var(--pink);
+      box-shadow: 0 0 24px rgba(255,45,120,0.3);
+    }
+    .concert-card.next-up::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--pink), var(--purple), var(--cyan));
+      animation: shimmer 2s linear infinite;
+      background-size: 200% 100%;
+    }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .card-date {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 2px;
+      color: var(--cyan);
+    }
+    .card-band {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 1px;
+      color: #fff;
+      line-height: 1.1;
+    }
+    .card-venue {
+      font-size: 0.82rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .card-price {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--teal);
+    }
+    .card-notes {
+      font-size: 0.78rem;
+      font-style: italic;
+      color: #8080b0;
+      border-left: 2px solid var(--purple);
+      padding-left: 8px;
+    }
+    .card-footer {
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* ── BADGES ── */
+    .badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 5px 10px;
+      border-radius: 50px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .badge-got {
+      background: rgba(0,255,136,0.1);
+      border: 1px solid var(--green);
+      color: var(--green);
+      box-shadow: 0 0 10px rgba(0,255,136,0.2);
+    }
+    .badge-need {
+      background: rgba(255,107,0,0.1);
+      border: 1px solid var(--orange);
+      color: var(--orange);
+      animation: pulse-orange 2s ease-in-out infinite;
+    }
+    @keyframes pulse-orange {
+      0%, 100% { box-shadow: 0 0 6px rgba(255,107,0,0.3); }
+      50%       { box-shadow: 0 0 18px rgba(255,107,0,0.7); }
+    }
+
+    /* ── COUNTDOWN ── */
+    .countdown-pill {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 50px;
+      background: linear-gradient(135deg, rgba(255,45,120,0.2), rgba(155,48,255,0.2));
+      border: 1px solid var(--pink);
+      color: var(--pink);
+      animation: pulse-pink 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse-pink {
+      0%, 100% { box-shadow: 0 0 6px rgba(255,45,120,0.3); }
+      50%       { box-shadow: 0 0 20px rgba(255,45,120,0.8); }
+    }
+
+    /* ── CONSIDERATION SECTION ── */
+    .consideration-section {
+      max-width: 1200px;
+      margin: 0 auto 48px;
+      padding: 0 20px;
+    }
+    .consideration-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .consideration-header h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 3px;
+      color: var(--orange);
+      white-space: nowrap;
+    }
+    .consideration-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--orange), transparent);
+    }
+    .consideration-card {
+      background: rgba(255,107,0,0.05);
+      border: 1px dashed var(--orange);
+      border-radius: 16px;
+      padding: 20px;
+      max-width: 400px;
+    }
+
+    /* ── HIDDEN ── */
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🎸 Carly's 2026 Concerts</h1>
+  <p class="subtitle">Your year in music · 21 shows · let's go</p>
+</div>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-card blue">
+    <div class="stat-value">21</div>
+    <div class="stat-label">Total Shows</div>
+  </div>
+  <div class="stat-card green">
+    <div class="stat-value">4</div>
+    <div class="stat-label">Tickets Bought</div>
+  </div>
+  <div class="stat-card orange">
+    <div class="stat-value">17</div>
+    <div class="stat-label">Still Need</div>
+  </div>
+  <div class="stat-card purple">
+    <div class="stat-value">$2,581</div>
+    <div class="stat-label">Total Budget</div>
+  </div>
+  <div class="stat-card pink">
+    <div class="stat-value">$791</div>
+    <div class="stat-label">Spent So Far</div>
+  </div>
+  <div class="stat-card teal">
+    <div class="stat-value">$1,790</div>
+    <div class="stat-label">Remaining</div>
+  </div>
+</div>
+
+<!-- FILTER -->
+<div class="filter-bar">
+  <button class="filter-btn active" data-filter="all">All Shows</button>
+  <button class="filter-btn" data-filter="got">✅ Got Tickets</button>
+  <button class="filter-btn" data-filter="need">🎟️ Need Tickets</button>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main" id="main-content"></div>
+
+<!-- CONSIDERATION -->
+<div class="consideration-section" id="consideration-section">
+  <div class="consideration-header">
+    <h2>⚠️ Consideration</h2>
+    <div class="consideration-line"></div>
+  </div>
+  <div class="consideration-card">
+    <div class="card-date">SAT · 5/17/2026</div>
+    <div class="card-band">A Perfect Circle</div>
+    <div class="card-venue">📍 Holmdel, NJ</div>
+    <div class="card-notes" style="margin-top: 8px;">Still deciding — might be worth it!</div>
+  </div>
+</div>
+
+<script>
+const TODAY = new Date('2026-02-28');
+
+const concerts = [
+  { date: '2026-03-10', day: 'Tue 3/10',  band: 'Bad Omens',             venue: 'Prudential Center',  price: '$150', got: false, notes: '' },
+  { date: '2026-03-21', day: 'Sat 3/21',  band: 'Currents / Erra',       venue: 'Irving Plaza',        price: '$150', got: false, notes: '' },
+  { date: '2026-04-03', day: 'Fri 4/3',   band: 'Black Label Society',   venue: 'Wellmont Theater',    price: '$60',  got: false, notes: '' },
+  { date: '2026-04-21', day: 'Tue 4/21',  band: 'Soen',                  venue: 'Gramercy',            price: '$60',  got: false, notes: '' },
+  { date: '2026-05-02', day: 'Sat 5/2',   band: 'Bring Me The Horizon',  venue: 'MSG',                 price: '$150', got: false, notes: '' },
+  { date: '2026-05-03', day: 'Sun 5/3',   band: 'Dayseeker',             venue: 'Starland',            price: '$60',  got: false, notes: '' },
+  { date: '2026-05-05', day: 'Tue 5/5',   band: 'Biffy Clyro',           venue: 'Irving Plaza',        price: '$60',  got: true,  notes: '' },
+  { date: '2026-05-07', day: 'Thu 5/7',   band: 'Sylosis',               venue: 'Gramercy',            price: '$60',  got: false, notes: '' },
+  { date: '2026-05-13', day: 'Wed 5/13',  band: 'Alter Bridge',          venue: 'Wellmont Theater',    price: '$150', got: false, notes: 'Consider Atlantic City on Sat 5/9' },
+  { date: '2026-06-10', day: 'Wed 6/10',  band: 'Dave Matthews',         venue: 'Forest Hills',        price: '$150', got: false, notes: 'Alternatives: Camden 7/9–7/10' },
+  { date: '2026-06-11', day: 'Thu 6/11',  band: 'The Warning',           venue: 'Pier 17',             price: '$66',  got: true,  notes: '' },
+  { date: '2026-06-16', day: 'Tue 6/16',  band: 'Jimmy Eat World',       venue: 'Pier 17',             price: '$100', got: false, notes: 'Carly Coming' },
+  { date: '2026-06-17', day: 'Wed 6/17',  band: 'Jimmy Eat World',       venue: 'Brooklyn Paramount',  price: '$100', got: false, notes: 'Carly Coming' },
+  { date: '2026-07-21', day: 'Tue 7/21',  band: 'Shinedown',             venue: 'Prudential Center',   price: '$265', got: true,  notes: '' },
+  { date: '2026-07-28', day: 'Tue 7/28',  band: 'Rush',                  venue: 'MSG',                 price: '$200', got: false, notes: '4 Options: 7/28, 7/30, 8/1, 8/3' },
+  { date: '2026-08-09', day: 'Sun 8/9',   band: 'My Chemical Romance',   venue: 'Forest Hills',        price: '$200', got: false, notes: '' },
+  { date: '2026-08-20', day: 'Thu 8/20',  band: 'King Gizzard',          venue: 'Forest Hills',        price: '',     got: false, notes: '' },
+  { date: '2026-08-21', day: 'Fri 8/21',  band: 'King Gizzard',          venue: 'Forest Hills',        price: '',     got: false, notes: '' },
+  { date: '2026-08-22', day: 'Sat 8/22',  band: 'King Gizzard',          venue: 'Forest Hills',        price: '',     got: false, notes: '' },
+  { date: '2026-09-05', day: 'Sat 9/5',   band: 'Iron Maiden',           venue: 'Sports Illustrated',  price: '$400', got: true,  notes: '' },
+  { date: '2026-09-25', day: 'Fri 9/25',  band: 'AC/DC',                 venue: 'MetLife',             price: '$200', got: false, notes: '' },
+];
+
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MONTH_CLASSES = ['','','march','april','may','june','july','august','september','','',''];
+
+function daysBetween(a, b) {
+  return Math.round((b - a) / 86400000);
+}
+
+function getNextShow() {
+  for (let i = 0; i < concerts.length; i++) {
+    const d = new Date(concerts[i].date);
+    if (d >= TODAY) return i;
+  }
+  return -1;
+}
+
+function render(filter) {
+  const nextIdx = getNextShow();
+  const main = document.getElementById('main-content');
+  main.innerHTML = '';
+
+  // Group by month
+  const byMonth = {};
+  concerts.forEach((c, i) => {
+    const d = new Date(c.date);
+    const mKey = d.getMonth(); // 0-indexed
+    if (!byMonth[mKey]) byMonth[mKey] = [];
+    byMonth[mKey].push({ ...c, idx: i });
+  });
+
+  Object.keys(byMonth).sort((a,b) => a-b).forEach(mKey => {
+    const shows = byMonth[mKey];
+    const month = parseInt(mKey);
+
+    // Apply filter
+    const visible = shows.filter(c => {
+      if (filter === 'got') return c.got;
+      if (filter === 'need') return !c.got;
+      return true;
+    });
+    if (visible.length === 0) return;
+
+    const section = document.createElement('div');
+    section.className = 'month-section ' + (MONTH_CLASSES[month] || '');
+
+    section.innerHTML = `
+      <div class="month-header">
+        <h2>${MONTHS[month].toUpperCase()}</h2>
+        <div class="month-line"></div>
+      </div>
+      <div class="concert-grid" id="grid-${month}"></div>
+    `;
+    main.appendChild(section);
+
+    const grid = section.querySelector(`#grid-${month}`);
+
+    visible.forEach(c => {
+      const cDate = new Date(c.date);
+      const isPast = cDate < TODAY;
+      const isNext = c.idx === nextIdx && filter !== 'got';
+      const daysAway = daysBetween(TODAY, cDate);
+
+      const card = document.createElement('div');
+      card.className = 'concert-card' + (isPast ? ' past' : '') + (isNext ? ' next-up' : '');
+      card.dataset.got = c.got ? 'true' : 'false';
+
+      const badge = c.got
+        ? `<span class="badge badge-got">✅ GOT IT</span>`
+        : `<span class="badge badge-need">🎟️ NEED TICKETS</span>`;
+
+      const countdown = (isNext && daysAway >= 0)
+        ? `<span class="countdown-pill">🔥 Next up in ${daysAway} day${daysAway !== 1 ? 's' : ''}</span>`
+        : '';
+
+      const price = c.price ? `<div class="card-price">💰 ${c.price}</div>` : '';
+      const notes = c.notes ? `<div class="card-notes">📝 ${c.notes}</div>` : '';
+
+      card.innerHTML = `
+        <div class="card-date">${c.day.toUpperCase()}</div>
+        <div class="card-band">${c.band}</div>
+        <div class="card-venue">📍 ${c.venue}</div>
+        ${price}
+        ${notes}
+        <div class="card-footer">
+          ${badge}
+          ${countdown}
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  });
+
+  // Show/hide consideration based on filter
+  const considerSection = document.getElementById('consideration-section');
+  considerSection.style.display = (filter === 'got') ? 'none' : '';
+}
+
+// Filter buttons
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    render(btn.dataset.filter);
+  });
+});
+
+render('all');
+</script>
+</body>
+</html>

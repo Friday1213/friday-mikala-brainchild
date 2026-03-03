@@ -1,0 +1,2717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carly Hub</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f6f9; color: #1a1a2e; }
+  .navbar { background: #1a1a2e; color: white; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .navbar h1 { font-size: 20px; font-weight: 700; cursor: pointer; }
+  .nav-tabs { display: flex; gap: 4px; }
+  .nav-tab { padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.7); border: none; background: none; }
+  .nav-tab.active { background: rgba(255,255,255,0.15); color: white; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px; }
+  .card { background: white; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 24px; margin-bottom: 16px; }
+  .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  .page-header h2 { font-size: 24px; font-weight: 700; }
+  .btn { padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-size: 14px; font-weight: 500; transition: opacity 0.15s; }
+  .btn:hover { opacity: 0.85; }
+  .btn-primary { background: #2563eb; color: white; }
+  .btn-danger { background: #dc2626; color: white; }
+  .btn-outline { background: white; color: #2563eb; border: 1px solid #2563eb; }
+  .btn-sm { padding: 4px 10px; font-size: 12px; }
+  .btn-ghost { background: rgba(255,255,255,0.1); color: white; border: none; }
+  .stat-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .stat-card { background: white; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 20px; text-align: center; }
+  .speak-btn { background: rgba(255,255,255,0.1); border: none; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; font-size: 18px; display: inline-flex; align-items: center; justify-content: center; margin-left: 8px; transition: background 0.2s; vertical-align: middle; }
+  .speak-btn:hover { background: rgba(255,255,255,0.2); }
+  .speak-btn:active { transform: scale(0.95); }
+  .stat-num { font-size: 32px; font-weight: 800; }
+  .stat-label { font-size: 12px; color: #6b7280; margin-top: 4px; }
+  .progress-bar { height: 12px; background: #e5e7eb; border-radius: 6px; overflow: hidden; margin: 16px 0 8px; }
+  .progress-fill { height: 100%; border-radius: 6px; transition: width 0.5s; }
+  .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .form-full { grid-column: 1 / -1; }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-group label { font-size: 13px; font-weight: 500; color: #374151; }
+  .form-group input, .form-group select, .form-group textarea { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; outline: none; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 24px; }
+  .modal { background: white; border-radius: 12px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 32px; }
+  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  .modal-header h2 { font-size: 20px; font-weight: 700; }
+  .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #6b7280; }
+  .close-btn:hover { color: #1a1a2e; }
+  .entry-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f3f4f6; font-size: 14px; }
+  .entry-row:last-child { border-bottom: none; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+  .badge-pto { background: #fee2e2; color: #dc2626; }
+  .badge-sick { background: #fef3c7; color: #d97706; }
+  .badge-holiday { background: #dbeafe; color: #2563eb; }
+  .badge-upcoming { background: #dbeafe; color: #2563eb; }
+  .badge-completed { background: #d1fae5; color: #059669; }
+  .badge-cancelled { background: #f3f4f6; color: #6b7280; }
+  .trip-card { background: white; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 20px; margin-bottom: 12px; border-left: 4px solid #2563eb; }
+  .trip-card.completed { border-left-color: #059669; opacity: 0.8; }
+  .trip-card.cancelled { border-left-color: #d1d5db; opacity: 0.6; }
+  .trip-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .trip-meta { font-size: 13px; color: #6b7280; margin-bottom: 8px; }
+  .trip-details { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; font-size: 13px; }
+  .trip-detail { display: flex; gap: 6px; }
+  .trip-detail-label { font-weight: 500; color: #374151; }
+  .trip-detail-value { color: #6b7280; }
+  .section-title { font-size: 15px; font-weight: 700; color: #374151; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #f3f4f6; }
+  .empty-state { text-align: center; padding: 48px; color: #9ca3af; }
+  .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+  .cal-header { text-align: center; font-size: 11px; font-weight: 600; color: #6b7280; padding: 4px; }
+  .cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 12px; cursor: pointer; position: relative; }
+  .cal-day.has-pto { background: #fee2e2; color: #dc2626; font-weight: 600; border-radius: 6px; }
+  .cal-day.has-sick { background: #fef3c7; color: #d97706; font-weight: 600; border-radius: 6px; }
+  .cal-day.has-holiday { background: #d1fae5; color: #059669; font-weight: 600; border-radius: 6px; }
+  .cal-day.has-half { background: linear-gradient(135deg, #d1fae5 50%, #f3f4f6 50%); color: #059669; font-weight: 600; border-radius: 6px; }
+  .cal-day.has-jewish { background: #ede9fe; color: #7c3aed; font-weight: 600; border-radius: 6px; }
+  .cal-day.today { outline: 2px solid #2563eb; border-radius: 6px; }
+  .cal-day.other-month { color: #d1d5db; }
+  .year-selector { display: flex; align-items: center; gap: 12px; }
+  .year-selector button { background: none; border: 1px solid #d1d5db; border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 14px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const api = async (path, options = {}) => {
+  const res = await fetch(path, { headers: { 'Content-Type': 'application/json' }, ...options });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+};
+
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYS_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+// VIP Medical Group company holidays
+function getHolidays(year) {
+  const h = {};
+  const add = (m, d, name, half, jewish) => {
+    const key = `${year}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    h[key] = { name, half: !!half, jewish: !!jewish };
+  };
+  // Jewish holidays (dates shift yearly — hardcoded through 2030)
+  const jewish = {
+    2025: { passover: [4,13], roshHashanah: [9,22], yomKippur: [10,1] },
+    2026: { passover: [4,2],  roshHashanah: [9,11], yomKippur: [9,20] },
+    2027: { passover: [4,21], roshHashanah: [9,30], yomKippur: [10,9] },
+    2028: { passover: [4,10], roshHashanah: [9,20], yomKippur: [9,29] },
+    2029: { passover: [3,31], roshHashanah: [9,9],  yomKippur: [9,18] },
+    2030: { passover: [4,18], roshHashanah: [9,27], yomKippur: [10,6] },
+  };
+  if (jewish[year]) {
+    const j = jewish[year];
+    add(...j.passover, 'Passover (First Night)', false, true);
+    add(...j.roshHashanah, 'Rosh Hashanah', false, true);
+    add(...j.yomKippur, 'Yom Kippur', false, true);
+  }
+  // Fixed dates
+  add(7, 3, 'July 3rd (Company Holiday)');
+  add(12, 24, 'Christmas Eve');
+  add(12, 25, 'Christmas Day');
+  add(12, 31, 'New Year\'s Eve');
+  // Memorial Day: last Monday in May
+  add(5, lastWeekday(year,5,1), 'Memorial Day');
+  // Labor Day: 1st Monday in Sep
+  add(9, nthWeekday(year,9,1,1), 'Labor Day');
+  // Thanksgiving: 4th Thursday in Nov
+  const thanks = nthWeekday(year,11,4,4);
+  add(11, thanks-1, 'Thanksgiving Eve', true); // half day Wednesday
+  add(11, thanks, 'Thanksgiving');
+  add(11, thanks+1, 'Black Friday');
+  return h;
+}
+function nthWeekday(year, month, dow, n) {
+  let d = 1, count = 0;
+  while (count < n) {
+    if (new Date(year, month-1, d).getDay() === dow) count++;
+    if (count < n) d++;
+  }
+  return d;
+}
+function lastWeekday(year, month, dow) {
+  const last = new Date(year, month, 0).getDate();
+  for (let d = last; d >= 1; d--) {
+    if (new Date(year, month-1, d).getDay() === dow) return d;
+  }
+}
+
+function PTOPage() {
+  const [entries, setEntries] = useState([]);
+  const [settings, setSettings] = useState({ annual_hours: 160, hours_per_day: 10, year: 2026 });
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [showForm, setShowForm] = useState(false);
+  const [editEntry, setEditEntry] = useState(null);
+  const [form, setForm] = useState({ type: 'PTO', date: '', hours: 10, note: '' });
+  const [viewMonth, setViewMonth] = useState(new Date().getMonth());
+
+  useEffect(() => {
+    api('/api/pto/settings').then(setSettings);
+    api(`/api/pto?year=${year}`).then(setEntries);
+  }, [year]);
+
+  const usedHours = entries.filter(e => e.type === 'PTO').reduce((s, e) => s + e.hours, 0);
+  const sickHours = entries.filter(e => e.type === 'Sick').reduce((s, e) => s + e.hours, 0);
+  const remainingHours = settings.annual_hours - usedHours;
+  const pct = Math.round((usedHours / settings.annual_hours) * 100);
+  const remainingDays = Math.floor(remainingHours / settings.hours_per_day);
+  const sickBank = settings.sick_hours || 40;
+  const sickRemaining = sickBank - sickHours;
+  const sickPct = Math.round((sickHours / sickBank) * 100);
+
+  const save = async (e) => {
+    e.preventDefault();
+    if (editEntry) {
+      await api(`/api/pto/${editEntry.id}`, { method: 'PUT', body: JSON.stringify(form) });
+      setEntries(es => es.map(x => x.id === editEntry.id ? { ...x, ...form } : x));
+    } else {
+      const { id } = await api('/api/pto', { method: 'POST', body: JSON.stringify(form) });
+      setEntries(es => [{ id, ...form }, ...es]);
+    }
+    setShowForm(false); setEditEntry(null); setForm({ type: 'PTO', date: '', hours: 10, note: '' });
+  };
+
+  const del = async (id) => {
+    await api(`/api/pto/${id}`, { method: 'DELETE' });
+    setEntries(es => es.filter(x => x.id !== id));
+  };
+
+  // Build calendar
+  const firstDay = new Date(year, viewMonth, 1).getDay();
+  const daysInMonth = new Date(year, viewMonth + 1, 0).getDate();
+  const today = new Date();
+  const entryDateMap = {};
+  entries.forEach(e => { entryDateMap[e.date] = e; });
+
+  const calDays = [];
+  for (let i = 0; i < firstDay; i++) calDays.push(null);
+  for (let d = 1; d <= daysInMonth; d++) calDays.push(d);
+
+  const fmtDate = d => d ? `${year}-${String(viewMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}` : '';
+  const isToday = d => d && today.getFullYear()===year && today.getMonth()===viewMonth && today.getDate()===d;
+  const holidays = getHolidays(year);
+
+  return (
+    <div>
+      <div className="page-header">
+        <h2>PTO Tracker</h2>
+        <div style={{display:'flex',gap:8,alignItems:'center'}}>
+          <div className="year-selector">
+            <button onClick={()=>setYear(y=>y-1)}>‹</button>
+            <span style={{fontWeight:600}}>{year}</span>
+            <button onClick={()=>setYear(y=>y+1)}>›</button>
+          </div>
+          <button className="btn btn-primary" onClick={()=>{setEditEntry(null);setForm({type:'PTO',date:'',hours:10,note:''});setShowForm(true);}}>+ Log Time</button>
+        </div>
+      </div>
+
+      <div className="stat-cards">
+        <div className="stat-card"><div className="stat-num" style={{color:'#2563eb'}}>{remainingHours}h</div><div className="stat-label">PTO Remaining</div></div>
+        <div className="stat-card"><div className="stat-num" style={{color:'#dc2626'}}>{usedHours}h</div><div className="stat-label">PTO Used</div></div>
+        <div className="stat-card"><div className="stat-num">{remainingDays}</div><div className="stat-label">PTO Days Left</div></div>
+        <div className="stat-card"><div className="stat-num" style={{color:'#d97706'}}>{sickRemaining}h</div><div className="stat-label">Sick Remaining</div></div>
+        <div className="stat-card"><div className="stat-num" style={{color:'#d97706'}}>{sickHours}h</div><div className="stat-label">Sick Used</div></div>
+      </div>
+
+      <div className="card" style={{marginBottom:8}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+          <span style={{fontSize:13,color:'#374151',fontWeight:500}}>🏖 PTO Used: {usedHours}h of {settings.annual_hours}h ({pct}%)</span>
+        </div>
+        <div className="progress-bar"><div className="progress-fill" style={{width:`${Math.min(pct,100)}%`,background: pct > 80 ? '#dc2626' : '#2563eb'}} /></div>
+      </div>
+      <div className="card" style={{marginBottom:16}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+          <span style={{fontSize:13,color:'#374151',fontWeight:500}}>🤒 Sick Used: {sickHours}h of {sickBank}h ({sickPct}%)</span>
+        </div>
+        <div className="progress-bar"><div className="progress-fill" style={{width:`${Math.min(sickPct,100)}%`,background: sickPct > 80 ? '#dc2626' : '#d97706'}} /></div>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <div className="card">
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
+            <div className="section-title" style={{marginBottom:0}}>{MONTHS[viewMonth]} {year}</div>
+            <div style={{display:'flex',gap:6}}>
+              <button className="btn btn-sm btn-outline" onClick={()=>setViewMonth(m=>m===0?11:m-1)}>‹</button>
+              <button className="btn btn-sm btn-outline" onClick={()=>setViewMonth(m=>m===11?0:m+1)}>›</button>
+            </div>
+          </div>
+          <div className="calendar-grid">
+            {DAYS_SHORT.map(d=><div key={d} className="cal-header">{d}</div>)}
+            {calDays.map((d,i)=>{
+              const dateStr = fmtDate(d);
+              const entry = entryDateMap[dateStr];
+              const holiday = holidays[dateStr];
+              const cls = entry?.type==='PTO'?'has-pto':entry?.type==='Sick'?'has-sick':holiday?.half?'has-half':holiday?.jewish?'has-jewish':holiday?'has-holiday':'';
+              const tip = entry ? `${entry.type}: ${entry.hours}h${entry.note?' - '+entry.note:''}` : holiday ? (holiday.half ? `½ Day: ${holiday.name}` : holiday.name) : '';
+              return <div key={i} className={`cal-day ${cls} ${isToday(d)?'today':''} ${!d?'other-month':''}`} title={tip}>{d||''}</div>;
+            })}
+          </div>
+          <div style={{display:'flex',gap:12,marginTop:12,fontSize:12}}>
+            <span><span style={{background:'#fee2e2',padding:'2px 6px',borderRadius:4,color:'#dc2626'}}>■</span> PTO</span>
+            <span><span style={{background:'#fef3c7',padding:'2px 6px',borderRadius:4,color:'#d97706'}}>■</span> Sick</span>
+            <span><span style={{background:'#d1fae5',padding:'2px 6px',borderRadius:4,color:'#059669'}}>■</span> Holiday</span>
+            <span><span style={{background:'linear-gradient(135deg,#d1fae5 50%,#f3f4f6 50%)',padding:'2px 6px',borderRadius:4,color:'#059669'}}>■</span> Half Day</span>
+            <span><span style={{background:'#ede9fe',padding:'2px 6px',borderRadius:4,color:'#7c3aed'}}>■</span> Jewish Holiday</span>
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="section-title">Upcoming Holidays</div>
+          {(() => {
+            const today = new Date().toISOString().split('T')[0];
+            const allHolidays = Object.entries(getHolidays(year))
+              .sort(([a],[b]) => a.localeCompare(b))
+              .filter(([date]) => date >= today || year > new Date().getFullYear());
+            if (allHolidays.length === 0) return <div style={{fontSize:13,color:'#9ca3af'}}>No upcoming holidays this year</div>;
+            return allHolidays.map(([date, h]) => (
+              <div key={date} className="entry-row">
+                <span style={{width:10,height:10,borderRadius:3,flexShrink:0,background:h.jewish?'#7c3aed':h.half?'linear-gradient(135deg,#059669 50%,#d1d5db 50%)':'#059669',display:'inline-block'}} />
+                <span style={{flex:1,fontWeight:500,fontSize:13}}>{h.name}{h.half?' (½ day)':''}</span>
+                <span style={{fontSize:12,color:'#6b7280'}}>{new Date(date+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',weekday:'short'})}</span>
+              </div>
+            ));
+          })()}
+        </div>
+        <div className="card" style={{marginTop:16}}>
+          <div className="section-title">Log History</div>
+          {entries.length === 0 ? <div className="empty-state" style={{padding:24}}>No entries yet</div> : entries.map(e => (
+            <div key={e.id} className="entry-row">
+              <span className={`badge badge-${e.type.toLowerCase()}`}>{e.type}</span>
+              <span style={{flex:1,fontWeight:500}}>{e.date}</span>
+              <span style={{color:'#374151',fontWeight:600}}>{e.hours}h</span>
+              {e.note && <span style={{color:'#6b7280',fontSize:12,flex:1}}>{e.note}</span>}
+              <button className="btn btn-outline btn-sm" onClick={()=>{setEditEntry(e);setForm({type:e.type,date:e.date,hours:e.hours,note:e.note||''});setShowForm(true);}}>Edit</button>
+              <button className="btn btn-danger btn-sm" onClick={()=>del(e.id)}>✕</button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {showForm && (
+        <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&setShowForm(false)}>
+          <div className="modal">
+            <div className="modal-header"><h2>{editEntry?'Edit Entry':'Log Time Off'}</h2><button className="close-btn" onClick={()=>setShowForm(false)}>×</button></div>
+            <form onSubmit={save}>
+              <div className="form-grid">
+                <div className="form-group"><label>Type</label>
+                  <select value={form.type} onChange={e=>setForm(f=>({...f,type:e.target.value}))}>
+                    <option value="PTO">PTO</option><option value="Sick">Sick</option><option value="Holiday">Holiday</option>
+                  </select>
+                </div>
+                <div className="form-group"><label>Date</label><input type="date" required value={form.date} onChange={e=>setForm(f=>({...f,date:e.target.value}))} /></div>
+                <div className="form-group"><label>Hours</label><input type="number" min="1" max="10" step="0.5" value={form.hours} onChange={e=>setForm(f=>({...f,hours:parseFloat(e.target.value)}))} /></div>
+                <div className="form-group form-full"><label>Note (optional)</label><input value={form.note} onChange={e=>setForm(f=>({...f,note:e.target.value}))} placeholder="e.g. Family vacation" /></div>
+              </div>
+              <div style={{display:'flex',gap:8,justifyContent:'flex-end',marginTop:16}}>
+                <button type="button" className="btn btn-outline" onClick={()=>setShowForm(false)}>Cancel</button>
+                <button type="submit" className="btn btn-primary">Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const OT_CATEGORIES = ['General','Onboarding','Credentialing','Admin','Travel','Coverage','Project','Worked on PTO'];
+
+function OvertimePage() {
+  const [entries, setEntries] = useState([]);
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [showForm, setShowForm] = useState(false);
+  const [editEntry, setEditEntry] = useState(null);
+  const [form, setForm] = useState({ date:'', hours:1, category:'General', note:'' });
+  const [filterCat, setFilterCat] = useState('all');
+
+  useEffect(() => { api(`/api/overtime?year=${year}`).then(setEntries); }, [year]);
+
+  const save = async (e) => {
+    e.preventDefault();
+    if (editEntry) {
+      await api(`/api/overtime/${editEntry.id}`, { method:'PUT', body:JSON.stringify(form) });
+      setEntries(es => es.map(x => x.id===editEntry.id ? {...x,...form} : x));
+    } else {
+      const { id } = await api('/api/overtime', { method:'POST', body:JSON.stringify(form) });
+      setEntries(es => [{id,...form},...es]);
+    }
+    setShowForm(false); setEditEntry(null); setForm({date:'',hours:1,category:'General',note:''});
+  };
+
+  const del = async (id) => {
+    if (!confirm('Delete this entry?')) return;
+    await api(`/api/overtime/${id}`, { method:'DELETE' });
+    setEntries(es => es.filter(x => x.id!==id));
+  };
+
+  const totalHours = entries.reduce((s,e) => s+e.hours, 0);
+  const totalDays = (totalHours/8).toFixed(1);
+
+  // Weekly avg (weeks elapsed in year so far, or full year)
+  const now = new Date();
+  const weeksElapsed = year < now.getFullYear() ? 52 : Math.max(1, Math.ceil((now - new Date(year,0,1)) / (7*24*60*60*1000)));
+  const weeklyAvg = (totalHours / weeksElapsed).toFixed(1);
+
+  // By category
+  const byCat = {};
+  entries.forEach(e => { byCat[e.category] = (byCat[e.category]||0) + e.hours; });
+
+  // By month
+  const byMonth = Array(12).fill(0);
+  entries.forEach(e => { const m = parseInt(e.date.split('-')[1])-1; byMonth[m] += e.hours; });
+  const maxMonth = Math.max(...byMonth, 1);
+
+  const filtered = filterCat==='all' ? entries : entries.filter(e=>e.category===filterCat);
+
+  return (
+    <div>
+      <div className="page-header">
+        <h2>Overtime Log</h2>
+        <div style={{display:'flex',gap:8,alignItems:'center'}}>
+          <div className="year-selector">
+            <button onClick={()=>setYear(y=>y-1)}>‹</button>
+            <span style={{fontWeight:600}}>{year}</span>
+            <button onClick={()=>setYear(y=>y+1)}>›</button>
+          </div>
+          <button className="btn btn-primary" onClick={()=>{setEditEntry(null);setForm({date:'',hours:1,category:'General',note:''});setShowForm(true);}}>+ Log Overtime</button>
+        </div>
+      </div>
+
+      <div className="stat-cards">
+        <div className="stat-card"><div className="stat-num" style={{color:'#7c3aed'}}>{totalHours}h</div><div className="stat-label">Total OT Hours</div></div>
+        <div className="stat-card"><div className="stat-num" style={{color:'#7c3aed'}}>{totalDays}</div><div className="stat-label">Equivalent Days</div></div>
+        <div className="stat-card"><div className="stat-num">{weeklyAvg}h</div><div className="stat-label">Avg Per Week</div></div>
+        <div className="stat-card"><div className="stat-num">{entries.length}</div><div className="stat-label">Log Entries</div></div>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}}>
+        <div className="card">
+          <div className="section-title">By Month</div>
+          {byMonth.map((h,i) => h>0 && (
+            <div key={i} style={{marginBottom:8}}>
+              <div style={{display:'flex',justifyContent:'space-between',fontSize:12,marginBottom:3}}>
+                <span style={{color:'#374151',fontWeight:500}}>{MONTHS[i]}</span>
+                <span style={{color:'#7c3aed',fontWeight:600}}>{h}h</span>
+              </div>
+              <div className="progress-bar" style={{margin:0,height:8}}>
+                <div className="progress-fill" style={{width:`${(h/maxMonth)*100}%`,background:'#7c3aed'}} />
+              </div>
+            </div>
+          ))}
+          {totalHours===0 && <div style={{fontSize:13,color:'#9ca3af'}}>No entries yet</div>}
+        </div>
+        <div className="card">
+          <div className="section-title">By Category</div>
+          {Object.entries(byCat).sort((a,b)=>b[1]-a[1]).map(([cat,h]) => (
+            <div key={cat} style={{marginBottom:8}}>
+              <div style={{display:'flex',justifyContent:'space-between',fontSize:12,marginBottom:3}}>
+                <span style={{color:'#374151',fontWeight:500}}>{cat}</span>
+                <span style={{color:'#7c3aed',fontWeight:600}}>{h}h</span>
+              </div>
+              <div className="progress-bar" style={{margin:0,height:8}}>
+                <div className="progress-fill" style={{width:`${(h/totalHours)*100}%`,background:'#7c3aed'}} />
+              </div>
+            </div>
+          ))}
+          {totalHours===0 && <div style={{fontSize:13,color:'#9ca3af'}}>No entries yet</div>}
+        </div>
+      </div>
+
+      <div className="card">
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+          <div className="section-title" style={{marginBottom:0}}>Log</div>
+          <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+            <button className={`btn btn-sm ${filterCat==='all'?'btn-primary':'btn-outline'}`} onClick={()=>setFilterCat('all')}>All</button>
+            {OT_CATEGORIES.map(c=>(
+              <button key={c} className={`btn btn-sm ${filterCat===c?'btn-primary':'btn-outline'}`} onClick={()=>setFilterCat(c)}>{c}</button>
+            ))}
+          </div>
+        </div>
+        {filtered.length===0 ? <div className="empty-state" style={{padding:24}}>No entries{filterCat!=='all'?' in this category':' yet'}</div> : filtered.map(e=>(
+          <div key={e.id} className="entry-row">
+            <span style={{background:'#ede9fe',color:'#7c3aed',padding:'2px 8px',borderRadius:12,fontSize:11,fontWeight:600,whiteSpace:'nowrap'}}>{e.category}</span>
+            <span style={{fontWeight:500,whiteSpace:'nowrap'}}>{e.date}</span>
+            <span style={{color:'#7c3aed',fontWeight:700,whiteSpace:'nowrap'}}>{e.hours}h</span>
+            <span style={{color:'#6b7280',fontSize:12,flex:1}}>{e.note}</span>
+            <button className="btn btn-outline btn-sm" onClick={()=>{setEditEntry(e);setForm({date:e.date,hours:e.hours,category:e.category,note:e.note||''});setShowForm(true);}}>Edit</button>
+            <button className="btn btn-danger btn-sm" onClick={()=>del(e.id)}>✕</button>
+          </div>
+        ))}
+      </div>
+
+      {showForm && (
+        <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&setShowForm(false)}>
+          <div className="modal">
+            <div className="modal-header"><h2>{editEntry?'Edit Entry':'Log Overtime'}</h2><button className="close-btn" onClick={()=>setShowForm(false)}>×</button></div>
+            <form onSubmit={save}>
+              <div className="form-grid">
+                <div className="form-group"><label>Date</label><input type="date" required value={form.date} onChange={e=>setForm(f=>({...f,date:e.target.value}))} /></div>
+                <div className="form-group"><label>Hours Over</label><input type="number" min="0.5" step="0.5" required value={form.hours} onChange={e=>setForm(f=>({...f,hours:parseFloat(e.target.value)}))} /></div>
+                <div className="form-group form-full"><label>Category</label>
+                  <select value={form.category} onChange={e=>setForm(f=>({...f,category:e.target.value}))}>
+                    {OT_CATEGORIES.map(c=><option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
+                <div className="form-group form-full"><label>Notes</label><textarea rows={3} value={form.note} onChange={e=>setForm(f=>({...f,note:e.target.value}))} placeholder="What were you working on?" /></div>
+              </div>
+              <div style={{display:'flex',gap:8,justifyContent:'flex-end',marginTop:16}}>
+                <button type="button" className="btn btn-outline" onClick={()=>setShowForm(false)}>Cancel</button>
+                <button type="submit" className="btn btn-primary">Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TravelPage() {
+  const [trips, setTrips] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [editTrip, setEditTrip] = useState(null);
+  const [filter, setFilter] = useState('all');
+  const [form, setForm] = useState({ destination:'', purpose:'', start_date:'', end_date:'', hotel:'', hotel_address:'', confirmation_number:'', flight_info:'', notes:'', status:'upcoming' });
+
+  useEffect(() => { api('/api/trips').then(setTrips); }, []);
+
+  const save = async (e) => {
+    e.preventDefault();
+    if (editTrip) {
+      await api(`/api/trips/${editTrip.id}`, { method: 'PUT', body: JSON.stringify(form) });
+      setTrips(ts => ts.map(t => t.id === editTrip.id ? { ...t, ...form } : t));
+    } else {
+      const { id } = await api('/api/trips', { method: 'POST', body: JSON.stringify(form) });
+      setTrips(ts => [{ id, ...form }, ...ts]);
+    }
+    setShowForm(false); setEditTrip(null);
+  };
+
+  const del = async (id) => {
+    await api(`/api/trips/${id}`, { method: 'DELETE' });
+    setTrips(ts => ts.filter(t => t.id !== id));
+  };
+
+  const filtered = filter === 'all' ? trips : trips.filter(t => t.status === filter);
+  const upcoming = trips.filter(t => t.status === 'upcoming');
+  const next = upcoming.sort((a,b) => a.start_date.localeCompare(b.start_date))[0];
+
+  const fmtRange = (s, e) => {
+    const sd = new Date(s + 'T00:00:00');
+    const ed = new Date(e + 'T00:00:00');
+    return `${sd.toLocaleDateString('en-US',{month:'short',day:'numeric'})} – ${ed.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}`;
+  };
+
+  const nights = (s, e) => {
+    const d = (new Date(e) - new Date(s)) / (1000*60*60*24);
+    return d > 0 ? `${d} night${d>1?'s':''}` : '';
+  };
+
+  return (
+    <div>
+      <div className="page-header">
+        <h2>Work Travel</h2>
+        <button className="btn btn-primary" onClick={()=>{setEditTrip(null);setForm({destination:'',purpose:'',start_date:'',end_date:'',hotel:'',hotel_address:'',confirmation_number:'',flight_info:'',notes:'',status:'upcoming'});setShowForm(true);}}>+ Add Trip</button>
+      </div>
+
+      {next && (
+        <div className="card" style={{borderLeft:'4px solid #2563eb',marginBottom:16}}>
+          <div style={{fontSize:12,color:'#2563eb',fontWeight:600,textTransform:'uppercase',letterSpacing:1,marginBottom:6}}>Next Trip</div>
+          <div style={{fontSize:20,fontWeight:700,marginBottom:4}}>✈️ {next.destination}</div>
+          <div style={{fontSize:14,color:'#6b7280',marginBottom:8}}>{fmtRange(next.start_date, next.end_date)} · {nights(next.start_date, next.end_date)}</div>
+          {next.hotel && <div style={{fontSize:13,color:'#374151'}}>🏨 {next.hotel}</div>}
+          {next.purpose && <div style={{fontSize:13,color:'#6b7280',marginTop:4}}>{next.purpose}</div>}
+        </div>
+      )}
+
+      <div style={{display:'flex',gap:8,marginBottom:16}}>
+        {['all','upcoming','completed','cancelled'].map(f=>(
+          <button key={f} className={`btn btn-sm ${filter===f?'btn-primary':'btn-outline'}`} onClick={()=>setFilter(f)} style={{textTransform:'capitalize'}}>{f}</button>
+        ))}
+      </div>
+
+      {filtered.length === 0 ? <div className="empty-state"><h3>No trips yet</h3><p>Add your first trip above</p></div> : filtered.map(t => (
+        <div key={t.id} className={`trip-card ${t.status}`}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:8}}>
+            <div>
+              <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:4}}>
+                <h3>{t.destination}</h3>
+                <span className={`badge badge-${t.status}`}>{t.status}</span>
+              </div>
+              <div className="trip-meta">{fmtRange(t.start_date, t.end_date)} · {nights(t.start_date, t.end_date)}{t.purpose && ` · ${t.purpose}`}</div>
+            </div>
+            <div style={{display:'flex',gap:6}}>
+              <button className="btn btn-outline btn-sm" onClick={()=>{setEditTrip(t);setForm({destination:t.destination,purpose:t.purpose||'',start_date:t.start_date,end_date:t.end_date,hotel:t.hotel||'',hotel_address:t.hotel_address||'',confirmation_number:t.confirmation_number||'',flight_info:t.flight_info||'',notes:t.notes||'',status:t.status});setShowForm(true);}}>Edit</button>
+              <button className="btn btn-danger btn-sm" onClick={()=>del(t.id)}>✕</button>
+            </div>
+          </div>
+          <div className="trip-details" style={{marginTop:8}}>
+            {t.hotel && <div className="trip-detail"><span className="trip-detail-label">Hotel:</span><span className="trip-detail-value">{t.hotel}</span></div>}
+            {t.hotel_address && <div className="trip-detail"><span className="trip-detail-label">Address:</span><span className="trip-detail-value">{t.hotel_address}</span></div>}
+            {t.confirmation_number && <div className="trip-detail"><span className="trip-detail-label">Confirmation:</span><span className="trip-detail-value">{t.confirmation_number}</span></div>}
+            {t.flight_info && <div className="trip-detail"><span className="trip-detail-label">Flight:</span><span className="trip-detail-value">{t.flight_info}</span></div>}
+            {t.notes && <div className="trip-detail" style={{gridColumn:'1/-1'}}><span className="trip-detail-label">Notes:</span><span className="trip-detail-value">{t.notes}</span></div>}
+          </div>
+        </div>
+      ))}
+
+      {showForm && (
+        <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&setShowForm(false)}>
+          <div className="modal">
+            <div className="modal-header"><h2>{editTrip?'Edit Trip':'Add Trip'}</h2><button className="close-btn" onClick={()=>setShowForm(false)}>×</button></div>
+            <form onSubmit={save}>
+              <div className="form-grid">
+                <div className="form-group form-full"><label>Destination *</label><input required value={form.destination} onChange={e=>setForm(f=>({...f,destination:e.target.value}))} placeholder="e.g. Dallas, TX" /></div>
+                <div className="form-group"><label>Start Date *</label><input type="date" required value={form.start_date} onChange={e=>setForm(f=>({...f,start_date:e.target.value}))} /></div>
+                <div className="form-group"><label>End Date *</label><input type="date" required value={form.end_date} onChange={e=>setForm(f=>({...f,end_date:e.target.value}))} /></div>
+                <div className="form-group form-full"><label>Purpose</label><input value={form.purpose} onChange={e=>setForm(f=>({...f,purpose:e.target.value}))} placeholder="e.g. Provider onboarding, Strategic Growth Meeting" /></div>
+                <div className="form-group"><label>Hotel</label><input value={form.hotel} onChange={e=>setForm(f=>({...f,hotel:e.target.value}))} /></div>
+                <div className="form-group"><label>Hotel Address</label><input value={form.hotel_address} onChange={e=>setForm(f=>({...f,hotel_address:e.target.value}))} /></div>
+                <div className="form-group"><label>Confirmation #</label><input value={form.confirmation_number} onChange={e=>setForm(f=>({...f,confirmation_number:e.target.value}))} /></div>
+                <div className="form-group"><label>Flight Info</label><input value={form.flight_info} onChange={e=>setForm(f=>({...f,flight_info:e.target.value}))} placeholder="e.g. AA1234, 8:00am EWR→DAL" /></div>
+                <div className="form-group"><label>Status</label>
+                  <select value={form.status} onChange={e=>setForm(f=>({...f,status:e.target.value}))}>
+                    <option value="upcoming">Upcoming</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option>
+                  </select>
+                </div>
+                <div className="form-group form-full"><label>Notes</label><textarea rows={3} value={form.notes} onChange={e=>setForm(f=>({...f,notes:e.target.value}))} /></div>
+              </div>
+              <div style={{display:'flex',gap:8,justifyContent:'flex-end',marginTop:16}}>
+                <button type="button" className="btn btn-outline" onClick={()=>setShowForm(false)}>Cancel</button>
+                <button type="submit" className="btn btn-primary">Save Trip</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ConcertsPage() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [activeYear, setActiveYear] = useState('all');
+  const [countdown, setCountdown] = useState('');
+
+  useEffect(() => {
+    fetch('/api/concerts').then(r => r.json()).then(d => { setData(d); setLoading(false); });
+  }, []);
+
+  // Countdown timer
+  useEffect(() => {
+    if (!data) return;
+    // Find next booked show in 2026 (future only)
+    const monthMap = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,July:5,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+    const now = new Date();
+    const bookedShows = (data['2026'] || [])
+      .filter(c => c.bought === 'Yes')
+      .map(c => {
+        // parse date like "Tue, 5/5" or "Sat, 10/31"
+        const m = c.date.match(/(\d+)\/(\d+)/);
+        if (!m) return null;
+        const d = new Date(2026, parseInt(m[1])-1, parseInt(m[2]), 19, 0, 0);
+        return { ...c, dateObj: d };
+      })
+      .filter(c => c && c.dateObj > now)
+      .sort((a,b) => a.dateObj - b.dateObj);
+
+    const next = bookedShows[0];
+    if (!next) return;
+
+    const tick = () => {
+      const diff = next.dateObj - new Date();
+      if (diff <= 0) { setCountdown('🎸 SHOWTIME!'); return; }
+      const days = Math.floor(diff / 86400000);
+      const hrs = Math.floor((diff % 86400000) / 3600000);
+      const mins = Math.floor((diff % 3600000) / 60000);
+      const secs = Math.floor((diff % 60000) / 1000);
+      setCountdown({ band: next.band, date: next.date, venue: next.location, days, hrs, mins, secs });
+    };
+    tick();
+    const interval = setInterval(tick, 1000);
+    return () => clearInterval(interval);
+  }, [data]);
+
+  if (loading) return React.createElement('div', { style: { background: '#0a0a0a', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 24 } }, '🎸 Loading your concert history...');
+
+  const years = ['2022','2023','2024','2025','2026'];
+  const yearColors = { '2022': '#ff6b6b', '2023': '#ffd93d', '2024': '#6bcb77', '2025': '#4d96ff', '2026': '#c77dff' };
+  const yearEmojis = { '2022': '🔥', '2023': '⚡', '2024': '🌊', '2025': '🤘', '2026': '🚀' };
+
+  const allConcerts = years.flatMap(y => (data[y] || []).map(c => ({ ...c, year: y })));
+
+  // Stats
+  const totalShows = allConcerts.length;
+  const showsByYear = {};
+  years.forEach(y => showsByYear[y] = (data[y] || []).length);
+
+  // Top venues
+  const venueCounts = {};
+  allConcerts.forEach(c => {
+    const v = c.location.split(',')[0].trim();
+    if (v) venueCounts[v] = (venueCounts[v] || 0) + 1;
+  });
+  const topVenues = Object.entries(venueCounts).sort((a,b) => b[1]-a[1]).slice(0, 5);
+
+  // Top bands (multi-show)
+  const bandCounts = {};
+  allConcerts.forEach(c => {
+    const b = c.band.trim();
+    if (b) bandCounts[b] = (bandCounts[b] || 0) + 1;
+  });
+  const topBands = Object.entries(bandCounts).sort((a,b) => b[1]-a[1]).slice(0, 8);
+
+  // Budget by year
+  const budgets = { '2022': 2185, '2023': 3875, '2024': 3115, '2025': 2715, '2026': 2581 };
+  const totalBudget = Object.values(budgets).reduce((a,b) => a+b, 0);
+  const maxBudget = Math.max(...Object.values(budgets));
+
+  // Displayed concerts
+  const displayed = activeYear === 'all' ? allConcerts : (data[activeYear] || []).map(c => ({ ...c, year: activeYear }));
+
+  const s = {
+    page: { background: '#0a0a0a', minHeight: '100vh', color: 'white', fontFamily: "'Inter', sans-serif", paddingBottom: 60 },
+    hero: { background: 'linear-gradient(135deg, #1a0533 0%, #0d1b3e 50%, #0a2a1a 100%)', padding: '48px 24px 40px', textAlign: 'center', position: 'relative', overflow: 'hidden' },
+    heroTitle: { fontSize: 48, fontWeight: 900, background: 'linear-gradient(90deg, #ff6b6b, #c77dff, #4d96ff, #6bcb77)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: 8, letterSpacing: -1 },
+    heroSub: { color: 'rgba(255,255,255,0.6)', fontSize: 16, marginBottom: 32 },
+    statRow: { display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' },
+    statBox: { background: 'rgba(255,255,255,0.08)', borderRadius: 16, padding: '16px 28px', textAlign: 'center', backdropFilter: 'blur(10px)' },
+    statNum: { fontSize: 36, fontWeight: 900, lineHeight: 1 },
+    statLabel: { fontSize: 12, color: 'rgba(255,255,255,0.5)', marginTop: 4, textTransform: 'uppercase', letterSpacing: 1 },
+    section: { maxWidth: 1100, margin: '0 auto', padding: '32px 24px 0' },
+    sectionTitle: { fontSize: 20, fontWeight: 800, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 },
+    grid2: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20 },
+    card: { background: '#141414', borderRadius: 20, padding: 24, border: '1px solid rgba(255,255,255,0.07)' },
+    yearBtn: (y) => ({ padding: '8px 20px', borderRadius: 30, border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 13, background: activeYear === y ? yearColors[y] || '#c77dff' : 'rgba(255,255,255,0.08)', color: activeYear === y ? '#000' : 'rgba(255,255,255,0.7)', transition: 'all 0.2s' }),
+    concertRow: (y) => ({ display: 'flex', gap: 12, alignItems: 'flex-start', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }),
+    dot: (y) => ({ width: 10, height: 10, borderRadius: '50%', background: yearColors[y], flexShrink: 0, marginTop: 5 }),
+  };
+
+  return (
+    React.createElement('div', { style: s.page },
+      // Hero
+      React.createElement('div', { style: s.hero },
+        React.createElement('div', { style: s.heroTitle }, '🎸 Concert Wrapped'),
+        React.createElement('div', { style: s.heroSub }, `${years[0]}–${years[years.length-1]} • Your complete show history`),
+
+        // Countdown to next booked show
+        countdown && typeof countdown === 'object' && React.createElement('div', { style: { background: 'rgba(255,255,255,0.06)', borderRadius: 20, padding: '16px 28px', marginBottom: 28, display: 'inline-block', border: '1px solid rgba(199,125,255,0.3)' } },
+          React.createElement('div', { style: { fontSize: 11, textTransform: 'uppercase', letterSpacing: 2, color: '#c77dff', marginBottom: 6 } }, '🎟️ Next Booked Show'),
+          React.createElement('div', { style: { fontSize: 18, fontWeight: 800, marginBottom: 10 } }, `${countdown.band} · ${countdown.venue}`),
+          React.createElement('div', { style: { display: 'flex', gap: 12, justifyContent: 'center' } },
+            [['days','DAYS'],['hrs','HRS'],['mins','MINS'],['secs','SECS']].map(([k,l]) =>
+              React.createElement('div', { key: k, style: { background: 'rgba(199,125,255,0.15)', borderRadius: 12, padding: '8px 14px', minWidth: 56 } },
+                React.createElement('div', { style: { fontSize: 28, fontWeight: 900, color: '#c77dff', lineHeight: 1 } }, String(countdown[k]).padStart(2,'0')),
+                React.createElement('div', { style: { fontSize: 10, color: 'rgba(255,255,255,0.4)', marginTop: 2 } }, l)
+              )
+            )
+          )
+        ),
+
+        React.createElement('div', { style: s.statRow },
+          React.createElement('div', { style: s.statBox },
+            React.createElement('div', { style: { ...s.statNum, color: '#c77dff' } }, totalShows),
+            React.createElement('div', { style: s.statLabel }, 'Total Shows')
+          ),
+          React.createElement('div', { style: s.statBox },
+            React.createElement('div', { style: { ...s.statNum, color: '#ffd93d' } }, `$${totalBudget.toLocaleString()}`),
+            React.createElement('div', { style: s.statLabel }, 'Total Budgeted')
+          ),
+          React.createElement('div', { style: s.statBox },
+            React.createElement('div', { style: { ...s.statNum, color: '#6bcb77' } }, topBands[0] ? topBands[0][0].split(' ').slice(-1)[0] : '—'),
+            React.createElement('div', { style: s.statLabel }, '#1 Most Seen')
+          ),
+          React.createElement('div', { style: s.statBox },
+            React.createElement('div', { style: { ...s.statNum, color: '#ff6b6b' } }, topVenues[0] ? topVenues[0][0] : '—'),
+            React.createElement('div', { style: s.statLabel }, 'Fave Venue')
+          )
+        )
+      ),
+
+      // Year breakdown bars
+      React.createElement('div', { style: s.section },
+        React.createElement('div', { style: s.sectionTitle }, '📅 Shows Per Year'),
+        React.createElement('div', { style: s.card },
+          years.map(y =>
+            React.createElement('div', { key: y, style: { marginBottom: 14 } },
+              React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', marginBottom: 4, fontSize: 13 } },
+                React.createElement('span', { style: { fontWeight: 700, color: yearColors[y] } }, `${yearEmojis[y]} ${y}`),
+                React.createElement('span', { style: { color: 'rgba(255,255,255,0.5)' } }, `${showsByYear[y]} shows • $${budgets[y].toLocaleString()}`)
+              ),
+              React.createElement('div', { style: { background: 'rgba(255,255,255,0.08)', borderRadius: 8, height: 28, overflow: 'hidden' } },
+                React.createElement('div', { style: { background: yearColors[y], height: '100%', width: `${(showsByYear[y] / Math.max(...Object.values(showsByYear))) * 100}%`, borderRadius: 8, display: 'flex', alignItems: 'center', paddingLeft: 10, fontSize: 12, fontWeight: 700, color: '#000', transition: 'width 1s ease' } },
+                  showsByYear[y] > 3 ? `${showsByYear[y]}` : ''
+                )
+              )
+            )
+          )
+        )
+      ),
+
+      // Top bands + top venues
+      React.createElement('div', { style: { ...s.section, ...s.grid2 } },
+        React.createElement('div', { style: s.card },
+          React.createElement('div', { style: s.sectionTitle }, '🎤 Most Seen Artists'),
+          topBands.map(([band, count], i) =>
+            React.createElement('div', { key: band, style: { display: 'flex', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' } },
+              React.createElement('div', { style: { width: 28, height: 28, borderRadius: '50%', background: ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#c77dff','#ff9f43','#ee5a24','#0abde3'][i], display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 900, color: '#000', flexShrink: 0 } }, i+1),
+              React.createElement('div', { style: { flex: 1, fontWeight: 600, fontSize: 14 } }, band),
+              React.createElement('div', { style: { background: 'rgba(255,255,255,0.1)', borderRadius: 12, padding: '2px 10px', fontSize: 12, fontWeight: 700 } }, `${count}x`)
+            )
+          )
+        ),
+        React.createElement('div', { style: s.card },
+          React.createElement('div', { style: s.sectionTitle }, '📍 Top Venues'),
+          topVenues.map(([venue, count], i) =>
+            React.createElement('div', { key: venue, style: { display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' } },
+              React.createElement('div', { style: { fontSize: 20 } }, ['🥇','🥈','🥉','4️⃣','5️⃣'][i]),
+              React.createElement('div', { style: { flex: 1, fontWeight: 600, fontSize: 14 } }, venue),
+              React.createElement('div', { style: { color: 'rgba(255,255,255,0.4)', fontSize: 13 } }, `${count} shows`)
+            )
+          )
+        )
+      ),
+
+      // Full concert list with year filter
+      React.createElement('div', { style: s.section },
+        React.createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 8 } },
+          React.createElement('div', { style: s.sectionTitle }, '🎟️ All Shows'),
+          React.createElement('div', { style: { display: 'flex', gap: 8, flexWrap: 'wrap' } },
+            React.createElement('button', { style: s.yearBtn('all'), onClick: () => setActiveYear('all') }, 'ALL'),
+            years.map(y => React.createElement('button', { key: y, style: s.yearBtn(y), onClick: () => setActiveYear(y) }, `${yearEmojis[y]} ${y}`))
+          )
+        ),
+        React.createElement('div', { style: s.card },
+          displayed.map((c, i) =>
+            React.createElement('div', { key: i, style: s.concertRow(c.year) },
+              React.createElement('div', { style: s.dot(c.year) }),
+              React.createElement('div', { style: { flex: 1 } },
+                React.createElement('div', { style: { fontWeight: 700, fontSize: 14 } }, c.band),
+                React.createElement('div', { style: { color: 'rgba(255,255,255,0.45)', fontSize: 12, marginTop: 2 } }, `${c.date} • ${c.location}`),
+                c.notes ? React.createElement('div', { style: { color: 'rgba(255,255,255,0.3)', fontSize: 11, fontStyle: 'italic', marginTop: 2 } }, c.notes) : null
+              ),
+              React.createElement('div', { style: { textAlign: 'right', flexShrink: 0 } },
+                c.price ? React.createElement('div', { style: { fontSize: 13, fontWeight: 700, color: yearColors[c.year] } }, c.price) : null,
+                c.bought === 'Yes' ? React.createElement('div', { style: { fontSize: 10, background: '#6bcb77', color: '#000', borderRadius: 8, padding: '2px 7px', marginTop: 4, fontWeight: 700 } }, '✓ GOT IT') : null
+              )
+            )
+          )
+        )
+      )
+    )
+  );
+}
+
+function BooksPage() {
+  const [books, setBooks] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('all');
+
+  useEffect(() => {
+    fetch('/api/books').then(r => r.json()).then(d => { setBooks(d); setLoading(false); });
+  }, []);
+
+  if (loading) return React.createElement('div', { style: { background: '#0a0a0a', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 24 } }, '📚 Loading your reading history...');
+
+  const readBooks = books.filter(b => b.shelf === 'read');
+  const currentlyReading = books.filter(b => b.shelf === 'currently-reading');
+  const toRead = books.filter(b => b.shelf === 'to-read');
+  const fiveStars = readBooks.filter(b => b.my_rating === 5);
+  const totalPages = readBooks.reduce((acc, b) => acc + (b.pages || 0), 0);
+  const ratedBooks = readBooks.filter(b => b.my_rating > 0);
+  const avgRating = ratedBooks.length ? (ratedBooks.reduce((a, b) => a + b.my_rating, 0) / ratedBooks.length).toFixed(1) : '—';
+
+  // Author counts
+  const authorCounts = {};
+  readBooks.forEach(b => {
+    const a = (b.author || '').trim();
+    if (a) authorCounts[a] = (authorCounts[a] || 0) + 1;
+  });
+  const topAuthors = Object.entries(authorCounts).sort((a, b) => b[1] - a[1]).slice(0, 8);
+
+  // Ratings breakdown
+  const ratingCounts = {1:0,2:0,3:0,4:0,5:0};
+  readBooks.forEach(b => { if (b.my_rating >= 1 && b.my_rating <= 5) ratingCounts[b.my_rating]++; });
+  const maxRatingCount = Math.max(...Object.values(ratingCounts), 1);
+
+  // Books per year
+  const booksPerYear = {};
+  readBooks.forEach(b => {
+    if (b.date_read) {
+      const yr = b.date_read.split('/')[0];
+      if (yr >= '2020' && yr <= '2026') booksPerYear[yr] = (booksPerYear[yr] || 0) + 1;
+    }
+  });
+  const maxBooksYear = Math.max(...Object.values(booksPerYear), 1);
+
+  // Shelves/genres
+  const shelfCounts = {};
+  books.forEach(b => {
+    if (!b.bookshelves) return;
+    b.bookshelves.split(',').map(s => s.trim()).filter(s => s && s !== 'read' && s !== 'to-read' && s !== 'currently-reading').forEach(s => {
+      shelfCounts[s] = (shelfCounts[s] || 0) + 1;
+    });
+  });
+  const topShelves = Object.entries(shelfCounts).sort((a,b) => b[1]-a[1]).slice(0,8);
+
+  const getIsbnCover = (isbn, size='M') => isbn ? `https://covers.openlibrary.org/b/isbn/${isbn}-${size}.jpg` : null;
+
+  const BookCover = ({ isbn, title, size = 'S', style = {} }) => {
+    const [failed, setFailed] = useState(false);
+    const coverUrl = getIsbnCover(isbn, size);
+    const dim = size === 'S' ? 40 : size === 'M' ? 80 : 120;
+    const colors = ['#ff6b9d','#ff9a3c','#ffd93d','#6bcb77','#4d96ff','#c77dff','#ff6b6b','#38d9a9'];
+    const colorIdx = title ? title.charCodeAt(0) % colors.length : 0;
+    if (!coverUrl || failed) {
+      return React.createElement('div', { style: { width: dim, height: dim * 1.4, borderRadius: 6, background: colors[colorIdx], display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: dim * 0.4, fontWeight: 900, color: '#000', flexShrink: 0, ...style } }, (title || '?')[0].toUpperCase());
+    }
+    return React.createElement('img', { src: coverUrl, alt: title, onError: () => setFailed(true), style: { width: dim, height: dim * 1.4, objectFit: 'cover', borderRadius: 6, flexShrink: 0, ...style } });
+  };
+
+  const StarRating = ({ rating }) => {
+    if (!rating) return React.createElement('span', { style: { color: 'rgba(255,255,255,0.3)', fontSize: 12 } }, 'unrated');
+    return React.createElement('span', { style: { color: '#ffd93d', fontSize: 13 } }, '★'.repeat(rating) + '☆'.repeat(5 - rating));
+  };
+
+  const filteredBooks = filter === 'all' ? books : filter === 'read' ? readBooks : filter === 'reading' ? currentlyReading : toRead;
+
+  const s = {
+    page: { background: '#0a0a0a', minHeight: '100vh', color: 'white', fontFamily: "'Inter', sans-serif", paddingBottom: 60 },
+    hero: { background: 'linear-gradient(135deg, #2d0a1e 0%, #1a0a2e 50%, #2d1a00 100%)', padding: '48px 24px 40px', textAlign: 'center' },
+    heroTitle: { fontSize: 48, fontWeight: 900, background: 'linear-gradient(90deg, #ff6b9d, #ff9a3c, #ffd93d, #ff6b9d)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: 8, letterSpacing: -1 },
+    heroSub: { color: 'rgba(255,255,255,0.6)', fontSize: 16, marginBottom: 32 },
+    statRow: { display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' },
+    statBox: { background: 'rgba(255,255,255,0.08)', borderRadius: 16, padding: '16px 28px', textAlign: 'center', backdropFilter: 'blur(10px)' },
+    statNum: { fontSize: 36, fontWeight: 900, lineHeight: 1 },
+    statLabel: { fontSize: 12, color: 'rgba(255,255,255,0.5)', marginTop: 4, textTransform: 'uppercase', letterSpacing: 1 },
+    section: { maxWidth: 1100, margin: '0 auto', padding: '32px 24px 0' },
+    sectionTitle: { fontSize: 20, fontWeight: 800, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 },
+    grid2: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20 },
+    card: { background: '#141414', borderRadius: 20, padding: 24, border: '1px solid rgba(255,255,255,0.07)' },
+    filterBtn: (f) => ({ padding: '8px 20px', borderRadius: 30, border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 13, background: filter === f ? '#ff6b9d' : 'rgba(255,255,255,0.08)', color: filter === f ? '#000' : 'rgba(255,255,255,0.7)', transition: 'all 0.2s' }),
+  };
+
+  return (
+    React.createElement('div', { style: s.page },
+      // Hero
+      React.createElement('div', { style: s.hero },
+        React.createElement('div', { style: s.heroTitle }, '📚 Reading Wrapped'),
+        React.createElement('div', { style: s.heroSub }, `Your complete reading life • ${readBooks.length} books conquered`),
+        React.createElement('div', { style: s.statRow },
+          React.createElement('div', { style: s.statBox },
+            React.createElement('div', { style: { ...s.statNum, color: '#ff6b9d' } }, readBooks.length),
+            React.createElement('div', { style: s.statLabel }, 'Books Read')
+          ),
+          React.createElement('div', { style: s.statBox },
+            React.createElement('div', { style: { ...s.statNum, color: '#6bcb77' } }, currentlyReading.length),
+            React.createElement('div', { style: s.statLabel }, 'Reading Now')
+          ),
+          React.createElement('div', { style: s.statBox },
+            React.createElement('div', { style: { ...s.statNum, color: '#4d96ff' } }, toRead.length),
+            React.createElement('div', { style: s.statLabel }, 'Want to Read')
+          ),
+          React.createElement('div', { style: s.statBox },
+            React.createElement('div', { style: { ...s.statNum, color: '#ffd93d' } }, totalPages.toLocaleString()),
+            React.createElement('div', { style: s.statLabel }, 'Pages Read')
+          ),
+          React.createElement('div', { style: s.statBox },
+            React.createElement('div', { style: { ...s.statNum, color: '#ff9a3c' } }, avgRating),
+            React.createElement('div', { style: s.statLabel }, 'Avg Rating')
+          ),
+          React.createElement('div', { style: s.statBox },
+            React.createElement('div', { style: { ...s.statNum, color: '#c77dff' } }, fiveStars.length),
+            React.createElement('div', { style: s.statLabel }, '5-Star Books')
+          )
+        )
+      ),
+
+      // Currently Reading
+      currentlyReading.length > 0 && React.createElement('div', { style: s.section },
+        React.createElement('div', { style: s.sectionTitle }, '📖 Currently Reading'),
+        React.createElement('div', { style: { display: 'flex', gap: 16, flexWrap: 'wrap' } },
+          currentlyReading.map((b, i) =>
+            React.createElement('div', { key: i, style: { ...s.card, display: 'flex', gap: 16, alignItems: 'flex-start', flex: '1 1 300px', maxWidth: 400, background: 'linear-gradient(135deg, #1a1a2e, #16213e)', border: '1px solid rgba(77,150,255,0.3)' } },
+              React.createElement(BookCover, { isbn: b.isbn, title: b.title, size: 'M' }),
+              React.createElement('div', { style: { flex: 1 } },
+                React.createElement('div', { style: { fontSize: 16, fontWeight: 800, marginBottom: 4, color: '#fff' } }, b.title),
+                React.createElement('div', { style: { color: 'rgba(255,255,255,0.6)', fontSize: 13, marginBottom: 8 } }, b.author),
+                React.createElement('div', { style: { fontSize: 11, color: '#4d96ff', background: 'rgba(77,150,255,0.15)', borderRadius: 8, padding: '4px 10px', display: 'inline-block', fontWeight: 700 } }, '📖 IN PROGRESS'),
+                b.pages ? React.createElement('div', { style: { color: 'rgba(255,255,255,0.4)', fontSize: 12, marginTop: 6 } }, `${b.pages} pages`) : null
+              )
+            )
+          )
+        )
+      ),
+
+      // Top Stats Grid
+      React.createElement('div', { style: { ...s.section } },
+        React.createElement('div', { style: s.sectionTitle }, '📊 Your Reading Stats'),
+        React.createElement('div', { style: s.grid2 },
+          // Top Authors
+          React.createElement('div', { style: s.card },
+            React.createElement('div', { style: s.sectionTitle }, '✍️ Top Authors'),
+            topAuthors.map(([author, count], i) =>
+              React.createElement('div', { key: author, style: { display: 'flex', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' } },
+                React.createElement('div', { style: { width: 28, height: 28, borderRadius: '50%', background: ['#ff6b9d','#ff9a3c','#ffd93d','#6bcb77','#4d96ff','#c77dff','#ff6b6b','#38d9a9'][i], display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 900, color: '#000', flexShrink: 0 } }, i+1),
+                React.createElement('div', { style: { flex: 1, fontWeight: 600, fontSize: 13 } }, author),
+                React.createElement('div', { style: { background: 'rgba(255,107,157,0.2)', borderRadius: 12, padding: '2px 10px', fontSize: 12, fontWeight: 700, color: '#ff6b9d' } }, `${count} books`)
+              )
+            )
+          ),
+          // Ratings Breakdown
+          React.createElement('div', { style: s.card },
+            React.createElement('div', { style: s.sectionTitle }, '⭐ Ratings Breakdown'),
+            [5,4,3,2,1].map(star =>
+              React.createElement('div', { key: star, style: { marginBottom: 12 } },
+                React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', marginBottom: 4, fontSize: 13 } },
+                  React.createElement('span', { style: { color: '#ffd93d' } }, '★'.repeat(star) + '☆'.repeat(5-star)),
+                  React.createElement('span', { style: { color: 'rgba(255,255,255,0.5)' } }, ratingCounts[star])
+                ),
+                React.createElement('div', { style: { background: 'rgba(255,255,255,0.08)', borderRadius: 8, height: 20, overflow: 'hidden' } },
+                  React.createElement('div', { style: { background: star === 5 ? '#ffd93d' : star === 4 ? '#ff9a3c' : star === 3 ? '#ff6b9d' : star === 2 ? '#c77dff' : '#666', height: '100%', width: `${(ratingCounts[star] / maxRatingCount) * 100}%`, borderRadius: 8, transition: 'width 1s ease' } })
+                )
+              )
+            )
+          ),
+          // Books Per Year
+          React.createElement('div', { style: s.card },
+            React.createElement('div', { style: s.sectionTitle }, '📅 Books Per Year'),
+            ['2020','2021','2022','2023','2024','2025','2026'].map(yr =>
+              React.createElement('div', { key: yr, style: { marginBottom: 10 } },
+                React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', marginBottom: 4, fontSize: 13 } },
+                  React.createElement('span', { style: { fontWeight: 700, color: '#ff9a3c' } }, yr),
+                  React.createElement('span', { style: { color: 'rgba(255,255,255,0.5)' } }, `${booksPerYear[yr] || 0} books`)
+                ),
+                React.createElement('div', { style: { background: 'rgba(255,255,255,0.08)', borderRadius: 8, height: 22, overflow: 'hidden' } },
+                  React.createElement('div', { style: { background: 'linear-gradient(90deg, #ff6b9d, #ff9a3c)', height: '100%', width: `${((booksPerYear[yr] || 0) / maxBooksYear) * 100}%`, borderRadius: 8, transition: 'width 1s ease' } })
+                )
+              )
+            )
+          ),
+          // Book Club
+          React.createElement('div', { style: { ...s.card, background: 'linear-gradient(135deg, rgba(99,60,180,0.25), rgba(60,20,120,0.2))', border: '1px solid rgba(180,130,255,0.25)' } },
+            React.createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 } },
+              React.createElement('div', { style: s.sectionTitle }, '📖 Next Book Club'),
+              React.createElement('div', { style: { background: 'rgba(180,130,255,0.15)', border: '1px solid rgba(180,130,255,0.3)', borderRadius: 20, padding: '3px 12px', fontSize: 11, fontWeight: 900, color: '#c4a0ff' } }, 'MAR 8')
+            ),
+            React.createElement('div', { style: { display: 'flex', gap: 14, alignItems: 'flex-start' } },
+              React.createElement('div', { style: { flexShrink: 0, width: 64, height: 90, borderRadius: 8, background: 'linear-gradient(135deg,#6b3fa0,#9b59b6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, boxShadow: '0 4px 16px rgba(100,50,180,0.4)' } }, '📚'),
+              React.createElement('div', { style: { flex: 1 } },
+                React.createElement('div', { style: { fontWeight: 900, fontSize: 15, color: '#fff', marginBottom: 4, lineHeight: 1.35 } }, 'The Road to Tender Hearts'),
+                React.createElement('div', { style: { fontSize: 12, color: 'rgba(255,255,255,0.55)', marginBottom: 10 } }, 'Annie Hartnett'),
+                React.createElement('div', { style: { display: 'flex', gap: 8, flexWrap: 'wrap' } },
+                  React.createElement('div', { style: { background: 'rgba(255,255,255,0.07)', borderRadius: 8, padding: '4px 10px', fontSize: 11, color: 'rgba(255,255,255,0.6)' } }, '📅 March 8, 2026'),
+                  React.createElement('div', { style: { background: 'rgba(255,255,255,0.07)', borderRadius: 8, padding: '4px 10px', fontSize: 11, color: 'rgba(255,255,255,0.6)' } }, '🕐 Time TBD')
+                )
+              )
+            )
+          ),
+
+          // Favorite Genres/Shelves
+          React.createElement('div', { style: s.card },
+            React.createElement('div', { style: s.sectionTitle }, '🏷️ Favorite Shelves'),
+            topShelves.length === 0
+              ? React.createElement('div', { style: { color: 'rgba(255,255,255,0.4)', fontSize: 14 } }, 'No custom shelves found')
+              : topShelves.map(([shelf, count], i) =>
+                  React.createElement('div', { key: shelf, style: { display: 'flex', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' } },
+                    React.createElement('div', { style: { width: 8, height: 8, borderRadius: '50%', background: ['#ff6b9d','#ff9a3c','#ffd93d','#6bcb77','#4d96ff','#c77dff','#ff6b6b','#38d9a9'][i] } }),
+                    React.createElement('div', { style: { flex: 1, fontWeight: 600, fontSize: 13, textTransform: 'capitalize' } }, shelf.replace(/-/g, ' ')),
+                    React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 12 } }, `${count}`)
+                  )
+                )
+          )
+        )
+      ),
+
+      // 5-Star Hall of Fame
+      fiveStars.length > 0 && React.createElement('div', { style: s.section },
+        React.createElement('div', { style: s.sectionTitle }, '🏆 5-Star Hall of Fame'),
+        React.createElement('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 16 } },
+          fiveStars.map((b, i) =>
+            React.createElement('div', { key: i, style: { textAlign: 'center' } },
+              React.createElement(BookCover, { isbn: b.isbn, title: b.title, size: 'M', style: { width: '100%', height: 180, objectFit: 'cover', borderRadius: 10, marginBottom: 8, border: '2px solid #ffd93d' } }),
+              React.createElement('div', { style: { fontSize: 12, fontWeight: 800, color: '#fff', marginBottom: 2, lineHeight: 1.3 } }, b.title.length > 40 ? b.title.slice(0, 40) + '…' : b.title),
+              React.createElement('div', { style: { fontSize: 11, color: 'rgba(255,255,255,0.5)', marginBottom: 2 } }, b.author),
+              b.date_read ? React.createElement('div', { style: { fontSize: 10, color: '#ffd93d' } }, b.date_read.split('/')[0]) : null
+            )
+          )
+        )
+      ),
+
+      // All Books
+      React.createElement('div', { style: s.section },
+        React.createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 8 } },
+          React.createElement('div', { style: s.sectionTitle }, '📋 All Books'),
+          React.createElement('div', { style: { display: 'flex', gap: 8, flexWrap: 'wrap' } },
+            [['all','ALL'],['read','READ'],['reading','READING'],['to-read','WANT TO READ']].map(([f, label]) =>
+              React.createElement('button', { key: f, style: s.filterBtn(f), onClick: () => setFilter(f) }, label)
+            )
+          )
+        ),
+        React.createElement('div', { style: s.card },
+          filteredBooks.map((b, i) =>
+            React.createElement('div', { key: i, style: { display: 'flex', gap: 12, alignItems: 'center', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' } },
+              React.createElement(BookCover, { isbn: b.isbn, title: b.title, size: 'S' }),
+              React.createElement('div', { style: { flex: 1, minWidth: 0 } },
+                React.createElement('div', { style: { fontWeight: 700, fontSize: 14, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' } }, b.title),
+                React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 12 } }, b.author)
+              ),
+              React.createElement('div', { style: { textAlign: 'right', flexShrink: 0, fontSize: 12 } },
+                React.createElement(StarRating, { rating: b.my_rating }),
+                b.date_read ? React.createElement('div', { style: { color: 'rgba(255,255,255,0.35)', fontSize: 11, marginTop: 2 } }, b.date_read) : null,
+                b.pages ? React.createElement('div', { style: { color: 'rgba(255,255,255,0.3)', fontSize: 11 } }, `${b.pages}p`) : null
+              )
+            )
+          )
+        )
+      )
+    )
+  );
+}
+
+// ============================================================
+// 🇷🇺 RUSSIAN LANGUAGE LEARNING PAGE
+// ============================================================
+
+const RUSSIAN_TRACKS = [
+  {
+    id: 'track1', emoji: '🔤', name: 'Cyrillic Alphabet', type: 'alphabet',
+    lessons: [
+      {
+        id: 'l1_1', name: 'Vowels', items: [
+          { cyrillic: 'А а', sound: 'ah', example: 'арбуз', exTrans: 'arbuz (watermelon)' },
+          { cyrillic: 'Е е', sound: 'yeh', example: 'если', exTrans: 'yesli (if)' },
+          { cyrillic: 'Ё ё', sound: 'yo', example: 'ёж', exTrans: 'yozh (hedgehog)' },
+          { cyrillic: 'И и', sound: 'ee', example: 'имя', exTrans: 'imya (name)' },
+          { cyrillic: 'О о', sound: 'oh', example: 'окно', exTrans: 'okno (window)' },
+          { cyrillic: 'У у', sound: 'oo', example: 'утро', exTrans: 'utro (morning)' },
+          { cyrillic: 'Ы ы', sound: 'ih (like "i" in "bit")', example: 'рыба', exTrans: 'ryba (fish)' },
+          { cyrillic: 'Э э', sound: 'eh', example: 'это', exTrans: 'eto (this)' },
+          { cyrillic: 'Ю ю', sound: 'yu', example: 'юг', exTrans: 'yug (south)' },
+          { cyrillic: 'Я я', sound: 'ya', example: 'яблоко', exTrans: 'yabloko (apple)' },
+        ]
+      },
+      {
+        id: 'l1_2', name: 'Easy Consonants', items: [
+          { cyrillic: 'Б б', sound: 'b', example: 'банк', exTrans: 'bank (bank)' },
+          { cyrillic: 'В в', sound: 'v', example: 'вода', exTrans: 'voda (water)' },
+          { cyrillic: 'Г г', sound: 'g', example: 'город', exTrans: 'gorod (city)' },
+          { cyrillic: 'Д д', sound: 'd', example: 'дом', exTrans: 'dom (house)' },
+          { cyrillic: 'З з', sound: 'z', example: 'зима', exTrans: 'zima (winter)' },
+          { cyrillic: 'К к', sound: 'k', example: 'кот', exTrans: 'kot (cat)' },
+          { cyrillic: 'Л л', sound: 'l', example: 'лимон', exTrans: 'limon (lemon)' },
+          { cyrillic: 'М м', sound: 'm', example: 'мама', exTrans: 'mama (mom)' },
+          { cyrillic: 'Н н', sound: 'n', example: 'нос', exTrans: 'nos (nose)' },
+          { cyrillic: 'П п', sound: 'p', example: 'папа', exTrans: 'papa (dad)' },
+          { cyrillic: 'Р р', sound: 'r (rolled!)', example: 'рука', exTrans: 'ruka (hand)' },
+          { cyrillic: 'С с', sound: 's', example: 'сок', exTrans: 'sok (juice)' },
+          { cyrillic: 'Т т', sound: 't', example: 'торт', exTrans: 'tort (cake)' },
+          { cyrillic: 'Ф ф', sound: 'f', example: 'фото', exTrans: 'foto (photo)' },
+        ]
+      },
+      {
+        id: 'l1_3', name: 'Tricky Letters', items: [
+          { cyrillic: 'Ж ж', sound: 'zh (like measure)', example: 'жить', exTrans: 'zhit\' (to live)' },
+          { cyrillic: 'Х х', sound: 'kh (like Bach)', example: 'хлеб', exTrans: 'khleb (bread)' },
+          { cyrillic: 'Ц ц', sound: 'ts (like cats)', example: 'цирк', exTrans: 'tsirk (circus)' },
+          { cyrillic: 'Ч ч', sound: 'ch (like cheese)', example: 'чай', exTrans: 'chay (tea)' },
+          { cyrillic: 'Ш ш', sound: 'sh (like shush)', example: 'школа', exTrans: 'shkola (school)' },
+          { cyrillic: 'Щ щ', sound: 'shch (like fresh cheese)', example: 'щи', exTrans: 'shchi (cabbage soup)' },
+          { cyrillic: 'Ъ ъ', sound: 'hard sign (pause)', example: 'объект', exTrans: 'ob\'yekt (object)' },
+          { cyrillic: 'Ь ь', sound: 'soft sign (soften prev)', example: 'пить', exTrans: 'pit\' (to drink)' },
+          { cyrillic: 'Й й', sound: 'y (like yes)', example: 'йогурт', exTrans: 'yogurt (yogurt)' },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'track2', emoji: '👋', name: 'Greetings & Introductions', type: 'vocab',
+    lessons: [
+      {
+        id: 'l2_1', name: 'Basic Greetings', items: [
+          { russian: 'Привет', trans: 'Privet', english: 'Hi / Hello (informal)' },
+          { russian: 'Здравствуйте', trans: 'Zdravstvuyte', english: 'Hello (formal)' },
+          { russian: 'Доброе утро', trans: 'Dobroye utro', english: 'Good morning' },
+          { russian: 'Добрый день', trans: 'Dobryy den\'', english: 'Good afternoon' },
+          { russian: 'Добрый вечер', trans: 'Dobryy vecher', english: 'Good evening' },
+          { russian: 'До свидания', trans: 'Do svidaniya', english: 'Goodbye (formal)' },
+          { russian: 'Пока', trans: 'Poka', english: 'Bye (informal)' },
+        ]
+      },
+      {
+        id: 'l2_2', name: 'Introductions', items: [
+          { russian: 'Меня зовут ___', trans: 'Menya zovut ___', english: 'My name is ___' },
+          { russian: 'Очень приятно', trans: 'Ochen\' priyatno', english: 'Nice to meet you' },
+          { russian: 'Как вас зовут?', trans: 'Kak vas zovut?', english: 'What is your name? (formal)' },
+          { russian: 'Как тебя зовут?', trans: 'Kak tebya zovut?', english: 'What is your name? (informal)' },
+          { russian: 'Я из Америки', trans: 'Ya iz Ameriki', english: 'I am from America' },
+          { russian: 'Я говорю немного по-русски', trans: 'Ya govoryu nemnogo po-russki', english: 'I speak a little Russian' },
+        ]
+      },
+      {
+        id: 'l2_3', name: 'How Are You?', items: [
+          { russian: 'Как дела?', trans: 'Kak dela?', english: 'How are you? (informal)' },
+          { russian: 'Как вы поживаете?', trans: 'Kak vy pozhivayete?', english: 'How are you? (formal)' },
+          { russian: 'Хорошо', trans: 'Khorosho', english: 'Good / Fine' },
+          { russian: 'Отлично', trans: 'Otlichno', english: 'Excellent / Great' },
+          { russian: 'Нормально', trans: 'Normal\'no', english: 'OK / Normal' },
+          { russian: 'Спасибо', trans: 'Spasibo', english: 'Thank you' },
+          { russian: 'Пожалуйста', trans: 'Pozhaluysta', english: 'Please / You\'re welcome' },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'track3', emoji: '👨‍👩‍👧', name: 'Family Words', type: 'vocab',
+    lessons: [
+      {
+        id: 'l3_1', name: 'Immediate Family', items: [
+          { russian: 'Семья', trans: 'Sem\'ya', english: 'Family' },
+          { russian: 'Мама', trans: 'Mama', english: 'Mom' },
+          { russian: 'Папа', trans: 'Papa', english: 'Dad' },
+          { russian: 'Сын', trans: 'Syn', english: 'Son' },
+          { russian: 'Дочь', trans: 'Doch\'', english: 'Daughter' },
+          { russian: 'Брат', trans: 'Brat', english: 'Brother' },
+          { russian: 'Сестра', trans: 'Sestra', english: 'Sister' },
+          { russian: 'Муж', trans: 'Muzh', english: 'Husband' },
+          { russian: 'Жена', trans: 'Zhena', english: 'Wife' },
+          { russian: 'Бабушка', trans: 'Babushka', english: 'Grandmother' },
+          { russian: 'Дедушка', trans: 'Dedushka', english: 'Grandfather' },
+        ]
+      },
+      {
+        id: 'l3_2', name: 'Extended Family', items: [
+          { russian: 'Парень', trans: 'Paren\'', english: 'Boyfriend 💕' },
+          { russian: 'Девушка', trans: 'Devushka', english: 'Girlfriend' },
+          { russian: 'Друг', trans: 'Drug', english: 'Friend (male)' },
+          { russian: 'Подруга', trans: 'Podruga', english: 'Friend (female)' },
+          { russian: 'Тётя', trans: 'Tyotya', english: 'Aunt' },
+          { russian: 'Дядя', trans: 'Dyadya', english: 'Uncle' },
+          { russian: 'Двоюродный брат', trans: 'Dvoyurodnyy brat', english: 'Cousin (male)' },
+          { russian: 'Двоюродная сестра', trans: 'Dvoyurodnaya sestra', english: 'Cousin (female)' },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'track4', emoji: '🙏', name: 'Polite Phrases', type: 'vocab',
+    lessons: [
+      {
+        id: 'l4_1', name: 'Essentials', items: [
+          { russian: 'Спасибо', trans: 'Spasibo', english: 'Thank you' },
+          { russian: 'Большое спасибо', trans: 'Bol\'shoye spasibo', english: 'Thank you very much' },
+          { russian: 'Пожалуйста', trans: 'Pozhaluysta', english: 'Please / You\'re welcome' },
+          { russian: 'Извините', trans: 'Izvinite', english: 'Excuse me / Sorry (formal)' },
+          { russian: 'Простите', trans: 'Prostite', english: 'I\'m sorry / Forgive me' },
+          { russian: 'Не понимаю', trans: 'Ne ponimayu', english: 'I don\'t understand' },
+          { russian: 'Повторите, пожалуйста', trans: 'Povtorite, pozhaluysta', english: 'Please repeat that' },
+          { russian: 'Говорите медленнее', trans: 'Govorite medlenneye', english: 'Speak slower please' },
+          { russian: 'Вы говорите по-английски?', trans: 'Vy govorite po-angliyski?', english: 'Do you speak English?' },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'track5', emoji: '🍽️', name: 'Food & Eating', type: 'vocab',
+    lessons: [
+      {
+        id: 'l5_1', name: 'At the Table', items: [
+          { russian: 'Вкусно!', trans: 'Vkusno!', english: 'Delicious!' },
+          { russian: 'Очень вкусно', trans: 'Ochen\' vkusno', english: 'Very delicious' },
+          { russian: 'Спасибо за угощение', trans: 'Spasibo za ugoshcheniye', english: 'Thank you for the meal' },
+          { russian: 'Можно ещё?', trans: 'Mozhno yeshchyo?', english: 'Can I have more?' },
+          { russian: 'Я не ем глютен ⚠️', trans: 'Ya ne yem glyuten', english: 'I don\'t eat gluten (IMPORTANT!)' },
+          { russian: 'Есть ли глютен в этом?', trans: 'Est\' li glyuten v etom?', english: 'Is there gluten in this?' },
+          { russian: 'Чай', trans: 'Chay', english: 'Tea' },
+          { russian: 'Вода', trans: 'Voda', english: 'Water' },
+          { russian: 'Хлеб', trans: 'Khleb', english: 'Bread (to avoid! 🚫)' },
+          { russian: 'Вино', trans: 'Vino', english: 'Wine' },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'track6', emoji: '🔢', name: 'Numbers & Questions', type: 'vocab',
+    lessons: [
+      {
+        id: 'l6_1', name: 'Numbers 1–10', items: [
+          { russian: 'Один', trans: 'Odin', english: '1 - One' },
+          { russian: 'Два', trans: 'Dva', english: '2 - Two' },
+          { russian: 'Три', trans: 'Tri', english: '3 - Three' },
+          { russian: 'Четыре', trans: 'Chetyre', english: '4 - Four' },
+          { russian: 'Пять', trans: 'Pyat\'', english: '5 - Five' },
+          { russian: 'Шесть', trans: 'Shest\'', english: '6 - Six' },
+          { russian: 'Семь', trans: 'Sem\'', english: '7 - Seven' },
+          { russian: 'Восемь', trans: 'Vosem\'', english: '8 - Eight' },
+          { russian: 'Девять', trans: 'Devyat\'', english: '9 - Nine' },
+          { russian: 'Десять', trans: 'Desyat\'', english: '10 - Ten' },
+        ]
+      },
+      {
+        id: 'l6_2', name: 'Useful Questions', items: [
+          { russian: 'Где?', trans: 'Gde?', english: 'Where?' },
+          { russian: 'Когда?', trans: 'Kogda?', english: 'When?' },
+          { russian: 'Почему?', trans: 'Pochemu?', english: 'Why?' },
+          { russian: 'Как?', trans: 'Kak?', english: 'How?' },
+          { russian: 'Сколько?', trans: 'Skol\'ko?', english: 'How much/many?' },
+          { russian: 'Что это?', trans: 'Chto eto?', english: 'What is this?' },
+          { russian: 'Это правильно?', trans: 'Eto pravil\'no?', english: 'Is this correct?' },
+        ]
+      },
+    ]
+  },
+];
+
+function getRussianState() {
+  const xp = parseInt(localStorage.getItem('russian_xp') || '0');
+  const completed = JSON.parse(localStorage.getItem('russian_completed') || '{}');
+  const lastDate = localStorage.getItem('russian_last_date') || '';
+  const streak = parseInt(localStorage.getItem('russian_streak') || '0');
+  return { xp, completed, lastDate, streak };
+}
+
+function getLevel(xp) {
+  if (xp >= 200) return 'Intermediate 🌟';
+  if (xp >= 80) return 'Elementary 📖';
+  return 'Beginner 🌱';
+}
+
+function updateStreak() {
+  const today = new Date().toISOString().slice(0, 10);
+  const lastDate = localStorage.getItem('russian_last_date') || '';
+  let streak = parseInt(localStorage.getItem('russian_streak') || '0');
+  if (lastDate === today) return streak;
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  if (lastDate === yesterday) { streak++; } else { streak = 1; }
+  localStorage.setItem('russian_last_date', today);
+  localStorage.setItem('russian_streak', String(streak));
+  return streak;
+}
+
+function addXP(amount) {
+  const current = parseInt(localStorage.getItem('russian_xp') || '0');
+  localStorage.setItem('russian_xp', String(current + amount));
+}
+
+function markLessonComplete(lessonId, stars) {
+  const completed = JSON.parse(localStorage.getItem('russian_completed') || '{}');
+  if (!completed[lessonId] || completed[lessonId] < stars) {
+    completed[lessonId] = stars;
+  }
+  localStorage.setItem('russian_completed', JSON.stringify(completed));
+}
+
+function buildQuestions(lesson, track) {
+  const items = lesson.items;
+  const isAlpha = track.type === 'alphabet';
+  const questions = [];
+  const shuffled = [...items].sort(() => Math.random() - 0.5).slice(0, 5);
+
+  shuffled.forEach((item, idx) => {
+    const qType = idx % 3;
+    if (isAlpha) {
+      const others = items.filter(i => i !== item).sort(() => Math.random() - 0.5).slice(0, 3);
+      if (qType === 0) {
+        questions.push({ type: 'flashcard_alpha', item });
+      } else if (qType === 1) {
+        const opts = [item.sound, ...others.map(o => o.sound)].sort(() => Math.random() - 0.5);
+        questions.push({ type: 'mc', prompt: item.cyrillic, promptLabel: 'What sound does this make?', correct: item.sound, options: opts });
+      } else {
+        const opts = [item.cyrillic, ...others.map(o => o.cyrillic)].sort(() => Math.random() - 0.5);
+        questions.push({ type: 'mc', prompt: `"${item.sound}"`, promptLabel: 'Which Cyrillic letter makes this sound?', correct: item.cyrillic, options: opts });
+      }
+    } else {
+      const others = items.filter(i => i !== item).sort(() => Math.random() - 0.5).slice(0, 3);
+      if (qType === 0) {
+        questions.push({ type: 'flashcard_vocab', item });
+      } else if (qType === 1) {
+        const opts = [item.russian, ...others.map(o => o.russian)].sort(() => Math.random() - 0.5);
+        questions.push({ type: 'mc', prompt: item.english, promptLabel: 'Choose the correct Russian:', correct: item.russian, options: opts });
+      } else {
+        const opts = [item.english, ...others.map(o => o.english)].sort(() => Math.random() - 0.5);
+        questions.push({ type: 'mc', prompt: item.russian, promptLabel: 'What does this mean?', correct: item.english, options: opts });
+      }
+    }
+  });
+  return questions;
+}
+
+function RussianPage() {
+  const [state, setState] = useState(() => getRussianState());
+  const [activeLesson, setActiveLesson] = useState(null);
+  const [activeLessonTrack, setActiveLessonTrack] = useState(null);
+  const [phase, setPhase] = useState('home'); // home | intro | quiz | result
+  const [questions, setQuestions] = useState([]);
+  const [qIdx, setQIdx] = useState(0);
+  const [score, setScore] = useState(0);
+  const [feedback, setFeedback] = useState(null); // null | 'correct' | 'wrong'
+  const [wrongAnswer, setWrongAnswer] = useState(null);
+  const [xpGained, setXpGained] = useState(0);
+  const [flipped, setFlipped] = useState(false);
+  const [xpFlash, setXpFlash] = useState(false);
+  const [ruLookupQuery, setRuLookupQuery] = useState('');
+  const [ruLookupResult, setRuLookupResult] = useState(null);
+  const [ruLookupLoading, setRuLookupLoading] = useState(false);
+  const [ruLookupDir, setRuLookupDir] = useState('auto');
+  const [ruWordLog, setRuWordLog] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('russian_word_log') || '[]'); } catch(e) { return []; }
+  });
+
+  const saveRuWordLog = (log) => {
+    const trimmed = log.slice(0, 200);
+    localStorage.setItem('russian_word_log', JSON.stringify(trimmed));
+    setRuWordLog(trimmed);
+  };
+
+  const doRuLookup = async () => {
+    const text = ruLookupQuery.trim();
+    if (!text) return;
+    setRuLookupLoading(true);
+    setRuLookupResult(null);
+    const hasCyrillic = /[\u0400-\u04FF]/.test(text);
+    const dir = ruLookupDir === 'auto' ? (hasCyrillic ? 'ru-en' : 'en-ru') : ruLookupDir;
+    const langpair = dir === 'ru-en' ? 'ru|en' : 'en|ru';
+    try {
+      const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${langpair}`);
+      const data = await res.json();
+      const translation = data.responseData.translatedText;
+      const result = { query: text, translation, direction: dir, date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) };
+      setRuLookupResult(result);
+      saveRuWordLog([result, ...ruWordLog]);
+    } catch(e) {
+      setRuLookupResult({ query: text, translation: 'Error fetching translation', direction: dir, date: '' });
+    }
+    setRuLookupLoading(false);
+  };
+
+  const deleteRuEntry = (idx) => {
+    const updated = ruWordLog.filter((_, i) => i !== idx);
+    saveRuWordLog(updated);
+  };
+
+  const speakText = (text, lang) => {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang;
+    u.rate = 0.8;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  };
+
+  const rs = {
+    page: { background: '#0d1117', minHeight: 'calc(100vh - 60px)', color: 'white', padding: 20, fontFamily: 'inherit' },
+    topBar: { display: 'flex', gap: 16, alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', background: '#161b22', borderRadius: 12, padding: '12px 20px', marginBottom: 24, fontSize: 15 },
+    statChip: { display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,0.07)', borderRadius: 20, padding: '6px 14px', fontWeight: 600 },
+    trackCard: { background: '#161b22', borderRadius: 14, padding: 20, marginBottom: 16, border: '1px solid rgba(255,255,255,0.08)' },
+    trackTitle: { fontSize: 18, fontWeight: 700, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 },
+    progressBar: { background: 'rgba(255,255,255,0.1)', borderRadius: 99, height: 8, overflow: 'hidden', marginBottom: 14 },
+    progressFill: (pct) => ({ background: '#f59e0b', width: `${pct}%`, height: '100%', borderRadius: 99, transition: 'width 0.4s' }),
+    lessonRow: { display: 'flex', gap: 10, flexWrap: 'wrap' },
+    lessonCircle: (status) => ({
+      width: 48, height: 48, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontSize: 18, fontWeight: 700, cursor: status === 'available' ? 'pointer' : 'default',
+      background: status === 'complete' ? '#f59e0b' : status === 'available' ? '#ef4444' : 'rgba(255,255,255,0.08)',
+      color: status === 'locked' ? 'rgba(255,255,255,0.3)' : 'white',
+      border: status === 'available' ? '2px solid #f59e0b' : 'none',
+      transition: 'transform 0.15s',
+    }),
+    lessonLabel: { textAlign: 'center', fontSize: 11, marginTop: 4, color: 'rgba(255,255,255,0.6)', maxWidth: 60 },
+    introBox: { background: '#161b22', borderRadius: 16, padding: 32, maxWidth: 480, margin: '40px auto', textAlign: 'center', border: '1px solid rgba(245,158,11,0.3)' },
+    quizBox: { maxWidth: 520, margin: '0 auto' },
+    progressHeader: { display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 },
+    qCard: { background: '#161b22', borderRadius: 16, padding: 28, textAlign: 'center', marginBottom: 16, border: '1px solid rgba(255,255,255,0.08)' },
+    bigLetter: { fontSize: 80, fontWeight: 900, lineHeight: 1, marginBottom: 8 },
+    promptLabel: { color: 'rgba(255,255,255,0.5)', fontSize: 13, marginBottom: 8 },
+    prompt: { fontSize: 26, fontWeight: 700, marginBottom: 8 },
+    optionBtn: (sel, correct) => ({
+      display: 'block', width: '100%', padding: '14px 16px', marginBottom: 10, borderRadius: 10, border: '2px solid',
+      cursor: feedback ? 'default' : 'pointer', fontSize: 15, fontWeight: 600, transition: 'all 0.15s', textAlign: 'left',
+      background: feedback && sel === correct ? 'rgba(34,197,94,0.2)' : feedback && sel !== correct ? 'rgba(239,68,68,0.12)' : 'rgba(255,255,255,0.05)',
+      borderColor: feedback && sel === correct ? '#22c55e' : feedback && sel !== correct ? '#ef4444' : 'rgba(255,255,255,0.15)',
+      color: 'white',
+    }),
+    flashCard: (flipped) => ({
+      background: flipped ? 'rgba(245,158,11,0.12)' : '#1c2333', borderRadius: 16, padding: 40, textAlign: 'center',
+      cursor: 'pointer', border: `2px solid ${flipped ? '#f59e0b' : 'rgba(255,255,255,0.12)'}`,
+      transition: 'all 0.3s', minHeight: 180, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+    }),
+    fcHint: { color: 'rgba(255,255,255,0.4)', fontSize: 13, marginTop: 8 },
+    knowBtn: { background: '#22c55e', color: 'white', border: 'none', borderRadius: 10, padding: '12px 28px', fontSize: 15, fontWeight: 700, cursor: 'pointer', marginRight: 10 },
+    learningBtn: { background: 'rgba(239,68,68,0.8)', color: 'white', border: 'none', borderRadius: 10, padding: '12px 28px', fontSize: 15, fontWeight: 700, cursor: 'pointer' },
+    feedbackBar: (type) => ({
+      background: type === 'correct' ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)',
+      border: `1px solid ${type === 'correct' ? '#22c55e' : '#ef4444'}`,
+      borderRadius: 10, padding: '12px 16px', marginTop: 12, color: type === 'correct' ? '#22c55e' : '#ef4444', fontWeight: 600,
+    }),
+    resultBox: { background: '#161b22', borderRadius: 16, padding: 32, maxWidth: 480, margin: '40px auto', textAlign: 'center' },
+    continueBtn: { background: '#ef4444', color: 'white', border: 'none', borderRadius: 10, padding: '14px 32px', fontSize: 16, fontWeight: 700, cursor: 'pointer', marginTop: 20 },
+    startBtn: { background: '#ef4444', color: 'white', border: 'none', borderRadius: 10, padding: '14px 32px', fontSize: 16, fontWeight: 700, cursor: 'pointer', marginTop: 20 },
+    backBtn: { background: 'rgba(255,255,255,0.08)', color: 'white', border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: 13, cursor: 'pointer', marginBottom: 16 },
+  };
+
+  const speak = (text, lang = 'ru-RU') => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = lang;
+    utterance.rate = 0.8;
+    utterance.pitch = 1;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  };
+
+  // Auto-speak Russian text when question changes
+  useEffect(() => {
+    if (phase !== 'quiz' || !questions.length) return;
+    const q = questions[qIdx];
+    if (!q) return;
+    const timer = setTimeout(() => {
+      if (q.type === 'flashcard_alpha') {
+        speak(q.item.sound);
+      } else if (q.type === 'flashcard_vocab') {
+        speak(q.item.russian);
+      } else if (q.type === 'mc') {
+        // Speak the prompt if it contains Russian — use only the uppercase form (first char before space)
+        const hasCyrillic = /[\u0400-\u04FF]/.test(q.prompt);
+        if (hasCyrillic) speak(q.prompt.split(' ')[0]);
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [qIdx, phase]);
+
+  const refresh = () => setState(getRussianState());
+
+  const startLesson = (lesson, track) => {
+    const qs = buildQuestions(lesson, track);
+    setActiveLesson(lesson);
+    setActiveLessonTrack(track);
+    setQuestions(qs);
+    setQIdx(0);
+    setScore(0);
+    setXpGained(0);
+    setFeedback(null);
+    setWrongAnswer(null);
+    setFlipped(false);
+    setPhase('intro');
+  };
+
+  const beginQuiz = () => { setPhase('quiz'); updateStreak(); refresh(); };
+
+  const handleAnswer = (answer) => {
+    if (feedback) return;
+    const q = questions[qIdx];
+    const isCorrect = answer === q.correct;
+    if (isCorrect) {
+      setScore(s => s + 1);
+      setXpGained(x => x + 1);
+      addXP(1);
+      setFeedback('correct');
+      setXpFlash(true);
+      setTimeout(() => setXpFlash(false), 700);
+      setTimeout(nextQ, 900);
+    } else {
+      setFeedback('wrong');
+      setWrongAnswer(q.correct);
+      setTimeout(nextQ, 1800);
+    }
+  };
+
+  const handleFlashcard = (knew) => {
+    if (knew) {
+      setScore(s => s + 1);
+      setXpGained(x => x + 1);
+      addXP(1);
+    }
+    setFeedback(knew ? 'correct' : 'wrong');
+    setTimeout(nextQ, 600);
+  };
+
+  const nextQ = () => {
+    setFeedback(null);
+    setWrongAnswer(null);
+    setFlipped(false);
+    if (qIdx + 1 >= questions.length) {
+      finishLesson();
+    } else {
+      setQIdx(i => i + 1);
+    }
+  };
+
+  const finishLesson = () => {
+    const total = questions.length;
+    const pct = score / total;
+    const stars = pct === 1 ? 3 : pct >= 0.7 ? 2 : 1;
+    markLessonComplete(activeLesson.id, stars);
+    addXP(10);
+    setXpGained(x => x + 10);
+    refresh();
+    setPhase('result');
+  };
+
+  const goHome = () => { setPhase('home'); setActiveLesson(null); };
+
+  // ---- RENDER ----
+
+  if (phase === 'intro' && activeLesson) {
+    return React.createElement('div', { style: rs.page },
+      React.createElement('div', { style: rs.introBox },
+        React.createElement('div', { style: { fontSize: 48, marginBottom: 12 } }, activeLessonTrack.emoji),
+        React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 13, marginBottom: 4 } }, activeLessonTrack.name),
+        React.createElement('div', { style: { fontSize: 24, fontWeight: 700, marginBottom: 16 } }, activeLesson.name),
+        React.createElement('div', { style: { color: 'rgba(255,255,255,0.6)', fontSize: 15, marginBottom: 24 } }, `5 questions · up to ${questions.length + 10} XP to earn`),
+        React.createElement('div', { style: { fontSize: 32, marginBottom: 8 } }, '🇷🇺'),
+        React.createElement('div', { style: { color: 'rgba(255,255,255,0.4)', fontSize: 13, marginBottom: 24 } }, "You've got this, Carly! 💪"),
+        React.createElement('button', { style: rs.startBtn, onClick: beginQuiz }, 'Start Lesson →'),
+        React.createElement('div', { style: { marginTop: 12 } },
+          React.createElement('button', { style: rs.backBtn, onClick: goHome }, '← Back')
+        )
+      )
+    );
+  }
+
+  if (phase === 'quiz' && activeLesson) {
+    const q = questions[qIdx];
+    const pct = ((qIdx) / questions.length) * 100;
+
+    return React.createElement('div', { style: rs.page },
+      React.createElement('div', { style: rs.quizBox },
+        React.createElement('button', { style: rs.backBtn, onClick: goHome }, '← Exit'),
+        React.createElement('div', { style: rs.progressHeader },
+          React.createElement('div', { style: { flex: 1, background: 'rgba(255,255,255,0.1)', borderRadius: 99, height: 10, overflow: 'hidden' } },
+            React.createElement('div', { style: { background: '#ef4444', width: `${pct}%`, height: '100%', borderRadius: 99, transition: 'width 0.3s' } })
+          ),
+          React.createElement('div', { style: { color: '#f59e0b', fontWeight: 700, fontSize: 14, whiteSpace: 'nowrap' } }, `${qIdx + 1} / ${questions.length}`),
+          xpFlash ? React.createElement('div', { style: { color: '#f59e0b', fontWeight: 700, fontSize: 14, animation: 'none' } }, '+1 ⭐') : null
+        ),
+
+        // Flashcard types
+        (q.type === 'flashcard_alpha' || q.type === 'flashcard_vocab') ?
+          React.createElement('div', null,
+            React.createElement('div', { style: { ...rs.qCard, cursor: 'pointer' }, onClick: () => !feedback && setFlipped(f => !f) },
+              !flipped ?
+                React.createElement('div', null,
+                  q.type === 'flashcard_alpha' ?
+                    React.createElement('div', null,
+                      React.createElement('div', { style: rs.bigLetter }, q.item.cyrillic),
+                      React.createElement('button', { className: 'speak-btn', onClick: (e) => { e.stopPropagation(); speak(q.item.sound); }, title: 'Hear it' }, '🔊'),
+                      qIdx === 0 ? React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 12, marginTop: 6 } }, '🔊 Tap speaker to hear') : null
+                    ) :
+                    React.createElement('div', null,
+                      React.createElement('div', { style: { fontSize: 28, fontWeight: 700 } }, q.item.russian),
+                      React.createElement('button', { className: 'speak-btn', onClick: (e) => { e.stopPropagation(); speak(q.item.russian); }, title: 'Hear it' }, '🔊')
+                    ),
+                  React.createElement('div', { style: rs.fcHint }, '👆 Tap to flip')
+                ) :
+                React.createElement('div', null,
+                  q.type === 'flashcard_alpha' ?
+                    React.createElement('div', null,
+                      React.createElement('div', { style: { fontSize: 18, color: '#f59e0b', fontWeight: 700, marginBottom: 4 } }, q.item.sound),
+                      React.createElement('button', { className: 'speak-btn', onClick: (e) => { e.stopPropagation(); speak(q.item.sound); }, title: 'Hear it again' }, '🔊'),
+                      React.createElement('div', { style: { fontSize: 14, color: 'rgba(255,255,255,0.6)', marginTop: 8 } }, `Example: ${q.item.example}`),
+                      React.createElement('div', { style: { fontSize: 12, color: 'rgba(255,255,255,0.4)' } }, q.item.exTrans)
+                    ) :
+                    React.createElement('div', null,
+                      React.createElement('div', { style: { fontSize: 18, color: '#f59e0b', fontWeight: 600, marginBottom: 4 } }, q.item.trans),
+                      React.createElement('button', { className: 'speak-btn', onClick: (e) => { e.stopPropagation(); speak(q.item.russian); }, title: 'Hear Russian again' }, '🔊'),
+                      React.createElement('div', { style: { fontSize: 20, fontWeight: 700 } }, q.item.english)
+                    )
+                )
+            ),
+            flipped && !feedback ?
+              React.createElement('div', { style: { display: 'flex', gap: 10, justifyContent: 'center', marginTop: 8 } },
+                React.createElement('button', { style: rs.knowBtn, onClick: () => handleFlashcard(true) }, '✓ Know it!'),
+                React.createElement('button', { style: rs.learningBtn, onClick: () => handleFlashcard(false) }, '↻ Still learning')
+              ) : null,
+            feedback ?
+              React.createElement('div', { style: rs.feedbackBar(feedback) },
+                feedback === 'correct' ? '🎉 Great job!' : '💪 Keep practicing!'
+              ) : null
+          )
+
+        // Multiple choice
+        : React.createElement('div', null,
+            React.createElement('div', { style: rs.qCard },
+              React.createElement('div', { style: rs.promptLabel }, q.promptLabel),
+              React.createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 } },
+                React.createElement('div', { style: rs.prompt }, q.prompt),
+                /[\u0400-\u04FF]/.test(q.prompt) ? React.createElement('button', { className: 'speak-btn', onClick: () => speak(q.prompt), title: 'Hear it' }, '🔊') : null
+              )
+            ),
+            q.options.map((opt, i) =>
+              React.createElement('button', {
+                key: i, style: rs.optionBtn(opt, q.correct),
+                onClick: () => !feedback && handleAnswer(opt)
+              },
+                /[\u0400-\u04FF]/.test(opt) ?
+                  React.createElement('span', null,
+                    opt,
+                    React.createElement('span', { style: { marginLeft: 8, fontSize: 14 }, onClick: (e) => { e.stopPropagation(); speak(opt); } }, '🔊')
+                  ) : opt
+              )
+            ),
+            feedback ?
+              React.createElement('div', { style: rs.feedbackBar(feedback) },
+                feedback === 'correct' ? '🎉 Correct! +1 XP' : `❌ Correct answer: ${q.correct}`
+              ) : null
+          )
+      )
+    );
+  }
+
+  if (phase === 'result') {
+    const total = questions.length;
+    const pct = Math.round((score / total) * 100);
+    const stars = pct === 100 ? 3 : pct >= 70 ? 2 : 1;
+    const starsDisplay = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+    return React.createElement('div', { style: rs.page },
+      React.createElement('div', { style: rs.resultBox },
+        React.createElement('div', { style: { fontSize: 48, marginBottom: 12 } }, pct === 100 ? '🏆' : pct >= 70 ? '🎉' : '💪'),
+        React.createElement('div', { style: { fontSize: 28, fontWeight: 700, marginBottom: 8 } }, pct === 100 ? 'Perfect!' : pct >= 70 ? 'Great job!' : 'Keep going!'),
+        React.createElement('div', { style: { fontSize: 36, marginBottom: 16 } }, starsDisplay),
+        React.createElement('div', { style: { display: 'flex', gap: 20, justifyContent: 'center', marginBottom: 20 } },
+          React.createElement('div', { style: { textAlign: 'center' } },
+            React.createElement('div', { style: { fontSize: 28, fontWeight: 700, color: '#f59e0b' } }, `${score}/${total}`),
+            React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 13 } }, 'Correct')
+          ),
+          React.createElement('div', { style: { textAlign: 'center' } },
+            React.createElement('div', { style: { fontSize: 28, fontWeight: 700, color: '#f59e0b' } }, `+${xpGained}`),
+            React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 13 } }, 'XP Earned')
+          )
+        ),
+        React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 14, marginBottom: 8 } },
+          pct === 100 ? "Carly, you're amazing! 🥰 His family is going to love you!" :
+          pct >= 70 ? "Solid work! A little more practice and you'll nail it! 💕" :
+          "Every lesson gets you closer! You can do this! 🌟"
+        ),
+        React.createElement('button', { style: rs.continueBtn, onClick: goHome }, 'Continue →')
+      )
+    );
+  }
+
+  // HOME
+  const { xp, completed, streak } = state;
+  return React.createElement('div', { style: rs.page },
+    // Top bar
+    React.createElement('div', { style: rs.topBar },
+      React.createElement('div', { style: rs.statChip }, `🔥 ${streak} day${streak !== 1 ? 's' : ''}`),
+      React.createElement('div', { style: rs.statChip }, `⭐ ${xp} XP`),
+      React.createElement('div', { style: rs.statChip }, getLevel(xp))
+    ),
+
+    React.createElement('div', { style: { textAlign: 'center', marginBottom: 24 } },
+      React.createElement('div', { style: { fontSize: 28, fontWeight: 700 } }, '🇷🇺 Learn Russian'),
+      React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 14, marginTop: 4 } }, "For talking to your boyfriend's family 💕")
+    ),
+
+    // Track cards
+    RUSSIAN_TRACKS.map((track, tIdx) => {
+      const allLessons = track.lessons;
+      const completedCount = allLessons.filter(l => completed[l.id] >= 1).length;
+      const pct = allLessons.length ? (completedCount / allLessons.length) * 100 : 0;
+
+      // Track is locked if prior track not complete
+      let trackLocked = false;
+      if (tIdx > 0) {
+        const prevTrack = RUSSIAN_TRACKS[tIdx - 1];
+        const prevDone = prevTrack.lessons.every(l => completed[l.id] >= 1);
+        if (!prevDone) trackLocked = true;
+      }
+
+      return React.createElement('div', { key: track.id, style: { ...rs.trackCard, opacity: trackLocked ? 0.5 : 1 } },
+        React.createElement('div', { style: rs.trackTitle },
+          React.createElement('span', null, track.emoji),
+          React.createElement('span', null, track.name),
+          trackLocked ? React.createElement('span', { style: { marginLeft: 'auto', fontSize: 14, color: 'rgba(255,255,255,0.3)' } }, '🔒') :
+            React.createElement('span', { style: { marginLeft: 'auto', fontSize: 13, color: '#f59e0b' } }, `${completedCount}/${allLessons.length}`)
+        ),
+        React.createElement('div', { style: rs.progressBar },
+          React.createElement('div', { style: rs.progressFill(trackLocked ? 0 : pct) })
+        ),
+        React.createElement('div', { style: rs.lessonRow },
+          allLessons.map((lesson, lIdx) => {
+            const lessonStars = completed[lesson.id] || 0;
+            let status = 'locked';
+            if (!trackLocked) {
+              if (lessonStars >= 1) status = 'complete';
+              else if (lIdx === 0 || completed[allLessons[lIdx - 1].id] >= 1) status = 'available';
+            }
+            return React.createElement('div', { key: lesson.id, style: { textAlign: 'center' } },
+              React.createElement('div', {
+                style: rs.lessonCircle(status),
+                onClick: () => status === 'available' && startLesson(lesson, track),
+                onMouseEnter: e => { if (status === 'available') e.currentTarget.style.transform = 'scale(1.12)'; },
+                onMouseLeave: e => { e.currentTarget.style.transform = 'scale(1)'; },
+              },
+                status === 'complete' ? ('⭐'.repeat(Math.min(lessonStars, 3))) :
+                status === 'available' ? '▶' : '🔒'
+              ),
+              React.createElement('div', { style: rs.lessonLabel }, lesson.name)
+            );
+          })
+        )
+      );
+    }),
+
+    // ---- LOOKUP BOX ----
+    React.createElement('div', { style: { background: '#1a2332', borderRadius: 14, padding: 20, marginTop: 24, border: '1px solid rgba(245,158,11,0.25)' } },
+      React.createElement('div', { style: { fontSize: 17, fontWeight: 700, marginBottom: 14, color: '#f59e0b' } }, '🔍 Quick Lookup'),
+      React.createElement('div', { style: { display: 'flex', gap: 8, marginBottom: 10 } },
+        React.createElement('input', {
+          type: 'text',
+          value: ruLookupQuery,
+          onChange: e => setRuLookupQuery(e.target.value),
+          onKeyDown: e => e.key === 'Enter' && doRuLookup(),
+          placeholder: 'Type a word in English or Russian…',
+          style: { flex: 1, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 8, padding: '10px 14px', color: 'white', fontSize: 15, outline: 'none' }
+        }),
+        React.createElement('button', {
+          onClick: doRuLookup,
+          style: { background: '#f59e0b', color: '#0d1117', border: 'none', borderRadius: 8, padding: '10px 18px', fontSize: 14, fontWeight: 700, cursor: 'pointer' }
+        }, ruLookupLoading ? '…' : 'Translate')
+      ),
+      React.createElement('div', { style: { display: 'flex', gap: 8, marginBottom: 14 } },
+        ['auto', 'en-ru', 'ru-en'].map(d =>
+          React.createElement('button', {
+            key: d,
+            onClick: () => setRuLookupDir(d),
+            style: { background: ruLookupDir === d ? '#f59e0b' : 'rgba(255,255,255,0.08)', color: ruLookupDir === d ? '#0d1117' : 'rgba(255,255,255,0.7)', border: 'none', borderRadius: 20, padding: '4px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }
+          }, d === 'auto' ? 'Auto' : d === 'en-ru' ? 'EN→RU' : 'RU→EN')
+        )
+      ),
+      ruLookupResult && React.createElement('div', { style: { background: 'rgba(245,158,11,0.1)', borderRadius: 10, padding: '14px 16px', marginBottom: 4, border: '1px solid rgba(245,158,11,0.2)' } },
+        React.createElement('div', { style: { fontSize: 22, fontWeight: 700, color: '#f59e0b', marginBottom: 4 } },
+          ruLookupResult.direction === 'en-ru' ? ruLookupResult.translation : ruLookupResult.query
+        ),
+        React.createElement('div', { style: { color: 'rgba(255,255,255,0.6)', fontSize: 14 } },
+          ruLookupResult.direction === 'en-ru' ? `← ${ruLookupResult.query}` : `→ ${ruLookupResult.translation}`
+        ),
+        React.createElement('button', {
+          onClick: () => speakText(ruLookupResult.direction === 'en-ru' ? ruLookupResult.translation : ruLookupResult.query, 'ru-RU'),
+          style: { marginTop: 10, background: 'rgba(245,158,11,0.2)', color: '#f59e0b', border: '1px solid rgba(245,158,11,0.4)', borderRadius: 8, padding: '6px 14px', fontSize: 13, cursor: 'pointer' }
+        }, '🔊 Hear it')
+      )
+    ),
+
+    // ---- WORD LOG ----
+    React.createElement('div', { style: { background: '#1a2332', borderRadius: 14, padding: 20, marginTop: 16, border: '1px solid rgba(255,255,255,0.08)', marginBottom: 24 } },
+      React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 } },
+        React.createElement('div', { style: { fontSize: 17, fontWeight: 700, color: '#f59e0b' } }, `📖 My Word Log  (${ruWordLog.length} word${ruWordLog.length !== 1 ? 's' : ''})`),
+        ruWordLog.length > 0 && React.createElement('button', {
+          onClick: () => { if (window.confirm('Clear all saved words?')) saveRuWordLog([]); },
+          style: { background: 'rgba(239,68,68,0.15)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '4px 12px', fontSize: 12, cursor: 'pointer' }
+        }, 'Clear All')
+      ),
+      ruWordLog.length === 0
+        ? React.createElement('div', { style: { color: 'rgba(255,255,255,0.35)', fontSize: 14, textAlign: 'center', padding: '20px 0' } }, "Start looking up words — they'll appear here!")
+        : ruWordLog.map((entry, idx) =>
+          React.createElement('div', { key: idx, style: { display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, background: idx % 2 === 0 ? 'rgba(255,255,255,0.04)' : 'transparent', marginBottom: 2 } },
+            React.createElement('span', { style: { flex: 1, fontSize: 14, color: 'white' } },
+              entry.direction === 'en-ru' ? `${entry.query} → ${entry.translation}` : `${entry.query} → ${entry.translation}`
+            ),
+            React.createElement('span', { style: { color: 'rgba(255,255,255,0.35)', fontSize: 12, whiteSpace: 'nowrap' } }, entry.date),
+            React.createElement('button', {
+              onClick: () => speakText(entry.direction === 'en-ru' ? entry.translation : entry.query, 'ru-RU'),
+              style: { background: 'none', border: 'none', cursor: 'pointer', fontSize: 15, padding: '2px 4px' }
+            }, '🔊'),
+            React.createElement('button', {
+              onClick: () => deleteRuEntry(idx),
+              style: { background: 'none', border: 'none', cursor: 'pointer', fontSize: 15, padding: '2px 4px' }
+            }, '🗑')
+          )
+        )
+    )
+  );
+}
+
+// ===================== SPANISH TAB =====================
+
+const SPANISH_TRACKS = [
+  {
+    id: 'sp-t1', name: 'Pronunciation Basics', emoji: '🔤', type: 'pronunciation',
+    lessons: [
+      {
+        id: 'sp-1-1', name: 'Vowels & Accents',
+        items: [
+          { rule: 'A', sound: '"ah" (like "father")', example: 'agua (AH-gwah)', exTrans: '= water' },
+          { rule: 'E', sound: '"eh" (like "bed")', example: 'enfermera (en-fer-MEH-rah)', exTrans: '= nurse' },
+          { rule: 'I', sound: '"ee" (like "feet")', example: 'infección (een-fek-SYON)', exTrans: '= infection' },
+          { rule: 'O', sound: '"oh" (like "go")', example: 'ojo (OH-hoh)', exTrans: '= eye' },
+          { rule: 'U', sound: '"oo" (like "food")', example: 'usted (oos-TED)', exTrans: '= you (formal)' },
+          { rule: 'Á/É/Í/Ó/Ú', sound: 'stressed vowel (accent = emphasis)', example: 'síntoma (SEEN-toh-mah)', exTrans: '= symptom' },
+        ]
+      },
+      {
+        id: 'sp-1-2', name: 'Key Consonants',
+        items: [
+          { rule: 'LL', sound: '"y" sound', example: 'llama (YAH-mah)', exTrans: '' },
+          { rule: 'Ñ', sound: '"ny" sound', example: 'año (AH-nyoh)', exTrans: '= year' },
+          { rule: 'H', sound: 'silent', example: 'hospital (os-pee-TAL)', exTrans: '' },
+          { rule: 'J', sound: '"h" sound', example: 'jabón (hah-BON)', exTrans: '= soap' },
+          { rule: 'RR', sound: 'rolled R', example: 'arroz (ah-RROS)', exTrans: '= rice' },
+          { rule: 'QU', sound: '"k" sound', example: 'qué (KAY)', exTrans: '= what' },
+        ]
+      },
+      {
+        id: 'sp-1-3', name: 'Medical Pronunciation',
+        items: [
+          { rule: 'paciente', sound: 'pah-SYEN-teh', example: 'Stress the bold syllable', exTrans: '= patient' },
+          { rule: 'medicina', sound: 'meh-dee-SEE-nah', example: 'Stress the bold syllable', exTrans: '= medicine' },
+          { rule: 'alergia', sound: 'ah-LEHR-hyah', example: 'Stress the bold syllable', exTrans: '= allergy' },
+          { rule: 'emergencia', sound: 'eh-mehr-HEN-syah', example: 'Stress the bold syllable', exTrans: '= emergency' },
+          { rule: 'síntoma', sound: 'SEEN-toh-mah', example: 'Stress the bold syllable', exTrans: '= symptom' },
+          { rule: 'doctor', sound: 'dok-TOR', example: 'Stress the bold syllable', exTrans: '= doctor' },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'sp-t2', name: 'Essential Phrases', emoji: '👋', type: 'vocab',
+    lessons: [
+      {
+        id: 'sp-2-1', name: 'Greetings',
+        items: [
+          { spanish: 'Buenos días', english: 'Good morning', pronunciation: 'BWEH-nos DEE-as' },
+          { spanish: 'Buenas tardes', english: 'Good afternoon', pronunciation: 'BWEH-nas TAR-des' },
+          { spanish: 'Buenas noches', english: 'Good evening/night', pronunciation: 'BWEH-nas NOH-ches' },
+          { spanish: 'Hola', english: 'Hello', pronunciation: 'OH-lah' },
+          { spanish: '¿Cómo está usted?', english: 'How are you? (formal)', pronunciation: 'KOH-moh es-TAH oos-TED' },
+          { spanish: 'Me llamo ___', english: 'My name is ___', pronunciation: 'meh YAH-moh' },
+          { spanish: 'Soy su enfermera/enfermero', english: 'I am your nurse', pronunciation: 'soy soo en-fer-MEH-rah' },
+          { spanish: 'Soy su médico/médica', english: 'I am your doctor', pronunciation: 'soy soo MEH-dee-koh' },
+          { spanish: 'Soy su asistente médico', english: 'I am your physician assistant', pronunciation: 'soy soo ah-sees-TEN-teh' },
+        ]
+      },
+      {
+        id: 'sp-2-2', name: 'Communication',
+        items: [
+          { spanish: 'No hablo español bien', english: "I don't speak Spanish well", pronunciation: 'no AH-bloh es-pah-NYOL byen' },
+          { spanish: '¿Habla usted inglés?', english: 'Do you speak English?', pronunciation: 'AH-blah oos-TED een-GLES' },
+          { spanish: '¿Entiende?', english: 'Do you understand?', pronunciation: 'en-TYEN-deh' },
+          { spanish: 'Por favor', english: 'Please', pronunciation: 'por fah-VOR' },
+          { spanish: 'Gracias', english: 'Thank you', pronunciation: 'GRAH-syas' },
+          { spanish: 'De nada', english: "You're welcome", pronunciation: 'deh NAH-dah' },
+          { spanish: 'Más despacio, por favor', english: 'More slowly please', pronunciation: 'mas des-PAH-syo' },
+          { spanish: '¿Puede repetir?', english: 'Can you repeat?', pronunciation: 'PWEH-deh reh-peh-TEER' },
+          { spanish: 'Un momento, por favor', english: 'One moment please', pronunciation: 'oon moh-MEN-toh' },
+        ]
+      },
+      {
+        id: 'sp-2-3', name: 'Consent & Instructions',
+        items: [
+          { spanish: 'Necesito su permiso', english: 'I need your permission', pronunciation: 'neh-seh-SEE-toh' },
+          { spanish: '¿Está de acuerdo?', english: 'Do you agree/consent?', pronunciation: 'es-TAH deh ah-KWER-doh' },
+          { spanish: 'Voy a...', english: 'I am going to...', pronunciation: 'voy ah' },
+          { spanish: 'Esto no va a doler mucho', english: "This won't hurt much", pronunciation: 'ES-toh no vah ah doh-LER' },
+          { spanish: 'Esto puede sentirse como un pinchazo', english: 'This may feel like a pinch', pronunciation: 'peen-CHA-soh' },
+          { spanish: 'Por favor, no se mueva', english: "Please don't move", pronunciation: 'por fah-VOR no seh MWEH-vah' },
+          { spanish: 'Respire profundo', english: 'Breathe deeply', pronunciation: 'res-PEE-reh pro-FOON-doh' },
+          { spanish: 'Relájese', english: 'Relax', pronunciation: 'reh-LAH-heh-seh' },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'sp-t3', name: 'Numbers & Body Parts', emoji: '🔢', type: 'vocab',
+    lessons: [
+      {
+        id: 'sp-3-1', name: 'Numbers 0-10',
+        items: [
+          { spanish: 'cero', english: 'zero (0)', pronunciation: 'SEH-roh' },
+          { spanish: 'uno', english: 'one (1)', pronunciation: 'OO-noh' },
+          { spanish: 'dos', english: 'two (2)', pronunciation: 'dos' },
+          { spanish: 'tres', english: 'three (3)', pronunciation: 'tres' },
+          { spanish: 'cuatro', english: 'four (4)', pronunciation: 'KWAH-troh' },
+          { spanish: 'cinco', english: 'five (5)', pronunciation: 'SEEN-koh' },
+          { spanish: 'seis', english: 'six (6)', pronunciation: 'says' },
+          { spanish: 'siete', english: 'seven (7)', pronunciation: 'SYEH-teh' },
+          { spanish: 'ocho', english: 'eight (8)', pronunciation: 'OH-choh' },
+          { spanish: 'nueve', english: 'nine (9)', pronunciation: 'NWEH-veh' },
+          { spanish: 'diez', english: 'ten (10)', pronunciation: 'dyes' },
+        ]
+      },
+      {
+        id: 'sp-3-2', name: 'Pain Scale',
+        items: [
+          { spanish: '¿Cuánto dolor tiene del uno al diez?', english: 'How much pain from 1-10?', pronunciation: 'KWAHN-toh doh-LOR' },
+          { spanish: 'Sin dolor', english: 'No pain (0)', pronunciation: 'seen doh-LOR' },
+          { spanish: 'Poco dolor', english: 'A little pain (1-3)', pronunciation: 'POH-koh doh-LOR' },
+          { spanish: 'Dolor moderado', english: 'Moderate pain (4-6)', pronunciation: 'moh-deh-RAH-doh' },
+          { spanish: 'Mucho dolor', english: 'A lot of pain (7-9)', pronunciation: 'MOO-choh doh-LOR' },
+          { spanish: 'Dolor insoportable', english: 'Unbearable pain (10)', pronunciation: 'een-soh-por-TAH-bleh' },
+          { spanish: '¿El dolor es constante o va y viene?', english: 'Is the pain constant or come and go?', pronunciation: 'kons-TAN-teh' },
+        ]
+      },
+      {
+        id: 'sp-3-3', name: 'Body Parts',
+        items: [
+          { spanish: 'cabeza', english: 'head', pronunciation: 'kah-BEH-sah' },
+          { spanish: 'cuello', english: 'neck', pronunciation: 'KWEH-yoh' },
+          { spanish: 'pecho', english: 'chest', pronunciation: 'PEH-choh' },
+          { spanish: 'espalda', english: 'back', pronunciation: 'es-PAL-dah' },
+          { spanish: 'abdomen/barriga', english: 'abdomen/belly', pronunciation: 'ah-DOH-men / bah-REE-gah' },
+          { spanish: 'brazo', english: 'arm', pronunciation: 'BRAH-soh' },
+          { spanish: 'mano', english: 'hand', pronunciation: 'MAH-noh' },
+          { spanish: 'pierna', english: 'leg', pronunciation: 'PYEHR-nah' },
+          { spanish: 'rodilla', english: 'knee', pronunciation: 'roh-DEE-yah' },
+          { spanish: 'tobillo', english: 'ankle', pronunciation: 'toh-BEE-yoh' },
+          { spanish: 'pie', english: 'foot', pronunciation: 'pyeh' },
+          { spanish: 'vena', english: 'vein', pronunciation: 'VEH-nah' },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'sp-t4', name: 'Patient Intake', emoji: '📋', type: 'vocab',
+    lessons: [
+      {
+        id: 'sp-4-1', name: 'Registration',
+        items: [
+          { spanish: '¿Cómo se llama?', english: 'What is your name?', pronunciation: 'KOH-moh seh YAH-mah' },
+          { spanish: '¿Cuál es su fecha de nacimiento?', english: 'What is your date of birth?', pronunciation: 'NAH-see-myen-toh' },
+          { spanish: '¿Cuántos años tiene?', english: 'How old are you?', pronunciation: 'KWAHN-tos AH-nyos' },
+          { spanish: '¿Tiene seguro médico?', english: 'Do you have health insurance?', pronunciation: 'seh-GOO-roh MEH-dee-koh' },
+          { spanish: '¿Cuál es su número de seguro?', english: 'What is your insurance number?', pronunciation: 'NOO-meh-roh' },
+          { spanish: '¿Tiene médico de cabecera?', english: 'Do you have a primary care doctor?', pronunciation: 'kah-beh-SEH-rah' },
+          { spanish: 'En caso de emergencia, ¿a quién llamamos?', english: 'In case of emergency, who do we call?', pronunciation: 'eh-mehr-HEN-syah' },
+        ]
+      },
+      {
+        id: 'sp-4-2', name: 'Chief Complaint',
+        items: [
+          { spanish: '¿Por qué viene hoy?', english: 'Why are you here today?', pronunciation: 'por KAY VYEH-neh oy' },
+          { spanish: '¿Qué le pasa?', english: 'What is wrong?', pronunciation: 'keh leh PAH-sah' },
+          { spanish: '¿Cuándo empezó?', english: 'When did it start?', pronunciation: 'KWAHN-doh em-peh-SOH' },
+          { spanish: '¿Le duele algo?', english: 'Does anything hurt?', pronunciation: 'leh DWEH-leh AL-goh' },
+          { spanish: '¿Ha tenido esto antes?', english: 'Have you had this before?', pronunciation: 'ah teh-NEE-doh' },
+          { spanish: '¿Está embarazada?', english: 'Are you pregnant?', pronunciation: 'es-TAH em-bah-rah-SAH-dah' },
+          { spanish: '¿Está tomando algún medicamento?', english: 'Are you taking any medications?', pronunciation: 'meh-dee-kah-MEN-toh' },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'sp-t5', name: 'Pain & Symptoms', emoji: '🩺', type: 'vocab',
+    lessons: [
+      {
+        id: 'sp-5-1', name: 'Describing Pain',
+        items: [
+          { spanish: '¿Dónde le duele?', english: 'Where does it hurt?', pronunciation: 'DOHN-deh leh DWEH-leh' },
+          { spanish: 'Muéstreme dónde', english: 'Show me where', pronunciation: 'MWES-treh-meh DOHN-deh' },
+          { spanish: '¿Cómo es el dolor?', english: 'What is the pain like?', pronunciation: 'KOH-moh es el doh-LOR' },
+          { spanish: 'Es punzante', english: 'It is sharp/stabbing', pronunciation: 'es poon-SAHN-teh' },
+          { spanish: 'Es sordo/opresivo', english: 'It is dull/pressure', pronunciation: 'es SOR-doh' },
+          { spanish: 'Es ardiente', english: 'It is burning', pronunciation: 'es ar-DYEN-teh' },
+          { spanish: 'Es pulsante', english: 'It is throbbing', pronunciation: 'es pool-SAHN-teh' },
+          { spanish: '¿El dolor se mueve?', english: 'Does the pain move/radiate?', pronunciation: 'el doh-LOR seh MWEH-veh' },
+        ]
+      },
+      {
+        id: 'sp-5-2', name: 'Vein Symptoms',
+        items: [
+          { spanish: '¿Tiene dolor en las piernas?', english: 'Do you have leg pain?', pronunciation: 'TYEH-neh doh-LOR' },
+          { spanish: '¿Tiene hinchazón en las piernas?', english: 'Do you have leg swelling?', pronunciation: 'een-chah-SON' },
+          { spanish: '¿Tiene venas varicosas?', english: 'Do you have varicose veins?', pronunciation: 'VEH-nas vah-ree-KOH-sas' },
+          { spanish: '¿Siente pesadez en las piernas?', english: 'Do you feel heaviness in your legs?', pronunciation: 'peh-sah-DES' },
+          { spanish: '¿Tiene calambres en las piernas?', english: 'Do you have leg cramps?', pronunciation: 'kah-LAM-bres' },
+          { spanish: '¿Empeora al estar de pie?', english: 'Does it worsen when standing?', pronunciation: 'em-peh-OH-rah' },
+          { spanish: '¿Mejora al elevar las piernas?', english: 'Does it improve when elevating legs?', pronunciation: 'meh-HOH-rah' },
+          { spanish: '¿Tiene cambios en la piel?', english: 'Do you have skin changes?', pronunciation: 'KAM-byos en la pyel' },
+          { spanish: '¿Tiene úlceras en las piernas?', english: 'Do you have leg ulcers?', pronunciation: 'OOL-seh-ras' },
+        ]
+      },
+      {
+        id: 'sp-5-3', name: 'General Symptoms',
+        items: [
+          { spanish: 'fiebre', english: 'fever', pronunciation: 'FYEH-breh' },
+          { spanish: 'mareo', english: 'dizziness', pronunciation: 'mah-REH-oh' },
+          { spanish: 'náuseas', english: 'nausea', pronunciation: 'NAH-oo-seh-as' },
+          { spanish: 'vómito', english: 'vomiting', pronunciation: 'VOH-mee-toh' },
+          { spanish: 'dificultad para respirar', english: 'difficulty breathing', pronunciation: 'dee-fee-kool-TAD' },
+          { spanish: 'cansancio', english: 'fatigue/tiredness', pronunciation: 'kan-SAN-syo' },
+          { spanish: 'sangrado', english: 'bleeding', pronunciation: 'san-GRAH-doh' },
+          { spanish: 'entumecimiento', english: 'numbness', pronunciation: 'en-too-meh-see-MYEN-toh' },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'sp-t6', name: 'Medical History', emoji: '📁', type: 'vocab',
+    lessons: [
+      {
+        id: 'sp-6-1', name: 'Allergies & Meds',
+        items: [
+          { spanish: '¿Tiene alergias?', english: 'Do you have allergies?', pronunciation: 'TYEN-eh ah-LEHR-hyas' },
+          { spanish: '¿Es alérgico/a a algún medicamento?', english: 'Are you allergic to any medication?', pronunciation: 'ah-LEHR-hee-koh' },
+          { spanish: '¿Es alérgico/a al látex?', english: 'Are you allergic to latex?', pronunciation: 'LAH-tex' },
+          { spanish: '¿Es alérgico/a al yodo?', english: 'Are you allergic to iodine?', pronunciation: 'YOH-doh' },
+          { spanish: '¿Qué medicamentos toma?', english: 'What medications do you take?', pronunciation: 'meh-dee-kah-MEN-tos' },
+          { spanish: '¿Toma anticoagulantes?', english: 'Do you take blood thinners?', pronunciation: 'an-tee-koh-ah-goo-LAN-tes' },
+          { spanish: '¿Toma aspirina regularmente?', english: 'Do you take aspirin regularly?', pronunciation: 'as-pee-REE-nah' },
+          { spanish: '¿Toma suplementos o vitaminas?', english: 'Do you take supplements or vitamins?', pronunciation: 'soo-pleh-MEN-tos' },
+        ]
+      },
+      {
+        id: 'sp-6-2', name: 'Past History',
+        items: [
+          { spanish: '¿Ha tenido cirugías?', english: 'Have you had surgeries?', pronunciation: 'see-roo-HEE-as' },
+          { spanish: '¿Ha tenido trombosis?', english: 'Have you had blood clots?', pronunciation: 'trom-BOH-sis' },
+          { spanish: '¿Ha tenido problemas del corazón?', english: 'Have you had heart problems?', pronunciation: 'koh-rah-SON' },
+          { spanish: '¿Tiene diabetes?', english: 'Do you have diabetes?', pronunciation: 'dyah-BEH-tes' },
+          { spanish: '¿Tiene presión alta?', english: 'Do you have high blood pressure?', pronunciation: 'preh-SYON AL-tah' },
+          { spanish: '¿Fuma?', english: 'Do you smoke?', pronunciation: 'FOO-mah' },
+          { spanish: '¿Toma alcohol?', english: 'Do you drink alcohol?', pronunciation: 'al-KOHL' },
+          { spanish: '¿Hace ejercicio?', english: 'Do you exercise?', pronunciation: 'AH-seh eh-her-SEE-syo' },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'sp-t7', name: 'Vein-Specific', emoji: '🩸', type: 'vocab',
+    lessons: [
+      {
+        id: 'sp-7-1', name: 'Vein Conditions',
+        items: [
+          { spanish: 'Usted tiene venas varicosas', english: 'You have varicose veins', pronunciation: 'VEH-nas vah-ree-KOH-sas' },
+          { spanish: 'Las venas varicosas son venas agrandadas', english: 'Varicose veins are enlarged veins', pronunciation: 'ah-gran-DAH-das' },
+          { spanish: 'Esto es causado por válvulas débiles', english: 'This is caused by weak valves', pronunciation: 'VAL-voo-las DEH-bee-les' },
+          { spanish: 'La sangre no fluye correctamente', english: 'The blood does not flow correctly', pronunciation: 'FLOO-yeh' },
+          { spanish: 'Vamos a hacer un ultrasonido', english: 'We are going to do an ultrasound', pronunciation: 'ool-trah-soh-NEE-doh' },
+          { spanish: 'El ultrasonido no duele', english: "The ultrasound doesn't hurt", pronunciation: 'ool-trah-soh-NEE-doh' },
+          { spanish: 'Vamos a revisar su circulación', english: 'We are going to check your circulation', pronunciation: 'seer-koo-lah-SYON' },
+        ]
+      },
+      {
+        id: 'sp-7-2', name: 'Treatment',
+        items: [
+          { spanish: 'Tenemos varios tratamientos', english: 'We have several treatments', pronunciation: 'trah-tah-MYEN-tos' },
+          { spanish: 'La ablación térmica', english: 'Thermal ablation (heat treatment)', pronunciation: 'ah-blah-SYON TEHR-mee-kah' },
+          { spanish: 'La escleroterapia', english: 'Sclerotherapy (injection treatment)', pronunciation: 'es-kleh-roh-teh-RAH-pyah' },
+          { spanish: 'Vamos a inyectar un medicamento en la vena', english: 'We will inject medication into the vein', pronunciation: 'een-yek-TAR' },
+          { spanish: 'Esto va a cerrar la vena', english: 'This will close the vein', pronunciation: 'seh-RRAR la VEH-nah' },
+          { spanish: 'El tratamiento dura aproximadamente una hora', english: 'Treatment takes approximately one hour', pronunciation: 'ah-prox-ee-MAH-dah-MEN-teh' },
+          { spanish: 'Necesita usar medias de compresión', english: 'You need to wear compression stockings', pronunciation: 'MEH-dyas deh kom-preh-SYON' },
+        ]
+      },
+      {
+        id: 'sp-7-3', name: 'Post-Procedure',
+        items: [
+          { spanish: 'Después del tratamiento', english: 'After the treatment', pronunciation: 'des-PWES del trah-tah-MYEN-toh' },
+          { spanish: 'Camine por al menos 30 minutos', english: 'Walk for at least 30 minutes', pronunciation: 'kah-MEE-neh' },
+          { spanish: 'No levante objetos pesados', english: 'Do not lift heavy objects', pronunciation: 'leh-VAN-teh peh-SAH-dos' },
+          { spanish: 'Evite el sol directo', english: 'Avoid direct sun', pronunciation: 'eh-VEE-teh el sol' },
+          { spanish: 'Use las medias todos los días', english: 'Wear the stockings every day', pronunciation: 'OO-seh las MEH-dyas' },
+          { spanish: 'Llámenos si tiene dolor severo', english: 'Call us if you have severe pain', pronunciation: 'YAH-meh-nos' },
+          { spanish: 'Llámenos si tiene fiebre', english: 'Call us if you have fever', pronunciation: 'YAH-meh-nos FYEH-breh' },
+          { spanish: 'Regrese en una semana', english: 'Return in one week', pronunciation: 'reh-GREH-seh' },
+          { spanish: '¿Tiene preguntas?', english: 'Do you have questions?', pronunciation: 'preh-GOON-tas' },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'sp-t8', name: 'Emergency Phrases', emoji: '🚨', type: 'vocab',
+    lessons: [
+      {
+        id: 'sp-8-1', name: 'Emergencies',
+        items: [
+          { spanish: '¡Llame al 911!', english: 'Call 911!', pronunciation: 'YAH-meh al nweh-veh-oo-no-oo-no' },
+          { spanish: 'Necesito ayuda', english: 'I need help', pronunciation: 'neh-seh-SEE-toh ah-YOO-dah' },
+          { spanish: 'Es una emergencia', english: 'It is an emergency', pronunciation: 'eh-mehr-HEN-syah' },
+          { spanish: '¿Tiene dolor en el pecho?', english: 'Do you have chest pain?', pronunciation: 'doh-LOR en el PEH-choh' },
+          { spanish: '¿Puede respirar?', english: 'Can you breathe?', pronunciation: 'PWEH-deh res-pee-RAR' },
+          { spanish: 'No se mueva', english: "Don't move", pronunciation: 'no seh MWEH-vah' },
+          { spanish: 'Estamos llamando al doctor', english: 'We are calling the doctor', pronunciation: 'yah-MAN-doh' },
+          { spanish: 'La ayuda viene en camino', english: 'Help is on the way', pronunciation: 'ah-YOO-dah VYEH-neh' },
+          { spanish: 'Quédese calmado/a', english: 'Stay calm', pronunciation: 'KAY-deh-seh kal-MAH-doh' },
+        ]
+      },
+    ]
+  },
+];
+
+function getSpanishState() {
+  const xp = parseInt(localStorage.getItem('spanish_xp') || '0');
+  const completed = JSON.parse(localStorage.getItem('spanish_completed') || '{}');
+  const lastDate = localStorage.getItem('spanish_last_date') || '';
+  const streak = parseInt(localStorage.getItem('spanish_streak') || '0');
+  return { xp, completed, lastDate, streak };
+}
+
+function getSpanishLevel(xp) {
+  if (xp >= 301) return 'Attending 👨‍⚕️';
+  if (xp >= 151) return 'Resident 🩺';
+  if (xp >= 51) return 'Intern 📋';
+  return 'Student 📚';
+}
+
+function updateSpanishStreak() {
+  const today = new Date().toISOString().slice(0, 10);
+  const lastDate = localStorage.getItem('spanish_last_date') || '';
+  let streak = parseInt(localStorage.getItem('spanish_streak') || '0');
+  if (lastDate === today) return streak;
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  if (lastDate === yesterday) { streak++; } else { streak = 1; }
+  localStorage.setItem('spanish_last_date', today);
+  localStorage.setItem('spanish_streak', String(streak));
+  return streak;
+}
+
+function addSpanishXP(amount) {
+  const current = parseInt(localStorage.getItem('spanish_xp') || '0');
+  localStorage.setItem('spanish_xp', String(current + amount));
+}
+
+function markSpanishLessonComplete(lessonId, stars) {
+  const completed = JSON.parse(localStorage.getItem('spanish_completed') || '{}');
+  if (!completed[lessonId] || completed[lessonId] < stars) {
+    completed[lessonId] = stars;
+  }
+  localStorage.setItem('spanish_completed', JSON.stringify(completed));
+}
+
+function buildSpanishQuestions(lesson, track) {
+  const items = lesson.items;
+  const isPron = track.type === 'pronunciation';
+  const questions = [];
+  const shuffled = [...items].sort(() => Math.random() - 0.5).slice(0, 5);
+
+  shuffled.forEach((item, idx) => {
+    const qType = idx % 3;
+    const others = items.filter(i => i !== item).sort(() => Math.random() - 0.5).slice(0, 3);
+    if (isPron) {
+      if (qType === 0) {
+        questions.push({ type: 'flashcard_pronunciation', item });
+      } else if (qType === 1) {
+        const opts = [item.sound, ...others.map(o => o.sound)].sort(() => Math.random() - 0.5);
+        questions.push({ type: 'mc', prompt: item.rule, promptLabel: 'How is this pronounced?', correct: item.sound, options: opts });
+      } else {
+        const opts = [item.rule, ...others.map(o => o.rule)].sort(() => Math.random() - 0.5);
+        questions.push({ type: 'mc', prompt: `"${item.sound}"`, promptLabel: 'Which letter/rule makes this sound?', correct: item.rule, options: opts });
+      }
+    } else {
+      if (qType === 0) {
+        questions.push({ type: 'flashcard_vocab', item });
+      } else if (qType === 1) {
+        const opts = [item.spanish, ...others.map(o => o.spanish)].sort(() => Math.random() - 0.5);
+        questions.push({ type: 'mc', prompt: item.english, promptLabel: 'Choose the correct Spanish:', correct: item.spanish, options: opts });
+      } else {
+        const opts = [item.english, ...others.map(o => o.english)].sort(() => Math.random() - 0.5);
+        questions.push({ type: 'mc', prompt: item.spanish, promptLabel: 'What does this mean?', correct: item.english, options: opts });
+      }
+    }
+  });
+  return questions;
+}
+
+function SpanishPage() {
+  const [state, setState] = useState(() => getSpanishState());
+  const [activeLesson, setActiveLesson] = useState(null);
+  const [activeLessonTrack, setActiveLessonTrack] = useState(null);
+  const [phase, setPhase] = useState('home');
+  const [questions, setQuestions] = useState([]);
+  const [qIdx, setQIdx] = useState(0);
+  const [score, setScore] = useState(0);
+  const [feedback, setFeedback] = useState(null);
+  const [wrongAnswer, setWrongAnswer] = useState(null);
+  const [xpGained, setXpGained] = useState(0);
+  const [flipped, setFlipped] = useState(false);
+  const [xpFlash, setXpFlash] = useState(false);
+  const [esLookupQuery, setEsLookupQuery] = useState('');
+  const [esLookupResult, setEsLookupResult] = useState(null);
+  const [esLookupLoading, setEsLookupLoading] = useState(false);
+  const [esLookupDir, setEsLookupDir] = useState('auto');
+  const [esWordLog, setEsWordLog] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('spanish_word_log') || '[]'); } catch(e) { return []; }
+  });
+
+  const saveEsWordLog = (log) => {
+    const trimmed = log.slice(0, 200);
+    localStorage.setItem('spanish_word_log', JSON.stringify(trimmed));
+    setEsWordLog(trimmed);
+  };
+
+  const doEsLookup = async () => {
+    const text = esLookupQuery.trim();
+    if (!text) return;
+    setEsLookupLoading(true);
+    setEsLookupResult(null);
+    const hasSpanish = /[áéíóúüñÁÉÍÓÚÜÑ]/.test(text);
+    const dir = esLookupDir === 'auto' ? (hasSpanish ? 'es-en' : 'en-es') : esLookupDir;
+    const langpair = dir === 'es-en' ? 'es|en' : 'en|es';
+    try {
+      const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${langpair}`);
+      const data = await res.json();
+      const translation = data.responseData.translatedText;
+      const result = { query: text, translation, direction: dir, date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) };
+      setEsLookupResult(result);
+      saveEsWordLog([result, ...esWordLog]);
+    } catch(e) {
+      setEsLookupResult({ query: text, translation: 'Error fetching translation', direction: dir, date: '' });
+    }
+    setEsLookupLoading(false);
+  };
+
+  const deleteEsEntry = (idx) => {
+    const updated = esWordLog.filter((_, i) => i !== idx);
+    saveEsWordLog(updated);
+  };
+
+  const speakEs = (text, lang) => {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang;
+    u.rate = 0.8;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  };
+
+  const ss = {
+    page: { background: '#0a1f0a', minHeight: 'calc(100vh - 60px)', color: 'white', padding: 20, fontFamily: 'inherit' },
+    topBar: { display: 'flex', gap: 16, alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', background: 'rgba(16,185,129,0.1)', borderRadius: 12, padding: '12px 20px', marginBottom: 24, fontSize: 15, border: '1px solid rgba(16,185,129,0.2)' },
+    statChip: { display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(16,185,129,0.15)', borderRadius: 20, padding: '6px 14px', fontWeight: 600 },
+    trackCard: { background: 'rgba(16,185,129,0.06)', borderRadius: 14, padding: 20, marginBottom: 16, border: '1px solid rgba(16,185,129,0.15)' },
+    trackTitle: { fontSize: 18, fontWeight: 700, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 },
+    progressBar: { background: 'rgba(255,255,255,0.1)', borderRadius: 99, height: 8, overflow: 'hidden', marginBottom: 14 },
+    progressFill: (pct) => ({ background: '#10b981', width: `${pct}%`, height: '100%', borderRadius: 99, transition: 'width 0.4s' }),
+    lessonRow: { display: 'flex', gap: 10, flexWrap: 'wrap' },
+    lessonCircle: (status) => ({
+      width: 48, height: 48, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontSize: 18, fontWeight: 700, cursor: status === 'available' ? 'pointer' : 'default',
+      background: status === 'complete' ? '#10b981' : status === 'available' ? '#059669' : 'rgba(255,255,255,0.08)',
+      color: status === 'locked' ? 'rgba(255,255,255,0.3)' : 'white',
+      border: status === 'available' ? '2px solid #10b981' : 'none',
+      transition: 'transform 0.15s',
+    }),
+    lessonLabel: { textAlign: 'center', fontSize: 11, marginTop: 4, color: 'rgba(255,255,255,0.6)', maxWidth: 60 },
+    introBox: { background: 'rgba(16,185,129,0.08)', borderRadius: 16, padding: 32, maxWidth: 480, margin: '40px auto', textAlign: 'center', border: '1px solid rgba(16,185,129,0.3)' },
+    quizBox: { maxWidth: 520, margin: '0 auto' },
+    progressHeader: { display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 },
+    qCard: { background: 'rgba(16,185,129,0.08)', borderRadius: 16, padding: 28, textAlign: 'center', marginBottom: 16, border: '1px solid rgba(16,185,129,0.15)' },
+    bigLetter: { fontSize: 72, fontWeight: 900, lineHeight: 1, marginBottom: 8, color: '#10b981' },
+    promptLabel: { color: 'rgba(255,255,255,0.5)', fontSize: 13, marginBottom: 8 },
+    prompt: { fontSize: 24, fontWeight: 700, marginBottom: 8 },
+    optionBtn: (sel, correct) => ({
+      display: 'block', width: '100%', padding: '14px 16px', marginBottom: 10, borderRadius: 10, border: '2px solid',
+      cursor: feedback ? 'default' : 'pointer', fontSize: 15, fontWeight: 600, transition: 'all 0.15s', textAlign: 'left',
+      background: feedback && sel === correct ? 'rgba(16,185,129,0.25)' : feedback && sel !== correct ? 'rgba(239,68,68,0.12)' : 'rgba(255,255,255,0.05)',
+      borderColor: feedback && sel === correct ? '#10b981' : feedback && sel !== correct ? '#ef4444' : 'rgba(255,255,255,0.15)',
+      color: 'white',
+    }),
+    flashCard: (flipped) => ({
+      background: flipped ? 'rgba(16,185,129,0.15)' : 'rgba(16,185,129,0.05)', borderRadius: 16, padding: 40, textAlign: 'center',
+      cursor: 'pointer', border: `2px solid ${flipped ? '#10b981' : 'rgba(16,185,129,0.2)'}`,
+      transition: 'all 0.3s', minHeight: 180, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+    }),
+    fcHint: { color: 'rgba(255,255,255,0.4)', fontSize: 13, marginTop: 8 },
+    knowBtn: { background: '#10b981', color: 'white', border: 'none', borderRadius: 10, padding: '12px 28px', fontSize: 15, fontWeight: 700, cursor: 'pointer', marginRight: 10 },
+    learningBtn: { background: 'rgba(239,68,68,0.8)', color: 'white', border: 'none', borderRadius: 10, padding: '12px 28px', fontSize: 15, fontWeight: 700, cursor: 'pointer' },
+    feedbackBar: (type) => ({
+      background: type === 'correct' ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)',
+      border: `1px solid ${type === 'correct' ? '#10b981' : '#ef4444'}`,
+      borderRadius: 10, padding: '12px 16px', marginTop: 12, color: type === 'correct' ? '#10b981' : '#ef4444', fontWeight: 600,
+    }),
+    resultBox: { background: 'rgba(16,185,129,0.08)', borderRadius: 16, padding: 32, maxWidth: 480, margin: '40px auto', textAlign: 'center', border: '1px solid rgba(16,185,129,0.2)' },
+    continueBtn: { background: '#10b981', color: 'white', border: 'none', borderRadius: 10, padding: '14px 32px', fontSize: 16, fontWeight: 700, cursor: 'pointer', marginTop: 20 },
+    startBtn: { background: '#10b981', color: 'white', border: 'none', borderRadius: 10, padding: '14px 32px', fontSize: 16, fontWeight: 700, cursor: 'pointer', marginTop: 20 },
+    backBtn: { background: 'rgba(255,255,255,0.08)', color: 'white', border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: 13, cursor: 'pointer', marginBottom: 16 },
+  };
+
+  const refresh = () => setState(getSpanishState());
+
+  const startLesson = (lesson, track) => {
+    const qs = buildSpanishQuestions(lesson, track);
+    setActiveLesson(lesson);
+    setActiveLessonTrack(track);
+    setQuestions(qs);
+    setQIdx(0);
+    setScore(0);
+    setXpGained(0);
+    setFeedback(null);
+    setWrongAnswer(null);
+    setFlipped(false);
+    setPhase('intro');
+  };
+
+  const beginQuiz = () => { setPhase('quiz'); updateSpanishStreak(); refresh(); };
+
+  const handleAnswer = (answer) => {
+    if (feedback) return;
+    const q = questions[qIdx];
+    const isCorrect = answer === q.correct;
+    if (isCorrect) {
+      setScore(s => s + 1);
+      setXpGained(x => x + 1);
+      addSpanishXP(1);
+      setFeedback('correct');
+      setXpFlash(true);
+      setTimeout(() => setXpFlash(false), 700);
+      setTimeout(nextQ, 900);
+    } else {
+      setFeedback('wrong');
+      setWrongAnswer(q.correct);
+      setTimeout(nextQ, 1800);
+    }
+  };
+
+  const handleFlashcard = (knew) => {
+    if (knew) {
+      setScore(s => s + 1);
+      setXpGained(x => x + 1);
+      addSpanishXP(1);
+    }
+    setFeedback(knew ? 'correct' : 'wrong');
+    setTimeout(nextQ, 600);
+  };
+
+  const nextQ = () => {
+    setFeedback(null);
+    setWrongAnswer(null);
+    setFlipped(false);
+    if (qIdx + 1 >= questions.length) {
+      finishLesson();
+    } else {
+      setQIdx(i => i + 1);
+    }
+  };
+
+  const finishLesson = () => {
+    const total = questions.length;
+    const pct = score / total;
+    const stars = pct === 1 ? 3 : pct >= 0.7 ? 2 : 1;
+    markSpanishLessonComplete(activeLesson.id, stars);
+    addSpanishXP(10);
+    setXpGained(x => x + 10);
+    refresh();
+    setPhase('result');
+  };
+
+  const goHome = () => { setPhase('home'); setActiveLesson(null); };
+
+  if (phase === 'intro' && activeLesson) {
+    return React.createElement('div', { style: ss.page },
+      React.createElement('div', { style: ss.introBox },
+        React.createElement('div', { style: { fontSize: 48, marginBottom: 12 } }, activeLessonTrack.emoji),
+        React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 13, marginBottom: 4 } }, activeLessonTrack.name),
+        React.createElement('div', { style: { fontSize: 24, fontWeight: 700, marginBottom: 16 } }, activeLesson.name),
+        React.createElement('div', { style: { color: 'rgba(255,255,255,0.6)', fontSize: 15, marginBottom: 24 } }, `5 questions · up to ${questions.length + 10} XP to earn`),
+        React.createElement('div', { style: { fontSize: 32, marginBottom: 8 } }, '🇲🇽'),
+        React.createElement('div', { style: { color: 'rgba(255,255,255,0.4)', fontSize: 13, marginBottom: 24 } }, "You've got this, Carly! Every phrase helps a patient 💚"),
+        React.createElement('button', { style: ss.startBtn, onClick: beginQuiz }, 'Start Lesson →'),
+        React.createElement('div', { style: { marginTop: 12 } },
+          React.createElement('button', { style: ss.backBtn, onClick: goHome }, '← Back')
+        )
+      )
+    );
+  }
+
+  if (phase === 'quiz' && activeLesson) {
+    const q = questions[qIdx];
+    const pct = ((qIdx) / questions.length) * 100;
+
+    return React.createElement('div', { style: ss.page },
+      React.createElement('div', { style: ss.quizBox },
+        React.createElement('button', { style: ss.backBtn, onClick: goHome }, '← Exit'),
+        React.createElement('div', { style: ss.progressHeader },
+          React.createElement('div', { style: { flex: 1, background: 'rgba(255,255,255,0.1)', borderRadius: 99, height: 10, overflow: 'hidden' } },
+            React.createElement('div', { style: { background: '#10b981', width: `${pct}%`, height: '100%', borderRadius: 99, transition: 'width 0.3s' } })
+          ),
+          React.createElement('div', { style: { color: '#10b981', fontWeight: 700, fontSize: 14, whiteSpace: 'nowrap' } }, `${qIdx + 1} / ${questions.length}`),
+          xpFlash ? React.createElement('div', { style: { color: '#10b981', fontWeight: 700, fontSize: 14 } }, '+1 ⭐') : null
+        ),
+
+        (q.type === 'flashcard_pronunciation' || q.type === 'flashcard_vocab') ?
+          React.createElement('div', null,
+            React.createElement('div', { style: { ...ss.qCard, cursor: 'pointer' }, onClick: () => !feedback && setFlipped(f => !f) },
+              !flipped ?
+                React.createElement('div', null,
+                  q.type === 'flashcard_pronunciation' ?
+                    React.createElement('div', { style: ss.bigLetter }, q.item.rule) :
+                    React.createElement('div', { style: { fontSize: 26, fontWeight: 700 } }, q.item.spanish),
+                  React.createElement('div', { style: ss.fcHint }, '👆 Tap to flip')
+                ) :
+                React.createElement('div', null,
+                  q.type === 'flashcard_pronunciation' ?
+                    React.createElement('div', null,
+                      React.createElement('div', { style: { fontSize: 18, color: '#10b981', fontWeight: 700, marginBottom: 4 } }, q.item.sound),
+                      React.createElement('div', { style: { fontSize: 14, color: 'rgba(255,255,255,0.6)', marginBottom: 4 } }, `Example: ${q.item.example}`),
+                      React.createElement('div', { style: { fontSize: 12, color: 'rgba(255,255,255,0.4)' } }, q.item.exTrans)
+                    ) :
+                    React.createElement('div', null,
+                      React.createElement('div', { style: { fontSize: 20, fontWeight: 700, marginBottom: 4 } }, q.item.english),
+                      React.createElement('div', { style: { fontSize: 14, color: '#10b981', fontStyle: 'italic' } }, q.item.pronunciation)
+                    )
+                )
+            ),
+            flipped && !feedback ?
+              React.createElement('div', { style: { display: 'flex', gap: 10, justifyContent: 'center', marginTop: 8 } },
+                React.createElement('button', { style: ss.knowBtn, onClick: () => handleFlashcard(true) }, '✓ Know it!'),
+                React.createElement('button', { style: ss.learningBtn, onClick: () => handleFlashcard(false) }, '↻ Still learning')
+              ) : null,
+            feedback ?
+              React.createElement('div', { style: ss.feedbackBar(feedback) },
+                feedback === 'correct' ? '🎉 Great job!' : '💪 Keep practicing!'
+              ) : null
+          )
+
+        : React.createElement('div', null,
+            React.createElement('div', { style: ss.qCard },
+              React.createElement('div', { style: ss.promptLabel }, q.promptLabel),
+              React.createElement('div', { style: ss.prompt }, q.prompt)
+            ),
+            q.options.map((opt, i) =>
+              React.createElement('button', {
+                key: i, style: ss.optionBtn(opt, q.correct),
+                onClick: () => !feedback && handleAnswer(opt)
+              }, opt)
+            ),
+            feedback ?
+              React.createElement('div', { style: ss.feedbackBar(feedback) },
+                feedback === 'correct' ? '🎉 Correcto! +1 XP' : `❌ Correct answer: ${q.correct}`
+              ) : null
+          )
+      )
+    );
+  }
+
+  if (phase === 'result') {
+    const total = questions.length;
+    const pct = Math.round((score / total) * 100);
+    const stars = pct === 100 ? 3 : pct >= 70 ? 2 : 1;
+    const starsDisplay = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+    return React.createElement('div', { style: ss.page },
+      React.createElement('div', { style: ss.resultBox },
+        React.createElement('div', { style: { fontSize: 48, marginBottom: 12 } }, pct === 100 ? '🏆' : pct >= 70 ? '🎉' : '💪'),
+        React.createElement('div', { style: { fontSize: 28, fontWeight: 700, marginBottom: 8 } }, pct === 100 ? '¡Perfecto!' : pct >= 70 ? '¡Muy bien!' : '¡Sigue así!'),
+        React.createElement('div', { style: { fontSize: 36, marginBottom: 16 } }, starsDisplay),
+        React.createElement('div', { style: { display: 'flex', gap: 20, justifyContent: 'center', marginBottom: 20 } },
+          React.createElement('div', { style: { textAlign: 'center' } },
+            React.createElement('div', { style: { fontSize: 28, fontWeight: 700, color: '#10b981' } }, `${score}/${total}`),
+            React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 13 } }, 'Correct')
+          ),
+          React.createElement('div', { style: { textAlign: 'center' } },
+            React.createElement('div', { style: { fontSize: 28, fontWeight: 700, color: '#10b981' } }, `+${xpGained}`),
+            React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 13 } }, 'XP Earned')
+          )
+        ),
+        React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 14, marginBottom: 8 } },
+          pct === 100 ? "Your patients are lucky to have you, Carly! 🌟" :
+          pct >= 70 ? "Great work! Your Spanish is getting stronger every day! 💚" :
+          "Every phrase you learn helps a patient feel heard! Keep going! 🩺"
+        ),
+        React.createElement('button', { style: ss.continueBtn, onClick: goHome }, 'Continue →')
+      )
+    );
+  }
+
+  // HOME
+  const { xp, completed, streak } = state;
+  return React.createElement('div', { style: ss.page },
+    React.createElement('div', { style: ss.topBar },
+      React.createElement('div', { style: ss.statChip }, `🔥 ${streak} day${streak !== 1 ? 's' : ''}`),
+      React.createElement('div', { style: ss.statChip }, `⭐ ${xp} XP`),
+      React.createElement('div', { style: ss.statChip }, getSpanishLevel(xp))
+    ),
+
+    React.createElement('div', { style: { textAlign: 'center', marginBottom: 24 } },
+      React.createElement('div', { style: { fontSize: 28, fontWeight: 700 } }, '🇲🇽 Medical Spanish'),
+      React.createElement('div', { style: { color: 'rgba(255,255,255,0.5)', fontSize: 14, marginTop: 4 } }, "Communicate with your Spanish-speaking patients 💚")
+    ),
+
+    SPANISH_TRACKS.map((track, tIdx) => {
+      const allLessons = track.lessons;
+      const completedCount = allLessons.filter(l => completed[l.id] >= 1).length;
+      const pct = allLessons.length ? (completedCount / allLessons.length) * 100 : 0;
+
+      let trackLocked = false;
+      if (tIdx > 0) {
+        const prevTrack = SPANISH_TRACKS[tIdx - 1];
+        const prevDone = prevTrack.lessons.every(l => completed[l.id] >= 1);
+        if (!prevDone) trackLocked = true;
+      }
+
+      return React.createElement('div', { key: track.id, style: { ...ss.trackCard, opacity: trackLocked ? 0.5 : 1 } },
+        React.createElement('div', { style: ss.trackTitle },
+          React.createElement('span', null, track.emoji),
+          React.createElement('span', null, track.name),
+          trackLocked ? React.createElement('span', { style: { marginLeft: 'auto', fontSize: 14, color: 'rgba(255,255,255,0.3)' } }, '🔒') :
+            React.createElement('span', { style: { marginLeft: 'auto', fontSize: 13, color: '#10b981' } }, `${completedCount}/${allLessons.length}`)
+        ),
+        React.createElement('div', { style: ss.progressBar },
+          React.createElement('div', { style: ss.progressFill(trackLocked ? 0 : pct) })
+        ),
+        React.createElement('div', { style: ss.lessonRow },
+          allLessons.map((lesson, lIdx) => {
+            const lessonStars = completed[lesson.id] || 0;
+            let status = 'locked';
+            if (!trackLocked) {
+              if (lessonStars >= 1) status = 'complete';
+              else if (lIdx === 0 || completed[allLessons[lIdx - 1].id] >= 1) status = 'available';
+            }
+            return React.createElement('div', { key: lesson.id, style: { textAlign: 'center' } },
+              React.createElement('div', {
+                style: ss.lessonCircle(status),
+                onClick: () => status === 'available' && startLesson(lesson, track),
+                onMouseEnter: e => { if (status === 'available') e.currentTarget.style.transform = 'scale(1.12)'; },
+                onMouseLeave: e => { e.currentTarget.style.transform = 'scale(1)'; },
+              },
+                status === 'complete' ? ('⭐'.repeat(Math.min(lessonStars, 3))) :
+                status === 'available' ? '▶' : '🔒'
+              ),
+              React.createElement('div', { style: ss.lessonLabel }, lesson.name)
+            );
+          })
+        )
+      );
+    }),
+
+    // ---- LOOKUP BOX ----
+    React.createElement('div', { style: { background: '#0f2d1a', borderRadius: 14, padding: 20, marginTop: 24, border: '1px solid rgba(16,185,129,0.25)' } },
+      React.createElement('div', { style: { fontSize: 17, fontWeight: 700, marginBottom: 14, color: '#10b981' } }, '🔍 Quick Lookup'),
+      React.createElement('div', { style: { display: 'flex', gap: 8, marginBottom: 10 } },
+        React.createElement('input', {
+          type: 'text',
+          value: esLookupQuery,
+          onChange: e => setEsLookupQuery(e.target.value),
+          onKeyDown: e => e.key === 'Enter' && doEsLookup(),
+          placeholder: 'Type a word in English or Spanish…',
+          style: { flex: 1, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: 8, padding: '10px 14px', color: 'white', fontSize: 15, outline: 'none' }
+        }),
+        React.createElement('button', {
+          onClick: doEsLookup,
+          style: { background: '#10b981', color: '#0a1f0a', border: 'none', borderRadius: 8, padding: '10px 18px', fontSize: 14, fontWeight: 700, cursor: 'pointer' }
+        }, esLookupLoading ? '…' : 'Translate')
+      ),
+      React.createElement('div', { style: { display: 'flex', gap: 8, marginBottom: 14 } },
+        ['auto', 'en-es', 'es-en'].map(d =>
+          React.createElement('button', {
+            key: d,
+            onClick: () => setEsLookupDir(d),
+            style: { background: esLookupDir === d ? '#10b981' : 'rgba(255,255,255,0.08)', color: esLookupDir === d ? '#0a1f0a' : 'rgba(255,255,255,0.7)', border: 'none', borderRadius: 20, padding: '4px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }
+          }, d === 'auto' ? 'Auto' : d === 'en-es' ? 'EN→ES' : 'ES→EN')
+        )
+      ),
+      esLookupResult && React.createElement('div', { style: { background: 'rgba(16,185,129,0.1)', borderRadius: 10, padding: '14px 16px', marginBottom: 4, border: '1px solid rgba(16,185,129,0.2)' } },
+        React.createElement('div', { style: { fontSize: 22, fontWeight: 700, color: '#10b981', marginBottom: 4 } },
+          esLookupResult.direction === 'en-es' ? esLookupResult.translation : esLookupResult.query
+        ),
+        React.createElement('div', { style: { color: 'rgba(255,255,255,0.6)', fontSize: 14 } },
+          esLookupResult.direction === 'en-es' ? `← ${esLookupResult.query}` : `→ ${esLookupResult.translation}`
+        ),
+        React.createElement('button', {
+          onClick: () => speakEs(esLookupResult.direction === 'en-es' ? esLookupResult.translation : esLookupResult.query, 'es-ES'),
+          style: { marginTop: 10, background: 'rgba(16,185,129,0.2)', color: '#10b981', border: '1px solid rgba(16,185,129,0.4)', borderRadius: 8, padding: '6px 14px', fontSize: 13, cursor: 'pointer' }
+        }, '🔊 Hear it')
+      )
+    ),
+
+    // ---- WORD LOG ----
+    React.createElement('div', { style: { background: '#0f2d1a', borderRadius: 14, padding: 20, marginTop: 16, border: '1px solid rgba(255,255,255,0.08)', marginBottom: 24 } },
+      React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 } },
+        React.createElement('div', { style: { fontSize: 17, fontWeight: 700, color: '#10b981' } }, `📖 My Word Log  (${esWordLog.length} word${esWordLog.length !== 1 ? 's' : ''})`),
+        esWordLog.length > 0 && React.createElement('button', {
+          onClick: () => { if (window.confirm('Clear all saved words?')) saveEsWordLog([]); },
+          style: { background: 'rgba(239,68,68,0.15)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '4px 12px', fontSize: 12, cursor: 'pointer' }
+        }, 'Clear All')
+      ),
+      esWordLog.length === 0
+        ? React.createElement('div', { style: { color: 'rgba(255,255,255,0.35)', fontSize: 14, textAlign: 'center', padding: '20px 0' } }, "Start looking up words — they'll appear here!")
+        : esWordLog.map((entry, idx) =>
+          React.createElement('div', { key: idx, style: { display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, background: idx % 2 === 0 ? 'rgba(255,255,255,0.04)' : 'transparent', marginBottom: 2 } },
+            React.createElement('span', { style: { flex: 1, fontSize: 14, color: 'white' } },
+              `${entry.query} → ${entry.translation}`
+            ),
+            React.createElement('span', { style: { color: 'rgba(255,255,255,0.35)', fontSize: 12, whiteSpace: 'nowrap' } }, entry.date),
+            React.createElement('button', {
+              onClick: () => speakEs(entry.direction === 'en-es' ? entry.translation : entry.query, 'es-ES'),
+              style: { background: 'none', border: 'none', cursor: 'pointer', fontSize: 15, padding: '2px 4px' }
+            }, '🔊'),
+            React.createElement('button', {
+              onClick: () => deleteEsEntry(idx),
+              style: { background: 'none', border: 'none', cursor: 'pointer', fontSize: 15, padding: '2px 4px' }
+            }, '🗑')
+          )
+        )
+    )
+  );
+}
+
+function HubHome({ setTab }) {
+  const cards = [
+    { id:'pto',      emoji:'🏖',  label:'PTO Tracker',    desc:'Vacation, sick days, and company holidays', color:'#2563eb' },
+    { id:'overtime', emoji:'⏱',  label:'Overtime Log',   desc:'Log extra hours by category', color:'#7c3aed' },
+    { id:'travel',   emoji:'✈️',  label:'Work Travel',    desc:'Trips, flights, and hotel bookings', color:'#0891b2' },
+    { id:'concerts', emoji:'🎸',  label:'Concert Wrapped',desc:'Your show history + next booked show', color:'#c026d3' },
+    { id:'books',    emoji:'📚',  label:'Reading',        desc:'Books, ratings, book club, and shelves', color:'#059669' },
+    { id:'russian',  emoji:'🇷🇺', label:'Russian',        desc:'Alphabet flashcards and quizzes', color:'#dc2626' },
+    { id:'spanish',  emoji:'🇲🇽', label:'Spanish',        desc:'Vocabulary and phrase practice', color:'#ea580c' },
+  ];
+  return (
+    <div style={{ minHeight:'100vh', background:'linear-gradient(135deg,#0f172a 0%,#1e1b4b 100%)', padding:'40px 24px 60px' }}>
+      <div style={{ maxWidth:680, margin:'0 auto' }}>
+        <div style={{ textAlign:'center', marginBottom:40 }}>
+          <div style={{ fontSize:52, marginBottom:12 }}>✨</div>
+          <h1 style={{ fontSize:28, fontWeight:900, color:'#f8fafc', marginBottom:8 }}>Carly Hub</h1>
+          <p style={{ fontSize:14, color:'rgba(255,255,255,0.45)', lineHeight:1.6 }}>Your personal command center.<br/>Pick a section below.</p>
+        </div>
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(190px,1fr))', gap:16 }}>
+          {cards.map(c => (
+            <button key={c.id} onClick={()=>setTab(c.id)} style={{
+              background:'rgba(255,255,255,0.04)',
+              border:'1px solid rgba(255,255,255,0.08)',
+              borderRadius:18, padding:'24px 18px',
+              cursor:'pointer', textAlign:'left',
+              transition:'all 0.2s', color:'inherit',
+              fontFamily:'inherit',
+            }}
+            onMouseEnter={e=>{e.currentTarget.style.background='rgba(255,255,255,0.09)';e.currentTarget.style.transform='translateY(-3px)';e.currentTarget.style.boxShadow='0 8px 30px rgba(0,0,0,0.4)';}}
+            onMouseLeave={e=>{e.currentTarget.style.background='rgba(255,255,255,0.04)';e.currentTarget.style.transform='';e.currentTarget.style.boxShadow='';}}
+            >
+              <div style={{ fontSize:36, marginBottom:10 }}>{c.emoji}</div>
+              <div style={{ fontSize:15, fontWeight:800, color:'#f1f5f9', marginBottom:5 }}>{c.label}</div>
+              <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', lineHeight:1.5 }}>{c.desc}</div>
+              <div style={{ marginTop:14, display:'inline-block', background:c.color+'22', border:'1px solid '+c.color+'44', borderRadius:20, padding:'3px 10px', fontSize:11, fontWeight:800, color:c.color }}>Open →</div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [tab, setTab] = useState('home');
+  return (
+    <div>
+      <nav className="navbar">
+        <h1 style={{cursor:'pointer'}} onClick={()=>setTab('home')}>✨ Carly Hub</h1>
+        <div className="nav-tabs">
+          <button className={`nav-tab ${tab==='home'?'active':''}`} onClick={()=>setTab('home')}>🏠 Home</button>
+          <button className={`nav-tab ${tab==='pto'?'active':''}`} onClick={()=>setTab('pto')}>🏖 PTO</button>
+          <button className={`nav-tab ${tab==='travel'?'active':''}`} onClick={()=>setTab('travel')}>✈️ Travel</button>
+          <button className={`nav-tab ${tab==='overtime'?'active':''}`} onClick={()=>setTab('overtime')}>⏱ Overtime</button>
+          <button className={`nav-tab ${tab==='concerts'?'active':''}`} onClick={()=>setTab('concerts')}>🎸 Concerts</button>
+          <button className={`nav-tab ${tab==='books'?'active':''}`} onClick={()=>setTab('books')}>📚 Reading</button>
+          <button className={`nav-tab ${tab==='russian'?'active':''}`} onClick={()=>setTab('russian')}>🇷🇺 Russian</button>
+          <button className={`nav-tab ${tab==='spanish'?'active':''}`} onClick={()=>setTab('spanish')}>🇲🇽 Spanish</button>
+        </div>
+      </nav>
+      <div className={tab === 'concerts' || tab === 'books' || tab === 'home' ? '' : 'container'}>
+        {tab === 'home' ? <HubHome setTab={setTab} /> : tab === 'pto' ? <PTOPage /> : tab === 'travel' ? <TravelPage /> : tab === 'overtime' ? <OvertimePage /> : tab === 'concerts' ? <ConcertsPage /> : tab === 'books' ? <BooksPage /> : tab === 'russian' ? <RussianPage /> : <SpanishPage />}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>🏕️ Stress</title>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:'Nunito',sans-serif;
+  background:#1a2f1a;
+  color:#f5e6c8;
+  display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+  padding:8px;user-select:none;position:relative;
+}
+
+/* ── BACKGROUND ── */
+#bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.star{position:absolute;border-radius:50%;background:#fffbe8;animation:twinkle var(--d) ease-in-out infinite alternate}
+@keyframes twinkle{from{opacity:var(--o)}to{opacity:calc(var(--o)*.1)}}
+.firefly{position:absolute;width:3px;height:3px;border-radius:50%;background:#ccff66;
+  animation:ff var(--d) ease-in-out infinite alternate;box-shadow:0 0 6px #aaff44}
+@keyframes ff{0%{transform:translate(0,0);opacity:0}50%{opacity:.9}100%{transform:translate(var(--tx),var(--ty));opacity:0}}
+#trees{position:absolute;bottom:0;left:0;right:0;height:120px;pointer-events:none}
+
+/* ── OVERLAYS ── */
+.ov{display:none;position:fixed;inset:0;z-index:200;align-items:center;justify-content:center;
+  background:rgba(10,18,8,.88);backdrop-filter:blur(4px)}
+.ov.show{display:flex}
+.obox{
+  background:linear-gradient(160deg,#2d4a1e,#1a2f10);
+  border:3px solid #8b6914;
+  border-radius:4px;
+  padding:32px 28px;text-align:center;max-width:310px;width:92%;
+  box-shadow:0 0 0 6px rgba(139,105,20,.15),0 8px 40px rgba(0,0,0,.6);
+  position:relative;
+}
+.obox::before{content:'';position:absolute;inset:6px;border:1px dashed rgba(139,105,20,.3);border-radius:2px;pointer-events:none}
+.obox h1{font-family:'Special Elite',serif;font-size:28px;color:#f5c842;margin-bottom:6px;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+.obox p{font-size:13px;color:#c4a96e;margin-bottom:18px;line-height:1.6}
+.obtn{display:block;width:100%;padding:12px;border:2px solid #8b6914;border-radius:4px;margin-bottom:9px;
+  cursor:pointer;font-family:'Special Elite',serif;font-size:15px;transition:all .2s;letter-spacing:.5px}
+.obtn:last-child{margin-bottom:0}
+.obtn.primary{background:linear-gradient(135deg,#8b6914,#c49a1a);color:#1a1000;border-color:#f5c842}
+.obtn.ghost{background:rgba(245,200,66,.07);color:#c4a96e}
+.obtn:hover{transform:translateY(-1px);filter:brightness(1.1)}
+
+/* ── NAME INPUT ── */
+.nm{width:100%;padding:11px;border-radius:3px;border:2px solid #8b6914;
+  background:rgba(255,240,180,.08);color:#f5e6c8;
+  font-family:'Special Elite',serif;font-size:16px;outline:none;text-align:center;
+  margin-bottom:12px;letter-spacing:1px}
+.nm::placeholder{color:#6b5a30}
+
+/* ── TOPBAR ── */
+#topbar{width:100%;max-width:500px;display:flex;align-items:center;justify-content:space-between;
+  padding:2px 4px;position:relative;z-index:5}
+.tbtn{background:rgba(139,105,20,.2);border:1px solid rgba(139,105,20,.4);color:#c4a96e;
+  border-radius:3px;padding:5px 12px;font-family:'Special Elite',serif;font-size:11px;cursor:pointer;text-decoration:none}
+
+/* ── GAME AREA ── */
+#game{width:100%;max-width:500px;display:flex;flex-direction:column;gap:8px;position:relative;z-index:5}
+
+/* ── HAND ROWS ── */
+.hand-row{display:flex;align-items:center;justify-content:center;gap:8px;height:100px}
+.stock-pile{width:66px;height:92px;border-radius:4px;border:2px dashed rgba(139,105,20,.4);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:24px;color:rgba(139,105,20,.5);flex-shrink:0;position:relative;cursor:pointer;
+  background:rgba(139,105,20,.05)}
+.stock-pile .count{font-size:10px;font-weight:900;color:rgba(196,169,110,.7);margin-top:2px;font-family:'Nunito',sans-serif}
+
+/* ── CENTER ── */
+#center{display:flex;align-items:center;justify-content:center;gap:14px}
+.center-pile{width:76px;height:104px;border-radius:4px;border:2px solid rgba(139,105,20,.3);
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.25);flex-shrink:0;cursor:pointer;transition:all .15s;position:relative}
+.center-pile:hover{border-color:rgba(245,200,66,.6)}
+.center-pile.valid{border-color:#f5c842;box-shadow:0 0 18px rgba(245,200,66,.4)}
+.deal-btn{
+  background:linear-gradient(135deg,#8b1a1a,#c42a2a);color:#fff8e8;border:2px solid #ff6b35;
+  border-radius:4px;padding:10px 16px;font-family:'Special Elite',serif;font-size:14px;
+  cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(200,60,0,.4);letter-spacing:.5px}
+.deal-btn:hover{transform:scale(1.05)}
+.deal-btn:disabled{opacity:.3;cursor:default;transform:none}
+.deal-btn.pulse{animation:campfire .6s ease infinite alternate}
+@keyframes campfire{from{box-shadow:0 4px 16px rgba(200,60,0,.4)}to{box-shadow:0 4px 36px rgba(255,120,0,.9),0 0 20px rgba(255,200,0,.3)}}
+
+/* ── CARDS ── */
+.card{
+  width:64px;height:90px;border-radius:4px;
+  background:linear-gradient(160deg,#fffdf5,#f0e8d0);
+  border:2px solid #c4a96e;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:20px;font-weight:900;cursor:pointer;transition:all .18s;position:relative;
+  box-shadow:2px 3px 10px rgba(0,0,0,.5);flex-shrink:0;font-family:'Special Elite',serif;
+}
+.card.red{color:#8b0000}
+.card.black{color:#1a1a2e}
+.card:hover{transform:translateY(-6px);box-shadow:2px 8px 20px rgba(0,0,0,.6)}
+.card.selected{transform:translateY(-12px);border-color:#f5c842;box-shadow:2px 8px 28px rgba(245,200,66,.5)}
+.card .suit{font-size:12px;position:absolute;bottom:3px;right:5px}
+.card .rank-small{font-size:9px;position:absolute;top:3px;left:4px;font-weight:900}
+.card.cpu-card{
+  background:repeating-linear-gradient(135deg,#2d4a1e 0px,#2d4a1e 8px,#1a2f10 8px,#1a2f10 16px);
+  border-color:#5a7a3a;box-shadow:2px 3px 10px rgba(0,0,0,.5);
+}
+.card.cpu-card::after{content:'🏕️';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:20px}
+
+/* ── STATUS ── */
+#status{font-size:12px;font-weight:700;color:#c4a96e;text-align:center;height:16px;font-family:'Special Elite',serif;letter-spacing:.5px}
+
+/* ── STRESS FLASH ── */
+#stress-flash{position:fixed;inset:0;z-index:150;display:none;align-items:center;justify-content:center;pointer-events:none}
+#stress-flash.show{display:flex}
+#stress-flash .sf-txt{
+  font-family:'Special Elite',serif;font-size:80px;color:#ff6b35;
+  text-shadow:0 0 30px #ff9500,0 0 60px #ffcc00,0 4px 0 rgba(0,0,0,.5);
+  animation:stressAnim .5s ease forwards;letter-spacing:3px}
+@keyframes stressAnim{0%{transform:scale(.4) rotate(-8deg);opacity:0}60%{transform:scale(1.2) rotate(2deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+
+/* ── LB ── */
+.lbt{width:100%;border-collapse:collapse;margin:6px 0}
+.lbt th{font-size:10px;color:#6b5a30;text-transform:uppercase;letter-spacing:.05em;padding:3px 5px;border-bottom:1px solid rgba(139,105,20,.2);text-align:left;font-family:'Nunito',sans-serif}
+.lbt td{padding:6px 5px;font-size:13px;font-weight:700;font-family:'Nunito',sans-serif}
+.lbt tr:not(:last-child) td{border-bottom:1px solid rgba(139,105,20,.1)}
+.lb-me td{color:#f5c842}
+
+/* ── CPU LABEL ── */
+.cpu-label{font-family:'Special Elite',serif;font-size:11px;color:#6b8a4a;text-align:center;letter-spacing:1px}
+</style>
+</head>
+<body>
+
+<div id="bg">
+  <svg id="trees" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 120" preserveAspectRatio="none">
+    <g fill="#0d1f0d" opacity="0.9">
+      <polygon points="40,120 55,60 70,120"/>
+      <polygon points="48,120 58,45 68,120"/>
+      <polygon points="90,120 110,50 130,120"/>
+      <polygon points="100,120 112,35 124,120"/>
+      <polygon points="155,120 175,65 195,120"/>
+      <polygon points="163,120 177,48 191,120"/>
+      <polygon points="220,120 235,55 250,120"/>
+      <polygon points="270,120 290,42 310,120"/>
+      <polygon points="278,120 292,28 306,120"/>
+      <polygon points="330,120 348,60 366,120"/>
+      <polygon points="338,120 350,44 362,120"/>
+      <polygon points="390,120 408,52 426,120"/>
+      <polygon points="398,120 410,36 422,120"/>
+      <polygon points="445,120 460,65 475,120"/>
+    </g>
+    <rect x="0" y="100" width="500" height="20" fill="#0d1f0d" opacity="0.9"/>
+  </svg>
+</div>
+
+<!-- START -->
+<div class="ov show" id="ov-s">
+  <div class="obox">
+    <div style="font-size:48px;margin-bottom:8px">🏕️</div>
+    <h1>Stress!</h1>
+    <p>Back at camp. Beat the CPU before lights out.<br>Play cards ±1 rank on the center piles.<br>Hit <strong>DEAL</strong> when you're stuck.</p>
+    <input id="nmi" class="nm" type="text" maxlength="16" placeholder="Your camp name…" autocomplete="off" spellcheck="false">
+    <button class="obtn primary" onclick="startGame()">🏕️ Play</button>
+    <button class="obtn ghost" onclick="openLB()">🏆 All-Time Champs</button>
+    <button class="obtn ghost" onclick="location.href='games.html'">← Back to Games</button>
+  </div>
+</div>
+
+<!-- LEADERBOARD -->
+<div class="ov" id="ov-lb">
+  <div class="obox" style="max-width:340px">
+    <div style="font-size:36px;margin-bottom:8px">🏆</div>
+    <h1>Camp Champs</h1>
+    <p style="margin-bottom:10px">Fewest deals to win</p>
+    <div id="lb-body"></div>
+    <button class="obtn primary" id="lb-play" onclick="closeOv('ov-lb');showOv('ov-s')" style="margin-top:10px">🏕️ Play</button>
+    <button class="obtn ghost" id="lb-back" onclick="closeOv('ov-lb');showOv('ov-o')" style="display:none">← Back</button>
+    <button class="obtn ghost" onclick="if(confirm('Clear all scores?')){localStorage.removeItem(LK);openLB()}">🗑 Clear Scores</button>
+  </div>
+</div>
+
+<!-- GAME OVER -->
+<div class="ov" id="ov-o">
+  <div class="obox">
+    <div id="oe" style="font-size:52px;margin-bottom:10px">🏆</div>
+    <h1 id="ot">You Win!</h1>
+    <p id="os" style="margin-bottom:12px"></p>
+    <div id="onb" style="display:none;background:rgba(245,200,66,.1);border:1px solid rgba(245,200,66,.3);border-radius:4px;padding:8px;margin-bottom:12px;font-size:12px;color:#f5c842;font-weight:800">⭐ New Personal Best!</div>
+    <button class="obtn primary" onclick="closeOv('ov-o');startGame()">🔥 Play Again</button>
+    <button class="obtn ghost" onclick="openLBfrom('over')">🏆 Leaderboard</button>
+    <button class="obtn ghost" onclick="location.href='games.html'">← Games</button>
+  </div>
+</div>
+
+<!-- STRESS FLASH -->
+<div id="stress-flash"><div class="sf-txt">STRESS!</div></div>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <a class="tbtn" href="games.html">← Games</a>
+  <span id="ptag" style="font-family:'Special Elite',serif;font-size:13px;color:#f5c842"></span>
+  <span id="deal-count" style="font-family:'Special Elite',serif;font-size:11px;color:#6b5a30"></span>
+</div>
+
+<!-- GAME -->
+<div id="game">
+  <div class="cpu-label">— COUNSELOR KAREN 🌲 —</div>
+  <div class="hand-row" id="cpu-row">
+    <div class="stock-pile" id="cpu-stock">🌲<div class="count" id="cpu-count"></div></div>
+    <div id="cpu-hand" style="display:flex;gap:6px"></div>
+  </div>
+
+  <div id="status"></div>
+
+  <div id="center">
+    <div class="center-pile" id="pile-0" onclick="playToCenter(0)"></div>
+    <button class="deal-btn" id="deal-btn" onclick="deal()">🔥 DEAL</button>
+    <div class="center-pile" id="pile-1" onclick="playToCenter(1)"></div>
+  </div>
+
+  <div id="status2" style="font-size:11px;font-weight:700;color:#5a4a25;text-align:center;height:15px;font-family:'Special Elite',serif"></div>
+
+  <div class="hand-row" id="player-row">
+    <div class="stock-pile" id="player-stock" style="cursor:default">🃏<div class="count" id="player-count"></div></div>
+    <div id="player-hand" style="display:flex;gap:6px"></div>
+  </div>
+  <div class="cpu-label" id="player-label">— YOUR HAND —</div>
+</div>
+
+<div style="height:2px"></div>
+
+<script>
+'use strict';
+const SUITS=['♠','♣','♥','♦'],RANKS=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+const RED_SUITS=new Set(['♥','♦']);
+const LK='stress_lb_v2';
+const HAND_SIZE=4;
+const CPU_MIN=750,CPU_MAX=1350;
+
+let player='',live=false;
+let playerStock=[],playerHand=[];
+let cpuStock=[],cpuHand=[];
+let centerPiles=[[],[]];
+let selected=null,deals=0,cpuTimer=null;
+
+// ── LB ──────────────────────────────────────────────────────────────────────
+function lbAll(){try{return JSON.parse(localStorage.getItem(LK))||[];}catch{return[];}}
+function lbSave(a){localStorage.setItem(LK,JSON.stringify(a));}
+function lbRecord(name,d){
+  const all=lbAll(),nx=name.toLowerCase();
+  const ex=all.find(e=>e.n.toLowerCase()===nx);
+  let nb=false;
+  if(ex){if(d<ex.d){ex.d=d;nb=true;}ex.g=(ex.g||1)+1;}
+  else{all.push({n:name,d,g:1});nb=true;}
+  all.sort((a,b)=>a.d-b.d);lbSave(all);return nb;
+}
+function lbRank(name){return lbAll().findIndex(e=>e.n.toLowerCase()===name.toLowerCase())+1||null;}
+
+let lbFrom='s';
+function openLB(){lbFrom='s';renderLB();closeOv('ov-s');showOv('ov-lb');}
+function openLBfrom(f){lbFrom=f;renderLB();closeOv('ov-o');showOv('ov-lb');}
+function renderLB(){
+  const all=lbAll(),mx=['🥇','🥈','🥉'];
+  document.getElementById('lb-play').style.display=lbFrom==='s'?'block':'none';
+  document.getElementById('lb-back').style.display=lbFrom==='over'?'block':'none';
+  let h='';
+  if(!all.length) h='<div style="text-align:center;padding:18px;color:#6b5a30;font-size:13px;font-family:Nunito,sans-serif">No wins yet — beat Counselor Karen! 🌲</div>';
+  else{
+    h='<table class="lbt"><thead><tr><th>#</th><th>Camper</th><th>Deals</th><th>Games</th></tr></thead><tbody>';
+    all.slice(0,10).forEach((e,i)=>{
+      const me=player&&e.n.toLowerCase()===player.toLowerCase();
+      h+=`<tr${me?' class="lb-me"':''}><td>${mx[i]||i+1}</td><td>${esc(e.n)}${me?' ◀':''}</td><td style="color:#f5c842;text-align:right">${e.d}</td><td style="color:#6b5a30;text-align:right;font-size:11px">${e.g}</td></tr>`;
+    });
+    h+='</tbody></table>';
+  }
+  document.getElementById('lb-body').innerHTML=h;
+}
+function showOv(id){document.getElementById(id).classList.add('show');}
+function closeOv(id){document.getElementById(id).classList.remove('show');}
+
+// ── DECK ─────────────────────────────────────────────────────────────────────
+function makeDeck(){
+  const d=[];
+  for(const s of SUITS)for(let r=0;r<13;r++)d.push({suit:s,rank:r});
+  return d;
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
+function canPlay(c,pile){
+  if(!pile.length)return true;
+  const t=pile[pile.length-1],d=Math.abs(c.rank-t.rank);
+  return d===1||(c.rank===0&&t.rank===12)||(c.rank===12&&t.rank===0);
+}
+
+// ── CARD HTML ────────────────────────────────────────────────────────────────
+function cardHTML(c,sel=false,faceDown=false,idx=null){
+  if(faceDown)return`<div class="card cpu-card"></div>`;
+  const red=RED_SUITS.has(c.suit);
+  const click=idx!==null?`onclick="selectCard(${idx})"`:'' ;
+  return`<div class="card${red?' red':' black'}${sel?' selected':''}" ${click} style="touch-action:manipulation">
+    <div class="rank-small">${RANKS[c.rank]}</div>${RANKS[c.rank]}<div class="suit">${c.suit}</div></div>`;
+}
+function centerCardHTML(c){
+  if(!c)return'';
+  const red=RED_SUITS.has(c.suit);
+  return`<div class="card${red?' red':' black'}" style="cursor:default;width:100%;height:100%;border-radius:2px;box-shadow:none">
+    <div class="rank-small">${RANKS[c.rank]}</div>${RANKS[c.rank]}<div class="suit">${c.suit}</div></div>`;
+}
+
+// ── START ────────────────────────────────────────────────────────────────────
+document.getElementById('nmi').addEventListener('keydown',e=>{if(e.key==='Enter')startGame();});
+function startGame(){
+  const v=(document.getElementById('nmi').value||'').trim();
+  if(!v){document.getElementById('nmi').focus();return;}
+  player=v;
+  document.getElementById('ptag').textContent='🏕️ '+v;
+  document.getElementById('player-label').textContent='— '+v.toUpperCase()+' —';
+  closeOv('ov-s');
+  newGame();
+}
+function newGame(){
+  clearTimeout(cpuTimer);
+  const deck=makeDeck();shuffle(deck);
+  playerStock=deck.slice(0,26);cpuStock=deck.slice(26);
+  playerHand=[];cpuHand=[];centerPiles=[[],[]];
+  selected=null;deals=0;live=true;
+  for(let i=0;i<HAND_SIZE;i++){
+    if(playerStock.length)playerHand.push(playerStock.pop());
+    if(cpuStock.length)cpuHand.push(cpuStock.pop());
+  }
+  if(playerStock.length)centerPiles[0].push(playerStock.pop());
+  if(cpuStock.length)centerPiles[1].push(cpuStock.pop());
+  render();scheduleCPU();
+}
+
+// ── RENDER ───────────────────────────────────────────────────────────────────
+function render(){
+  document.getElementById('cpu-hand').innerHTML=cpuHand.map(c=>cardHTML(c,false,true)).join('');
+  document.getElementById('cpu-count').textContent=cpuStock.length;
+  document.getElementById('cpu-stock').style.opacity=cpuStock.length?1:.25;
+  for(let i=0;i<2;i++){
+    const el=document.getElementById('pile-'+i);
+    const top=centerPiles[i][centerPiles[i].length-1];
+    el.innerHTML=top?centerCardHTML(top):'';
+    if(selected!==null&&live&&playerHand[selected])
+      el.classList.toggle('valid',canPlay(playerHand[selected],centerPiles[i]));
+    else el.classList.remove('valid');
+  }
+  document.getElementById('player-hand').innerHTML=
+    playerHand.map((c,i)=>cardHTML(c,selected===i,false,i)).join('');
+  document.getElementById('player-count').textContent=playerStock.length;
+  document.getElementById('player-stock').style.opacity=playerStock.length?1:.25;
+  document.getElementById('deal-count').textContent=deals?`${deals} deal${deals===1?'':'s'}`:'';
+  const stuck=live&&!playerCanMove()&&!cpuCanMove();
+  const btn=document.getElementById('deal-btn');
+  btn.disabled=!live;
+  btn.classList.toggle('pulse',stuck);
+  const ps=playerHand.length+playerStock.length,cs=cpuHand.length+cpuStock.length;
+  document.getElementById('status').textContent=live?`You: ${ps} cards  •  Karen: ${cs} cards`:'';
+  document.getElementById('status2').textContent=stuck&&live?'Stuck! Hit 🔥 DEAL':'';
+}
+
+// ── PLAYER ───────────────────────────────────────────────────────────────────
+function selectCard(i){
+  if(!live)return;
+  if(selected===i){selected=null;render();return;}
+  selected=i;render();
+  const card=playerHand[i],valid=[0,1].filter(p=>canPlay(card,centerPiles[p]));
+  if(valid.length===1)setTimeout(()=>playToCenter(valid[0]),90);
+}
+function playToCenter(pi){
+  if(!live||selected===null)return;
+  const card=playerHand[selected];
+  if(!canPlay(card,centerPiles[pi])){flashInvalid(pi);return;}
+  centerPiles[pi].push(card);
+  playerHand.splice(selected,1);selected=null;
+  if(playerStock.length&&playerHand.length<HAND_SIZE)playerHand.push(playerStock.pop());
+  render();checkWin();
+}
+function flashInvalid(pi){
+  const el=document.getElementById('pile-'+pi);
+  el.style.borderColor='#8b0000';
+  setTimeout(()=>{el.style.borderColor='';render();},300);
+}
+
+// ── DEAL ─────────────────────────────────────────────────────────────────────
+function deal(){
+  if(!live)return;
+  deals++;selected=null;
+  for(let i=0;i<2;i++){
+    const src=i===0?playerStock:cpuStock;
+    if(src.length)centerPiles[i].push(src.pop());
+  }
+  if(playerStock.length&&playerHand.length<HAND_SIZE)playerHand.push(playerStock.pop());
+  if(cpuStock.length&&cpuHand.length<HAND_SIZE)cpuHand.push(cpuStock.pop());
+  flashStress();render();checkWin();
+}
+
+// ── CPU ───────────────────────────────────────────────────────────────────────
+function cpuCanMove(){return cpuHand.some(c=>centerPiles.some(p=>canPlay(c,p)));}
+function playerCanMove(){return playerHand.some(c=>centerPiles.some(p=>canPlay(c,p)));}
+function scheduleCPU(){if(!live)return;cpuTimer=setTimeout(cpuTurn,CPU_MIN+Math.random()*(CPU_MAX-CPU_MIN));}
+function cpuTurn(){
+  if(!live)return;
+  const moves=[];
+  cpuHand.forEach((c,ci)=>centerPiles.forEach((p,pi)=>{if(canPlay(c,p))moves.push({ci,pi});}));
+  if(moves.length){
+    const m=moves[Math.floor(Math.random()*moves.length)];
+    centerPiles[m.pi].push(cpuHand[m.ci]);cpuHand.splice(m.ci,1);
+    if(cpuStock.length&&cpuHand.length<HAND_SIZE)cpuHand.push(cpuStock.pop());
+    render();if(!checkWin())scheduleCPU();
+  } else scheduleCPU();
+}
+
+// ── WIN ───────────────────────────────────────────────────────────────────────
+function checkWin(){
+  const pw=playerHand.length===0&&playerStock.length===0;
+  const cw=cpuHand.length===0&&cpuStock.length===0;
+  if(!pw&&!cw)return false;
+  live=false;clearTimeout(cpuTimer);
+  setTimeout(()=>showResult(pw&&!cw),400);
+  return true;
+}
+function showResult(win){
+  const nb=win&&player?lbRecord(player,deals):false;
+  const rank=win&&player?lbRank(player):null;
+  const mx=['🥇','🥈','🥉'];
+  document.getElementById('oe').textContent=win?'🏆':'😭';
+  document.getElementById('ot').textContent=win?'You Win, Camper!':'Counselor Karen Wins';
+  document.getElementById('ot').style.color=win?'#f5c842':'#c45a3a';
+  document.getElementById('os').textContent=win
+    ?`${player} cleared in ${deals} deal${deals===1?'':'s'}!${rank?' Ranked '+(mx[rank-1]||'#'+rank)+'!':''}`
+    :'Karen is the true camp legend. Better luck at next summer!';
+  document.getElementById('onb').style.display=nb?'block':'none';
+  showOv('ov-o');
+}
+
+// ── STRESS FLASH ──────────────────────────────────────────────────────────────
+function flashStress(){
+  const el=document.getElementById('stress-flash');
+  el.classList.add('show');setTimeout(()=>el.classList.remove('show'),800);
+}
+
+// ── UTILS ────────────────────────────────────────────────────────────────────
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+// ── BACKGROUND ───────────────────────────────────────────────────────────────
+(function(){
+  const bg=document.getElementById('bg');
+  for(let i=0;i<50;i++){
+    const s=document.createElement('div');s.className='star';
+    const sz=(Math.random()*1.5+.5).toFixed(1);
+    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*60}%;--d:${(Math.random()*3+1.5).toFixed(1)}s;--o:${(Math.random()*.7+.2).toFixed(2)}`;
+    bg.appendChild(s);
+  }
+  for(let i=0;i<12;i++){
+    const f=document.createElement('div');f.className='firefly';
+    f.style.cssText=`left:${Math.random()*100}%;top:${40+Math.random()*40}%;--d:${(Math.random()*3+2).toFixed(1)}s;--tx:${(Math.random()*60-30).toFixed(0)}px;--ty:${(Math.random()*40-20).toFixed(0)}px`;
+    bg.appendChild(f);
+  }
+})();
+
+document.getElementById('nmi').focus();
+</script>
+</body>
+</html>

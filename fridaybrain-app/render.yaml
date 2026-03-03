@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: fridaybrain
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: DB_PATH
+        value: /var/data/onboarding.db
+    disk:
+      name: data
+      mountPath: /var/data
+      sizeGB: 1

@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Reservation Radar 📡</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Nunito', sans-serif; background: #0f0c1a; color: #e2d9f3; min-height: 100vh; }
+a { color: inherit; text-decoration: none; }
+
+.navbar {
+  background: linear-gradient(135deg, #1a1030, #0f0c1a);
+  padding: 0 28px;
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid rgba(167,139,250,0.15);
+  position: sticky; top: 0; z-index: 100;
+}
+.navbar h1 { font-size: 20px; font-weight: 900; color: white; letter-spacing: -0.5px; }
+.navbar h1 span { color: #a78bfa; }
+.nav-tabs { display: flex; gap: 4px; }
+.nav-tab { background: none; border: none; color: #9ca3af; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700; padding: 8px 14px; border-radius: 8px; cursor: pointer; transition: all 0.15s; }
+.nav-tab:hover { background: rgba(167,139,250,0.1); color: #e2d9f3; }
+.nav-tab.active { background: rgba(167,139,250,0.15); color: #a78bfa; }
+
+.container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+
+.page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; }
+.page-header h2 { font-size: 26px; font-weight: 900; color: white; }
+.page-header p { font-size: 13px; color: #7c6ea0; margin-top: 4px; }
+
+.btn { padding: 9px 18px; border-radius: 10px; border: none; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.15s; }
+.btn-primary { background: linear-gradient(135deg, #7c3aed, #6366f1); color: white; }
+.btn-primary:hover { opacity: 0.9; }
+.btn-outline { background: transparent; border: 1px solid rgba(167,139,250,0.3); color: #a78bfa; }
+.btn-outline:hover { background: rgba(167,139,250,0.1); }
+.btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 7px; }
+.btn-ghost { background: transparent; border: none; color: #9ca3af; }
+.btn-ghost:hover { color: #e2d9f3; }
+
+/* Alert banner */
+.alert-banner { background: linear-gradient(135deg, #7c2d12, #9a3412); border: 1px solid #f97316; border-radius: 12px; padding: 14px 18px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
+.alert-banner .alert-icon { font-size: 24px; flex-shrink: 0; }
+.alert-banner .alert-text { flex: 1; }
+.alert-banner .alert-title { font-weight: 800; color: #fed7aa; font-size: 14px; }
+.alert-banner .alert-sub { font-size: 12px; color: #fdba74; margin-top: 2px; }
+
+/* Section headers */
+.section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: #a78bfa; margin-bottom: 12px; margin-top: 28px; display: flex; align-items: center; gap: 8px; }
+.section-title::after { content: ''; flex: 1; height: 1px; background: rgba(167,139,250,0.15); }
+
+/* Restaurant cards */
+.restaurant-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; }
+.r-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 16px; transition: all 0.2s; cursor: pointer; }
+.r-card:hover { background: rgba(167,139,250,0.06); border-color: rgba(167,139,250,0.2); transform: translateY(-1px); }
+.r-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.r-name { font-weight: 800; font-size: 15px; color: white; }
+.r-meta { font-size: 12px; color: #7c6ea0; margin-top: 2px; }
+.r-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.badge { display: inline-flex; align-items: center; gap: 3px; padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+.badge-gf { background: rgba(52,211,153,0.15); color: #34d399; border: 1px solid rgba(52,211,153,0.2); }
+.badge-platform { background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.2); }
+.badge-price { background: rgba(255,255,255,0.05); color: #9ca3af; border: 1px solid rgba(255,255,255,0.08); }
+.badge-hot-3 { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
+.badge-hot-2 { background: rgba(249,115,22,0.15); color: #fb923c; border: 1px solid rgba(249,115,22,0.2); }
+.badge-hot-1 { background: rgba(167,139,250,0.15); color: #a78bfa; border: 1px solid rgba(167,139,250,0.2); }
+.r-advance { margin-top: 10px; font-size: 12px; color: #9ca3af; background: rgba(255,255,255,0.03); border-radius: 8px; padding: 8px 10px; border-left: 2px solid rgba(167,139,250,0.3); }
+.r-actions { display: flex; gap: 6px; margin-top: 10px; }
+
+/* Watchlist */
+.watch-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 16px; margin-bottom: 10px; }
+.watch-card.book-today { border-color: #f97316; background: rgba(249,115,22,0.08); }
+.watch-card.book-soon { border-color: #facc15; background: rgba(250,204,21,0.05); }
+.watch-card.got-it { border-color: #34d399; background: rgba(52,211,153,0.06); opacity: 0.7; }
+.watch-top { display: flex; justify-content: space-between; align-items: flex-start; }
+.watch-name { font-weight: 800; font-size: 15px; color: white; }
+.watch-date { font-size: 13px; color: #9ca3af; margin-top: 3px; }
+.book-day-badge { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
+.book-now { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+.book-2day { background: rgba(249,115,22,0.2); color: #fb923c; border: 1px solid rgba(249,115,22,0.3); }
+.book-soon-badge { background: rgba(250,204,21,0.15); color: #fbbf24; border: 1px solid rgba(250,204,21,0.2); }
+.book-later { background: rgba(255,255,255,0.06); color: #9ca3af; border: 1px solid rgba(255,255,255,0.08); }
+.book-walkin { background: rgba(96,165,250,0.15); color: #60a5fa; border: 1px solid rgba(96,165,250,0.2); }
+
+/* Modal */
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.modal { background: #1a1030; border: 1px solid rgba(167,139,250,0.2); border-radius: 16px; padding: 28px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; }
+.modal h3 { font-size: 18px; font-weight: 800; color: white; margin-bottom: 20px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.form-group { margin-bottom: 12px; }
+.form-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #7c6ea0; display: block; margin-bottom: 5px; }
+.form-input { width: 100%; padding: 9px 12px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; font-family: 'Nunito', sans-serif; font-size: 13px; }
+.form-input:focus { outline: none; border-color: rgba(167,139,250,0.4); }
+.form-input option { background: #1a1030; }
+textarea.form-input { resize: vertical; min-height: 70px; }
+.checkbox-row { display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: rgba(52,211,153,0.05); border: 1px solid rgba(52,211,153,0.15); border-radius: 8px; margin-bottom: 12px; cursor: pointer; }
+.checkbox-row label { font-size: 13px; color: #34d399; font-weight: 700; cursor: pointer; }
+.form-actions { display: flex; gap: 8px; margin-top: 20px; }
+
+/* Filter bar */
+.filter-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+.filter-btn { padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); background: transparent; color: #9ca3af; font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+.filter-btn.active { background: rgba(167,139,250,0.15); border-color: rgba(167,139,250,0.3); color: #a78bfa; }
+.filter-btn:hover { border-color: rgba(167,139,250,0.2); color: #e2d9f3; }
+input.filter-search { padding: 7px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; color: white; font-family: 'Nunito', sans-serif; font-size: 12px; min-width: 160px; }
+input.filter-search:focus { outline: none; border-color: rgba(167,139,250,0.3); }
+input.filter-search::placeholder { color: #4b5563; }
+
+.empty { text-align: center; padding: 60px 20px; color: #4b5563; }
+.empty .empty-icon { font-size: 40px; margin-bottom: 12px; }
+.empty h3 { font-size: 18px; color: #7c6ea0; font-weight: 700; }
+.empty p { font-size: 13px; margin-top: 6px; }
+
+/* Detail panel */
+.detail-notes { font-size: 13px; color: #9ca3af; line-height: 1.6; margin-top: 10px; }
+.detail-link { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.25); border-radius: 8px; color: #818cf8; font-size: 12px; font-weight: 700; margin-top: 10px; }
+
+/* Countdown chip */
+.countdown { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel">
+const { useState, useEffect, useMemo } = React;
+
+const api = (url, opts) => fetch(url, { headers: {'Content-Type':'application/json'}, ...opts }).then(r => r.json());
+
+const HOT = { 3: ['🔥🔥🔥','Hardest to Get','hot-3'], 2: ['🔥🔥','Hard but Possible','hot-2'], 1: ['✨','GF Gem / Accessible','hot-1'] };
+
+function daysUntilBook(targetDate, daysAdvance) {
+  if (!daysAdvance || !targetDate) return null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const target = new Date(targetDate + 'T00:00:00');
+  const bookDay = new Date(target);
+  bookDay.setDate(bookDay.getDate() - daysAdvance);
+  bookDay.setHours(0,0,0,0);
+  return Math.floor((bookDay - today) / 86400000);
+}
+
+function BookDayBadge({ diff, daysAdvance }) {
+  if (daysAdvance === 0) return <span className="badge book-walkin">Walk-in Only</span>;
+  if (diff === null) return null;
+  if (diff < 0) return <span className="badge" style={{background:'rgba(100,100,100,0.1)',color:'#6b7280',border:'1px solid rgba(100,100,100,0.2)'}}>Window Passed</span>;
+  if (diff === 0) return <span className="badge book-now">🚨 BOOK TODAY</span>;
+  if (diff === 1) return <span className="badge book-2day">⚡ Book Tomorrow</span>;
+  if (diff <= 7) return <span className="badge book-soon-badge">📅 Book in {diff}d</span>;
+  return <span className="badge book-later">Book in {diff}d</span>;
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d + 'T00:00:00').toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' });
+}
+
+// ── Restaurant Card ───────────────────────────────────────────────────────────
+function RestaurantCard({ r, onWatch, onEdit }) {
+  const [expanded, setExpanded] = useState(false);
+  const hotInfo = HOT[r.hot_level] || HOT[2];
+
+  return (
+    <div className="r-card" onClick={() => setExpanded(e => !e)}>
+      <div className="r-card-top">
+        <div>
+          <div className="r-name">{r.name}</div>
+          <div className="r-meta">{r.neighborhood}{r.cuisine ? ` · ${r.cuisine}` : ''}</div>
+        </div>
+        <div style={{fontSize:20}}>{hotInfo[0]}</div>
+      </div>
+      <div className="r-badges">
+        <span className={`badge badge-${hotInfo[2]}`}>{hotInfo[1]}</span>
+        {r.gluten_free === 1 && <span className="badge badge-gf">🌿 GF Friendly</span>}
+        {r.platform && <span className="badge badge-platform">{r.platform}</span>}
+        {r.price_range && <span className="badge badge-price">{r.price_range}</span>}
+      </div>
+
+      {r.days_advance > 0 && (
+        <div className="r-advance">
+          ⏱ <strong>{r.days_advance} days out</strong>
+          {r.advance_notes && <div style={{marginTop:4, color:'#6b7280'}}>{r.advance_notes}</div>}
+        </div>
+      )}
+      {r.days_advance === 0 && (
+        <div className="r-advance">🚶 <strong>Walk-in / Call only</strong>{r.advance_notes && <div style={{marginTop:4,color:'#6b7280'}}>{r.advance_notes}</div>}</div>
+      )}
+
+      {expanded && (
+        <div onClick={e => e.stopPropagation()}>
+          {r.gluten_free === 1 && r.gf_notes && (
+            <div style={{marginTop:10,padding:'8px 10px',background:'rgba(52,211,153,0.07)',borderRadius:8,border:'1px solid rgba(52,211,153,0.15)',fontSize:12,color:'#34d399'}}>
+              🌿 <strong>GF Info:</strong> {r.gf_notes}
+            </div>
+          )}
+          {r.my_notes && <div className="detail-notes">📝 {r.my_notes}</div>}
+          <div style={{display:'flex',gap:8,flexWrap:'wrap',marginTop:10}}>
+            {r.booking_url && (
+              <a href={r.booking_url} target="_blank" rel="noreferrer" className="detail-link">🔗 Book on {r.platform} ↗</a>
+            )}
+            {r.platform === 'Resy' && r.booking_url && (
+              <a href={r.booking_url} target="_blank" rel="noreferrer" style={{display:'inline-flex',alignItems:'center',gap:6,padding:'7px 14px',background:'rgba(251,191,36,0.1)',border:'1px solid rgba(251,191,36,0.25)',borderRadius:8,color:'#fbbf24',fontSize:12,fontWeight:700,marginTop:0}}>
+                🔔 Turn On Resy Notify ↗
+              </a>
+            )}
+          </div>
+          {r.platform === 'Resy' && (
+            <div style={{marginTop:8,fontSize:11,color:'#6b7280',fontStyle:'italic'}}>
+              💡 If fully booked, hit "Notify" in the Resy app — you'll get a text the moment a spot opens
+            </div>
+          )}
+          <div className="r-actions">
+            <button className="btn btn-primary btn-sm" onClick={() => onWatch(r)}>+ Add to Watchlist</button>
+            <button className="btn btn-outline btn-sm" onClick={() => onEdit(r)}>Edit</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Watch Card ────────────────────────────────────────────────────────────────
+function WatchCard({ w, onUpdate, onDelete }) {
+  const diff = daysUntilBook(w.target_date, w.days_advance);
+  const cardClass = w.status === 'got_it' ? 'watch-card got-it'
+    : diff === 0 ? 'watch-card book-today'
+    : diff !== null && diff <= 3 ? 'watch-card book-soon'
+    : 'watch-card';
+
+  return (
+    <div className={cardClass}>
+      <div className="watch-top">
+        <div>
+          <div className="watch-name">{w.name}</div>
+          <div className="watch-date">
+            🍽 {fmtDate(w.target_date)} · Party of {w.party_size}
+            {w.neighborhood && <span style={{color:'#6b7280'}}> · {w.neighborhood}</span>}
+          </div>
+          {w.days_advance > 0 && (
+            <div style={{fontSize:11,color:'#6b7280',marginTop:3}}>
+              Booking window opens: {new Date(new Date(w.target_date+'T00:00:00').setDate(new Date(w.target_date+'T00:00:00').getDate() - w.days_advance)).toLocaleDateString('en-US',{month:'short',day:'numeric'})}
+            </div>
+          )}
+        </div>
+        <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:6}}>
+          <BookDayBadge diff={diff} daysAdvance={w.days_advance} />
+          {w.status === 'got_it' && <span className="badge" style={{background:'rgba(52,211,153,0.2)',color:'#34d399',border:'1px solid rgba(52,211,153,0.3)'}}>✅ Got It!</span>}
+        </div>
+      </div>
+      {w.advance_notes && <div style={{fontSize:11,color:'#6b7280',marginTop:6,lineHeight:1.5}}>{w.advance_notes}</div>}
+      {w.notes && <div style={{fontSize:12,color:'#9ca3af',marginTop:6,fontStyle:'italic'}}>📝 {w.notes}</div>}
+      {w.booking_url && <a href={w.booking_url} target="_blank" rel="noreferrer" className="detail-link" style={{fontSize:11}}>🔗 Book on {w.platform} ↗</a>}
+      <div style={{display:'flex',gap:6,marginTop:10}}>
+        {w.status !== 'got_it' && <button className="btn btn-sm btn-outline" style={{borderColor:'rgba(52,211,153,0.3)',color:'#34d399'}} onClick={() => onUpdate(w.id, 'got_it')}>✅ Got it!</button>}
+        {w.status === 'got_it' && <button className="btn btn-sm btn-ghost" onClick={() => onUpdate(w.id, 'watching')}>↩ Still watching</button>}
+        <button className="btn btn-sm btn-ghost" style={{color:'#ef4444'}} onClick={() => onDelete(w.id)}>Remove</button>
+      </div>
+    </div>
+  );
+}
+
+// ── Modals ────────────────────────────────────────────────────────────────────
+function WatchModal({ restaurant, onSave, onClose }) {
+  const [form, setForm] = useState({ target_date: '', party_size: 2, notes: '' });
+  const diff = form.target_date ? daysUntilBook(form.target_date, restaurant.days_advance) : null;
+
+  return (
+    <div className="overlay" onClick={onClose}>
+      <div className="modal" onClick={e => e.stopPropagation()}>
+        <h3>📡 Watch: {restaurant.name}</h3>
+        <div style={{background:'rgba(167,139,250,0.08)',border:'1px solid rgba(167,139,250,0.15)',borderRadius:10,padding:'10px 14px',marginBottom:16,fontSize:13,color:'#a78bfa'}}>
+          {restaurant.days_advance > 0 ? `Reservations open ${restaurant.days_advance} days in advance` : 'Walk-in or call only — set your target date and I\'ll remind you to go!'}
+        </div>
+        <div className="form-row">
+          <div className="form-group">
+            <label className="form-label">Target Date</label>
+            <input type="date" className="form-input" value={form.target_date} onChange={e => setForm(f=>({...f,target_date:e.target.value}))} />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Party Size</label>
+            <input type="number" className="form-input" value={form.party_size} min={1} max={20} onChange={e => setForm(f=>({...f,party_size:+e.target.value}))} />
+          </div>
+        </div>
+        {form.target_date && diff !== null && (
+          <div style={{marginBottom:14,padding:'10px 14px',borderRadius:10,background: diff===0?'rgba(239,68,68,0.1)':diff<=3?'rgba(249,115,22,0.1)':'rgba(52,211,153,0.07)',border:`1px solid ${diff===0?'rgba(239,68,68,0.3)':diff<=3?'rgba(249,115,22,0.3)':'rgba(52,211,153,0.2)'}`,fontSize:13,fontWeight:700,color:diff===0?'#f87171':diff<=3?'#fb923c':'#34d399'}}>
+            {diff === 0 ? '🚨 Book TODAY!' : diff < 0 ? '⚠️ Booking window has passed' : `📅 Start looking on ${new Date(new Date(form.target_date+'T00:00:00').setDate(new Date(form.target_date+'T00:00:00').getDate() - restaurant.days_advance)).toLocaleDateString('en-US',{weekday:'short',month:'long',day:'numeric'})} (${diff} days from now)`}
+          </div>
+        )}
+        <div className="form-group">
+          <label className="form-label">Notes</label>
+          <textarea className="form-input" value={form.notes} onChange={e => setForm(f=>({...f,notes:e.target.value}))} placeholder="Any notes about this visit..." rows={2} />
+        </div>
+        <div className="form-actions">
+          <button className="btn btn-primary" onClick={() => form.target_date && onSave({ restaurant_id: restaurant.id, ...form })}>Add to Watchlist</button>
+          <button className="btn btn-outline" onClick={onClose}>Cancel</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RestaurantModal({ restaurant, onSave, onClose }) {
+  const [form, setForm] = useState(restaurant ? { ...restaurant } : {
+    name:'', neighborhood:'', cuisine:'', platform:'Resy', booking_url:'', days_advance:'', advance_notes:'', gluten_free:0, gf_notes:'', my_notes:'', price_range:'$$$$', hot_level:2
+  });
+
+  return (
+    <div className="overlay" onClick={onClose}>
+      <div className="modal" onClick={e => e.stopPropagation()}>
+        <h3>{restaurant ? 'Edit Restaurant' : '+ Add Restaurant'}</h3>
+        <div className="form-row">
+          <div className="form-group"><label className="form-label">Name</label><input className="form-input" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} /></div>
+          <div className="form-group"><label className="form-label">Neighborhood</label><input className="form-input" value={form.neighborhood||''} onChange={e=>setForm(f=>({...f,neighborhood:e.target.value}))} /></div>
+        </div>
+        <div className="form-row">
+          <div className="form-group"><label className="form-label">Cuisine</label><input className="form-input" value={form.cuisine||''} onChange={e=>setForm(f=>({...f,cuisine:e.target.value}))} /></div>
+          <div className="form-group">
+            <label className="form-label">Platform</label>
+            <select className="form-input" value={form.platform||'Resy'} onChange={e=>setForm(f=>({...f,platform:e.target.value}))}>
+              <option>Resy</option><option>OpenTable</option><option>Tock</option><option>Phone</option><option>Walk-in</option><option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div className="form-row">
+          <div className="form-group"><label className="form-label">Days in Advance</label><input type="number" className="form-input" value={form.days_advance||''} onChange={e=>setForm(f=>({...f,days_advance:+e.target.value}))} placeholder="0 = walk-in" /></div>
+          <div className="form-group">
+            <label className="form-label">Difficulty</label>
+            <select className="form-input" value={form.hot_level||2} onChange={e=>setForm(f=>({...f,hot_level:+e.target.value}))}>
+              <option value={3}>🔥🔥🔥 Hardest to Get</option>
+              <option value={2}>🔥🔥 Hard but Possible</option>
+              <option value={1}>✨ GF Gem / Accessible</option>
+            </select>
+          </div>
+        </div>
+        <div className="form-group"><label className="form-label">Booking URL</label><input className="form-input" value={form.booking_url||''} onChange={e=>setForm(f=>({...f,booking_url:e.target.value}))} placeholder="https://resy.com/..." /></div>
+        <div className="form-group"><label className="form-label">Booking Tips</label><textarea className="form-input" rows={2} value={form.advance_notes||''} onChange={e=>setForm(f=>({...f,advance_notes:e.target.value}))} placeholder="When does it open? Any tricks?" /></div>
+        <div className="checkbox-row" onClick={() => setForm(f=>({...f,gluten_free:f.gluten_free?0:1}))}>
+          <input type="checkbox" checked={!!form.gluten_free} readOnly style={{accentColor:'#34d399',width:16,height:16}} />
+          <label>🌿 Gluten-Free Friendly</label>
+        </div>
+        {form.gluten_free ? <div className="form-group"><label className="form-label">GF Notes</label><textarea className="form-input" rows={2} value={form.gf_notes||''} onChange={e=>setForm(f=>({...f,gf_notes:e.target.value}))} placeholder="GF menu? Dedicated kitchen? Accommodating staff?" /></div> : null}
+        <div className="form-row">
+          <div className="form-group">
+            <label className="form-label">Price Range</label>
+            <select className="form-input" value={form.price_range||'$$$$'} onChange={e=>setForm(f=>({...f,price_range:e.target.value}))}>
+              <option>$</option><option>$$</option><option>$$$</option><option>$$$$</option><option>$$$$$</option>
+            </select>
+          </div>
+        </div>
+        <div className="form-group"><label className="form-label">My Notes</label><textarea className="form-input" rows={2} value={form.my_notes||''} onChange={e=>setForm(f=>({...f,my_notes:e.target.value}))} placeholder="Personal notes, tips, who to go with..." /></div>
+        <div className="form-actions">
+          <button className="btn btn-primary" onClick={() => form.name && onSave(form)}>Save</button>
+          <button className="btn btn-outline" onClick={onClose}>Cancel</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── App ───────────────────────────────────────────────────────────────────────
+function App() {
+  const [tab, setTab] = useState('restaurants');
+  const [restaurants, setRestaurants] = useState([]);
+  const [watchlist, setWatchlist] = useState([]);
+  const [alerts, setAlerts] = useState([]);
+  const [watchModal, setWatchModal] = useState(null);
+  const [editModal, setEditModal] = useState(null);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [filter, setFilter] = useState('all');
+  const [search, setSearch] = useState('');
+
+  const loadAll = async () => {
+    const [r, w, a] = await Promise.all([
+      api('/api/restaurants'), api('/api/watchlist'), api('/api/alert-check')
+    ]);
+    setRestaurants(r); setWatchlist(w); setAlerts(a);
+  };
+  useEffect(() => { loadAll(); }, []);
+
+  const addToWatch = async (data) => {
+    await api('/api/watchlist', { method:'POST', body: JSON.stringify(data) });
+    setWatchModal(null); loadAll();
+  };
+
+  const saveRestaurant = async (data) => {
+    if (editModal?.id) {
+      await api(`/api/restaurants/${editModal.id}`, { method:'PUT', body: JSON.stringify(data) });
+    } else {
+      await api('/api/restaurants', { method:'POST', body: JSON.stringify(data) });
+    }
+    setEditModal(null); setShowAddModal(false); loadAll();
+  };
+
+  const updateWatch = async (id, status) => {
+    const w = watchlist.find(x => x.id === id);
+    await api(`/api/watchlist/${id}`, { method:'PUT', body: JSON.stringify({ ...w, status }) });
+    loadAll();
+  };
+
+  const deleteWatch = async (id) => {
+    await api(`/api/watchlist/${id}`, { method:'DELETE' });
+    loadAll();
+  };
+
+  const filteredRestaurants = useMemo(() => {
+    let list = restaurants;
+    if (filter === 'gf') list = list.filter(r => r.gluten_free === 1);
+    if (filter === 'hot') list = list.filter(r => r.hot_level === 3);
+    if (filter === 'resy') list = list.filter(r => r.platform === 'Resy');
+    if (filter === 'opentable') list = list.filter(r => r.platform === 'OpenTable');
+    if (search) list = list.filter(r => r.name.toLowerCase().includes(search.toLowerCase()) || (r.neighborhood||'').toLowerCase().includes(search.toLowerCase()) || (r.cuisine||'').toLowerCase().includes(search.toLowerCase()));
+    return list;
+  }, [restaurants, filter, search]);
+
+  // Sort watchlist: book today first, then by how soon to book
+  const sortedWatchlist = useMemo(() => {
+    return [...watchlist].sort((a, b) => {
+      if (a.status === 'got_it' && b.status !== 'got_it') return 1;
+      if (b.status === 'got_it' && a.status !== 'got_it') return -1;
+      const da = daysUntilBook(a.target_date, a.days_advance) ?? 9999;
+      const db2 = daysUntilBook(b.target_date, b.days_advance) ?? 9999;
+      return da - db2;
+    });
+  }, [watchlist]);
+
+  const bookToday = sortedWatchlist.filter(w => w.status !== 'got_it' && daysUntilBook(w.target_date, w.days_advance) === 0);
+  const bookSoon = sortedWatchlist.filter(w => w.status !== 'got_it' && daysUntilBook(w.target_date, w.days_advance) > 0 && daysUntilBook(w.target_date, w.days_advance) <= 7);
+  const upcoming = sortedWatchlist.filter(w => w.status !== 'got_it' && (daysUntilBook(w.target_date, w.days_advance) === null || daysUntilBook(w.target_date, w.days_advance) > 7));
+  const gotIt = sortedWatchlist.filter(w => w.status === 'got_it');
+
+  return (
+    <div>
+      <nav className="navbar">
+        <h1>📡 Reservation <span>Radar</span></h1>
+        <div className="nav-tabs">
+          <button className={`nav-tab ${tab==='watchlist'?'active':''}`} onClick={()=>setTab('watchlist')}>My Watchlist {watchlist.filter(w=>w.status!=='got_it').length > 0 && <span style={{marginLeft:4,background:'rgba(167,139,250,0.2)',padding:'1px 6px',borderRadius:10,fontSize:10}}>{watchlist.filter(w=>w.status!=='got_it').length}</span>}</button>
+          <button className={`nav-tab ${tab==='restaurants'?'active':''}`} onClick={()=>setTab('restaurants')}>All Restaurants</button>
+        </div>
+      </nav>
+
+      <div className="container">
+
+        {/* Alerts */}
+        {alerts.length > 0 && (
+          <div>
+            {alerts.map(a => (
+              <div key={a.id} className="alert-banner">
+                <div className="alert-icon">🚨</div>
+                <div className="alert-text">
+                  <div className="alert-title">{a.days_until_book === 0 ? 'Book TODAY:' : `Book Tomorrow:`} {a.name}</div>
+                  <div className="alert-sub">Your target date is {fmtDate(a.target_date)} · Window opens {a.days_advance} days out{a.booking_url ? ` · ` : ''}{a.booking_url && <a href={a.booking_url} target="_blank" rel="noreferrer" style={{color:'#fed7aa',textDecoration:'underline'}}>Book now ↗</a>}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {tab === 'watchlist' && (
+          <div>
+            <div className="page-header">
+              <div>
+                <h2>My Watchlist</h2>
+                <p>Restaurants you want to visit — sorted by when to start booking</p>
+              </div>
+              <button className="btn btn-primary" onClick={() => setTab('restaurants')}>+ Add from List</button>
+            </div>
+
+            {sortedWatchlist.length === 0 && (
+              <div className="empty">
+                <div className="empty-icon">📡</div>
+                <h3>Nothing on your radar yet</h3>
+                <p>Browse All Restaurants and add places you want to visit</p>
+              </div>
+            )}
+
+            {bookToday.length > 0 && <>
+              <div className="section-title">🚨 Book Today</div>
+              {bookToday.map(w => <WatchCard key={w.id} w={w} onUpdate={updateWatch} onDelete={deleteWatch} />)}
+            </>}
+            {bookSoon.length > 0 && <>
+              <div className="section-title">⚡ Book This Week</div>
+              {bookSoon.map(w => <WatchCard key={w.id} w={w} onUpdate={updateWatch} onDelete={deleteWatch} />)}
+            </>}
+            {upcoming.length > 0 && <>
+              <div className="section-title">📅 Upcoming</div>
+              {upcoming.map(w => <WatchCard key={w.id} w={w} onUpdate={updateWatch} onDelete={deleteWatch} />)}
+            </>}
+            {gotIt.length > 0 && <>
+              <div className="section-title">✅ Got The Reservation</div>
+              {gotIt.map(w => <WatchCard key={w.id} w={w} onUpdate={updateWatch} onDelete={deleteWatch} />)}
+            </>}
+          </div>
+        )}
+
+        {tab === 'restaurants' && (
+          <div>
+            <div className="page-header">
+              <div>
+                <h2>All Restaurants</h2>
+                <p>NYC's hottest spots — click any card for details & booking tips</p>
+              </div>
+              <button className="btn btn-primary" onClick={() => { setEditModal(null); setShowAddModal(true); }}>+ Add Restaurant</button>
+            </div>
+
+            <div className="filter-bar">
+              <input className="filter-search" placeholder="Search..." value={search} onChange={e=>setSearch(e.target.value)} />
+              <span style={{fontSize:12,color:'#6b7280',padding:'6px 12px',background:'rgba(255,255,255,0.04)',borderRadius:20,border:'1px solid rgba(255,255,255,0.08)',fontWeight:700}}>
+                {filteredRestaurants.length === restaurants.length ? `📍 ${restaurants.length} restaurants` : `📍 ${filteredRestaurants.length} of ${restaurants.length}`}
+              </span>
+              {['all','gf','hot','resy','opentable'].map(f => (
+                <button key={f} className={`filter-btn ${filter===f?'active':''}`} onClick={()=>setFilter(f)}>
+                  {f==='all'?'All':f==='gf'?'🌿 GF Friendly':f==='hot'?'🔥🔥🔥 Hardest':f==='resy'?'Resy':'OpenTable'}
+                </button>
+              ))}
+            </div>
+
+            {[3,2,1].map(level => {
+              const group = filteredRestaurants.filter(r => r.hot_level === level);
+              if (!group.length) return null;
+              const info = HOT[level];
+              return (
+                <div key={level}>
+                  <div className="section-title">{info[0]} {info[1]}</div>
+                  <div className="restaurant-grid">
+                    {group.map(r => (
+                      <RestaurantCard key={r.id} r={r} onWatch={setWatchModal} onEdit={r => setEditModal(r)} />
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {watchModal && <WatchModal restaurant={watchModal} onSave={addToWatch} onClose={()=>setWatchModal(null)} />}
+      {(editModal || showAddModal) && <RestaurantModal restaurant={editModal} onSave={saveRestaurant} onClose={()=>{setEditModal(null);setShowAddModal(false);}} />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

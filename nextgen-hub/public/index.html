@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>NextGen Hub — VIP Medical Group</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#f0f7f4;color:#1e293b;min-height:100vh}
+.navbar{background:linear-gradient(135deg,#065f46,#047857);padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(6,95,70,0.3)}
+.navbar h1{font-size:20px;font-weight:900;color:white;letter-spacing:-0.5px}
+.navbar h1 span{color:#6ee7b7}
+.navbar-sub{font-size:12px;color:#6ee7b7;margin-top:2px;font-weight:600}
+.tab-bar{background:#065f46;padding:0 20px;display:flex;gap:2px;align-items:flex-end;overflow-x:auto;scrollbar-width:none}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab{padding:8px 18px 10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;border:none;cursor:pointer;border-radius:10px 10px 0 0;transition:all 0.15s;white-space:nowrap;color:rgba(255,255,255,0.65);background:rgba(255,255,255,0.08);margin-top:6px}
+.tab:hover{background:rgba(255,255,255,0.18);color:white}
+.tab.active{background:#f0f7f4;color:#065f46;margin-top:4px;padding-bottom:12px}
+.container{max-width:1100px;margin:0 auto;padding:28px 24px}
+.stats-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px}
+.stat-card{background:white;border-radius:12px;padding:16px 20px;box-shadow:0 1px 8px rgba(0,0,0,0.06);min-width:120px}
+.stat-num{font-size:28px;font-weight:900;color:#065f46}
+.stat-label{font-size:12px;color:#64748b;font-weight:700;margin-top:2px}
+.search-hero{background:white;border-radius:16px;padding:28px;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.search-hero h2{font-size:22px;font-weight:900;color:#065f46;margin-bottom:6px}
+.search-hero p{font-size:13px;color:#64748b;margin-bottom:20px}
+.search-box{display:flex;gap:10px;flex-wrap:wrap}
+.search-main{flex:2;min-width:200px;padding:12px 16px;border:2px solid #e2e8f0;border-radius:10px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:600;transition:border-color 0.15s}
+.search-main:focus{outline:none;border-color:#047857}
+.filter{padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;background:white;color:#374151;cursor:pointer}
+.filter:focus{outline:none;border-color:#047857}
+.btn{padding:10px 20px;border-radius:10px;border:none;font-family:'Nunito',sans-serif;font-weight:800;cursor:pointer;font-size:14px;transition:all 0.15s}
+.btn-primary{background:#047857;color:white}
+.btn-primary:hover{background:#065f46}
+.btn-outline{background:white;color:#374151;border:2px solid #e2e8f0}
+.btn-outline:hover{border-color:#047857;color:#047857}
+.btn-sm{padding:7px 14px;font-size:13px}
+.btn-red{background:none;border:none;color:#ef4444;cursor:pointer;font-size:16px;padding:4px 8px}
+.results-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.results-count{font-size:13px;font-weight:800;color:#64748b}
+.article-card{background:white;border-radius:14px;margin-bottom:12px;box-shadow:0 1px 8px rgba(0,0,0,0.06);overflow:hidden;transition:box-shadow 0.2s}
+.article-card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.1)}
+.article-header{padding:18px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.article-title{font-size:16px;font-weight:900;color:#1e293b;margin-bottom:6px}
+.article-summary{font-size:13px;color:#64748b;line-height:1.5}
+.article-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:800;white-space:nowrap}
+.badge-cat{background:#d1fae5;color:#065f46}
+.badge-role{background:#dbeafe;color:#1e40af}
+.badge-mod{background:#f3e8ff;color:#6b21a8}
+.article-detail{padding:0 20px 20px;border-top:1px solid #f1f5f9}
+.detail-section{margin-top:16px}
+.detail-label{font-size:11px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
+.detail-value{font-size:14px;color:#374151;line-height:1.7;white-space:pre-wrap}
+.tips-box{background:#f0fdf4;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin-top:4px}
+.mistakes-box{background:#fff7ed;border-left:4px solid #f97316;border-radius:0 8px 8px 0;padding:12px 16px;margin-top:4px}
+.card-actions{display:flex;gap:8px;margin-top:16px;padding-top:12px;border-top:1px solid #f1f5f9}
+.empty{text-align:center;padding:60px 20px;color:#94a3b8}
+.empty-icon{font-size:48px;margin-bottom:12px}
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:white;border-radius:20px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto;padding:32px}
+.modal h2{font-size:20px;font-weight:900;color:#065f46;margin-bottom:24px}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:12px;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px}
+.form-input{width:100%;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;transition:border-color 0.15s}
+.form-input:focus{outline:none;border-color:#047857}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-actions{display:flex;gap:10px;margin-top:24px}
+.section-divider{font-size:11px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:0.08em;padding:16px 0 8px;border-top:1px solid #f1f5f9;margin-top:8px}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+const CATEGORIES = ['General','Scheduling','Clinical Documentation','Billing','Orders','Reporting','Patient Portal','Admin','Troubleshooting'];
+const ROLES = ['All Staff','Front Desk','Medical Assistant','Provider','Biller','Superuser','Manager'];
+const MODULES = ['General','Scheduling','Chart','E-Prescribing','Billing','Lab/Orders','Reporting','Patient Portal','Admin'];
+
+async function api(path, opts={}) {
+  const res = await fetch(path, { headers:{'Content-Type':'application/json'}, ...opts });
+  return res.json();
+}
+
+function ArticleModal({ article, onSave, onClose }) {
+  const [form, setForm] = useState(article || { title:'', category:'General', role:'All Staff', module:'General', summary:'', content:'', tips:'', common_mistakes:'', video_url:'' });
+  const set = (k,v) => setForm(f=>({...f,[k]:v}));
+  return (
+    <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="modal">
+        <h2>{article ? '✏️ Edit Article' : '✦ New Article'}</h2>
+        <div className="form-group"><label className="form-label">Title *</label><input className="form-input" value={form.title} onChange={e=>set('title',e.target.value)} placeholder="e.g. How to Schedule a New Patient Appointment" /></div>
+        <div className="form-grid">
+          <div className="form-group"><label className="form-label">Category</label>
+            <select className="form-input" value={form.category} onChange={e=>set('category',e.target.value)}>
+              {CATEGORIES.map(c=><option key={c}>{c}</option>)}
+            </select>
+          </div>
+          <div className="form-group"><label className="form-label">Role</label>
+            <select className="form-input" value={form.role||''} onChange={e=>set('role',e.target.value)}>
+              <option value="">All Roles</option>
+              {ROLES.map(r=><option key={r}>{r}</option>)}
+            </select>
+          </div>
+        </div>
+        <div className="form-group"><label className="form-label">Module</label>
+          <select className="form-input" value={form.module||''} onChange={e=>set('module',e.target.value)}>
+            <option value="">Select module...</option>
+            {MODULES.map(m=><option key={m}>{m}</option>)}
+          </select>
+        </div>
+        <div className="form-group"><label className="form-label">Summary <span style={{fontWeight:400,color:'#64748b'}}>(one-liner shown on card)</span></label><input className="form-input" value={form.summary||''} onChange={e=>set('summary',e.target.value)} placeholder="Brief description of what this article covers" /></div>
+
+        <div className="section-divider">Content</div>
+        <div className="form-group"><label className="form-label">Step-by-Step Instructions</label><textarea className="form-input" rows={8} value={form.content||''} onChange={e=>set('content',e.target.value)} placeholder="Write the full instructions here. Use numbered steps for clarity.&#10;&#10;1. First step&#10;2. Second step&#10;3. Third step" /></div>
+        <div className="form-group"><label className="form-label">💡 Tips & Shortcuts</label><textarea className="form-input" rows={3} value={form.tips||''} onChange={e=>set('tips',e.target.value)} placeholder="Helpful tips, keyboard shortcuts, things that make this easier..." /></div>
+        <div className="form-group"><label className="form-label">⚠️ Common Mistakes</label><textarea className="form-input" rows={3} value={form.common_mistakes||''} onChange={e=>set('common_mistakes',e.target.value)} placeholder="What do people get wrong? What should they watch out for?" /></div>
+        <div className="form-group"><label className="form-label">🎥 Video URL <span style={{fontWeight:400,color:'#64748b'}}>(optional)</span></label><input className="form-input" value={form.video_url||''} onChange={e=>set('video_url',e.target.value)} placeholder="https://..." /></div>
+
+        <div className="form-actions">
+          <button className="btn btn-primary" onClick={()=>form.title&&onSave(form)}>Save Article</button>
+          <button className="btn btn-outline" onClick={onClose}>Cancel</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ArticleCard({ a, onEdit, onDelete, defaultOpen }) {
+  const [open, setOpen] = useState(defaultOpen || false);
+  return (
+    <div className="article-card">
+      <div className="article-header" onClick={()=>setOpen(o=>!o)}>
+        <div style={{flex:1}}>
+          <div className="article-title">{a.title}</div>
+          {a.summary && <div className="article-summary">{a.summary}</div>}
+          <div className="article-badges">
+            <span className="badge badge-cat">📁 {a.category}</span>
+            {a.role && <span className="badge badge-role">👤 {a.role}</span>}
+            {a.module && <span className="badge badge-mod">🔧 {a.module}</span>}
+          </div>
+        </div>
+        <span style={{color:'#94a3b8',fontSize:12,flexShrink:0}}>{open?'▲':'▼'}</span>
+      </div>
+
+      {open && (
+        <div className="article-detail">
+          {a.content && (
+            <div className="detail-section">
+              <div className="detail-label">📋 Instructions</div>
+              <div className="detail-value">{a.content}</div>
+            </div>
+          )}
+          {a.tips && (
+            <div className="detail-section">
+              <div className="detail-label">💡 Tips & Shortcuts</div>
+              <div className="tips-box detail-value">{a.tips}</div>
+            </div>
+          )}
+          {a.common_mistakes && (
+            <div className="detail-section">
+              <div className="detail-label">⚠️ Common Mistakes</div>
+              <div className="mistakes-box detail-value">{a.common_mistakes}</div>
+            </div>
+          )}
+          {a.video_url && (
+            <div className="detail-section">
+              <div className="detail-label">🎥 Video Reference</div>
+              <a href={a.video_url} target="_blank" rel="noreferrer" style={{color:'#047857',fontWeight:700,fontSize:14}}>Watch Video ↗</a>
+            </div>
+          )}
+          <div className="card-actions">
+            <button className="btn btn-outline btn-sm" onClick={()=>onEdit(a)}>✏️ Edit</button>
+            <button className="btn-red" onClick={()=>onDelete(a.id)}>🗑</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function VeinProcedureTemplate() {
+  const EMPTY = {side:'Right',vein:'',procedure:'',access:'',pregnant:'Not Pregnant',sonographer:'',hpi:'',anesthesia_none:false,tumescent_dose:'',tumescent_units:'mL',catheter:'',vein_length:'',pullbacks:'',length_ablated:'',dist_junction:'',supplies:'',prescan_notes:'',proc_notes:'',findings:'',post_instructions:'',dressing:'',followup_weeks:'',followup_prn:false,followup_sooner:false,aborted:false,consent:false,risks:false,questions:false,prepped:false,pt_id:false,site_confirmed:false};
+  const [form, setForm] = useState(EMPTY);
+  const [submitted, setSubmitted] = useState(false);
+  const set = (k,v) => setForm(f=>({...f,[k]:v}));
+
+  const CPT = {'Radiofrequency':'36475','Laser':'36478','Varithena':'36478','VenaSeal':'36483'};
+  const veins = ['Great Saphenous Vein (GSV)','Duplicate Great Saphenous Vein','Small Saphenous Vein (SSV)'];
+  const accesses = ['Proximal Thigh','Mid-Thigh','Distal Thigh','Below Knee','Mid-Calf'];
+  const catheters = ['3CM','7CM','8CM'];
+
+  const SectionHeader = ({children}) => <div style={{fontSize:12,fontWeight:900,color:'white',background:'#047857',padding:'8px 14px',borderRadius:8,marginBottom:12,marginTop:20,letterSpacing:'0.03em'}}>{children}</div>;
+  const Field = ({label,req,hint,children}) => (
+    <div style={{marginBottom:14}}>
+      <div style={{fontSize:11,fontWeight:900,color:'#065f46',textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:4}}>
+        {label}{req&&<span style={{color:'#ef4444',marginLeft:3}}>*</span>}
+        {hint&&<span style={{fontWeight:400,color:'#94a3b8',textTransform:'none',marginLeft:6,fontSize:10}}>{hint}</span>}
+      </div>
+      {children}
+    </div>
+  );
+  const Radio = ({name,value,label,checked,onChange,color='#047857',bg='#d1fae5'}) => (
+    <label style={{display:'flex',alignItems:'center',gap:8,padding:'7px 11px',borderRadius:8,cursor:'pointer',background:checked?bg:'#f8fafc',border:`2px solid ${checked?color:'#e2e8f0'}`,fontWeight:checked?800:600,fontSize:13,marginBottom:5,transition:'all 0.15s'}}>
+      <input type="radio" name={name} value={value} checked={checked} onChange={onChange} style={{accentColor:color}} />{label}
+    </label>
+  );
+  const Check = ({label,checked,onChange,color='#047857',bg='#d1fae5'}) => (
+    <label style={{display:'flex',alignItems:'center',gap:8,padding:'7px 11px',borderRadius:8,cursor:'pointer',background:checked?bg:'#f8fafc',border:`2px solid ${checked?color:'#e2e8f0'}`,fontWeight:checked?800:600,fontSize:13,marginBottom:5,transition:'all 0.15s'}}>
+      <input type="checkbox" checked={checked} onChange={onChange} style={{width:15,height:15,accentColor:color}} />{label}
+    </label>
+  );
+  const TextInput = ({k,placeholder,type='text'}) => <input type={type} style={{width:'100%',padding:'9px 12px',border:'2px solid #e2e8f0',borderRadius:8,fontFamily:'Nunito',fontSize:13,fontWeight:600}} value={form[k]||''} onChange={e=>set(k,e.target.value)} placeholder={placeholder} />;
+  const TextArea = ({k,placeholder,rows=3}) => <textarea style={{width:'100%',padding:'9px 12px',border:'2px solid #e2e8f0',borderRadius:8,fontFamily:'Nunito',fontSize:13,fontWeight:600,resize:'vertical'}} rows={rows} value={form[k]||''} onChange={e=>set(k,e.target.value)} placeholder={placeholder} />;
+
+  if (submitted) return (
+    <div style={{background:'white',borderRadius:16,padding:32,boxShadow:'0 2px 12px rgba(0,0,0,0.06)'}}>
+      <div style={{textAlign:'center',marginBottom:24}}><div style={{fontSize:40,marginBottom:8}}>✅</div><h3 style={{fontSize:18,fontWeight:900,color:'#065f46'}}>Note Checklist Complete</h3><div style={{color:'#64748b',fontSize:13,marginTop:4}}>{form.side} {form.vein}</div></div>
+      <div style={{background:'#f0fdf4',borderRadius:12,padding:20,marginBottom:20}}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12,fontSize:13}}>
+          {[['Procedure',`${form.procedure} (CPT ${CPT[form.procedure]||'—'})`],['Access',form.access],['Catheter',form.catheter],['Vein Length',form.vein_length?`${form.vein_length} cm`:'—'],['Pullbacks',form.pullbacks||'—'],['Length Ablated',form.length_ablated?`${form.length_ablated} cm`:'—'],['Dist. to Junction',form.dist_junction?`${form.dist_junction} cm`:'—'],['Tumescent',form.tumescent_dose?`${form.tumescent_dose} ${form.tumescent_units}`:'—'],['Sonographer/MA',form.sonographer||'—'],['Pre-Scan',form.prescan_notes?'✅ Documented':'—'],['Aborted',form.aborted?'⚠️ YES':'No'],['Pregnancy',form.pregnant]].map(([k,v])=>(
+            <div key={k}><div style={{fontSize:10,fontWeight:900,color:'#94a3b8',textTransform:'uppercase'}}>{k}</div><div style={{fontWeight:700,color:'#1e293b',marginTop:2}}>{v}</div></div>
+          ))}
+        </div>
+        <div style={{marginTop:12,paddingTop:12,borderTop:'1px solid #d1fae5',fontSize:12}}>
+          <strong>Pre-Procedure Care:</strong> {[form.consent&&'Consent',form.risks&&'Risks explained',form.questions&&'Q&A done',form.prepped&&'Prepped/draped',form.pt_id&&'Pt identified',form.site_confirmed&&'Site confirmed'].filter(Boolean).join(' · ')||'None checked'}
+        </div>
+      </div>
+      <button className="btn btn-primary" onClick={()=>{setForm(EMPTY);setSubmitted(false);}}>Start New Note</button>
+    </div>
+  );
+
+  return (
+    <div style={{background:'white',borderRadius:16,padding:28,boxShadow:'0 2px 12px rgba(0,0,0,0.06)'}}>
+      <h3 style={{fontSize:18,fontWeight:900,color:'#065f46',marginBottom:4}}>🩺 Vein Procedure Note — Field Reference</h3>
+      <p style={{fontSize:13,color:'#64748b',marginBottom:16}}>Reference checklist for completing the procedure note in NextGen. All required fields marked with *.</p>
+
+      <div style={{marginBottom:24}}>
+        <div style={{fontSize:11,fontWeight:900,color:'#94a3b8',textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:8}}>📄 Original NextGen Template</div>
+        <img src="/vein-template-1.png" alt="Vein Procedure Template" style={{width:'100%',borderRadius:10,border:'2px solid #e2e8f0',boxShadow:'0 2px 8px rgba(0,0,0,0.08)',cursor:'pointer'}} onClick={e=>window.open(e.target.src,'_blank')} title="Click to view full size" />
+        <div style={{fontSize:11,color:'#94a3b8',marginTop:4,textAlign:'center'}}>Click to view full size</div>
+      </div>
+
+      {/* Pre-procedure care */}
+      <SectionHeader>☑️ Pre-Procedure Care Checklist</SectionHeader>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:6}}>
+        <Check label="Consent was obtained" checked={form.consent} onChange={e=>set('consent',e.target.checked)} />
+        <Check label="Procedure/risks were explained" checked={form.risks} onChange={e=>set('risks',e.target.checked)} />
+        <Check label="Questions were answered" checked={form.questions} onChange={e=>set('questions',e.target.checked)} />
+        <Check label="Prepped and draped" checked={form.prepped} onChange={e=>set('prepped',e.target.checked)} />
+        <Check label="Correct patient identified" checked={form.pt_id} onChange={e=>set('pt_id',e.target.checked)} />
+        <Check label="Correct site and side confirmed" checked={form.site_confirmed} onChange={e=>set('site_confirmed',e.target.checked)} />
+      </div>
+
+      {/* Provider / Vein / Procedure */}
+      <SectionHeader>🩺 Procedure Details</SectionHeader>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <div>
+          <Field label="Side" req><div style={{display:'flex',gap:8}}>
+            {['Right','Left'].map(s=><button key={s} onClick={()=>set('side',s)} style={{flex:1,padding:'9px',borderRadius:8,border:`2px solid ${form.side===s?'#047857':'#e2e8f0'}`,background:form.side===s?'#d1fae5':'white',fontWeight:800,fontSize:14,cursor:'pointer',color:form.side===s?'#065f46':'#374151'}}>{s}</button>)}
+          </div></Field>
+          <Field label="Vein" req>
+            {veins.map(v=><Radio key={v} name="vein" value={v} label={`${form.side} ${v}`} checked={form.vein===v} onChange={()=>set('vein',v)} />)}
+          </Field>
+          <Field label="Procedure Type + CPT" req>
+            {Object.entries(CPT).map(([p,c])=><Radio key={p} name="proc" value={p} label={`${p} — ${c}`} checked={form.procedure===p} onChange={()=>set('procedure',p)} />)}
+          </Field>
+        </div>
+        <div>
+          <Field label="Access Site" req>
+            {accesses.map(a=><Radio key={a} name="access" value={a} label={a} checked={form.access===a} onChange={()=>set('access',a)} />)}
+          </Field>
+          <Field label="Pregnancy Status" req>
+            <Radio name="preg" value="Not Pregnant" label="Not Pregnant" checked={form.pregnant==='Not Pregnant'} onChange={()=>set('pregnant','Not Pregnant')} />
+          </Field>
+          <Field label="Sonographer / MA">
+            <TextInput k="sonographer" placeholder="Name of assisting MA or sonographer" />
+          </Field>
+        </div>
+      </div>
+
+      {/* HPI */}
+      <SectionHeader>📝 HPI / Primary Complaint</SectionHeader>
+      <Field label="History of Present Illness" req>
+        <TextArea k="hpi" rows={4} placeholder="Document patient primary complaint, symptom duration, severity, prior conservative treatment history..." />
+      </Field>
+
+      {/* Anesthesia */}
+      <SectionHeader>💉 Anesthesia</SectionHeader>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12}}>
+        <Field label="None"><Check label="No anesthesia used" checked={form.anesthesia_none} onChange={e=>set('anesthesia_none',e.target.checked)} /></Field>
+        <Field label="Tumescent Dose"><TextInput k="tumescent_dose" placeholder="e.g. 150" type="number" /></Field>
+        <Field label="Units"><select style={{width:'100%',padding:'9px 12px',border:'2px solid #e2e8f0',borderRadius:8,fontFamily:'Nunito',fontSize:13,fontWeight:600}} value={form.tumescent_units} onChange={e=>set('tumescent_units',e.target.value)}><option>mL</option><option>cc</option></select></Field>
+      </div>
+
+      {/* Catheter + Vein Measurements */}
+      <SectionHeader>📏 Catheter & Vein Measurements</SectionHeader>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <Field label="Catheter Size" req>
+          <div style={{display:'flex',gap:8}}>
+            {catheters.map(c=><button key={c} onClick={()=>set('catheter',c)} style={{flex:1,padding:'9px',borderRadius:8,border:`2px solid ${form.catheter===c?'#047857':'#e2e8f0'}`,background:form.catheter===c?'#d1fae5':'white',fontWeight:800,fontSize:13,cursor:'pointer',color:form.catheter===c?'#065f46':'#374151'}}>{c}</button>)}
+          </div>
+        </Field>
+        <Field label="Distance from Catheter to Junction (cm)" hint="Min 1.5 cm" req>
+          <TextInput k="dist_junction" placeholder="e.g. 2.0" type="number" />
+        </Field>
+        <Field label="Length of Vein Treated (cm)">
+          <TextInput k="vein_length" placeholder="e.g. 30" type="number" />
+        </Field>
+        <Field label="Pullbacks">
+          <TextInput k="pullbacks" placeholder="Number of pullbacks" type="number" />
+        </Field>
+        <Field label="Length of Vein Ablated (cm)">
+          <TextInput k="length_ablated" placeholder="e.g. 28" type="number" />
+        </Field>
+        <Field label="Extra Supplies">
+          <TextInput k="supplies" placeholder="Any additional supplies used" />
+        </Field>
+      </div>
+
+      {/* Notes */}
+      <SectionHeader>📋 Documentation</SectionHeader>
+      <Field label="Pre-Procedure Scan Notes" req>
+        <TextArea k="prescan_notes" rows={3} placeholder="Document pre-procedure duplex ultrasound findings..." />
+      </Field>
+      <Field label="Procedure Notes">
+        <TextArea k="proc_notes" rows={3} placeholder="Procedure notes..." />
+      </Field>
+      <Field label="Findings">
+        <TextArea k="findings" rows={3} placeholder="Intra-procedure findings..." />
+      </Field>
+
+      {/* Post Procedure */}
+      <SectionHeader>🏥 Post Procedure</SectionHeader>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <Field label="Post-Procedure Instructions">
+          <TextArea k="post_instructions" rows={3} placeholder="Patient instructions after procedure..." />
+        </Field>
+        <Field label="Dressing / Wound Care">
+          <TextArea k="dressing" rows={3} placeholder="Dressing and wound care instructions..." />
+        </Field>
+      </div>
+      <Field label="Follow-Up">
+        <div style={{display:'flex',gap:8,flexWrap:'wrap',alignItems:'center',marginBottom:8}}>
+          <span style={{fontSize:13,fontWeight:700,color:'#374151'}}>Return in</span>
+          <input type="number" style={{width:70,padding:'7px 10px',border:'2px solid #e2e8f0',borderRadius:8,fontFamily:'Nunito',fontSize:13,fontWeight:600}} value={form.followup_weeks} onChange={e=>set('followup_weeks',e.target.value)} placeholder="wks" />
+          <span style={{fontSize:13,fontWeight:700,color:'#374151'}}>weeks</span>
+        </div>
+        <Check label="Sooner if symptoms persist/worsen" checked={form.followup_sooner} onChange={e=>set('followup_sooner',e.target.checked)} />
+        <Check label="PRN (as needed)" checked={form.followup_prn} onChange={e=>set('followup_prn',e.target.checked)} />
+      </Field>
+
+      {/* Aborted */}
+      <Check label="⚠️ Aborted Procedure" checked={form.aborted} onChange={e=>set('aborted',e.target.checked)} color='#f59e0b' bg='#fef3c7' />
+
+      <div style={{marginTop:20,display:'flex',gap:10}}>
+        <button className="btn btn-primary" onClick={()=>{const req=form.vein&&form.procedure&&form.access&&form.catheter&&form.prescan_notes&&form.dist_junction&&form.pregnant;if(req)setSubmitted(true);else alert('Please complete all required fields (*)');}} style={{background:'#047857'}}>✅ Mark Complete</button>
+        <button className="btn btn-outline" onClick={()=>setForm(EMPTY)}>🔄 Reset</button>
+      </div>
+    </div>
+  );
+}
+
+function VarithenaTemplate() {
+  const EMPTY = {side:'Right',vein:'',access:'',pregnant:'Not Pregnant',sonographer:'',hpi:'',foam_volume:'',foam_conc:'1%',injection_sites:'',total_volume:'',prescan_notes:'',proc_notes:'',findings:'',post_instructions:'',dressing:'',followup_weeks:'',followup_prn:false,followup_sooner:false,aborted:false,consent:false,risks:false,questions:false,prepped:false,pt_id:false,site_confirmed:false,standing_post:false,compression:false};
+  const [form, setForm] = useState(EMPTY);
+  const [submitted, setSubmitted] = useState(false);
+  const set = (k,v) => setForm(f=>({...f,[k]:v}));
+
+  const veins = ['Great Saphenous Vein (GSV)','Accessory GSV','Small Saphenous Vein (SSV)','GSV + Tributaries'];
+  const accesses = ['Proximal Thigh','Mid-Thigh','Distal Thigh','Below Knee','Mid-Calf'];
+  const concentrations = ['0.5%','1%','2%'];
+
+  const SectionHeader = ({children}) => <div style={{fontSize:12,fontWeight:900,color:'white',background:'#7c3aed',padding:'8px 14px',borderRadius:8,marginBottom:12,marginTop:20,letterSpacing:'0.03em'}}>{children}</div>;
+  const Field = ({label,req,hint,children}) => (
+    <div style={{marginBottom:14}}>
+      <div style={{fontSize:11,fontWeight:900,color:'#6d28d9',textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:4}}>
+        {label}{req&&<span style={{color:'#ef4444',marginLeft:3}}>*</span>}
+        {hint&&<span style={{fontWeight:400,color:'#94a3b8',textTransform:'none',marginLeft:6,fontSize:10}}>{hint}</span>}
+      </div>
+      {children}
+    </div>
+  );
+  const Radio = ({name,value,label,checked,onChange}) => (
+    <label style={{display:'flex',alignItems:'center',gap:8,padding:'7px 11px',borderRadius:8,cursor:'pointer',background:checked?'#ede9fe':'#f8fafc',border:`2px solid ${checked?'#7c3aed':'#e2e8f0'}`,fontWeight:checked?800:600,fontSize:13,marginBottom:5,transition:'all 0.15s'}}>
+      <input type="radio" name={name} value={value} checked={checked} onChange={onChange} style={{accentColor:'#7c3aed'}} />{label}
+    </label>
+  );
+  const Check = ({label,checked,onChange,warn}) => (
+    <label style={{display:'flex',alignItems:'center',gap:8,padding:'7px 11px',borderRadius:8,cursor:'pointer',background:checked?(warn?'#fef3c7':'#ede9fe'):'#f8fafc',border:`2px solid ${checked?(warn?'#f59e0b':'#7c3aed'):'#e2e8f0'}`,fontWeight:checked?800:600,fontSize:13,marginBottom:5,transition:'all 0.15s'}}>
+      <input type="checkbox" checked={checked} onChange={onChange} style={{width:15,height:15,accentColor:warn?'#f59e0b':'#7c3aed'}} />{label}
+    </label>
+  );
+  const TextInput = ({k,placeholder,type='text'}) => <input type={type} style={{width:'100%',padding:'9px 12px',border:'2px solid #e2e8f0',borderRadius:8,fontFamily:'Nunito',fontSize:13,fontWeight:600}} value={form[k]||''} onChange={e=>set(k,e.target.value)} placeholder={placeholder} />;
+  const TextArea = ({k,placeholder,rows=3}) => <textarea style={{width:'100%',padding:'9px 12px',border:'2px solid #e2e8f0',borderRadius:8,fontFamily:'Nunito',fontSize:13,fontWeight:600,resize:'vertical'}} rows={rows} value={form[k]||''} onChange={e=>set(k,e.target.value)} placeholder={placeholder} />;
+
+  if (submitted) return (
+    <div style={{background:'white',borderRadius:16,padding:32,boxShadow:'0 2px 12px rgba(0,0,0,0.06)'}}>
+      <div style={{textAlign:'center',marginBottom:24}}><div style={{fontSize:40,marginBottom:8}}>✅</div><h3 style={{fontSize:18,fontWeight:900,color:'#6d28d9'}}>Varithena Note Complete</h3><div style={{color:'#64748b',fontSize:13,marginTop:4}}>{form.side} {form.vein} — CPT 36478</div></div>
+      <div style={{background:'#f5f3ff',borderRadius:12,padding:20,marginBottom:20}}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12,fontSize:13}}>
+          {[['CPT','36478 (Varithena)'],['Access',form.access],['Foam Volume',form.foam_volume?`${form.foam_volume} mL`:'—'],['Concentration',form.foam_conc],['Injection Sites',form.injection_sites||'—'],['Total Volume',form.total_volume?`${form.total_volume} mL`:'—'],['Sonographer/MA',form.sonographer||'—'],['Compression',form.compression?'✅ Applied':'—'],['Standing Post',form.standing_post?'✅ Yes':'—']].map(([k,v])=>(
+            <div key={k}><div style={{fontSize:10,fontWeight:900,color:'#94a3b8',textTransform:'uppercase'}}>{k}</div><div style={{fontWeight:700,color:'#1e293b',marginTop:2}}>{v}</div></div>
+          ))}
+        </div>
+      </div>
+      <button className="btn btn-primary" style={{background:'#7c3aed'}} onClick={()=>{setForm(EMPTY);setSubmitted(false);}}>Start New Note</button>
+    </div>
+  );
+
+  return (
+    <div style={{background:'white',borderRadius:16,padding:28,boxShadow:'0 2px 12px rgba(0,0,0,0.06)'}}>
+      <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:4}}>
+        <h3 style={{fontSize:18,fontWeight:900,color:'#6d28d9'}}>💜 Varithena Procedure Note — Field Reference</h3>
+        <span style={{background:'#ede9fe',color:'#6d28d9',fontWeight:800,fontSize:12,padding:'3px 10px',borderRadius:20}}>CPT 36478</span>
+      </div>
+      <p style={{fontSize:13,color:'#64748b',marginBottom:16}}>Varithena (polidocanol injectable foam) — chemical ablation. Different from thermal ablation: no catheter, no tumescent, foam volume is the key measurement.</p>
+
+      <SectionHeader>☑️ Pre-Procedure Care Checklist</SectionHeader>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:6}}>
+        <Check label="Consent was obtained" checked={form.consent} onChange={e=>set('consent',e.target.checked)} />
+        <Check label="Procedure/risks were explained" checked={form.risks} onChange={e=>set('risks',e.target.checked)} />
+        <Check label="Questions were answered" checked={form.questions} onChange={e=>set('questions',e.target.checked)} />
+        <Check label="Prepped and draped" checked={form.prepped} onChange={e=>set('prepped',e.target.checked)} />
+        <Check label="Correct patient identified" checked={form.pt_id} onChange={e=>set('pt_id',e.target.checked)} />
+        <Check label="Correct site and side confirmed" checked={form.site_confirmed} onChange={e=>set('site_confirmed',e.target.checked)} />
+      </div>
+
+      <SectionHeader>💜 Procedure Details</SectionHeader>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <div>
+          <Field label="Side" req><div style={{display:'flex',gap:8}}>
+            {['Right','Left'].map(s=><button key={s} onClick={()=>set('side',s)} style={{flex:1,padding:'9px',borderRadius:8,border:`2px solid ${form.side===s?'#7c3aed':'#e2e8f0'}`,background:form.side===s?'#ede9fe':'white',fontWeight:800,fontSize:14,cursor:'pointer',color:form.side===s?'#6d28d9':'#374151'}}>{s}</button>)}
+          </div></Field>
+          <Field label="Vein Treated" req>
+            {veins.map(v=><Radio key={v} name="vein" value={v} label={`${form.side} ${v}`} checked={form.vein===v} onChange={()=>set('vein',v)} />)}
+          </Field>
+          <Field label="Access Site" req>
+            {accesses.map(a=><Radio key={a} name="access" value={a} label={a} checked={form.access===a} onChange={()=>set('access',a)} />)}
+          </Field>
+        </div>
+        <div>
+          <Field label="Pregnancy Status" req>
+            <Radio name="preg" value="Not Pregnant" label="Not Pregnant" checked={form.pregnant==='Not Pregnant'} onChange={()=>set('pregnant','Not Pregnant')} />
+          </Field>
+          <Field label="Sonographer / MA">
+            <TextInput k="sonographer" placeholder="Name of assisting MA or sonographer" />
+          </Field>
+          <div style={{background:'#fef3c7',border:'1px solid #fcd34d',borderRadius:10,padding:12,marginTop:8}}>
+            <div style={{fontSize:11,fontWeight:900,color:'#92400e',marginBottom:4}}>⚠️ Varithena-Specific Reminders</div>
+            <div style={{fontSize:12,color:'#78350f',lineHeight:1.6}}>
+              • Max foam volume: <strong>15 mL per session</strong><br/>
+              • Vessel must be ≥3mm diameter<br/>
+              • Patient must stand/walk immediately after<br/>
+              • Compression stocking required post-procedure<br/>
+              • Not covered by all insurers — verify before procedure
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <SectionHeader>📝 HPI / Primary Complaint</SectionHeader>
+      <Field label="History of Present Illness" req>
+        <TextArea k="hpi" rows={4} placeholder="Document patient complaint, symptom duration, severity, prior conservative treatment history..." />
+      </Field>
+
+      <SectionHeader>💉 Foam Details</SectionHeader>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12}}>
+        <Field label="Foam Volume (mL)" req hint="Max 15 mL/session">
+          <TextInput k="foam_volume" placeholder="e.g. 10" type="number" />
+        </Field>
+        <Field label="Concentration" req>
+          <select style={{width:'100%',padding:'9px 12px',border:'2px solid #e2e8f0',borderRadius:8,fontFamily:'Nunito',fontSize:13,fontWeight:600}} value={form.foam_conc} onChange={e=>set('foam_conc',e.target.value)}>
+            {concentrations.map(c=><option key={c}>{c}</option>)}
+          </select>
+        </Field>
+        <Field label="Total Volume Used (mL)">
+          <TextInput k="total_volume" placeholder="Total mL" type="number" />
+        </Field>
+        <Field label="Number of Injection Sites">
+          <TextInput k="injection_sites" placeholder="e.g. 3" type="number" />
+        </Field>
+      </div>
+
+      <SectionHeader>📋 Documentation</SectionHeader>
+      <Field label="Pre-Procedure Scan Notes" req>
+        <TextArea k="prescan_notes" rows={3} placeholder="Pre-procedure duplex ultrasound findings — vessel diameter, reflux duration, access site anatomy..." />
+      </Field>
+      <Field label="Procedure Notes">
+        <TextArea k="proc_notes" rows={3} placeholder="Foam injection technique, ultrasound guidance used, patient tolerance..." />
+      </Field>
+      <Field label="Findings">
+        <TextArea k="findings" rows={3} placeholder="Vessel response to foam, spasm noted, any complications..." />
+      </Field>
+
+      <SectionHeader>🏥 Post Procedure</SectionHeader>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <Field label="Post-Procedure Instructions">
+          <TextArea k="post_instructions" rows={3} placeholder="Walking instructions, activity restrictions, when to call..." />
+        </Field>
+        <Field label="Dressing / Wound Care">
+          <TextArea k="dressing" rows={3} placeholder="Compression stocking instructions, bandaging..." />
+        </Field>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:12}}>
+        <Check label="✅ Patient ambulated post-procedure" checked={form.standing_post} onChange={e=>set('standing_post',e.target.checked)} />
+        <Check label="✅ Compression stocking applied" checked={form.compression} onChange={e=>set('compression',e.target.checked)} />
+      </div>
+      <Field label="Follow-Up">
+        <div style={{display:'flex',gap:8,flexWrap:'wrap',alignItems:'center',marginBottom:8}}>
+          <span style={{fontSize:13,fontWeight:700,color:'#374151'}}>Return in</span>
+          <input type="number" style={{width:70,padding:'7px 10px',border:'2px solid #e2e8f0',borderRadius:8,fontFamily:'Nunito',fontSize:13,fontWeight:600}} value={form.followup_weeks} onChange={e=>set('followup_weeks',e.target.value)} placeholder="wks" />
+          <span style={{fontSize:13,fontWeight:700,color:'#374151'}}>weeks</span>
+        </div>
+        <Check label="Sooner if symptoms persist/worsen" checked={form.followup_sooner} onChange={e=>set('followup_sooner',e.target.checked)} />
+        <Check label="PRN (as needed)" checked={form.followup_prn} onChange={e=>set('followup_prn',e.target.checked)} />
+      </Field>
+      <Check label="⚠️ Aborted Procedure" checked={form.aborted} onChange={e=>set('aborted',e.target.checked)} warn />
+
+      <div style={{marginTop:20,display:'flex',gap:10}}>
+        <button className="btn btn-primary" style={{background:'#7c3aed'}} onClick={()=>{const req=form.vein&&form.access&&form.foam_volume&&form.prescan_notes&&form.pregnant;if(req)setSubmitted(true);else alert('Please complete all required fields (*)');}}>✅ Mark Complete</button>
+        <button className="btn btn-outline" onClick={()=>setForm(EMPTY)}>🔄 Reset</button>
+      </div>
+    </div>
+  );
+}
+
+function SuperuserTracker() {
+  const [superusers, setSuperusers] = useState([]);
+  const [q, setQ] = useState('');
+  const [regionFilter, setRegionFilter] = useState('');
+
+  useEffect(() => {
+    fetch('/superusers.json').then(r=>r.json()).then(setSuperusers);
+  }, []);
+
+  const regions = [...new Set(superusers.map(s=>s.region))].sort();
+  const filtered = superusers.filter(s => {
+    const match = q ? (s.name+s.role+s.notes+s.email).toLowerCase().includes(q.toLowerCase()) : true;
+    const reg = regionFilter ? s.region===regionFilter : true;
+    return match && reg;
+  });
+
+  return (
+    <div>
+      <div style={{background:'white',borderRadius:16,padding:24,boxShadow:'0 2px 12px rgba(0,0,0,0.06)',marginBottom:20}}>
+        <h3 style={{fontSize:18,fontWeight:900,color:'#065f46',marginBottom:4}}>⭐ NextGen Superuser Directory</h3>
+        <p style={{fontSize:13,color:'#64748b',marginBottom:16}}>All {superusers.length} designated superusers for the NextGen go-live. These are your first point of contact for training and support questions.</p>
+        <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
+          <input style={{flex:2,minWidth:200,padding:'10px 14px',border:'2px solid #e2e8f0',borderRadius:10,fontFamily:'Nunito',fontSize:14,fontWeight:600}} placeholder="Search by name, role, or region..." value={q} onChange={e=>setQ(e.target.value)} />
+          <select style={{padding:'10px 14px',border:'2px solid #e2e8f0',borderRadius:10,fontFamily:'Nunito',fontSize:13,fontWeight:700,background:'white'}} value={regionFilter} onChange={e=>setRegionFilter(e.target.value)}>
+            <option value="">All Regions</option>
+            {regions.map(r=><option key={r}>{r}</option>)}
+          </select>
+          {(q||regionFilter)&&<button style={{padding:'10px 16px',borderRadius:10,border:'2px solid #e2e8f0',background:'white',fontFamily:'Nunito',fontWeight:700,cursor:'pointer'}} onClick={()=>{setQ('');setRegionFilter('');}}>Clear</button>}
+        </div>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(320px,1fr))',gap:12}}>
+        {filtered.map((s,i)=>(
+          <div key={i} style={{background:'white',borderRadius:14,padding:18,boxShadow:'0 1px 8px rgba(0,0,0,0.06)',border:'1px solid #f1f5f9'}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:8}}>
+              <div>
+                <div style={{fontSize:15,fontWeight:900,color:'#1e293b'}}>{s.name}</div>
+                <div style={{fontSize:12,color:'#047857',fontWeight:700,marginTop:2}}>{s.role}</div>
+              </div>
+              <span style={{background:'#d1fae5',color:'#065f46',fontWeight:800,fontSize:11,padding:'3px 10px',borderRadius:20,flexShrink:0}}>{s.region}</span>
+            </div>
+            <a href={`mailto:${s.email}`} style={{fontSize:12,color:'#3b82f6',fontWeight:600,textDecoration:'none'}}>{s.email}</a>
+            {s.notes && <div style={{fontSize:12,color:'#64748b',marginTop:6,lineHeight:1.5}}>{s.notes}</div>}
+          </div>
+        ))}
+      </div>
+      {filtered.length===0&&<div style={{textAlign:'center',padding:40,color:'#94a3b8'}}>No superusers match your search</div>}
+    </div>
+  );
+}
+
+// ─── WORKFLOWS ────────────────────────────────────────────────────────────────
+const WORKFLOWS = [
+  {
+    id: 'scheduling',
+    title: 'New Patient Scheduling',
+    icon: '📅',
+    role: 'Front Desk',
+    color: '#0369a1',
+    light: '#e0f2fe',
+    steps: [
+      { type:'start', text:'Patient calls or submits portal request' },
+      { type:'step', text:'Verify insurance eligibility', detail:'Run eligibility check in NextGen before booking — catch issues before day of visit' },
+      { type:'step', text:'Search for existing patient record', detail:'Use F4 or the search bar. Search by DOB + last name to avoid duplicates' },
+      { type:'decision', text:'Patient already in system?', yes:'Open existing chart → confirm demographics are current', no:'Register new patient: demographics, insurance, guarantor' },
+      { type:'step', text:'Select appointment type & provider', detail:'Match visit type to correct template (New Patient Vein Consult, Follow-Up, Procedure, etc.)' },
+      { type:'step', text:'Choose date, time, and location' },
+      { type:'step', text:'Enter reason for visit / chief complaint', detail:'This populates the HPI starting point for the provider' },
+      { type:'step', text:'Confirm appointment & send patient reminder' },
+      { type:'end', text:'Appointment scheduled ✅' },
+    ]
+  },
+  {
+    id: 'checkin',
+    title: 'Patient Check-In',
+    icon: '🏥',
+    role: 'Front Desk',
+    color: '#065f46',
+    light: '#d1fae5',
+    steps: [
+      { type:'start', text:'Patient arrives at front desk' },
+      { type:'step', text:'Search patient in NextGen', detail:'Use F4 quick search or the Appointments tab. Confirm you have the right patient (DOB, name)' },
+      { type:'step', text:'Verify demographics & insurance', detail:'Ask patient to confirm address, phone, insurance. Re-scan insurance card if first visit of the year' },
+      { type:'decision', text:'Any changes since last visit?', yes:'Update record → re-scan insurance card → re-run eligibility', no:'Confirm as-is and continue' },
+      { type:'step', text:'Collect copay or outstanding balance', detail:'Collect before the visit — much easier than after. Document payment in NextGen' },
+      { type:'step', text:'Mark patient as "Arrived" in the schedule', detail:'This notifies the MA / clinical staff in real time' },
+      { type:'step', text:'Complete consent forms if needed', detail:'New patients, new procedures, or annual re-consent' },
+      { type:'end', text:'Patient checked in ✅' },
+    ]
+  },
+  {
+    id: 'procnote',
+    title: 'Procedure Note Completion',
+    icon: '📋',
+    role: 'Provider',
+    color: '#6d28d9',
+    light: '#ede9fe',
+    steps: [
+      { type:'start', text:'Procedure performed' },
+      { type:'step', text:'Open patient chart → Encounter', detail:'Navigate to today\'s encounter. If not yet created, start a new encounter from the schedule' },
+      { type:'step', text:'Select the correct procedure note template', detail:'Thermal Ablation, Varithena, or Sclerotherapy — use the Templates tab for field-by-field guidance' },
+      { type:'step', text:'Complete pre-procedure section', detail:'Consent obtained, checklist items, patient ID confirmed, site marked' },
+      { type:'step', text:'Document intraoperative findings', detail:'Vein treated, access site, catheter/foam details, duplex scan measurements, junction distance' },
+      { type:'step', text:'Complete post-procedure instructions', detail:'Compression applied, ambulation, follow-up timing, patient education documented' },
+      { type:'step', text:'Enter CPT code(s) for billing', detail:'Ablation: 36475/36476/36478/36479. Add laterality modifier (RT/LT). Multiple veins = multiple lines' },
+      { type:'decision', text:'Ready to sign?', yes:'Sign note → encounter locks. Charges auto-submit or route to billing queue', no:'Save as draft → return before end of day. Unsigned notes = unbilled claims' },
+      { type:'end', text:'Note signed & charges submitted ✅' },
+    ]
+  },
+  {
+    id: 'priorauth',
+    title: 'Prior Authorization & Orders',
+    icon: '📝',
+    role: 'Medical Assistant',
+    color: '#b45309',
+    light: '#fef3c7',
+    steps: [
+      { type:'start', text:'Provider orders a procedure, imaging, or lab' },
+      { type:'step', text:'Open Orders module in NextGen', detail:'Chart → Orders. Select the correct order type: Lab, Imaging, or Procedure' },
+      { type:'step', text:'Enter clinical indication & ICD-10 code', detail:'The ICD-10 must match what the payer requires for that procedure — this is critical for PA approval' },
+      { type:'decision', text:'Does this payer require prior auth?', yes:'Submit PA request → document payer portal confirmation # in chart notes', no:'Proceed to scheduling — no PA needed' },
+      { type:'step', text:'Check Vein Policy Hub for payer-specific rules', detail:'Especially for vein procedures: CEAP score, duplex requirements, conservative therapy weeks, and PA requirements vary by payer' },
+      { type:'step', text:'Document PA approval number in the chart', detail:'Store in the order notes or dedicated PA field. Never schedule before PA is confirmed in writing' },
+      { type:'step', text:'Schedule procedure or imaging', detail:'Coordinate with facility / front desk. Ensure the approval window covers the scheduled date' },
+      { type:'end', text:'Order placed & authorized ✅' },
+    ]
+  },
+  {
+    id: 'erx',
+    title: 'E-Prescribing (eRx)',
+    icon: '💊',
+    role: 'Provider',
+    color: '#be185d',
+    light: '#fce7f3',
+    steps: [
+      { type:'start', text:'Provider ready to prescribe' },
+      { type:'step', text:'Open patient chart → Medications module' },
+      { type:'step', text:'Search medication by name', detail:'Use generic name when possible. NextGen will show formulary options for patient\'s insurance' },
+      { type:'step', text:'Select: strength, form, directions, quantity, refills', detail:'Double-check directions (sig). "Take 1 tablet by mouth daily" vs "twice daily" matters' },
+      { type:'decision', text:'Is this a controlled substance?', yes:'Complete EPCS: requires 2-factor authentication (hard token or app). Provider must be EPCS-enrolled', no:'Standard eRx — no additional steps' },
+      { type:'step', text:'Select patient\'s preferred pharmacy', detail:'Patient\'s preferred pharmacy should be saved in their demographics. Confirm before sending' },
+      { type:'step', text:'Review prescription summary & send', detail:'Last chance to catch errors. Review drug-drug interactions flagged by NextGen before dismissing' },
+      { type:'end', text:'Prescription sent to pharmacy ✅' },
+    ]
+  },
+  {
+    id: 'charges',
+    title: 'Charge Capture (End of Visit)',
+    icon: '💰',
+    role: 'Provider / Biller',
+    color: '#166534',
+    light: '#dcfce7',
+    steps: [
+      { type:'start', text:'Provider signs the encounter note' },
+      { type:'step', text:'Open the Billing section of the encounter' },
+      { type:'step', text:'Confirm E&M level or primary procedure CPT code', detail:'E&M level must match the documented complexity. Undercoding = lost revenue. Overcoding = compliance risk' },
+      { type:'step', text:'Verify ICD-10 diagnosis codes are linked to each CPT', detail:'Every CPT line needs at least one supporting ICD-10. Payers will deny if the link is missing' },
+      { type:'decision', text:'Additional procedures performed today?', yes:'Add a CPT line for each procedure. Apply modifier (RT/LT, 59, 25) where required', no:'Proceed to review' },
+      { type:'step', text:'Review the full charge summary', detail:'Check: correct provider, correct location/POS code, correct date of service' },
+      { type:'step', text:'Submit charges', detail:'Charges route to the billing queue for claim scrubbing and submission. Flag anything unusual in the notes' },
+      { type:'end', text:'Charges in billing queue ✅' },
+    ]
+  },
+  {
+    id: 'lab-ordering',
+    title: 'Lab Order Workflow',
+    icon: '🧪',
+    role: 'Provider / MA',
+    color: '#0369a1',
+    light: '#e0f2fe',
+    steps: [
+      { type:'start', text:'Provider ready to place a lab order' },
+      { type:'step', text:'Open the patient chart', detail:'Use Patient Search or open from the Appointment tab in your inbox.' },
+      { type:'step', text:'Complete 4-Point Check', detail:'Verify: Location · Provider · Patient · Encounter Date/Time. Do this before every order.' },
+      { type:'step', text:'Navigate to the Orders Module' },
+      { type:'step', text:'Begin a new lab order', detail:'Click the dropdown next to New → select Lab Order.' },
+      { type:'step', text:'Indicate test priority (if needed)', detail:'Options: Stat, Hold, Ordered Elsewhere.' },
+      { type:'step', text:'Select ordering diagnosis code(s)', detail:'Add codes from Select Diagnosis. Use Search All if the list is blank or missing your code.' },
+      { type:'step', text:'Select applicable tests', detail:'Choose from Favorites, By Category, or Search All.' },
+      { type:'step', text:'Review assigned tests and diagnosis codes', detail:'Verify selections in Assign Diagnosis to Selected Tests.' },
+      { type:'step', text:'Add additional details (if applicable)', detail:'General tab: clinical info, comments, Copy To physicians. Test Details tab: AOE questions, specimen details.' },
+      { type:'step', text:'Enter tracking information (optional)', detail:'Add internal comments or actions under the Tracking tab.' },
+      { type:'step', text:'Review the order', detail:'Confirm all details in the Orders Summary grid.' },
+      { type:'decision', text:'Does the order need to be printed?', yes:'Right-click → Print or Print Preview', no:'Submit order directly — no print needed' },
+      { type:'end', text:'Lab order placed ✅' },
+    ]
+  },
+  {
+    id: 'rad-ordering',
+    title: 'Radiology/Diagnostic Order Workflow',
+    icon: '🩻',
+    role: 'Provider / MA',
+    color: '#7c3aed',
+    light: '#ede9fe',
+    steps: [
+      { type:'start', text:'Provider ready to place a radiology/diagnostic order' },
+      { type:'step', text:'Open the patient chart', detail:'Use Patient Search or open from the Appointment tab in your inbox.' },
+      { type:'step', text:'Complete 4-Point Check', detail:'Verify: Location · Provider · Patient · Encounter Date/Time. Do this before every order.' },
+      { type:'step', text:'Navigate to the Orders Module' },
+      { type:'step', text:'Begin a new radiology/diagnostic order', detail:'Click the dropdown next to New → select Radiology Order.' },
+      { type:'step', text:'Indicate test priority (if needed)', detail:'Options: Stat, Hold, Ordered Elsewhere.' },
+      { type:'step', text:'Select ordering diagnosis code(s)', detail:'Add codes from Select Diagnosis. Use Search All if the list is blank or missing your code.' },
+      { type:'step', text:'Select applicable tests', detail:'Choose from Favorites, By Category, or Search All.' },
+      { type:'step', text:'Review assigned tests and diagnosis codes', detail:'Verify selections in Assign Diagnosis to Selected Tests.' },
+      { type:'step', text:'Add additional details (if applicable)', detail:'General tab: clinical info, comments, Copy To physicians.' },
+      { type:'step', text:'Enter tracking information (optional)', detail:'Add internal comments or actions under the Tracking tab.' },
+      { type:'step', text:'Review the order', detail:'Confirm all details in the Orders Summary grid.' },
+      { type:'decision', text:'Does the order need to be printed?', yes:'Right-click → Print or Print Preview', no:'Submit order directly — no print needed' },
+      { type:'end', text:'Radiology/diagnostic order placed ✅' },
+    ]
+  },
+  {
+    id: 'mips-130',
+    title: 'MIPS QID 130 — Medication Documentation',
+    icon: '💊',
+    role: 'MA / Provider',
+    color: '#b45309',
+    light: '#fef3c7',
+    steps: [
+      { type:'start', text:'Patient encounter begins' },
+      { type:'step', text:'Go to the Appointment Tab within the Inbox', detail:'Select the patient from the Appointment Tab.' },
+      { type:'step', text:'Complete 4-Point Check', detail:'Verify: Location · Provider · Patient · Encounter Date/Time.' },
+      { type:'step', text:'Open the Intake Template or the Medication Module' },
+      { type:'step', text:'Determine whether the patient is taking any medications', detail:'Ask the patient or review available information.' },
+      { type:'decision', text:'Is the patient taking any medications?',
+        yes:'Document all medications in the Medication Module → Check the Medications Reconciled checkbox',
+        no:'Document "No Active Medications" → Check the Medications Reconciled checkbox' },
+      { type:'end', text:'MIPS QID 130 documented ✅' },
+    ]
+  },
+  {
+    id:'standing-orders', title:'Standing Orders', icon:'📋', role:'MA / Clinical Staff', color:'#ea580c', light:'#fff7ed',
+    steps:[
+      {type:'start',text:'Patient appointment status is "Kept"'},
+      {type:'step',text:'Open the patient chart from the Appointment tab in the Inbox'},
+      {type:'step',text:'Complete 4-Point Check',detail:'Verify: Location · Provider · Patient · Encounter Date/Time.'},
+      {type:'step',text:'Open the Intake → click the Standing Orders link'},
+      {type:'step',text:'Select the appropriate test from the grid'},
+      {type:'decision',text:'Is an assessment/diagnosis attached to the test?',yes:'Continue to next step',no:'Click Add or Update Assessment to add a diagnosis'},
+      {type:'step',text:'Enter test interpretation if necessary',detail:'Enter directly or click Details to enter discrete data.'},
+      {type:'decision',text:'Is the test billable?',yes:'Ensure Submit to Superbill is selected',no:'Deselect the Submit to Superbill checkbox'},
+      {type:'step',text:'Click the Place Order button'},
+      {type:'end',text:'Standing order placed ✅'},
+    ]
+  },
+  {
+    id:'clinical-intake', title:'Clinical Staff Intake', icon:'🩺', role:'MA / Clinical Staff', color:'#0891b2', light:'#e0f2fe',
+    steps:[
+      {type:'start',text:'Patient arrives — select from Appointment tab in Inbox'},
+      {type:'step',text:'Update Patient Tracking → "Exam Room" / "with Nursing" / "with MA"'},
+      {type:'step',text:'Complete 4-Point Check',detail:'Verify: Location · Provider · Patient · Encounter Date/Time.'},
+      {type:'step',text:'Open *SOAP template — confirm specialty (General Surgery/Vein or Neurosurgery/Pain). Select Visit Type. Apply Quick Note if appropriate. Open *Intake template.'},
+      {type:'decision',text:'New or established patient?',yes:'NEW: Add Past Medical/Surgical, Family, Social, Confidential histories in History Summary',no:'ESTABLISHED: Review previous histories and update as needed'},
+      {type:'step',text:'Select Chief Complaint and document HPI'},
+      {type:'step',text:'Open Vital Signs panel — add or update vitals'},
+      {type:'step',text:'Open Medications module — import med history, reconcile, check Medications Reconciled'},
+      {type:'step',text:'Add/update Allergies — select Allergies Reviewed when done'},
+      {type:'step',text:'Add POC orders as needed. Use Standing Orders link if applicable.'},
+      {type:'step',text:'Open Review of Systems panel — apply ROS Quick Save, adjust grid'},
+      {type:'step',text:'Generate the Intake Note'},
+      {type:'step',text:'Update Patient Tracking → "Ready for Provider"'},
+      {type:'end',text:'Intake complete ✅'},
+    ]
+  },
+  {
+    id:'provider-visit', title:'Provider Visit', icon:'👨‍⚕️', role:'Provider', color:'#1e3a5f', light:'#e0f2fe',
+    steps:[
+      {type:'start',text:'Patient status shows "Ready for Provider"'},
+      {type:'step',text:'Open patient from Inbox — update Patient Tracking to "With Provider"'},
+      {type:'step',text:'Complete 4-Point Check',detail:'Verify: Location · Provider · Patient · Encounter Date/Time.'},
+      {type:'step',text:'Open SOAP Template — apply Quick Note if needed. Use Quick Save and MyPhrase for efficiency.'},
+      {type:'step',text:'Review Chief Complaint (entered by MA) — update if needed'},
+      {type:'step',text:'Review History Summary — add new history, update History Review indicator'},
+      {type:'step',text:'Review/update Review of Systems, Vital Signs, and Physical Exam panels'},
+      {type:'step',text:'Expand Assessment/Plan panel — select assessments, update A/P Details tab'},
+      {type:'step',text:'Place orders: Labs tab (lab orders) · Diagnostics tab (imaging) · Referrals tab (referrals)'},
+      {type:'step',text:'Open Medication Module (Meds icon) — refill or add medications'},
+      {type:'step',text:'Click EM Coding icon → Finalize template → choose MDM level → Submit Code'},
+      {type:'step',text:'Master Document generates automatically — sign now or later via PAQ'},
+      {type:'end',text:'Patient Tracking auto-updates to "Charges Submitted" ✅'},
+    ]
+  },
+  {
+    id:'chronic-conditions', title:'Chronic Conditions Visit', icon:'🫀', role:'Provider', color:'#15803d', light:'#dcfce7',
+    steps:[
+      {type:'start',text:'Patient status: Waiting for Provider'},
+      {type:'step',text:'Open patient from Appointment tab — update tracking to "With Provider"'},
+      {type:'step',text:'Complete 4-Point Check',detail:'Verify: Location · Provider · Patient · Encounter Date/Time.'},
+      {type:'step',text:'Open Intake template from history toolbar — select SOAP template tab — click Chronic Conditions button under Reason for Visit'},
+      {type:'decision',text:'Is the condition/problem already listed?',yes:'Select the problem, choose diagnosis code and assessment status',no:'Click Add Problem to add a new problem, then select it'},
+      {type:'step',text:'Check for screening questions — if present, click Screening Questions link, document responses, Save & Close'},
+      {type:'step',text:'Review Lab Results, Patient Histories, Vital Signs — document Physical Exam and Patient Instructions'},
+      {type:'decision',text:'Additional problems to address?',yes:'Select next problem and repeat the process',no:'Continue to Assessment & Plan'},
+      {type:'step',text:'All chronic condition assessments auto-populate in Assessment & Plan — add additional assessments, click Add/Update, use Quick Save, Save & Close'},
+      {type:'step',text:'Click EM Coding icon → choose MDM level → Submit Code → Master Document generates'},
+      {type:'end',text:'Encounter finalized — Charges Submitted ✅'},
+    ]
+  },
+  {
+    id:'chart-abstraction', title:'Chart Abstraction', icon:'📂', role:'All Staff', color:'#475569', light:'#f1f5f9',
+    steps:[
+      {type:'start',text:'Ready to abstract a patient chart'},
+      {type:'step',text:'Use Patient Lookup button to find the correct patient — open their chart'},
+      {type:'step',text:'Complete 4-Point Check',detail:'Verify: Location · Provider · Patient · Encounter Date/Time.'},
+      {type:'step',text:'Create a new encounter'},
+      {type:'step',text:'Open *Intake Template — select appropriate Specialty (General Surgery or Neurosurgery)'},
+      {type:'step',text:'Select Visit Type → Chart Abstraction'},
+      {type:'step',text:'Complete History Summary Panel — add Past Medical/Surgical, Family, Social, Confidential histories'},
+      {type:'step',text:'Enter Diagnoses — click Quick Button for Diagnosis List → open Billing ICD/Problems Module → add/update ICD codes'},
+      {type:'step',text:'Document Allergies — Allergies panel → click Add → enter allergies'},
+      {type:'step',text:'Document Medications — click Add/Update → use medication history import or enter manually'},
+      {type:'end',text:'Chart abstraction complete ✅'},
+    ]
+  },
+  {
+    id:'referral-processing', title:'Referral Processing', icon:'📤', role:'Front Desk / MA', color:'#be185d', light:'#fce7f3',
+    steps:[
+      {type:'start',text:'Ready to process and send a referral'},
+      {type:'decision',text:'Is NG Share enabled for this referral?',
+        yes:'Open Referrals via Order template or Referral Management template → locate referral → click Share → sends CCDA + attachments + cover letter electronically → confirm delivery in Orders Panel',
+        no:'Open Checkout template → click Add to open Referrals Order template → highlight referral → click Details to see attachments'},
+      {type:'step',text:'(NG Share NOT enabled) Generate referral documents using document buttons — Referral Document and Referral Letter'},
+      {type:'step',text:'Confirm which documents need to be included — use practice preferred method (Fax, MSU, or Data Share Module)'},
+      {type:'step',text:'File Menu → Custom Print/Send → choose Fax → General & Categories tabs → select all documents → click Fax button → enter recipient info → finalize'},
+      {type:'end',text:'Referral sent and confirmed ✅'},
+    ]
+  },
+  {
+    id:'referral-ordering', title:'Referral Ordering', icon:'🔗', role:'Provider / MA', color:'#7c3aed', light:'#ede9fe',
+    steps:[
+      {type:'start',text:'Provider ready to place a referral order'},
+      {type:'step',text:'Open the Referrals Order template'},
+      {type:'decision',text:'Is NG Share available?',yes:'Click NG Share button → search for provider or organization by name, specialty, or location → click name to select',no:'Proceed with manual referral entry'},
+      {type:'step',text:'Under "To:" select the radio button for the type of referral'},
+      {type:'step',text:'Add Diagnosis — click Description field and select, or use Add Assessment / Add Common Assessment'},
+      {type:'step',text:'Select Services Requested (radio buttons/checkboxes) · Choose Clinical Indication from picklist or free-text · Add Timeframe (optional) · Enter Clinical Information/Comments · Select Specialty'},
+      {type:'step',text:'Add Tasks if needed — use Task section to send tasks to staff'},
+      {type:'step',text:'Click Add to enter referral into the grid'},
+      {type:'step',text:'Add Instructions (checkboxes or Instruction Details hyperlink for free-text) — Add Attachments up to 8 via Details — confirm provider address via Address Detail hyperlink'},
+      {type:'step',text:'Complete Therapies & DME sections if applicable'},
+      {type:'end',text:'Referral order placed ✅'},
+    ]
+  },
+  {
+    id:'unified-workflow', title:'Unified Intake + Provider Visit', icon:'🔄', role:'All Clinical Staff', color:'#065f46', light:'#d1fae5',
+    steps:[
+      {type:'start',text:'PHASE A — Clinical Intake (MA/RN)'},
+      {type:'step',text:'Select patient from Inbox → update tracking to "with Nursing" or "with MA"'},
+      {type:'step',text:'4-Point Check: Location · Provider · Patient · Encounter Date/Time'},
+      {type:'step',text:'Open *SOAP template (confirm specialty) + *Intake template. Select Visit Type.'},
+      {type:'decision',text:'New or established patient?',yes:'NEW: Add all histories (Medical/Surgical, Family, Social, Confidential)',no:'ESTABLISHED: Review and update existing histories'},
+      {type:'step',text:'Select Chief Complaint → document HPI → record Vitals → reconcile Medications → review Allergies → place POC/Standing Orders → complete ROS'},
+      {type:'step',text:'Generate Intake Note → update tracking to "Ready for Provider"'},
+      {type:'start',text:'PHASE B — Provider Visit'},
+      {type:'step',text:'Open patient (status: Ready for Provider) → update tracking to "With Provider"'},
+      {type:'step',text:'4-Point Check → Open SOAP Template → review & update Chief Complaint, Histories, ROS, Vitals, Physical Exam'},
+      {type:'step',text:'Assessment & Plan → place Labs / Diagnostics / Referrals orders → update Medications'},
+      {type:'step',text:'EM Coding → select MDM level → Submit Code → Master Document generates → sign via PAQ'},
+      {type:'end',text:'Patient Tracking → "Charges Submitted" ✅'},
+    ]
+  },
+];
+
+function FlowNode({ node, color, light }) {
+  const arrowStyle = { display:'flex', justifyContent:'center', alignItems:'center', height:28, color:'#94a3b8', fontSize:18 };
+  if (node.type === 'start') return (
+    <div style={{background:color,color:'white',borderRadius:50,padding:'10px 28px',textAlign:'center',fontWeight:800,fontSize:14,display:'inline-block',margin:'0 auto'}}>{node.text}</div>
+  );
+  if (node.type === 'end') return (
+    <div style={{background:color,color:'white',borderRadius:50,padding:'10px 28px',textAlign:'center',fontWeight:800,fontSize:14,display:'inline-block',margin:'0 auto'}}>{node.text}</div>
+  );
+  if (node.type === 'decision') return (
+    <div style={{border:`2px solid ${color}`,borderRadius:12,padding:'14px 18px',background:'#fffbeb',position:'relative'}}>
+      <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:10}}>
+        <span style={{fontSize:18}}>◆</span>
+        <span style={{fontWeight:900,fontSize:14,color:'#92400e'}}>{node.text}</span>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+        <div style={{background:'#d1fae5',borderRadius:8,padding:'10px 12px',borderLeft:'4px solid #22c55e'}}>
+          <div style={{fontSize:11,fontWeight:900,color:'#166534',marginBottom:4}}>✅ YES</div>
+          <div style={{fontSize:13,color:'#166534',fontWeight:600,lineHeight:1.4}}>{node.yes}</div>
+        </div>
+        <div style={{background:'#fee2e2',borderRadius:8,padding:'10px 12px',borderLeft:'4px solid #ef4444'}}>
+          <div style={{fontSize:11,fontWeight:900,color:'#991b1b',marginBottom:4}}>❌ NO</div>
+          <div style={{fontSize:13,color:'#991b1b',fontWeight:600,lineHeight:1.4}}>{node.no}</div>
+        </div>
+      </div>
+    </div>
+  );
+  // regular step
+  return (
+    <div style={{background:'white',borderRadius:12,padding:'14px 18px',borderLeft:`4px solid ${color}`,boxShadow:'0 1px 6px rgba(0,0,0,0.06)'}}>
+      <div style={{fontWeight:800,fontSize:14,color:'#1e293b',marginBottom:node.detail?6:0}}>{node.text}</div>
+      {node.detail && <div style={{fontSize:13,color:'#64748b',lineHeight:1.5}}>{node.detail}</div>}
+    </div>
+  );
+}
+
+function WorkflowChart({ wf }) {
+  return (
+    <div style={{maxWidth:620,margin:'0 auto'}}>
+      {wf.steps.map((node, i) => (
+        <div key={i}>
+          <div style={{display:'flex',justifyContent:'center'}}>
+            <div style={{width: node.type==='start'||node.type==='end' ? 'auto' : '100%'}}>
+              <FlowNode node={node} color={wf.color} light={wf.light} />
+            </div>
+          </div>
+          {i < wf.steps.length - 1 && (
+            <div style={{display:'flex',justifyContent:'center',padding:'4px 0',color:'#94a3b8',fontSize:20,lineHeight:1}}>↓</div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function WorkflowsView() {
+  const [active, setActive] = useState('scheduling');
+  const wf = WORKFLOWS.find(w => w.id === active);
+  return (
+    <div>
+      {/* Workflow picker */}
+      <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:24}}>
+        {WORKFLOWS.map(w => (
+          <button key={w.id} onClick={()=>setActive(w.id)} style={{
+            padding:'9px 16px', borderRadius:10, border:'none', cursor:'pointer',
+            fontSize:13, fontWeight:800,
+            background: active===w.id ? w.color : '#e2e8f0',
+            color: active===w.id ? 'white' : '#475569',
+            transition:'all 0.15s'
+          }}>
+            {w.icon} {w.title}
+          </button>
+        ))}
+      </div>
+
+      {/* Active workflow */}
+      {wf && (
+        <div style={{background:'white',borderRadius:16,padding:'28px 24px',boxShadow:'0 2px 12px rgba(0,0,0,0.06)'}}>
+          <div style={{marginBottom:20,paddingBottom:16,borderBottom:'1px solid #f1f5f9'}}>
+            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:4}}>
+              <span style={{fontSize:24}}>{wf.icon}</span>
+              <h2 style={{fontSize:20,fontWeight:900,color:wf.color}}>{wf.title}</h2>
+              <span style={{background:wf.light,color:wf.color,fontSize:11,fontWeight:800,padding:'3px 10px',borderRadius:20}}>👤 {wf.role}</span>
+            </div>
+            <p style={{fontSize:13,color:'#64748b',marginLeft:34}}>Step-by-step NextGen workflow. Expand decisions to see both paths.</p>
+          </div>
+          <WorkflowChart wf={wf} />
+        </div>
+      )}
+    </div>
+  );
+}
+// ──────────────────────────────────────────────────────────────────────────────
+
+// ── TEMPLATE REVIEW ───────────────────────────────────────────────────────────
+const TEMPLATE_REVIEWS = [
+  {
+    id: 'rfa',
+    title: 'Vein Radiofrequency Ablation (RFA)',
+    cpt: '36475 / 36476',
+    status: 'In Review',
+    color: '#1d4ed8',
+    images: [
+      '51D6F6A3-B5B1-493F-9E88-06325022660B',
+      '28F24709-C3DD-4E63-8A17-1B8FCDE5A979',
+      '0EA3D80A-4371-4F61-8BD7-79CB8DD7A788',
+      'FE866162-0E93-4C3F-8F30-B9B9DBE06414',
+      '4E0ABDB9-2395-4605-BA94-556F91C0A0C1',
+      '12FD2486-27A7-463E-B42A-A0EE6BF61971',
+      'A9F27977-69DC-4047-BF63-6439B1344902',
+      '8FBD6A3E-27C9-4141-9A27-24F253D61EFD',
+      '06A8EB54-D7D5-457B-B787-E72E8F952C01',
+      '70D59F99-B0BE-4992-A4A6-BA8677A9368F',
+      'A5EBA574-AC1B-410C-A99E-F16C9318C21D',
+      '006E3B65-8E63-43B5-B4F2-596DEC4D4B5F',
+      'CC8187D6-B265-45D5-8F5A-C7FCA241AF11',
+      '3AE56A36-2001-4DA2-8E76-9585BDE0DE7F',
+      'AAE6742E-C691-4506-8FB1-385E6EE5B1EC',
+      'BD3FE3A3-55A8-40FB-A803-75E9849805D7',
+    ],
+    fields: [
+      { label: 'Sonographer / MA', type: 'Dropdown' },
+      { label: 'Provider', type: 'Text' },
+      { label: 'Location', type: 'Text' },
+      { label: 'Side', type: 'Checkbox', options: 'Right / Left' },
+      { label: 'Link to Open Surgical Orders', type: 'Link' },
+      { label: 'Vein Ablation Procedure', type: 'Dropdown', options: 'Radiofrequency - 36475 · Laser - 36478 · Varithena - 36478 · VenaSeal - 36482' },
+      { label: 'Vein Treated', type: 'List', options: 'Great Saphenous Vein · Duplicate GSV · Small Saphenous Vein · Accessory GSV' },
+      { label: 'Vein Ablation Access Site', type: 'Dropdown', options: 'Proximal Thigh · Mid-Thigh · Distal Thigh · Below Knee · Mid-Calf' },
+      { label: 'Vein Procedure HPI / Primary Complaint', type: 'Text Input' },
+      { label: 'Volume Tumescent', type: 'Text Input' },
+      { label: 'Vein Catheter', type: 'Dropdown', options: '3CM · 7CM · 8CM' },
+      { label: 'Vein Extra Supplies', type: 'Dropdown' },
+      { label: 'Pre Procedure Scan', type: 'Section' },
+      { label: 'Pregnancy Status', type: 'Header + Checkbox', options: 'Not Pregnant' },
+      { label: 'Medications', type: 'Header + Checkboxes', options: 'Not Taking Antibiotic · Not Taking Blood Thinners' },
+      { label: 'Time Out', type: 'Text Input' },
+      { label: 'Aborted Procedure', type: 'Section', options: 'Checkbox · Reason picklist · Date/User stamp' },
+    ],
+    consultantNotes: [
+      '4-Point alert on template + Encounter Description Remark',
+      'Vein Ablation Procedure and access site linked — copy top 4 encounters from this encounter date or DB Picklist. Link launches copy forward using native NG functionality.',
+      'Include instructional text for the tumescent volume formula',
+      'Potential integration with MICS',
+      'Aborted procedure: who selects checkbox, reason picklist, date/user stamp needed',
+      'Submit to Superbill · Generate Document · Lock down fields at end',
+      'Instead of copying forward — adding links to bring in data from Procedure Note, Finalize, etc.',
+    ],
+  },
+  {
+    id: 'varithena',
+    title: 'Varithena (Foam Sclerotherapy)',
+    cpt: '36465 / 36466',
+    status: 'In Review',
+    color: '#7c3aed',
+    images: [
+      '51D6F6A3-B5B1-493F-9E88-06325022660B',
+      '28F24709-C3DD-4E63-8A17-1B8FCDE5A979',
+      'FE866162-0E93-4C3F-8F30-B9B9DBE06414',
+      '7D7B047B-D169-4888-BCDE-48AF8500EF55',
+      '9242A56E-9330-49E9-9BA7-41B1F8E0B6F1',
+      'A5EBA574-AC1B-410C-A99E-F16C9318C21D',
+      '006E3B65-8E63-43B5-B4F2-596DEC4D4B5F',
+      'CC8187D6-B265-45D5-8F5A-C7FCA241AF11',
+      '3AE56A36-2001-4DA2-8E76-9585BDE0DE7F',
+      'AAE6742E-C691-4506-8FB1-385E6EE5B1EC',
+      'BD3FE3A3-55A8-40FB-A803-75E9849805D7',
+    ],
+    fields: [
+      { label: 'Sonographer / MA', type: 'Dropdown' },
+      { label: 'Provider', type: 'Text' },
+      { label: 'Location', type: 'Text' },
+      { label: 'Side', type: 'Checkbox', options: 'Left Lower Extremity · Right Lower Extremity' },
+      { label: 'Link to Open Surgical Orders', type: 'Link' },
+      { label: 'Prior Auth', type: 'Section' },
+      { label: 'Single Vein - 36465', type: 'Dropdown', options: 'Distal GSV Only · SSV Only · Accessory Vein Only' },
+      { label: 'Multiple Vein - 36466', type: 'Dropdown', options: 'Distal GSV + Accessory Vein · SSV + Accessory Vein · Accessory Vein x 2' },
+      { label: 'Number of Access', type: 'Button/Counter' },
+      { label: 'Access Site 1', type: 'Dropdown' },
+      { label: 'Access Site 2', type: 'Dropdown' },
+      { label: 'Access Site 3', type: 'Dropdown' },
+      { label: 'Cosmetics (Complimentary)', type: 'Button', options: 'Not billed — placed at time of procedure' },
+      { label: 'Pregnancy Status', type: 'Header + Checkbox', options: 'Not Pregnant' },
+      { label: 'Medications', type: 'Header + Checkboxes', options: 'Not Taking Antibiotic · Not Taking Blood Thinners' },
+      { label: 'Time Out', type: 'Text Input' },
+      { label: 'Procedure Status', type: 'Radio', options: 'Aborted Procedure · Completed Procedure' },
+      { label: 'Pre Procedure Scan', type: 'Section' },
+    ],
+    consultantNotes: [
+      'Cosmetics: two separate documents — not billed, placed at time of procedure. Complimentary cosmetics CPT needed.',
+      'Prior Auth section at top',
+      'Ability to pull patient\'s list of diagnoses into this template',
+    ],
+  },
+  {
+    id: 'lomn',
+    title: 'Letter of Medical Necessity (LOMN)',
+    cpt: 'N/A — PA document',
+    status: 'In Review',
+    color: '#059669',
+    images: ['405B4167-B529-4B35-A0FC-C619FFF8778C'],
+    fields: [
+      { label: 'Practice / Provider info', type: 'Auto-populated' },
+      { label: 'Patient demographics', type: 'Auto-populated' },
+      { label: 'Insurance info', type: 'Auto-populated' },
+      { label: 'ICD-10 codes', type: 'Linked from encounter' },
+      { label: 'Recommended procedures', type: 'CPT codes + descriptions' },
+      { label: 'HPI narrative', type: 'Auto-generated from note' },
+      { label: 'Physical exam findings', type: 'Auto-generated' },
+      { label: 'Conservative therapy documentation', type: 'Auto-generated' },
+      { label: 'Physician signature', type: 'Digital signature' },
+    ],
+    consultantNotes: [
+      'Sample LOMN shows NYC Vein RFA request for bilateral GSV + SSV ablation',
+      'Document auto-generates from encounter data — HPI, exam, ICD-10, CPT all pulled from chart',
+    ],
+  },
+  {
+    id: 'proc-ordering',
+    title: 'Procedure Ordering',
+    cpt: 'Various',
+    status: 'Pending — needs DX and CPT/SIM input',
+    color: '#b45309',
+    images: ['FC66774E-5F58-4F4A-B549-A2D7B0A02DBF'],
+    fields: [
+      { label: 'Procedure type', type: 'Dropdown' },
+      { label: 'Side', type: 'Dropdown', options: 'Right · Left · Bilateral' },
+      { label: 'Surgery date', type: 'Date' },
+      { label: 'Provider', type: 'Dropdown' },
+      { label: 'Procedure time limit', type: 'Text' },
+      { label: 'Priority', type: 'Dropdown' },
+      { label: 'Type of service', type: 'Dropdown' },
+      { label: 'Assistant requested', type: 'Checkbox' },
+      { label: 'Special equipment', type: 'Text' },
+      { label: 'Diagnosis codes', type: 'Linked from assessment' },
+    ],
+    consultantNotes: [
+      'Carly to email TempDev with different scenarios for procedure scheduling',
+      'Needs DX codes and CPT/SIM codes defined before this template can be finalized',
+    ],
+  },
+];
+
+function TemplateReviewView() {
+  const [active, setActive] = useState('rfa');
+  const [imgIdx, setImgIdx] = useState(0);
+  const t = TEMPLATE_REVIEWS.find(t => t.id === active);
+
+  React.useEffect(() => { setImgIdx(0); }, [active]);
+
+  return (
+    <div>
+      <div style={{background:'linear-gradient(135deg,#1e3a5f,#2563eb)',borderRadius:16,padding:'20px 24px',marginBottom:20,color:'white'}}>
+        <div style={{fontWeight:900,fontSize:18,marginBottom:4}}>📐 NextGen Template Review</div>
+        <div style={{fontSize:13,opacity:0.85}}>Mockup designs from TempDev/consultant — review each template, check fields and notes, and provide corrections to the dev team.</div>
+      </div>
+
+      {/* Template picker */}
+      <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:20}}>
+        {TEMPLATE_REVIEWS.map(tr => (
+          <button key={tr.id} onClick={()=>setActive(tr.id)} style={{
+            padding:'10px 18px',borderRadius:12,border:'none',cursor:'pointer',
+            fontSize:13,fontWeight:800,
+            background: active===tr.id ? tr.color : '#e2e8f0',
+            color: active===tr.id ? 'white' : '#475569',
+            transition:'all 0.15s',
+          }}>
+            {tr.title}
+            <span style={{marginLeft:8,fontSize:11,opacity:0.8,fontWeight:600}}>CPT {tr.cpt}</span>
+          </button>
+        ))}
+      </div>
+
+      {t && (
+        <div style={{display:'grid',gridTemplateColumns:'1fr 380px',gap:16,alignItems:'start'}}>
+          {/* Left — image viewer */}
+          <div style={{background:'white',borderRadius:16,padding:20,boxShadow:'0 2px 12px rgba(0,0,0,0.06)'}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+              <div style={{fontWeight:900,fontSize:15,color:t.color}}>{t.title}</div>
+              <span style={{background: t.status.includes('Pending')?'#fef3c7':'#dbeafe', color: t.status.includes('Pending')?'#92400e':'#1e40af', padding:'3px 12px',borderRadius:20,fontSize:11,fontWeight:800}}>{t.status}</span>
+            </div>
+            <div style={{background:'#f8fafc',borderRadius:10,overflow:'hidden',marginBottom:10,border:'1px solid #e2e8f0'}}>
+              <img
+                src={`/templates/${t.images[imgIdx]}.jpg`}
+                alt={`${t.title} section ${imgIdx+1}`}
+                style={{width:'100%',display:'block'}}
+                onError={e=>{e.target.style.display='none'}}
+              />
+            </div>
+            <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:8,flexWrap:'wrap'}}>
+              <button onClick={()=>setImgIdx(i=>Math.max(0,i-1))} disabled={imgIdx===0}
+                style={{padding:'6px 16px',borderRadius:8,border:'none',background:imgIdx===0?'#e2e8f0':'#1d4ed8',color:imgIdx===0?'#94a3b8':'white',fontFamily:'Nunito',fontWeight:800,fontSize:12,cursor:imgIdx===0?'default':'pointer'}}>← Prev</button>
+              <span style={{fontSize:12,color:'#64748b',fontWeight:700}}>{imgIdx+1} / {t.images.length}</span>
+              <button onClick={()=>setImgIdx(i=>Math.min(t.images.length-1,i+1))} disabled={imgIdx===t.images.length-1}
+                style={{padding:'6px 16px',borderRadius:8,border:'none',background:imgIdx===t.images.length-1?'#e2e8f0':'#1d4ed8',color:imgIdx===t.images.length-1?'#94a3b8':'white',fontFamily:'Nunito',fontWeight:800,fontSize:12,cursor:imgIdx===t.images.length-1?'default':'pointer'}}>Next →</button>
+            </div>
+            <div style={{display:'flex',gap:4,flexWrap:'wrap',justifyContent:'center',marginTop:8}}>
+              {t.images.map((_,i)=>(
+                <button key={i} onClick={()=>setImgIdx(i)}
+                  style={{width:24,height:24,borderRadius:6,border:'none',background:imgIdx===i?t.color:'#e2e8f0',color:imgIdx===i?'white':'#64748b',fontFamily:'Nunito',fontWeight:800,fontSize:10,cursor:'pointer'}}>{i+1}</button>
+              ))}
+            </div>
+          </div>
+
+          {/* Right — fields + consultant notes */}
+          <div style={{display:'flex',flexDirection:'column',gap:12}}>
+            <div style={{background:'white',borderRadius:14,padding:18,boxShadow:'0 1px 8px rgba(0,0,0,0.06)'}}>
+              <div style={{fontWeight:900,fontSize:14,color:'#1e293b',marginBottom:12}}>📋 Template Fields</div>
+              {t.fields.map((f,i)=>(
+                <div key={i} style={{padding:'6px 0',borderBottom:'1px solid #f1f5f9',display:'flex',flexDirection:'column',gap:2}}>
+                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:8}}>
+                    <span style={{fontSize:13,fontWeight:700,color:'#1e293b'}}>{f.label}</span>
+                    <span style={{background:'#f1f5f9',color:'#64748b',fontSize:10,fontWeight:800,padding:'2px 8px',borderRadius:20,whiteSpace:'nowrap',flexShrink:0}}>{f.type}</span>
+                  </div>
+                  {f.options && <div style={{fontSize:11,color:'#94a3b8',paddingLeft:2}}>{f.options}</div>}
+                </div>
+              ))}
+            </div>
+            <div style={{background:'#fefce8',border:'2px solid #fde047',borderRadius:14,padding:18}}>
+              <div style={{fontWeight:900,fontSize:13,color:'#92400e',marginBottom:10}}>📌 Consultant Notes</div>
+              {t.consultantNotes.map((n,i)=>(
+                <div key={i} style={{fontSize:12,color:'#78350f',marginBottom:6,padding:'6px 8px',background:'rgba(255,255,255,0.6)',borderRadius:6,lineHeight:1.5}}>• {n}</div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
+function TemplatesView() {
+  const [active, setActive] = useState('ablation');
+  return (
+    <div>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:20,flexWrap:'wrap',gap:10}}>
+        <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+          {[['ablation','🩺 Thermal Ablation (RF / Laser / VenaSeal)'],['varithena','💜 Varithena (Chemical Ablation)']].map(([k,label])=>(
+            <button key={k} onClick={()=>setActive(k)} style={{padding:'10px 20px',borderRadius:10,border:'none',cursor:'pointer',fontSize:13,fontWeight:800,background:active===k?(k==='varithena'?'#7c3aed':'#047857'):'#e2e8f0',color:active===k?'white':'#475569',transition:'all 0.15s'}}>{label}</button>
+          ))}
+        </div>
+        <a href="/builder.html" target="_blank" style={{display:'inline-flex',alignItems:'center',gap:6,background:'#166534',color:'white',textDecoration:'none',padding:'10px 18px',borderRadius:10,fontSize:13,fontWeight:800,boxShadow:'0 2px 8px rgba(22,101,52,0.3)'}}>🏗️ Template Builder →</a>
+      </div>
+      {active==='ablation' ? <VeinProcedureTemplate /> : <VarithenaTemplate />}
+    </div>
+  );
+}
+
+function TemplatesView_OLD() {
+  const [active, setActive] = useState('ablation');
+  return (
+    <div>
+      <div style={{display:'flex',gap:8,marginBottom:20}}>
+        {[['ablation','🩺 Thermal Ablation (RF / Laser / VenaSeal)'],['varithena','💜 Varithena (Chemical Ablation)']].map(([k,label])=>(
+          <button key={k} onClick={()=>setActive(k)} style={{padding:'10px 20px',borderRadius:10,border:'none',cursor:'pointer',fontSize:13,fontWeight:800,background:active===k?(k==='varithena'?'#7c3aed':'#047857'):'#e2e8f0',color:active===k?'white':'#475569',transition:'all 0.15s'}}>{label}</button>
+        ))}
+      </div>
+      {active==='ablation' ? <VeinProcedureTemplate /> : <VarithenaTemplate />}
+    </div>
+  );
+}
+
+function App() {
+  const [articles, setArticles] = useState([]);
+  const [stats, setStats] = useState({});
+  const [q, setQ] = useState('');
+  const [catFilter, setCatFilter] = useState('');
+  const [roleFilter, setRoleFilter] = useState('');
+  const [modal, setModal] = useState(null);
+  const [showAdd, setShowAdd] = useState(false);
+  const [activeTab, setActiveTab] = useState('All');
+
+  const TABS = ['All', ...CATEGORIES, '🔀 Workflows', '🩺 Templates', '📐 Template Review', '⭐ Superusers'];
+
+  const load = async () => {
+    const params = new URLSearchParams();
+    if (q) params.set('q', q);
+    const effectiveCat = catFilter || (activeTab !== 'All' ? activeTab : '');
+    if (effectiveCat) params.set('category', effectiveCat);
+    if (roleFilter) params.set('role', roleFilter);
+    const [a, s] = await Promise.all([api(`/api/articles?${params}`), api('/api/stats')]);
+    setArticles(a); setStats(s);
+  };
+
+  useEffect(() => { load(); }, [q, catFilter, roleFilter, activeTab]);
+
+  const saveArticle = async (data) => {
+    if (modal?.id) await api(`/api/articles/${modal.id}`, {method:'PUT', body:JSON.stringify(data)});
+    else await api('/api/articles', {method:'POST', body:JSON.stringify(data)});
+    setModal(null); setShowAdd(false); load();
+  };
+
+  const deleteArticle = async (id) => {
+    if (!confirm('Delete this article?')) return;
+    await api(`/api/articles/${id}`, {method:'DELETE'});
+    load();
+  };
+
+  return (
+    <div>
+      <nav className="navbar">
+        <div>
+          <h1>⚡ NextGen <span>Hub</span></h1>
+          <div className="navbar-sub">Quick reference guide · VIP Medical Group</div>
+        </div>
+        <button className="btn btn-primary btn-sm" style={{background:'rgba(255,255,255,0.2)',border:'1px solid rgba(255,255,255,0.3)'}} onClick={()=>{setModal(null);setShowAdd(true);}}>+ Add Article</button>
+      </nav>
+
+      {/* Category tabs */}
+      <div className="tab-bar">
+        {TABS.map(t => (
+          <button key={t} className={`tab${activeTab===t?' active':''}`} onClick={()=>{setActiveTab(t);setCatFilter('');}}>{t}</button>
+        ))}
+      </div>
+
+      <div className="container">
+
+        {/* Stats */}
+        <div className="stats-row">
+          <div className="stat-card"><div className="stat-num">{stats.total||0}</div><div className="stat-label">Total Articles</div></div>
+          {(stats.byCategory||[]).slice(0,4).map(c=>(
+            <div key={c.category} className="stat-card"><div className="stat-num">{c.c}</div><div className="stat-label">{c.category}</div></div>
+          ))}
+        </div>
+
+        {/* Search */}
+        <div className="search-hero">
+          <h2>🔍 How do I...?</h2>
+          <p>Search by keyword, topic, or role. Click any result to expand the full instructions.</p>
+          <div className="search-box">
+            <input className="search-main" placeholder="Search articles, steps, tips..." value={q} onChange={e=>setQ(e.target.value)} />
+            <select className="filter" value={roleFilter} onChange={e=>setRoleFilter(e.target.value)}>
+              <option value="">All Roles</option>
+              {ROLES.map(r=><option key={r}>{r}</option>)}
+            </select>
+            {(q||catFilter||roleFilter) && <button className="btn btn-outline" onClick={()=>{setQ('');setCatFilter('');setRoleFilter('');}}>Clear</button>}
+          </div>
+        </div>
+
+        {/* Workflows tab */}
+        {activeTab==='🔀 Workflows' && <WorkflowsView />}
+
+        {/* Templates tab */}
+        {activeTab==='🩺 Templates' && <TemplatesView />}
+
+        {/* Template Review tab */}
+        {activeTab==='📐 Template Review' && <TemplateReviewView />}
+
+        {/* Superusers tab */}
+        {activeTab==='⭐ Superusers' && <SuperuserTracker />}
+
+        {/* Articles */}
+        {activeTab!=='🔀 Workflows' && activeTab!=='🩺 Templates' && activeTab!=='📐 Template Review' && activeTab!=='⭐ Superusers' && <>
+        <div className="results-header">
+          <div className="results-count">📄 {articles.length} article{articles.length!==1?'s':''}{q||catFilter||roleFilter||activeTab!=='All'?' matching filters':''}</div>
+        </div>
+
+        {articles.length === 0 && (
+          <div className="empty">
+            <div className="empty-icon">📭</div>
+            <h3>No articles yet</h3>
+            <p style={{marginTop:8}}>Click "+ Add Article" to create your first guide</p>
+          </div>
+        )}
+
+        {articles.map(a => (
+          <ArticleCard key={a.id} a={a} onEdit={a=>{setModal(a);setShowAdd(true);}} onDelete={deleteArticle} defaultOpen={articles.length===1} />
+        ))}
+        </> }
+
+      </div>
+
+      {showAdd && <ArticleModal article={modal} onSave={saveArticle} onClose={()=>{setShowAdd(false);setModal(null);}} />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
