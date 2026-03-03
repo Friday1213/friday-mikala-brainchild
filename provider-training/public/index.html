@@ -4269,6 +4269,23 @@ function App() {
             ⚙️ Systems
           </button>
         </div>
+        <div className="mode-divider"/>
+        <div className="mode-toggle">
+          <button
+            className={`mode-btn${mode==='intro'?' active':''}`}
+            onClick={()=>goMode('intro')}
+            style={{background: mode==='intro' ? '#E45487' : undefined}}
+          >
+            🚀 Module 1
+          </button>
+          <button
+            className={`mode-btn${mode==='selfguided'?' active':''}`}
+            onClick={()=>goMode('selfguided')}
+            style={{background: mode==='selfguided' ? '#1078B9' : undefined}}
+          >
+            📋 Module 2
+          </button>
+        </div>
       </div>
 
       {/* Sub-tab bar — only when not on home */}
