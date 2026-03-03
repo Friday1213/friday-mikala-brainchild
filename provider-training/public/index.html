@@ -3877,6 +3877,325 @@ function IntroModule({ onExit }) {
   );
 }
 
+// ── MODULE 2: SELF-GUIDED TRAINING CHECKLIST ─────────────────────────────────
+function SelfGuidedModule({ onExit }) {
+  const pur = '#AC4ABD', dpup = '#6C3CB5', blu = '#1078B9', pk = '#E45487', dk = '#2d1b69';
+
+  const [providerName, setProviderName] = React.useState('');
+  const [startDate, setStartDate] = React.useState('');
+  const [setup, setSetup] = React.useState(false);
+  const [activePhase, setActivePhase] = React.useState('prestart');
+  const [checks, setChecks] = React.useState({});
+
+  // Load saved state on mount
+  React.useEffect(() => {
+    const saved = localStorage.getItem('vip_m2_profile');
+    if (saved) {
+      try {
+        const p = JSON.parse(saved);
+        setProviderName(p.name || '');
+        setStartDate(p.startDate || '');
+        setSetup(true);
+        setChecks(p.checks || {});
+        setActivePhase(p.activePhase || 'prestart');
+      } catch(e) {}
+    }
+  }, []);
+
+  const saveState = (name, date, ch, phase) => {
+    localStorage.setItem('vip_m2_profile', JSON.stringify({
+      name, startDate: date, checks: ch, activePhase: phase
+    }));
+  };
+
+  const toggleCheck = (id) => {
+    const next = {...checks, [id]: !checks[id]};
+    setChecks(next);
+    saveState(providerName, startDate, next, activePhase);
+  };
+
+  const switchPhase = (p) => {
+    setActivePhase(p);
+    saveState(providerName, startDate, checks, p);
+  };
+
+  const PHASES = [
+    { id:'prestart', label:'Pre-Start', icon:'📋', color:'#059669',
+      subtitle:'Complete before Day 1', desc:'These items must be done before you walk in the door. Arriving unprepared is not an option.' },
+    { id:'week1',   label:'Week 1',    icon:'🎯', color:pk,
+      subtitle:'Complete by end of Week 1', desc:'Performance benchmarks for your first week. Track honestly.' },
+    { id:'day30',   label:'30 Days',   icon:'📈', color:blu,
+      subtitle:'Complete by Day 30', desc:'You should be gaining momentum. Clinical and operational confidence building.' },
+    { id:'day60',   label:'60 Days',   icon:'🏆', color:pur,
+      subtitle:'Complete by Day 60', desc:'Full integration. You are an asset to your office, not a drain on its resources.' },
+  ];
+
+  const ITEMS = {
+    prestart: [
+      { id:'ps_clinical_manual',  label:'Read the Clinical Manual cover to cover',
+        sub:'Focus on: venous anatomy, CEAP classification, reflux pathophysiology, DVT vs CVI, treatment algorithms.', tag:'Reading' },
+      { id:'ps_systems_manual',   label:'Read the Systems Manual cover to cover',
+        sub:'Focus on: EMR navigation, documentation workflows, scheduling structure, insurance basics.', tag:'Reading' },
+      { id:'ps_ceap',             label:'Memorize CEAP classification C0–C6',
+        sub:'Be able to define each class and give a clinical example for each without looking it up.', tag:'Clinical' },
+      { id:'ps_rfa_choreo',       label:'Review RFA procedural choreography',
+        sub:'Room setup, patient positioning, required supplies, step-by-step sequence. Know it before you observe your first case.', tag:'Procedure' },
+      { id:'ps_varithena_choreo', label:'Review Varithena procedural choreography',
+        sub:'Mixing protocol, injection technique, compression requirements, post-procedure instructions.', tag:'Procedure' },
+      { id:'ps_visit_templates',  label:'Review initial visit and follow-up visit templates',
+        sub:'Know what is documented at each visit type and why before you sit down at a chart.', tag:'Systems' },
+      { id:'ps_gsv_ssv',          label:'Review GSV and SSV ultrasound anatomy',
+        sub:'Be able to identify SFJ, SPJ, course of both veins, and basic reflux findings on a diagram.', tag:'Clinical' },
+      { id:'ps_patient_flow',     label:'Understand the VIP patient journey end to end',
+        sub:'Consult → duplex scan → insurance auth → procedure → follow-up → graduation. Know every step and who owns each one.', tag:'Systems' },
+      { id:'ps_nextgen_videos',   label:'Watch all NextGen EHR training videos',
+        sub:'Available at nextgen-hub.onrender.com. Go-live May 12, 2026. EMR proficiency is required before start.', tag:'Systems' },
+      { id:'ps_hr_paperwork',     label:'Complete all HR onboarding paperwork',
+        sub:'Credentialing, employment, compliance docs. Contact Sara Young (HR) if anything is outstanding.', tag:'Admin' },
+      { id:'ps_hub_orientation',  label:'Complete Module 1 — New Provider Onboarding',
+        sub:'The 90-minute orientation module. If you have not done this yet, do it first.', tag:'Required' },
+      { id:'ps_contacts',         label:'Save key contacts in your phone',
+        sub:'Your ROD, Regional Medical Director, Carly Sarch (Dir. Provider Services), and office staff.', tag:'Admin' },
+    ],
+    week1: [
+      { id:'w1_consult_indep',    label:'Performed an initial consult visit independently',
+        sub:'History, physical exam, vein talk, documentation, next steps — without being prompted.', tag:'Clinical' },
+      { id:'w1_review_indep',     label:'Performed a review/follow-up visit independently',
+        sub:'Post-procedure checks and scan review appointments without prompting.', tag:'Clinical' },
+      { id:'w1_emr_navigate',     label:'Navigate the EMR confidently without assistance',
+        sub:'Chart a visit, pull prior records, order duplex, schedule follow-up — no hand-holding.', tag:'Systems' },
+      { id:'w1_same_day_charts',  label:'Completing charts same-day, every day',
+        sub:'No outstanding notes at end of day. This is a non-negotiable standard.', tag:'Documentation' },
+      { id:'w1_rfa_verbal',       label:'Can walk through RFA choreography verbally from memory',
+        sub:'Steps, supplies, setup, post-procedure. If you cannot say it, you cannot do it.', tag:'Procedure' },
+      { id:'w1_varithena_verbal', label:'Can walk through Varithena choreography verbally from memory',
+        sub:'Same standard as RFA.', tag:'Procedure' },
+      { id:'w1_scan_gsv_ssv',     label:'Identified GSV and SSV anatomy on live duplex ultrasound',
+        sub:'SFJ, SPJ, course of both veins. Observed and ideally hands-on with a sonographer.', tag:'Clinical' },
+      { id:'w1_intake_observed',  label:'Observed full intake workflow with MA',
+        sub:'Rooming, vitals, intake forms, consent workflow. Know what happens before you walk in.', tag:'Systems' },
+      { id:'w1_schedule_structure', label:'Understand the daily scheduling structure',
+        sub:'What each appointment type is, how the schedule is built, how to read your day.', tag:'Systems' },
+      { id:'w1_procedure_observed', label:'Observed at least one RFA and one Varithena procedure',
+        sub:'Watch from start to finish. Ask questions after, not during.', tag:'Procedure' },
+      { id:'w1_insurance_basics', label:'Understand basic insurance workflow',
+        sub:'Prior auth process, required documentation, who handles each step, what can delay a case.', tag:'Systems' },
+      { id:'w1_team_introductions', label:'Introduced yourself to full office team',
+        sub:'MAs, sonographers, front desk, and any visiting leadership. Know everyone by name.', tag:'Admin' },
+    ],
+    day30: [
+      { id:'d30_consult_fluent',  label:'Running initial consult visits with full confidence',
+        sub:'No hesitation on history, exam, vein talk, or documentation. Patients experience a polished visit.', tag:'Clinical' },
+      { id:'d30_review_fluent',   label:'Running review and follow-up visits independently',
+        sub:'Scan interpretation, treatment response assessment, next step planning — all independent.', tag:'Clinical' },
+      { id:'d30_rfa_assist',      label:'Assisting on RFA procedures',
+        sub:'Active role in procedure. Not just observing.', tag:'Procedure' },
+      { id:'d30_varithena_assist', label:'Assisting on Varithena procedures',
+        sub:'Active role. Familiar with all steps, supplies, and patient communication.', tag:'Procedure' },
+      { id:'d30_us_reflux',       label:'Identifying venous reflux on duplex ultrasound',
+        sub:'Recognizing SFJ/SPJ incompetence, pathologic reflux duration (>500ms), basic mapping.', tag:'Clinical' },
+      { id:'d30_emr_fluent',      label:'EMR documentation is fast and accurate',
+        sub:'Charts feel routine. Format is correct. No errors requiring correction.', tag:'Documentation' },
+      { id:'d30_auth_workflow',   label:'Comfortable with prior authorization workflow',
+        sub:'Know what triggers auth, what documentation is needed, and how to avoid delays.', tag:'Systems' },
+      { id:'d30_rod_relationship', label:'Established working relationship with your ROD',
+        sub:'You know their communication style, their expectations, and how to escalate to them.', tag:'Admin' },
+      { id:'d30_rmd_relationship', label:'Connected with your Regional Medical Director',
+        sub:'Introduced yourself. Know how and when to use them as a clinical resource.', tag:'Admin' },
+      { id:'d30_patient_journey', label:'Can guide a patient through their full treatment journey',
+        sub:'From consult through graduation — confidently explaining every step, timeline, and expectation.', tag:'Clinical' },
+      { id:'d30_complications_aware', label:'Can recognize and respond to procedural complications',
+        sub:'DVT, EHIT, nerve injury, skin changes — know the signs and the correct immediate response.', tag:'Clinical' },
+    ],
+    day60: [
+      { id:'d60_venous_mastery',  label:'Full command of venous disease fundamentals',
+        sub:'CEAP, hemodynamics, reflux pathophysiology, DVT vs CVI, treatment algorithms — fluent and accurate without reference.', tag:'Clinical' },
+      { id:'d60_rfa_independent', label:'Performing RFA independently',
+        sub:'No step-by-step guidance needed. Smooth, efficient, safe.', tag:'Procedure' },
+      { id:'d60_varithena_independent', label:'Performing Varithena independently',
+        sub:'Mixing, injection, compression, post-procedure management — fully independent.', tag:'Procedure' },
+      { id:'d60_us_competent',    label:'Competent duplex ultrasound interpretation',
+        sub:'Reflux, DVT, EHIT, post-treatment response. Not expert-level, but reliably accurate.', tag:'Clinical' },
+      { id:'d60_workflows_reflexive', label:'VIP workflows are reflexive — not effortful',
+        sub:'You execute without thinking about the steps. The process is automatic.', tag:'Systems' },
+      { id:'d60_documentation_mastery', label:'Documentation standards consistently met',
+        sub:'Same-day, correct format, no errors, audit-ready at all times.', tag:'Documentation' },
+      { id:'d60_minimal_supervision', label:'Operating with minimal supervision on standard cases',
+        sub:'Your supervising provider trusts your judgment. You are not drawing on team resources to function.', tag:'Clinical' },
+      { id:'d60_team_asset',      label:'Known and trusted by your full office team',
+        sub:'MAs, sonographers, and front desk rely on you. You make their jobs easier, not harder.', tag:'Admin' },
+      { id:'d60_insurance_mastery', label:'Insurance and auth workflow fully mastered',
+        sub:'You catch documentation gaps before they become denials. You understand the revenue cycle basics.', tag:'Systems' },
+      { id:'d60_proactive_communicator', label:'Proactive communicator with leadership',
+        sub:'You surface issues early. You do not wait for someone else to notice a problem.', tag:'Admin' },
+      { id:'d60_carly_checkin',   label:'Completed 60-day check-in with Carly',
+        sub:'Scheduled and attended your formal 60-day review with the Director of Provider Services.', tag:'Required' },
+    ],
+  };
+
+  const tagColors = {
+    'Required':'#dc2626', 'Clinical':'#7c3aed', 'Procedure':'#E45487',
+    'Systems':'#1078B9', 'Documentation':'#f59e0b', 'Admin':'#059669', 'Reading':'#64748b'
+  };
+
+  const phaseProgress = (phaseId) => {
+    const items = ITEMS[phaseId] || [];
+    const done = items.filter(it => checks[it.id]).length;
+    return { done, total: items.length, pct: items.length ? Math.round((done/items.length)*100) : 0 };
+  };
+
+  const daysUntilStart = () => {
+    if (!startDate) return null;
+    const diff = Math.ceil((new Date(startDate) - new Date()) / 86400000);
+    return diff;
+  };
+
+  if (!setup) return (
+    <div style={{minHeight:'100vh',background:'#f1f5f9',display:'flex',alignItems:'center',justifyContent:'center',padding:24}}>
+      <div style={{background:'white',borderRadius:20,padding:'36px 32px',maxWidth:480,width:'100%',boxShadow:'0 8px 40px rgba(0,0,0,0.12)'}}>
+        <div style={{fontSize:36,marginBottom:12,textAlign:'center'}}>📋</div>
+        <h2 style={{fontSize:22,fontWeight:900,color:dk,marginBottom:6,textAlign:'center'}}>Self-Guided Training Checklist</h2>
+        <p style={{fontSize:13,color:'#64748b',textAlign:'center',marginBottom:28,lineHeight:1.6}}>
+          Work through your training at your own pace. Your progress saves automatically to this device.
+        </p>
+        <div style={{marginBottom:16}}>
+          <label style={{fontSize:12,fontWeight:800,color:'#475569',display:'block',marginBottom:6}}>YOUR FULL NAME</label>
+          <input value={providerName} onChange={e=>setProviderName(e.target.value)}
+            placeholder="Dr. First Last"
+            style={{width:'100%',padding:'11px 14px',borderRadius:10,border:'2px solid #e2e8f0',fontSize:14,fontFamily:'DM Sans',outline:'none'}} />
+        </div>
+        <div style={{marginBottom:24}}>
+          <label style={{fontSize:12,fontWeight:800,color:'#475569',display:'block',marginBottom:6}}>START DATE <span style={{fontWeight:400,color:'#94a3b8'}}>(or expected start date)</span></label>
+          <input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)}
+            style={{width:'100%',padding:'11px 14px',borderRadius:10,border:'2px solid #e2e8f0',fontSize:14,fontFamily:'DM Sans',outline:'none'}} />
+        </div>
+        <button onClick={()=>{ if(!providerName.trim()) return; setSetup(true); saveState(providerName,startDate,{},activePhase); }}
+          disabled={!providerName.trim()}
+          style={{width:'100%',padding:'13px',borderRadius:12,border:'none',fontFamily:'Poppins',
+            background:!providerName.trim()?'#e2e8f0':`linear-gradient(135deg,${pk},${pur})`,
+            color:!providerName.trim()?'#94a3b8':'white',fontWeight:900,fontSize:15,cursor:!providerName.trim()?'default':'pointer'}}>
+          Start My Checklist →
+        </button>
+      </div>
+    </div>
+  );
+
+  const days = daysUntilStart();
+  const currentPhase = PHASES.find(p=>p.id===activePhase);
+  const currentItems = ITEMS[activePhase] || [];
+
+  return (
+    <div style={{minHeight:'100vh',background:'#f1f5f9'}}>
+      {/* Header */}
+      <div style={{background:`linear-gradient(135deg,${dk},${dpup})`,padding:'16px 24px',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:10}}>
+        <div>
+          <div style={{fontSize:18,fontWeight:900,color:'white'}}>📋 Self-Guided Training Checklist</div>
+          <div style={{fontSize:12,color:'rgba(255,255,255,0.75)'}}>{providerName}
+            {startDate && <span> · Start date: {new Date(startDate+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>}
+            {days !== null && days > 0 && <span style={{background:'rgba(255,255,255,0.2)',borderRadius:20,padding:'1px 10px',marginLeft:8,fontSize:11}}>{days} days until start</span>}
+            {days !== null && days <= 0 && <span style={{background:'#22c55e40',borderRadius:20,padding:'1px 10px',marginLeft:8,fontSize:11,color:'#bbf7d0'}}>Training in progress</span>}
+          </div>
+        </div>
+        <div style={{display:'flex',gap:8}}>
+          <button onClick={()=>{ if(window.confirm('Reset your checklist? This cannot be undone.')){ localStorage.removeItem('vip_m2_profile'); setSetup(false); setProviderName(''); setStartDate(''); setChecks({}); }}}
+            style={{background:'rgba(255,255,255,0.1)',border:'none',color:'rgba(255,255,255,0.7)',borderRadius:8,padding:'6px 12px',fontSize:11,cursor:'pointer'}}>
+            Reset
+          </button>
+          <button onClick={()=>onExit('home')}
+            style={{background:'rgba(255,255,255,0.15)',border:'none',color:'white',borderRadius:8,padding:'6px 14px',fontSize:12,fontWeight:700,cursor:'pointer'}}>
+            ← Back to Hub
+          </button>
+        </div>
+      </div>
+
+      {/* Phase selector + overall progress */}
+      <div style={{background:'white',padding:'16px 24px',borderBottom:'1px solid #e2e8f0'}}>
+        {/* Overall progress bar */}
+        <div style={{display:'flex',gap:6,marginBottom:12,flexWrap:'wrap'}}>
+          {PHASES.map(p => {
+            const prog = phaseProgress(p.id);
+            return (
+              <button key={p.id} onClick={()=>switchPhase(p.id)}
+                style={{flex:1,minWidth:120,padding:'10px 8px',borderRadius:10,border:`2px solid ${activePhase===p.id?p.color:'#e2e8f0'}`,
+                  background:activePhase===p.id?`${p.color}10`:'white',cursor:'pointer',textAlign:'center',transition:'all 0.15s'}}>
+                <div style={{fontSize:16,marginBottom:2}}>{p.icon}</div>
+                <div style={{fontSize:12,fontWeight:900,color:activePhase===p.id?p.color:'#475569'}}>{p.label}</div>
+                <div style={{fontSize:10,color:'#94a3b8',marginBottom:6}}>{p.subtitle}</div>
+                <div style={{background:'#f1f5f9',borderRadius:999,height:5,overflow:'hidden'}}>
+                  <div style={{background:p.color,height:'100%',borderRadius:999,width:`${prog.pct}%`,transition:'width 0.3s'}}></div>
+                </div>
+                <div style={{fontSize:10,fontWeight:800,color:p.color,marginTop:3}}>{prog.done}/{prog.total}</div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Phase content */}
+      <div style={{maxWidth:860,margin:'0 auto',padding:'20px 16px'}}>
+        <div style={{background:`linear-gradient(135deg,${currentPhase.color},${currentPhase.color}cc)`,borderRadius:14,padding:'16px 20px',marginBottom:16,color:'white'}}>
+          <div style={{fontSize:20,fontWeight:900,marginBottom:4}}>{currentPhase.icon} {currentPhase.label} — {currentPhase.subtitle}</div>
+          <div style={{fontSize:13,opacity:0.9}}>{currentPhase.desc}</div>
+          <div style={{marginTop:10,background:'rgba(255,255,255,0.2)',borderRadius:999,height:8,overflow:'hidden'}}>
+            <div style={{background:'white',height:'100%',borderRadius:999,width:`${phaseProgress(activePhase).pct}%`,transition:'width 0.4s'}}></div>
+          </div>
+          <div style={{fontSize:12,marginTop:4,opacity:0.9}}>{phaseProgress(activePhase).done} of {phaseProgress(activePhase).total} complete · {phaseProgress(activePhase).pct}%</div>
+        </div>
+
+        {/* Group by tag */}
+        {(() => {
+          const tags = [...new Set(currentItems.map(i=>i.tag))];
+          return tags.map(tag => {
+            const tagItems = currentItems.filter(i=>i.tag===tag);
+            const tagDone = tagItems.filter(i=>checks[i.id]).length;
+            return (
+              <div key={tag} style={{marginBottom:16}}>
+                <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:8}}>
+                  <div style={{background:tagColors[tag]||'#94a3b8',color:'white',borderRadius:20,padding:'3px 12px',fontSize:11,fontWeight:800}}>{tag}</div>
+                  <div style={{fontSize:11,color:'#94a3b8'}}>{tagDone}/{tagItems.length}</div>
+                </div>
+                {tagItems.map(item => (
+                  <div key={item.id} onClick={()=>toggleCheck(item.id)}
+                    style={{display:'flex',gap:12,alignItems:'flex-start',padding:'12px 14px',borderRadius:10,marginBottom:6,
+                      background:checks[item.id]?`${currentPhase.color}10`:'white',
+                      border:`1px solid ${checks[item.id]?currentPhase.color+'40':'#e2e8f0'}`,cursor:'pointer',
+                      transition:'all 0.15s'}}>
+                    <div style={{width:22,height:22,borderRadius:6,border:`2px solid ${checks[item.id]?currentPhase.color:'#cbd5e1'}`,
+                      background:checks[item.id]?currentPhase.color:'white',
+                      display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:1,transition:'all 0.15s'}}>
+                      {checks[item.id] && <span style={{color:'white',fontSize:12,fontWeight:900}}>✓</span>}
+                    </div>
+                    <div style={{flex:1}}>
+                      <div style={{fontSize:13,fontWeight:700,color:checks[item.id]?'#64748b':'#1e293b',
+                        textDecoration:checks[item.id]?'line-through':'none',marginBottom:3}}>{item.label}</div>
+                      <div style={{fontSize:11,color:'#64748b',lineHeight:1.5}}>{item.sub}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            );
+          });
+        })()}
+
+        {/* Phase complete banner */}
+        {phaseProgress(activePhase).pct === 100 && (
+          <div style={{background:`linear-gradient(135deg,${currentPhase.color},${dk})`,borderRadius:14,padding:'20px 24px',textAlign:'center',color:'white',marginTop:8}}>
+            <div style={{fontSize:36,marginBottom:8}}>🏆</div>
+            <div style={{fontSize:18,fontWeight:900,marginBottom:6}}>{currentPhase.label} — Complete!</div>
+            <div style={{fontSize:13,opacity:0.9,marginBottom:16}}>Outstanding. Move on to your next phase.</div>
+            {PHASES.findIndex(p=>p.id===activePhase) < PHASES.length-1 && (
+              <button onClick={()=>switchPhase(PHASES[PHASES.findIndex(p=>p.id===activePhase)+1].id)}
+                style={{background:'white',color:currentPhase.color,borderRadius:10,padding:'10px 24px',border:'none',fontWeight:900,fontSize:14,cursor:'pointer'}}>
+                Next Phase →
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ── APP ───────────────────────────────────────────────────────────────────────
 function App() {
   // Read initial state from URL hash e.g. #clinical/p2p or #admin/faq
@@ -3978,7 +4297,8 @@ function App() {
       {mode === 'home' && (
         <div style={{background:'linear-gradient(135deg,#2d1b69,#6C3CB5)',padding:'32px 24px'}}>
           <div style={{maxWidth:1080,margin:'0 auto'}}>
-            {/* START HERE */}
+            {/* MODULE BUTTONS */}
+            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:12,marginBottom:24}}>
             <div onClick={()=>{ setMode('intro'); window.scrollTo(0,0); }}
               style={{background:'linear-gradient(135deg,#E45487,#AC4ABD)',borderRadius:16,padding:'20px 24px',marginBottom:24,
                 cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:12,
@@ -3992,6 +4312,20 @@ function App() {
                 Begin →
               </div>
             </div>
+            <div onClick={()=>{ setMode('selfguided'); window.scrollTo(0,0); }}
+              style={{background:'linear-gradient(135deg,#1078B9,#6C3CB5)',borderRadius:16,padding:'20px 24px',
+                cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:12,
+                boxShadow:'0 8px 32px rgba(16,120,185,0.35)',border:'2px solid rgba(255,255,255,0.2)'}}>
+              <div>
+                <div style={{fontSize:11,fontWeight:900,color:'rgba(255,255,255,0.8)',letterSpacing:2,marginBottom:4}}>ONGOING</div>
+                <div style={{fontSize:20,fontWeight:900,color:'white',marginBottom:4}}>📋 Self-Guided Training Checklist</div>
+                <div style={{fontSize:13,color:'rgba(255,255,255,0.85)'}}>Pre-Start · Week 1 · 30 Days · 60 Days · Work at your own pace</div>
+              </div>
+              <div style={{background:'white',color:'#1078B9',borderRadius:12,padding:'12px 24px',fontWeight:900,fontSize:15,flexShrink:0}}>
+                Open →
+              </div>
+            </div>
+            </div>
             <h1 style={{fontSize:26,fontWeight:900,color:'white',marginBottom:8}}>Welcome to VIP Medical Group 👋</h1>
             <p style={{fontSize:14,color:'rgba(255,255,255,0.85)',maxWidth:560,lineHeight:1.6,marginBottom:18}}>Your one-stop hub for everything you need — from pre-arrival checklists to clinical protocols to FAQs.</p>
             <div style={{display:'flex',gap:10,marginTop:8}}>
@@ -4004,9 +4338,10 @@ function App() {
 
       {/* Intro Module — full page takeover */}
       {mode === 'intro' && <IntroModule onExit={(m)=>{ setMode(m); window.scrollTo(0,0); }} />}
+      {mode === 'selfguided' && <SelfGuidedModule onExit={(m)=>{ setMode(m); window.scrollTo(0,0); }} />}
 
       {/* Content */}
-      {mode !== 'intro' && <div className="container">
+      {mode !== 'intro' && mode !== 'selfguided' && <div className="container">
         {mode === 'home'     && <HomeTab setMode={goMode} setAdminTab={setAdminTab} setClinicalTab={setClinicalTab} />}
         {mode === 'clinical' && clinicalTab === 'clinical'       && <ClinicalTab />}
         {mode === 'clinical' && clinicalTab === 'treatment'      && <TreatmentTab />}
