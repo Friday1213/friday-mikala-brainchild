@@ -4,3 +4,4 @@ google-service-account.json
 node_modules/
 */node_modules/
 *.db
+google-service-account.json
