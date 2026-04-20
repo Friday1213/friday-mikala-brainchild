@@ -1,0 +1,32 @@
+name: Deploy Training Hub
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'provider-training/public/index.html'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: 187.124.69.104
+          username: root
+          password: ${{ secrets.VPS_PASSWORD }}
+          source: "provider-training/public/index.html"
+          target: "/var/www/fridaybrain/carly-work/training/"
+          strip_components: 2
+
+      - name: Restart app
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 187.124.69.104
+          username: root
+          password: ${{ secrets.VPS_PASSWORD }}
+          script: pm2 restart carly-work
